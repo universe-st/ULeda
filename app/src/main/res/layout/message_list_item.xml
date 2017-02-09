@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="0dp"
+    android:paddingBottom="10dp">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:weightSum="100">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="20"
+            android:weightSum="100">
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                app:srcCompat="@drawable/user1"
+                android:id="@+id/userImage"
+                android:layout_weight="100"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="80"
+            android:weightSum="100"
+            android:paddingTop="0dp">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="50"
+                android:weightSum="100">
+
+                <TextView
+                    android:textColor="@android:color/black"
+                    android:text="幻致Trance"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/userName"
+                    android:textSize="17sp"
+                    android:gravity="bottom"
+                    android:layout_weight="80" />
+
+                <TextView
+                    android:textColor="@android:color/black"
+                    android:text="刚刚"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/time"
+                    android:textSize="15sp"
+                    android:layout_weight="20"
+                    android:paddingBottom="4dp"
+                    android:gravity="bottom|center_horizontal" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="50"
+                android:weightSum="100">
+
+                <TextView
+                    android:textColor="@android:color/black"
+                    android:text=" 在吗？"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/message"
+                    android:textSize="15sp"
+                    android:layout_weight="80"
+                    android:ellipsize="end"
+                    android:gravity="center_vertical"
+                    android:maxLines="1" />
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/oneo"
+                    android:id="@+id/hint"
+                    android:layout_weight="20"
+                    android:padding="5dp" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

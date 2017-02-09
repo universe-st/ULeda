@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ededed">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:gravity="bottom"
+        android:layout_height="70dp"
+        android:weightSum="1"
+        android:background="@color/colorUMain"
+        android:layout_marginBottom="20dp"
+        >
+
+        <ImageButton
+            app:srcCompat="@drawable/back"
+            android:id="@+id/back"
+            android:background="#00000000"
+            android:layout_marginBottom="10dp"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:onClick="onClick" />
+
+        <TextView
+            android:text="更换手机"
+            android:layout_width="330dp"
+            android:layout_height="match_parent"
+            android:id="@+id/textView2"
+            android:gravity="bottom|center_horizontal"
+            android:textSize="23sp"
+            android:layout_marginBottom="0dp"
+            android:layout_weight="0.98"
+            android:paddingBottom="6dp"
+            android:textColor="#ffffff" />
+
+        <TextView
+            android:text=""
+            android:id="@+id/textView8"
+            android:layout_marginBottom="12dp"
+            android:layout_height="25dp"
+            android:layout_width="25dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:background="#ededed"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginBottom="2dp"
+            android:background="#ffffff"
+            android:weightSum="10"
+            android:id="@+id/general">
+
+            <TextView
+                android:text="  国家和地区"
+                android:layout_height="match_parent"
+                android:id="@+id/textView16"
+                android:gravity="center_vertical"
+                android:textSize="18sp"
+                android:layout_width="239dp"
+                android:layout_marginLeft="5dp" />
+
+            <TextView
+                android:text="中国大陆 86"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView39"
+                android:layout_weight="7" />
+
+            <ImageView
+                android:layout_height="25dp"
+                app:srcCompat="@drawable/forward"
+                android:id="@+id/imageView3"
+                android:layout_weight="3"
+                android:layout_marginTop="7dp"
+                android:layout_width="25dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginBottom="2dp"
+            android:background="#ffffff"
+            android:weightSum="10"
+            android:id="@+id/feedback">
+
+            <TextView
+                android:text="  新手机号"
+                android:layout_height="match_parent"
+                android:id="@+id/textView23"
+                android:gravity="center_vertical"
+                android:textSize="18sp"
+                android:layout_width="110dp"
+                android:layout_marginLeft="5dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:ems="10"
+                android:id="@+id/editText2"
+                android:hint="请输入手机号" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ededed">
+        <Button
+            android:text="下一步"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/button"
+            android:layout_marginTop="20dp"
+            android:background="@color/colorUMain"
+            android:textColor="#ffffff"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+</LinearLayout>

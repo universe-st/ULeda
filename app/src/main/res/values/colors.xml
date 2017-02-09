@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="colorUMain">#DD5A44</color>
+    <color name="colorUSwitch">#B84A37</color>
+
+    <color name="colorUTaskType">#5CCD8F</color>
+
+    <color name="colorUBlue">#4FBDFE</color>
+
+    <color name="colorUDeepGray">#666666</color>
+
+    <color name="colorUGray">#ABABAB</color>
+
+    <color name="colorUInfo">#f0b6ac</color>
+    
+    <color name="colorULightGray">#F5F5F5</color>
+
+    <color name="colorUWhite">#ffffff </color>
+
+    <color name="colorUBlack_transparent">#50000000</color>
+
+    <color name="colorUAquablue">#09F5F4</color>
+
+    <color name="colorUGreen">#61C791</color>
+
+    <color name="colorUBtBlue">#62B9FA</color>
+    
+    <color name="colorUOrange">#DD5A44</color>
+
+    <color name="colorUGrayLogin">#B2B2B2</color>
+
+    <color name="colorUWhiteLogin">#FDFDFD</color>
+
+</resources>
