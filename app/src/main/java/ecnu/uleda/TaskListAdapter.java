@@ -41,17 +41,17 @@ public class TaskListAdapter extends ArrayAdapter<UTask> {
         }
         if(task==null)return LayoutInflater.from(getContext().getApplicationContext()).inflate(R.layout.task_list_item,parent,false);
         TextView tv=(TextView)convertView.findViewById(R.id.task_type);
-        tv.setText(task.getShortType());
+        tv.setText(task.getTag());
         tv=(TextView)convertView.findViewById(R.id.publisher_name);
-        tv.setText(task.getPublisherName());
+        tv.setText(task.getAuthorUserName());
         tv=(TextView)convertView.findViewById(R.id.publisher_stars);
         tv.setText(task.getStarString());
         tv=(TextView)convertView.findViewById(R.id.task_info);
-        tv.setText(task.getShortInfo(30));
+        tv.setText(task.getTitle());
         tv=(TextView)convertView.findViewById(R.id.task_reward);
-        tv.setText(String.format(Locale.ENGLISH,"¥%.2f",task.getReward()));
-        int h=0;
-        int m=task.getLeftTime();
+        tv.setText(String.format(Locale.ENGLISH,"¥%.2f",task.getPrice()));
+        long h=0;
+        long m=task.getLeftTime();
         h+=(m/60);
         m%=60;
         String s;
