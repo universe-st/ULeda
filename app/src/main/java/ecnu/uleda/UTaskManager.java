@@ -17,6 +17,10 @@ import java.util.HashMap;
  */
 
 public class UTaskManager {
+    /*
+    * 该类遵循单例模式。
+    *
+    * */
     private static UTaskManager sInstance=null;
 
     private ArrayList<UTask> mTaskList;
