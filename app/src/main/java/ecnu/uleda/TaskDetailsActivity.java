@@ -62,7 +62,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
         public View getView(int position, View convertView,@NonNull ViewGroup parent){
             UserChatItem userChatItem=getItem(position);
             View v=null;
-            if(mTask.getPublisherName().equals(userChatItem.name)){
+            if(mTask.getAuthorUserName().equals(userChatItem.name)){
                 v=View.inflate(getContext().getApplicationContext(),R.layout.task_detail_chat_item_right,null);
             }else{
                 v=View.inflate(getContext().getApplicationContext(),R.layout.task_detail_chat_item_left,null);
@@ -87,7 +87,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
         Intent intent=getIntent();
         String jStr=intent.getStringExtra("UTask");
         try {
-            mTask = new UTask(new JSONObject(jStr));
+            mTask = new UTask();
         }catch (Exception e){
             Log.d("TaskDetailActivity",e.toString());
             finish();
@@ -103,9 +103,9 @@ public class TaskDetailsActivity extends AppCompatActivity {
         mTaskLocation=(TextView)v.findViewById(R.id.task_location);
         mTaskReward=(TextView)v.findViewById(R.id.task_details_reward);
         mTaskDetailInfo=(TextView)v.findViewById(R.id.task_detail_info);
-        mTaskDetailInfo.setText(mTask.getInformation());
-        mTaskReward.setText(String.format(Locale.ENGLISH,"¥%.2f",mTask.getReward()));
-        mTaskTitle.setText(mTask.getShortInfo(7));
+        mTaskDetailInfo.setText(mTask.getDescription());
+        mTaskReward.setText(String.format(Locale.ENGLISH,"¥%.2f",mTask.getPrice()));
+        mTaskTitle.setText(mTask.getTitle());
         CircleImageView civ=(CircleImageView)v.findViewById(R.id.task_detail_circle_image);
         civ.setImageBitmap(BitmapFactory.decodeResource(this.getResources(),R.drawable.user));
         civ.setOnClickListener(new View.OnClickListener() {
@@ -116,10 +116,10 @@ public class TaskDetailsActivity extends AppCompatActivity {
             }
         });
         TextView tv=(TextView)v.findViewById(R.id.task_detail_publisher_name);
-        tv.setText(mTask.getPublisherName());
+        tv.setText(mTask.getAuthorUserName());
         tv=(TextView)v.findViewById(R.id.task_detail_stars);
         tv.setText(mTask.getStarString());
-        if(mTask.getToLocation()!=null){
+        if(mTask.getPosition()!=null){
             Point size=UPublicTool.getScreenSize(this.getApplicationContext(),0.03,0.03);
             SpannableStringBuilder str=UPublicTool.addICONtoString(this.getApplicationContext(),"#LO"+mTask.getToWhere(),"#LO",R.drawable.location,size.x,size.y);
             mTaskLocation.setText(str);
@@ -138,7 +138,6 @@ public class TaskDetailsActivity extends AppCompatActivity {
             @Override
             public void onScroll(AbsListView absListView, int i, int i1, int i2) {
                 int scrollY=getListScrollY();
-                //Log.d("TaskDetailsActivity",scrollY+"");
                 if(scrollY<=200){
                     mHeadlineLayout.setRedAlpha(1.0f);
                 }else if(scrollY>200 && scrollY<=600){
@@ -148,7 +147,6 @@ public class TaskDetailsActivity extends AppCompatActivity {
                 }
             }
         });
-        //测试代码
     }
     private int getListScrollY() {//获取滚动距离
         View c = mListView.getChildAt(0);
@@ -172,8 +170,8 @@ public class TaskDetailsActivity extends AppCompatActivity {
         mMapView=(MapView)findViewById(R.id.task_map_view);
         mTencentMap=mMapView.getMap();
         mHeadlineLayout=(UHeadlineLayout)findViewById(R.id.head_line_layout);
-        mHeadlineLayout.setTitleRed(mTask.getShortInfo(5));
-        mHeadlineLayout.setTitleWhite(mTask.getShortInfo(7));
+        mHeadlineLayout.setTitleRed(mTask.getTitle());
+        mHeadlineLayout.setTitleWhite(mTask.getTitle());
         mHeadlineLayout.setRedAlpha(1f);
         mHeadlineLayout.setBackButtonClickListener(new View.OnClickListener() {
             @Override
@@ -181,114 +179,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
                 finish();
             }
         });
-        //测试代码
-        UserChatItem uc0=new UserChatItem();
-        uc0.name=mTask.getPublisherName();
-        uc0.imageID=R.drawable.user4;
-        uc0.sayWhat="你好";
-        uc0.timeBefore="1小时前";
-        UserChatItem uc1=new UserChatItem();
-        uc1.name="张三";
-        uc1.imageID=R.drawable.user5;
-        uc1.sayWhat="你好啊";
-        uc1.timeBefore="2小时前";
-        UserChatItem uc2=new UserChatItem();
-        uc2.name=mTask.getPublisherName();
-        uc2.imageID=R.drawable.user4;
-        uc2.sayWhat="你好！";
-        uc2.timeBefore="1小时前";
-        UserChatItem uc3=new UserChatItem();
-        uc3.name=mTask.getPublisherName();
-        uc3.imageID=R.drawable.user4;
-        uc3.sayWhat="你好！";
-        uc3.timeBefore="1小时前";
-        UserChatItem uc4=new UserChatItem();
-        uc4.name=mTask.getPublisherName();
-        uc4.imageID=R.drawable.user4;
-        uc4.sayWhat="你好！";
-        uc4.timeBefore="1小时前";
-        UserChatItem uc5=new UserChatItem();
-        uc5.name="张三";
-        uc5.imageID=R.drawable.user5;
-        uc5.sayWhat="你好啊";
-        uc5.timeBefore="2小时前";
-        UserChatItem uc6=new UserChatItem();
-        uc6.name="张三";
-        uc6.imageID=R.drawable.user5;
-        uc6.sayWhat="你好啊";
-        uc6.timeBefore="2小时前";
-        UserChatItem uc7=new UserChatItem();
-        uc7.name="张三";
-        uc7.imageID=R.drawable.user5;
-        uc7.sayWhat="你好啊";
-        uc7.timeBefore="2小时前";
-        UserChatItem uc8=new UserChatItem();
-        uc8.name=mTask.getPublisherName();
-        uc8.imageID=R.drawable.user4;
-        uc8.sayWhat="你好";
-        uc8.timeBefore="1小时前";
-        UserChatItem uc9=new UserChatItem();
-        uc9.name=mTask.getPublisherName();
-        uc9.imageID=R.drawable.user4;
-        uc9.sayWhat="你好";
-        uc9.timeBefore="1小时前";
-        mUserChatItems.add(uc0);
-        mUserChatItems.add(uc1);
-        mUserChatItems.add(uc2);
-        mUserChatItems.add(uc3);
-        mUserChatItems.add(uc4);
-        mUserChatItems.add(uc5);
-        mUserChatItems.add(uc6);
-        mUserChatItems.add(uc7);
-        mUserChatItems.add(uc8);
-        mUserChatItems.add(uc9);
     }
     public void mapInit(){
-        LatLng from=mTask.getFromLocation();
-        LatLng to=mTask.getToLocation();
-        mTencentMap.setZoom(18);
-        if(from!=null && to!=null){
-            mTencentMap.addMarker(new MarkerOptions()
-                    .title(mTask.getFromWhere())
-                    .anchor(0.5f,0.5f)
-                    .position(from)
-                    .icon(BitmapDescriptorFactory
-                            .defaultMarker()));
-            mTencentMap.addMarker(new MarkerOptions()
-                    .title(mTask.getToWhere())
-                    .anchor(0.5f,0.5f)
-                    .position(to)
-                    .icon(BitmapDescriptorFactory
-                            .defaultMarker()));
-            LatLng latLng=new LatLng((from.getLatitude()+to.getLatitude())/2,
-                    (from.getLongitude()+to.getLongitude())/2);
-            mTencentMap.setCenter(latLng);
-            //将中心锁定在中点位置
-            List<LatLng> latLngs=new ArrayList<>();
-            latLngs.add(from);
-            latLngs.add(to);
-            mTencentMap.addPolyline(new PolylineOptions()
-                    .addAll(latLngs)
-                    .color(0xFFDD5A44)
-                    .width(10f));
-        }else if(from==null && to!=null){
-            mTencentMap.addMarker(new MarkerOptions()
-                    .title(mTask.getToWhere())
-                    .anchor(0.5f,0.5f)
-                    .position(to)
-                    .icon(BitmapDescriptorFactory
-                            .defaultMarker()));
-            mTencentMap.setCenter(to);
-        }else if(from!=null){
-            mTencentMap.addMarker(new MarkerOptions()
-                    .title(mTask.getFromWhere())
-                    .anchor(0.5f,0.5f)
-                    .position(from)
-                    .icon(BitmapDescriptorFactory
-                            .defaultMarker()));
-            mTencentMap.setCenter(from);
-        }else{
-            mMapView.setVisibility(View.INVISIBLE);
-        }
     }
 }
