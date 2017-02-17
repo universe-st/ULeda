@@ -52,6 +52,7 @@
         <activity android:name=".Mywallet_RechargeActivity" />
         <activity android:name=".PopupwindowActivity" />
         <activity android:name=".TaskPostActivity"/>
+
     </application>
 
 </manifest>

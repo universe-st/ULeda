@@ -38,6 +38,7 @@ public class TaskListFragment extends Fragment {
     private TaskListAdapter mTaskListAdapter;
     private static final int LOAD_MORE=0;
     private static final int REFRESH=1;
+    private static final int ERROR=2;
     private Handler mRefreshHandler=new Handler(){
         @Override
         public void handleMessage(Message msg){
@@ -53,6 +54,9 @@ public class TaskListFragment extends Fragment {
                     mTaskListAdapter.notifyDataSetChanged();
                     Toast.makeText(TaskListFragment.this.getActivity(),"加载成功",Toast.LENGTH_SHORT).show();
                     break;
+                case ERROR:
+                    mListView.completeRefresh();
+                    Toast.makeText(TaskListFragment.this.getActivity(),"网络异常",Toast.LENGTH_SHORT).show();
                 default:
                     break;
             }
@@ -95,7 +99,7 @@ public class TaskListFragment extends Fragment {
                 //Thanks to MicroDog.
                 UTask task=(UTask)adapterView.getItemAtPosition(i);
                 Intent intent=new Intent(getActivity().getApplicationContext(),TaskDetailsActivity.class);
-                intent.putExtra("UTask",task.toJSON().toString());
+                intent.putExtra("UTask",task);
                 startActivity(intent);
             }
         });
@@ -117,7 +121,7 @@ public class TaskListFragment extends Fragment {
         mSortAdapter.setDropDownViewResource(R.layout.u_spiner_dropdown_item);
         mSortSpinner.setAdapter(mSortAdapter);
         mListView=(RefreshListView)v.findViewById(R.id.task_list_view);
-        mUTaskManager=UTaskManager.getInstance();
+        mUTaskManager = UTaskManager.getInstance();
         mTaskListAdapter=(TaskListAdapter)mUTaskManager
                 .setListView(mListView,this.getActivity().getApplicationContext());
         mListView.setOnRefreshListener(new RefreshListView.OnRefreshListener() {
@@ -126,10 +130,14 @@ public class TaskListFragment extends Fragment {
                 Thread thread=new Thread() {
                     @Override
                     public void run(){
-                        mUTaskManager.refresh();
-                        Message message=new Message();
-                        message.what=REFRESH;
-                        mRefreshHandler.sendMessage(message);
+                        try {
+                            mUTaskManager.refreshTaskInList();
+                            Message message = new Message();
+                            message.what = REFRESH;
+                            mRefreshHandler.sendMessage(message);
+                        }catch (UServerAccessException e){
+                            //TODO:根据异常的状态决定向主线程的handle发送哪些信息
+                        }
                     }
                 };
                 thread.start();
@@ -140,7 +148,11 @@ public class TaskListFragment extends Fragment {
                 Thread thread=new Thread(){
                     @Override
                     public void run(){
-                        mUTaskManager.loadMore(2);
+                        try {
+                            mUTaskManager.loadMoreTaskInList(2);
+                        }catch (UServerAccessException e){
+                            //TODO:根据异常的状态决定向主线程的handle发送哪些信息
+                        }
                         Message message=new Message();
                         message.what=LOAD_MORE;
                         mRefreshHandler.sendMessage(message);

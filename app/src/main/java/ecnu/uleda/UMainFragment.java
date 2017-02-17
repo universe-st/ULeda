@@ -148,33 +148,6 @@ public class UMainFragment extends Fragment {
     }
 
     private void onPressHelpEachOtherButton(){
-        ArrayList<UTask> tasks=mUTaskManager.getTasks();
-        for(UTask t:tasks){
-            LatLng fromLocation=t.getFromLocation();
-            LatLng toLocation=t.getToLocation();
-            if(fromLocation==null && toLocation==null){
-                break;
-            }else if(toLocation==null){
-                Marker marker=mTencentMap.addMarker(new MarkerOptions()
-                        .position(fromLocation)
-                        .title(t.getShortType())
-                        .anchor(0.5f,0.5f)
-                        .icon(BitmapDescriptorFactory
-                                .defaultMarker())
-                );
-                mMarkers.add(marker);
-                showMarkers();
-            }else{
-                Marker marker=mTencentMap.addMarker(new MarkerOptions()
-                        .position(toLocation)
-                        .title(t.getShortType())
-                        .anchor(0.5f,0.5f)
-                        .icon(BitmapDescriptorFactory
-                                .defaultMarker())
-                );
-                mMarkers.add(marker);
-                showMarkers();
-            }
-        }
+        //TODO:设置【互助】按钮按下后的操作
     }
 }
