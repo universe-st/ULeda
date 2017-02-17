@@ -91,7 +91,7 @@ public abstract class UPublicTool {
     }
     //当这个函数里表达式的值为false时，抛出断言异常，然后终止程序。
     public static void UAssert(boolean a){
-        if(a) {
+        if(!a) {
             throw new AssertionError();
         }
     }
