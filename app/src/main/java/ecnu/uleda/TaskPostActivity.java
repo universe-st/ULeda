@@ -13,15 +13,15 @@ public class TaskPostActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.task_post_activity);
-        //Button buttonBack=(Button) findViewById(R.id.button_task_post_back);
-        //buttonBack.setOnClickListener(new View.OnClickListener(){
-        //    public void onClick(View v){
-          //      finish();
-            //}
-        //});
+        Button buttonBack=(Button) findViewById(R.id.button_task_post_back);
+        buttonBack.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                finish();
+            }
+        });
 
-        //if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
-          //  getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        //}
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
     }
 }
