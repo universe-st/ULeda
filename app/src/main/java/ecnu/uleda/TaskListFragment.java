@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -146,6 +147,15 @@ public class TaskListFragment extends Fragment {
                     }
                 };
                 thread.start();
+            }
+        });
+
+        Button buttonTaskPost = (Button)v.findViewById(R.id.task_post);
+         //final UMainActivity activity =(UMainActivity) getActivity();
+        buttonTaskPost.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                Intent intent =new Intent(getActivity(),TaskPostActivity.class);
+                startActivity(intent);
             }
         });
     }
