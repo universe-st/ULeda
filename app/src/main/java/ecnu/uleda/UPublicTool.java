@@ -89,6 +89,15 @@ public abstract class UPublicTool {
         point.y*=y;
         return point;
     }
+    //返回一个字符串的缩略形式
+    public static String forShort(String str,int n){
+        if(str.length()<=n){
+            return str;
+        }else{
+            str=str.substring(0,n)+"…";
+            return str;
+        }
+    }
     //当这个函数里表达式的值为false时，抛出断言异常，然后终止程序。
     public static void UAssert(boolean a){
         if(!a) {

@@ -8,12 +8,15 @@ import android.widget.ListView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
 /**
  * Created by Shensheng on 2017/1/19.
+ * 任务管理者
+ * 管理列表和地图上的任务
  */
 
 public class UTaskManager {
@@ -27,6 +30,7 @@ public class UTaskManager {
     private ArrayList<UTask> mTasksInList;
     private ArrayList<UTask> mTasksInMap;
 
+    private int mNumber;
     public static UTaskManager getInstance(){
         if(sInstance==null){
             sInstance=new UTaskManager();
@@ -41,6 +45,36 @@ public class UTaskManager {
     private UTaskManager(){
         mTasksInList=new ArrayList<>();
         mTasksInMap=new ArrayList<>();
+        mTasksInList.add(new UTask()
+                .setActiveTime(99999)
+                .setAuthorAvatar("")
+                .setAuthorCredit(5)
+                .setAuthorUserName("张三")
+                .setPosition(null)
+                .setPrice(new BigDecimal("5.00"))
+                .setPostDate(new Date().getTime())
+                .setStatus(UTask.UNRECEIVE)
+                .setTitle("测试任务")
+                .setDescription("测试列表")
+                .setAuthorID(0)
+                .setTag("跑腿代步")
+                .setPath("甲地|乙地")
+        );
+        mTasksInList.add(new UTask()
+                .setActiveTime(99999)
+                .setAuthorAvatar("")
+                .setAuthorCredit(5)
+                .setAuthorUserName("李四")
+                .setPosition(null)
+                .setPrice(new BigDecimal("5.00"))
+                .setPostDate(new Date().getTime())
+                .setStatus(UTask.UNRECEIVE)
+                .setTitle("测试任务")
+                .setDescription("测试列表")
+                .setAuthorID(0)
+                .setTag("跑腿代步")
+                .setPath("甲地|乙地")
+        );
     }
     public ListAdapter setListView(ListView listView, Context context){
         //将一个ListView的内容设置为我们的任务
