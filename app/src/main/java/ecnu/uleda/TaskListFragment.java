@@ -34,7 +34,7 @@ public class TaskListFragment extends Fragment {
     private ArrayAdapter<String> mMainAdapter;
     private ArrayAdapter<String> mSortAdapter;
     private RefreshListView mListView;
-    private UTaskManager mUTaskManager;
+    private UTaskManager mUTaskManager=UTaskManager.getInstance();
     private TaskListAdapter mTaskListAdapter;
     private static final int LOAD_MORE=0;
     private static final int REFRESH=1;
@@ -121,7 +121,6 @@ public class TaskListFragment extends Fragment {
         mSortAdapter.setDropDownViewResource(R.layout.u_spiner_dropdown_item);
         mSortSpinner.setAdapter(mSortAdapter);
         mListView=(RefreshListView)v.findViewById(R.id.task_list_view);
-        mUTaskManager = UTaskManager.getInstance();
         mTaskListAdapter=(TaskListAdapter)mUTaskManager
                 .setListView(mListView,this.getActivity().getApplicationContext());
         mListView.setOnRefreshListener(new RefreshListView.OnRefreshListener() {
