@@ -85,13 +85,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_details);
         Intent intent=getIntent();
-        String jStr=intent.getStringExtra("UTask");
-        try {
-            mTask = new UTask();
-        }catch (Exception e){
-            Log.d("TaskDetailActivity",e.toString());
-            finish();
-        }
+        mTask=(UTask)intent.getSerializableExtra("UTask");
         init();
         mapInit();
         listViewInit();

@@ -41,7 +41,7 @@ public class TaskListAdapter extends ArrayAdapter<UTask> {
         }
         if(task==null)return LayoutInflater.from(getContext().getApplicationContext()).inflate(R.layout.task_list_item,parent,false);
         TextView tv=(TextView)convertView.findViewById(R.id.task_type);
-        tv.setText(task.getTag());
+        tv.setText(task.getTag().substring(0,2));
         tv=(TextView)convertView.findViewById(R.id.publisher_name);
         tv.setText(task.getAuthorUserName());
         tv=(TextView)convertView.findViewById(R.id.publisher_stars);
