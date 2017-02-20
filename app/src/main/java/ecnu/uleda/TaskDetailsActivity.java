@@ -4,18 +4,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.tencent.mapsdk.raster.model.BitmapDescriptorFactory;
@@ -33,7 +39,8 @@ import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class TaskDetailsActivity extends AppCompatActivity {
+public class TaskDetailsActivity extends AppCompatActivity
+implements View.OnClickListener{
     private UTask mTask;
     private UHeadlineLayout mHeadlineLayout;
     private MapView mMapView;
@@ -43,6 +50,55 @@ public class TaskDetailsActivity extends AppCompatActivity {
     private TextView mTaskLocation;
     private TextView mTaskReward;
     private TextView mTaskDetailInfo;
+    PopupWindow mPopupWindow;
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.comment: {
+                showPopupWindow();
+            }
+
+        }
+    }
+
+    private void showPopupWindow() {
+
+            View view = View.inflate(this, R.layout.activity_addcomment, null);
+
+            Button send = (Button) view.findViewById(R.id.send);
+
+            send.setOnClickListener(this);
+
+
+            view.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    mPopupWindow.dismiss();
+                }
+            });
+
+            view.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in));
+            LinearLayout comment= (LinearLayout) view.findViewById(R.id.comment);
+            comment.startAnimation(AnimationUtils.loadAnimation(this, R.anim.push_bottom_in));
+
+            if(mPopupWindow==null){
+                mPopupWindow = new PopupWindow(this);
+                mPopupWindow.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
+                mPopupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+                mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
+                mPopupWindow.setFocusable(true);
+                mPopupWindow.setOutsideTouchable(true);
+            }
+
+            mPopupWindow.setContentView(view);
+            mPopupWindow.showAtLocation(comment, Gravity.BOTTOM
+                    , 0, 0);
+            mPopupWindow.update();
+
+    }
+
     //测试代码
     public static class UserChatItem{
         public int imageID=0;
