@@ -88,9 +88,10 @@ implements View.OnClickListener{
 
             mPopupWindow.setContentView(view);
             mPopupWindow.showAtLocation(comment, Gravity.BOTTOM
-                    , 0, -UPublicTool.getScreenSize(this,1,1).y);
-            mPopupWindow.update();
-
+                    , 0, 0);
+            if (Build.VERSION.SDK_INT != 24) {
+                mPopupWindow.update();
+            }
     }
 
     //测试代码
