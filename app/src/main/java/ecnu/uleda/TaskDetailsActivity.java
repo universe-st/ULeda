@@ -87,7 +87,7 @@ implements View.OnClickListener{
             }
 
             mPopupWindow.setContentView(view);
-            mPopupWindow.showAtLocation(comment, Gravity.BOTTOM
+            mPopupWindow.showAtLocation(findViewById(R.id.foot_line_button_bar), Gravity.BOTTOM
                     , 0, 0);
             mPopupWindow.update();
 
