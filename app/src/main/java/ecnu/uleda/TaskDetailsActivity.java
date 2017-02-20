@@ -87,8 +87,8 @@ implements View.OnClickListener{
             }
 
             mPopupWindow.setContentView(view);
-            mPopupWindow.showAtLocation(findViewById(R.id.foot_line_button_bar), Gravity.BOTTOM
-                    , 0, 0);
+            mPopupWindow.showAtLocation(comment, Gravity.BOTTOM
+                    , 0, -UPublicTool.getScreenSize(this,1,1).y);
             mPopupWindow.update();
 
     }
