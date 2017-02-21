@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -23,6 +24,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.tencent.tencentmap.mapsdk.map.MapView;
 import com.tencent.tencentmap.mapsdk.map.TencentMap;
 
@@ -52,14 +55,22 @@ implements View.OnClickListener{
             case R.id.comment: {
                 showPopupWindow();
                 mListView.setSelection(mListView.getCount()-1);
+                mPostCommentEdit.requestFocus();
+                InputMethodManager imm = (InputMethodManager)this.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(0,InputMethodManager.SHOW_FORCED);
                 break;
             }
             case R.id.send:{
+                String text=mPostCommentEdit.getText().toString();
+                if(text.length()==0){
+                    Toast.makeText(this,"评论内容不可以为空哦！",Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 UserChatItem uci=new UserChatItem();
                 uci.imageID=R.drawable.model1;
                 uci.timeBefore="1小时前";
                 uci.name="你";
-                uci.sayWhat=mPostCommentEdit.getText().toString();
+                uci.sayWhat=text;
                 mUserChatItems.add(uci);
                 mPopupWindow.dismiss();
                 mListView.setSelection(mListView.getCount()-1);
