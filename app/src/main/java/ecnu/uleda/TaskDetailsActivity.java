@@ -18,6 +18,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
@@ -43,40 +44,44 @@ implements View.OnClickListener{
     private TextView mTaskLocation;
     private TextView mTaskReward;
     private TextView mTaskDetailInfo;
-    PopupWindow mPopupWindow;
-
+    private PopupWindow mPopupWindow;
+    private EditText mPostCommentEdit;
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.comment: {
                 showPopupWindow();
                 mListView.setSelection(mListView.getCount()-1);
+                break;
             }
-
+            case R.id.send:{
+                UserChatItem uci=new UserChatItem();
+                uci.imageID=R.drawable.model1;
+                uci.timeBefore="1小时前";
+                uci.name="你";
+                uci.sayWhat=mPostCommentEdit.getText().toString();
+                mUserChatItems.add(uci);
+                mPopupWindow.dismiss();
+                mListView.setSelection(mListView.getCount()-1);
+                break;
+            }
         }
     }
 
     private void showPopupWindow() {
-
             View view = View.inflate(this, R.layout.activity_addcomment, null);
-
             Button send = (Button) view.findViewById(R.id.send);
-
+            mPostCommentEdit=(EditText)view.findViewById(R.id.comment_edit);
             send.setOnClickListener(this);
-
-
             view.setOnClickListener(new View.OnClickListener() {
-
                 @Override
                 public void onClick(View v) {
                     mPopupWindow.dismiss();
                 }
             });
-
             view.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in));
             LinearLayout comment= (LinearLayout) view.findViewById(R.id.comment);
             comment.startAnimation(AnimationUtils.loadAnimation(this, R.anim.push_bottom_in));
-
             if(mPopupWindow==null){
                 mPopupWindow = new PopupWindow(this);
                 mPopupWindow.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
@@ -85,7 +90,6 @@ implements View.OnClickListener{
                 mPopupWindow.setFocusable(true);
                 mPopupWindow.setOutsideTouchable(true);
             }
-
             mPopupWindow.setContentView(view);
             mPopupWindow.showAtLocation(comment, Gravity.BOTTOM
                     , 0, 0);
@@ -130,6 +134,8 @@ implements View.OnClickListener{
         }
     }
     private ArrayList<UserChatItem> mUserChatItems=new ArrayList<>();
+
+
     //测试代码
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,6 +147,8 @@ implements View.OnClickListener{
         mapInit();
         listViewInit();
     }
+
+
     public void listViewInit(){
         View v=View.inflate(this.getApplicationContext(),R.layout.task_details_list_header_view,null);
         View fv=View.inflate(this.getApplicationContext(),R.layout.task_detail_chat_list_footer_view,null);
@@ -193,6 +201,8 @@ implements View.OnClickListener{
             }
         });
     }
+
+
     private int getListScrollY() {//获取滚动距离
         View c = mListView.getChildAt(0);
         if (c == null) {
@@ -208,6 +218,8 @@ implements View.OnClickListener{
         }
         return -top + firstVisiblePosition * c.getHeight() + headerHeight;
     }
+
+
     public void init(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
