@@ -9,10 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.tencent.mapsdk.raster.model.BitmapDescriptorFactory;
 import com.tencent.mapsdk.raster.model.LatLng;
 import com.tencent.mapsdk.raster.model.Marker;
-import com.tencent.mapsdk.raster.model.MarkerOptions;
 import com.tencent.tencentmap.mapsdk.map.MapView;
 import com.tencent.tencentmap.mapsdk.map.TencentMap;
 
