@@ -1,5 +1,6 @@
 package ecnu.uleda;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -71,6 +72,13 @@ public class UMainFragment extends Fragment {
     private void init(View v){
         mFab=(FloatingActionButton)v.findViewById(R.id.float_button);
         mFab.setAlpha(0.7f);
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(UMainFragment.this.getActivity(),TaskPostActivity.class);
+                startActivity(intent);
+            }
+        });
         mButtons=new Button[5];
         mButtons[0]=(Button)v.findViewById(R.id.recommended_bt);
         mButtons[1]=(Button)v.findViewById(R.id.help_each_other_bt);
@@ -148,33 +156,6 @@ public class UMainFragment extends Fragment {
     }
 
     private void onPressHelpEachOtherButton(){
-        ArrayList<UTask> tasks=mUTaskManager.getTasks();
-        for(UTask t:tasks){
-            LatLng fromLocation=t.getFromLocation();
-            LatLng toLocation=t.getToLocation();
-            if(fromLocation==null && toLocation==null){
-                break;
-            }else if(toLocation==null){
-                Marker marker=mTencentMap.addMarker(new MarkerOptions()
-                        .position(fromLocation)
-                        .title(t.getShortType())
-                        .anchor(0.5f,0.5f)
-                        .icon(BitmapDescriptorFactory
-                                .defaultMarker())
-                );
-                mMarkers.add(marker);
-                showMarkers();
-            }else{
-                Marker marker=mTencentMap.addMarker(new MarkerOptions()
-                        .position(toLocation)
-                        .title(t.getShortType())
-                        .anchor(0.5f,0.5f)
-                        .icon(BitmapDescriptorFactory
-                                .defaultMarker())
-                );
-                mMarkers.add(marker);
-                showMarkers();
-            }
-        }
+        //TODO:设置【互助】按钮按下后的操作
     }
 }

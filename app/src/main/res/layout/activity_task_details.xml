@@ -37,6 +37,7 @@
                 android:background="@drawable/half_transparent"
                 />
             <LinearLayout
+                android:id="@+id/foot_line_button_bar"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:weightSum="2"
