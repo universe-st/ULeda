@@ -182,11 +182,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:ems="5"
-                android:maxLength="5"
-                android:inputType="number"
+                android:maxLength="7"
+                android:inputType="numberDecimal"
                 android:id="@+id/task_post_payment"
                 android:background="@null"
-                android:hint="最低2元"
+                android:hint="最低0.5元"
                 android:textColorHint="@color/colorUGray"
                 android:gravity="center_vertical|left" />
         </FrameLayout>
