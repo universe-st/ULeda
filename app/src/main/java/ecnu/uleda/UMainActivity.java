@@ -1,7 +1,9 @@
 package ecnu.uleda;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -25,6 +27,21 @@ public class UMainActivity extends AppCompatActivity {
         init();
         Intent intent=new Intent(this,LoginActivity.class);
         startActivity(intent);
+        checkMapPermission();
+    }
+    private void checkMapPermission(){
+        if (Build.VERSION.SDK_INT >= 23) {
+            String[] permissions = {
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.READ_PHONE_STATE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+            };
+
+            if (this.checkSelfPermission(permissions[0]) != PackageManager.PERMISSION_GRANTED)
+            {
+                requestPermissions(permissions, 0);
+            }
+        }
     }
     @Override
     public void onActivityResult(int requestCode,int resultCode,Intent data){
