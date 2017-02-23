@@ -14,7 +14,7 @@ import java.net.URLEncoder;
  */
 
 public class ServerAccessApi {
-
+    private static final int SET_TIME_OUT=500;
     private static String getPassport()throws UServerAccessException{
         //TODO:返回当前的Passport
         return null;
@@ -32,7 +32,7 @@ public class ServerAccessApi {
         PhalApiClientResponse response=client
                 .withService("User.GetLoginToken")//接口的名称
                 .withParams("username",userName)//插入一个参数对
-                .withTimeout(500)
+                .withTimeout(SET_TIME_OUT)
                 .request();
         if(response.getRet()==200){//200的意思是正常返回
             try{
@@ -48,10 +48,33 @@ public class ServerAccessApi {
             throw new UServerAccessException(UServerAccessException.INTERNET_ERROR);
         }
     }
+    //这个需要返回一个数据包，所以返回类型是JSONObject
+    public static JSONObject getTaskPost(String id,String passport,String postID) throws UServerAccessException{
+        id=UrlEncode(id);
+        passport=UrlEncode(passport);
+        postID=UrlEncode(postID);
+        PhalApiClientResponse response=createClient()
+                .withService("Task.GetPost")
+                .withParams("id",id)
+                .withParams("passport",passport)
+                .withParams("postID",postID)
+                .withTimeout(SET_TIME_OUT)
+                .request();
+        if(response.getRet()==200){
+            try {
+                return new JSONObject(response.getData());
+            }catch (JSONException e){
+                e.printStackTrace();
+                throw new UServerAccessException(UServerAccessException.ERROR_DATA);
+            }
+        }else{
+            throw new UServerAccessException(UServerAccessException.INTERNET_ERROR);
+        }
+    }
 
-
-    public static void login(String username,String password) throws UServerAccessException{
-        //登陆
+    public static JSONObject login(String username,String passport) throws UServerAccessException{
+        //TODO:登陆
+        return null;
     }
 
 

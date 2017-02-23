@@ -1,14 +1,23 @@
 package ecnu.uleda;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.tencent.lbssearch.object.Location;
+import com.tencent.map.geolocation.TencentLocation;
+import com.tencent.map.geolocation.TencentLocationListener;
+import com.tencent.map.geolocation.TencentLocationManager;
+import com.tencent.map.geolocation.TencentLocationRequest;
 import com.tencent.mapsdk.raster.model.BitmapDescriptorFactory;
 import com.tencent.mapsdk.raster.model.LatLng;
 import com.tencent.mapsdk.raster.model.Marker;
@@ -17,6 +26,7 @@ import com.tencent.tencentmap.mapsdk.map.MapView;
 import com.tencent.tencentmap.mapsdk.map.TencentMap;
 
 import java.util.ArrayList;
+import android.Manifest;
 
 
 public class UMainFragment extends Fragment {
@@ -27,10 +37,12 @@ public class UMainFragment extends Fragment {
     private MapView mMapView;
     private TencentMap mTencentMap;
     private ArrayList<Marker> mMarkers=new ArrayList<>();
-    private UTaskManager mUTaskManager=UTaskManager.getInstance();
+    private UTaskManager mUTaskManager = UTaskManager.getInstance();
+    private TencentLocationManager mLocationManager;
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        mLocationManager = TencentLocationManager.getInstance(this.getActivity());
     }
 
     @Override
@@ -42,6 +54,7 @@ public class UMainFragment extends Fragment {
         mTencentMap.setCenter(new LatLng(31.2284994411d,121.4063922732d));
         //测试代码
         mTencentMap.setZoom(18);
+
         return v;
     }
 
@@ -115,6 +128,23 @@ public class UMainFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 setCurrent(4);
+                mLocationManager.requestLocationUpdates(TencentLocationRequest.create()
+                        .setInterval(5000)
+                        .setRequestLevel(TencentLocationRequest.REQUEST_LEVEL_ADMIN_AREA), new TencentLocationListener() {
+                    @Override
+                    public void onLocationChanged(TencentLocation tencentLocation, int i, String s) {
+                        mLocationManager.removeUpdates(this);
+                        Navigation.getInstance(UMainFragment.this.getActivity(),mTencentMap)
+                                .startNavigation(new Location((float) tencentLocation.getLatitude(),
+                                        (float)tencentLocation.getLongitude()),
+                                        new Location(31.2296355001f,121.4034706544f));
+                    }
+
+                    @Override
+                    public void onStatusUpdate(String s, int i, String s1) {
+
+                    }
+                });
             }
         });
         setCurrent(0);
@@ -134,7 +164,6 @@ public class UMainFragment extends Fragment {
             }
         }
     }
-
     private void showMarkers(){
         if(mMarkers!=null){
             for(Marker m :mMarkers){
