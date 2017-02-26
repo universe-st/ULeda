@@ -20,15 +20,23 @@ public class MD5Utils {
             int j = md.length;
             char str[] = new char[j * 2];
             int k = 0;
+            for(byte byte0 : md){
+                str[k++] = hexDigits[byte0 >>> 4 & 0xf];
+                str[k++] = hexDigits[byte0 & 0xf];
+            }/*
             for (int i = 0; i < j; i++) {
                 byte byte0 = md[i];
                 str[k++] = hexDigits[byte0 >>> 4 & 0xf];
                 str[k++] = hexDigits[byte0 & 0xf];
-            }
-            return new String(str);
+            }*/
+            return new String(str).toLowerCase();
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return "";
         }
+    }
+
+    private MD5Utils(){
+
     }
 }

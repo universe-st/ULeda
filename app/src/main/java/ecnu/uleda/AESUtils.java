@@ -10,9 +10,9 @@ public class AESUtils{
     public static String encrypt(String data, String key)  {
         try {
 
-            String iv = key;
+            //String iv = key;
 
-            Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
+            Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
             int blockSize = cipher.getBlockSize();
 
             byte[] dataBytes = data.getBytes();
@@ -25,9 +25,9 @@ public class AESUtils{
             System.arraycopy(dataBytes, 0, plaintext, 0, dataBytes.length);
 
             SecretKeySpec keyspec = new SecretKeySpec(key.getBytes(), "AES");
-            IvParameterSpec ivspec = new IvParameterSpec(iv.getBytes());
+            //IvParameterSpec ivspec = new IvParameterSpec(iv.getBytes());
 
-            cipher.init(Cipher.ENCRYPT_MODE, keyspec, ivspec);
+            cipher.init(Cipher.ENCRYPT_MODE, keyspec);
             byte[] encrypted = cipher.doFinal(plaintext);
 
             return new sun.misc.BASE64Encoder().encode(encrypted);
@@ -42,15 +42,15 @@ public class AESUtils{
     public static String desEncrypt(String data, String key){
         try
         {
-            String iv = key;
+            //String iv = key;
 
             byte[] encrypted1 = new BASE64Decoder().decodeBuffer(data);
 
-            Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
+            Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
             SecretKeySpec keyspec = new SecretKeySpec(key.getBytes(), "AES");
-            IvParameterSpec ivspec = new IvParameterSpec(iv.getBytes());
+            //IvParameterSpec ivspec = new IvParameterSpec(iv.getBytes());
 
-            cipher.init(Cipher.DECRYPT_MODE, keyspec, ivspec);
+            cipher.init(Cipher.DECRYPT_MODE, keyspec);
 
             byte[] original = cipher.doFinal(encrypted1);
             int indexOfLastZero=original.length-1;

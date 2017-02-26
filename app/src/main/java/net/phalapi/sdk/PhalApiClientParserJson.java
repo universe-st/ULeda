@@ -9,7 +9,7 @@ public class PhalApiClientParserJson implements PhalApiClientParser {
 
 	public PhalApiClientResponse parse(String apiResult) {
 		if (apiResult == null) {
-			return new PhalApiClientResponse(408, "", "Request Timeout");
+			return new PhalApiClientResponse(500, "", "Request Timeout");
 		}
 		
 		try {
