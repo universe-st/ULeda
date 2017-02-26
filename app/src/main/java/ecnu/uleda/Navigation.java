@@ -1,8 +1,7 @@
 package ecnu.uleda;
 
 import android.content.Context;
-import android.preference.PreferenceActivity;
-import android.util.Log;
+import android.widget.Toast;
 
 import com.tencent.lbssearch.TencentSearch;
 import com.tencent.lbssearch.httpresponse.BaseObject;
@@ -29,18 +28,22 @@ import java.util.List;
 
 /**
  * Created by Shensheng on 2017/2/23.
- * 导航控制
+ * 导航控制模块
  */
 
 public class Navigation implements HttpResponseListener,TencentLocationListener{
 
     private static Navigation sNavigation=null;
     private Marker mMarker;
-    private Runnable mRunnable=null;
     private Context mContext;
     private TencentMap mMap;
     private Polyline mPolyline;
     private TencentLocationManager mManager;
+
+    public interface OnArriveListener {
+        void onArrive();
+    }
+
     public static Navigation getInstance(Context context, TencentMap map){
         if(sNavigation==null){
             sNavigation=new Navigation();
@@ -57,7 +60,7 @@ public class Navigation implements HttpResponseListener,TencentLocationListener{
         WalkingParam walkingParam = new WalkingParam();
         walkingParam.from(start);
         walkingParam.to(end);
-        tencentSearch.getDirection(walkingParam,this);
+        tencentSearch.getDirection(walkingParam,this);//通过腾讯地图API计算路线，返回结果加载给onSuccess
     }
 
 
@@ -68,7 +71,12 @@ public class Navigation implements HttpResponseListener,TencentLocationListener{
         }
         WalkingResultObject object=(WalkingResultObject)baseObject;
         drawPolylineOnMap(object);
+        showText("路线计算完成");
+        mManager.requestLocationUpdates(TencentLocationRequest.create()
+                .setInterval(2000)
+                .setRequestLevel(TencentLocationRequest.REQUEST_LEVEL_ADMIN_AREA),this);
     }
+    //在地图上绘制折线
     private void drawPolylineOnMap(WalkingResultObject object){
         WalkingResultObject.Route[] routes=object.result.routes.toArray(new WalkingResultObject.Route[object.result.routes.size()]);
         if(routes.length==0){
@@ -89,9 +97,6 @@ public class Navigation implements HttpResponseListener,TencentLocationListener{
         .addAll(latLngs)
         .color(0xFFDD5A44)
         .width(10f));
-        mManager.requestLocationUpdates(TencentLocationRequest.create()
-                .setInterval(2000)
-                .setRequestLevel(TencentLocationRequest.REQUEST_LEVEL_ADMIN_AREA),this);
     }
     @Override
     public void onLocationChanged(TencentLocation tencentLocation, int i, String s) {
@@ -107,22 +112,21 @@ public class Navigation implements HttpResponseListener,TencentLocationListener{
 
     @Override
     public void onStatusUpdate(String s, int i, String s1) {
-
+        //TODO:添加状态变化提示用户
     }
     @Override
     public void onFailure(int arg,String state,Throwable t){
-
+        //todo:路线计算失败的提示
     }
     public void endNavigation(){
         if(mPolyline!=null) {
             mPolyline.remove();
+            mMarker.remove();
         }
     }
-
-    public void setOnEnd(Runnable runnable){
-        mRunnable=runnable;
+    private void showText(String s){
+        Toast.makeText(mContext,s,Toast.LENGTH_SHORT).show();
     }
-
     private Navigation(){
 
     }
