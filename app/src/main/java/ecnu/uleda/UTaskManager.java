@@ -68,9 +68,9 @@ public class UTaskManager {
                 JSONArray array = ServerAccessApi.getTaskList(
                         mUOC.getId(),
                         mUOC.getPassport(),
-                        "priceAsc",
-                        "0",
-                        "1",
+                        "priceDes",
+                        "4",
+                        "10",
                         "全部",
                         "31.2296355001,121.4034706544");
                 int length=array.length();
