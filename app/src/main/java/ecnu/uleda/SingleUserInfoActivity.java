@@ -1,19 +1,26 @@
 package ecnu.uleda;
 
 import android.content.Intent;
+import android.icu.text.SimpleDateFormat;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
+
+
+import java.util.Calendar;
 
 public class SingleUserInfoActivity extends AppCompatActivity {
 
     private UserInfo mUserInfo;
+    private UserOperatorController mUserOperatorController;
     private Handler mHandler=new Handler(){
         @Override
         public void handleMessage(Message msg){
@@ -25,8 +32,54 @@ public class SingleUserInfoActivity extends AppCompatActivity {
             }
         }
     };
+    private TextView textViewUserName;
+    private TextView textViewUserSex;
+    private TextView textViewUserAge;
+    //private TextView  textViewUsersign;
+    private TextView textViewSchoolClass;
+    private int nowYear,userYear,year;
+    private String sYear;
+    private String schoolClass;
+    private String[] userClass;//userClass[0]:入学年份 userClass[1]:院系 userClass[2]:专业 userClass[3]:班级
+    private Button buttonAddUser;
+    private Button buttonSendmsg;
+
     private void putInformation(){
         //TODO:将用户信息显示在屏幕上
+
+        textViewUserName = (TextView) findViewById(R.id.name);
+        textViewUserSex = (TextView) findViewById(R.id.user_sex);
+        textViewUserAge = (TextView) findViewById(R.id.user_age);
+        //textViewUsersign = (TextView) findViewById(R.id.text_sign);
+        textViewSchoolClass = (TextView) findViewById(R.id.user_class);
+        buttonAddUser = (Button) findViewById(R.id.button_adduser);
+        buttonSendmsg = (Button) findViewById(R.id.button_sendmsg);
+
+        textViewUserName.setText(mUserInfo.getRealName());
+
+        if(mUserInfo.getSex()==0)
+            textViewUserSex.setText("♂");
+        else
+            textViewUserSex.setText("♀");
+
+        Calendar c = Calendar.getInstance();
+        nowYear = c.get(Calendar.YEAR);
+        sYear = mUserInfo.getBirthday().substring(0,4);
+        userYear = Integer.valueOf(sYear).intValue();
+        year = nowYear-userYear;
+        sYear = String.valueOf(year);
+        textViewUserAge.setText(sYear);
+        //textViewUsersign.setText();
+
+        schoolClass = mUserInfo.getSchoolClass();
+        userClass = schoolClass.split("\\|");
+        textViewSchoolClass.setText(userClass[2]+" "+userClass[3]);
+
+        if(mUserInfo.getId().equals(mUserOperatorController.getId()))
+        {
+            buttonAddUser.setVisibility(View.INVISIBLE);
+            buttonSendmsg.setVisibility(View.INVISIBLE);
+        }
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +97,7 @@ public class SingleUserInfoActivity extends AppCompatActivity {
         Intent intent=getIntent();
         if(intent.getBooleanExtra("isGet",false)){
             mUserInfo=(UserInfo)intent.getSerializableExtra("userinfo");
+            //mUserOperatorController=(UserOperatorController)intent.getSerializableExtra("operatorcontroller");
             putInformation();
         }else {
             final String id = intent.getStringExtra("userid");
@@ -52,6 +106,7 @@ public class SingleUserInfoActivity extends AppCompatActivity {
                 public void run() {
                     try {
                         mUserInfo = UserOperatorController.getInstance().getUserBaseInfo(id);
+                        mUserOperatorController=UserOperatorController.getInstance();
                         Message message = new Message();
                         message.what = 0;
                         mHandler.sendMessage(message);

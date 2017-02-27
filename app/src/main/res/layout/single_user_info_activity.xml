@@ -54,23 +54,45 @@
             android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="致幻Trance"
+            android:text=""
             android:textColor="@color/colorUWhite"
             android:textSize="18sp"
             android:layout_below="@+id/icon_image"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp" />
 
-        <TextView
-            android:id="@+id/name1"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="♂ 20"
-            android:textColor="@color/colorUAquablue"
-            android:textSize="18sp"
             android:layout_below="@+id/name"
+            android:weightSum="2"
+            android:orientation="horizontal"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="5dp" />
+            >
+            <TextView
+                android:id="@+id/user_sex"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text=""
+                android:textColor="@color/colorUAquablue"
+                android:textSize="18sp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="5dp"
+                android:gravity="right"/>
+            <TextView
+                android:id="@+id/user_age"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text=""
+                android:textColor="@color/colorUAquablue"
+                android:textSize="18sp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="5dp"
+                android:gravity="left"/>
+        </LinearLayout>
+
 
     </RelativeLayout>
 
@@ -84,9 +106,8 @@
         android:weightSum="10">
 
         <TextView
-            android:layout_width="66dp"
+            android:layout_width="75dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:textColor="@color/colorUWhite"
             android:text="签名"
             android:textSize="20sp"
@@ -115,11 +136,10 @@
         android:orientation="horizontal"
         android:weightSum="10">
         <TextView
-            android:layout_width="66dp"
+            android:layout_width="75dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:textColor="@color/colorUWhite"
-            android:text="班级"
+            android:text="学校"
             android:textSize="20sp"
             android:gravity="right|center_vertical"
             />
@@ -127,8 +147,8 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:textColor="@color/colorUWhite"
-            android:id="@+id/text_class"
-            android:text="2016级软件1班"
+            android:id="@+id/user_class"
+            android:text=""
             android:textSize="15sp"
             android:gravity="left|center_vertical"
             android:layout_gravity="right"
@@ -146,9 +166,8 @@
         android:weightSum="10">
 
         <TextView
-            android:layout_width="66dp"
+            android:layout_width="75dp"
             android:layout_height="match_parent"
-            android:layout_weight="1.30"
             android:textColor="@color/colorUWhite"
             android:text="荣誉度"
             android:textSize="20sp"
@@ -189,9 +208,8 @@
         android:weightSum="10">
 
         <TextView
-            android:layout_width="66dp"
+            android:layout_width="75dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.85"
             android:textColor="@color/colorUWhite"
             android:text="热心度"
             android:textSize="20sp"
