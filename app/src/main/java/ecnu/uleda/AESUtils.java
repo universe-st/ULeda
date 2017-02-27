@@ -27,7 +27,7 @@ public class AESUtils{
             SecretKeySpec keyspec = new SecretKeySpec(key.getBytes(), "AES");
             IvParameterSpec ivspec = new IvParameterSpec(iv.getBytes());
 
-            cipher.init(Cipher.ENCRYPT_MODE, keyspec, ivspec);
+            cipher.init(Cipher.ENCRYPT_MODE, keyspec,ivspec);
             byte[] encrypted = cipher.doFinal(plaintext);
 
             return new sun.misc.BASE64Encoder().encode(encrypted);
@@ -50,7 +50,7 @@ public class AESUtils{
             SecretKeySpec keyspec = new SecretKeySpec(key.getBytes(), "AES");
             IvParameterSpec ivspec = new IvParameterSpec(iv.getBytes());
 
-            cipher.init(Cipher.DECRYPT_MODE, keyspec, ivspec);
+            cipher.init(Cipher.DECRYPT_MODE, keyspec,ivspec);
 
             byte[] original = cipher.doFinal(encrypted1);
             int indexOfLastZero=original.length-1;

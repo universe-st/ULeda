@@ -135,7 +135,10 @@ public class TaskListFragment extends Fragment {
                             message.what = REFRESH;
                             mRefreshHandler.sendMessage(message);
                         }catch (UServerAccessException e){
-                            //TODO:根据异常的状态决定向主线程的handle发送哪些信息
+                            e.printStackTrace();
+                            Message message=new Message();
+                            message.what=ERROR;
+                            mRefreshHandler.sendMessage(message);
                         }
                     }
                 };

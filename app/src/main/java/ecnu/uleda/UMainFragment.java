@@ -134,6 +134,10 @@ public class UMainFragment extends Fragment {
                     @Override
                     public void onLocationChanged(TencentLocation tencentLocation, int i, String s) {
                         mLocationManager.removeUpdates(this);
+                        if(i!=TencentLocation.ERROR_OK){
+                            Toast.makeText(UMainFragment.this.getActivity(),"定位错误，请检查GPS状态",Toast.LENGTH_SHORT).show();
+                            return;
+                        }
                         Navigation.getInstance(UMainFragment.this.getActivity(),mTencentMap)
                                 .startNavigation(new Location((float) tencentLocation.getLatitude(),
                                         (float)tencentLocation.getLongitude()),

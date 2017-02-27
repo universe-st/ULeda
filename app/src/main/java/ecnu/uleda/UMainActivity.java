@@ -25,8 +25,10 @@ public class UMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_umain);
         init();
-        Intent intent=new Intent(this,LoginActivity.class);
-        startActivity(intent);
+        if(!UserOperatorController.getInstance().getIsLogined()) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+        }
         checkMapPermission();
     }
     private void checkMapPermission(){

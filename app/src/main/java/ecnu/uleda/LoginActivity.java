@@ -23,16 +23,25 @@ public class LoginActivity extends AppCompatActivity {
     private Button mLogin;
     private EditText mUserName;
     private EditText mPassword;
+    private Handler mHandler=new Handler(){
+      @Override
+      public void handleMessage(Message msg){
+          if(mUOC.getIsLogined()){
+              finish();
+              Toast.makeText(LoginActivity.this,"欢迎您，"+mUOC.getUserName()+"！",Toast.LENGTH_SHORT).show();
+          }else{
+              Toast.makeText(LoginActivity.this,"登陆错误："+mUOC.getMessage(),Toast.LENGTH_SHORT).show();
+              setAllEnabled(true);
+          }
+      }
+    };
+    private UserOperatorController mUOC=UserOperatorController.getInstance();
     @Override
     protected void onCreate(Bundle  savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         init();
-
         UStatusBarUtils.setWindowStatusBarColor(LoginActivity.this,R.color.colorUMain);
-
-        //if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
-          //  getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);}
     }
 
 
@@ -40,6 +49,25 @@ public class LoginActivity extends AppCompatActivity {
         mLogin=(Button)findViewById(R.id.login_button);
         mUserName=(EditText)findViewById(R.id.user_name);
         mPassword=(EditText)findViewById(R.id.password);
+        //测试
+        mUserName.setText("dizy");
+        mPassword.setText("zy980018");
+        //测试
+        mLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setAllEnabled(false);
+                new Thread(){
+                    @Override
+                    public void run(){
+                        mUOC.login(mUserName.getText().toString(),mPassword.getText().toString());
+                        Log.d("LoginActivity",mUOC.getMessage());
+                        Message message=new Message();
+                        mHandler.sendMessage(message);
+                    }
+                }.start();
+            }
+        });
     }
 
     private void setAllEnabled(boolean a){

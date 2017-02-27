@@ -37,7 +37,16 @@ public class UTask implements Serializable{
 
     private BigDecimal mPrice;
     private LatLng mPosition;
+    private String mPostID;
 
+    public String getPostID() {
+        return mPostID;
+    }
+
+    public UTask setPostID(String postID) {
+        mPostID = postID;
+        return this;
+    }
 
     public String getTitle() {
         return mTitle;

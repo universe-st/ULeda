@@ -176,6 +176,7 @@ implements View.OnClickListener{
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(TaskDetailsActivity.this,SingleUserInfoActivity.class);
+                intent.putExtra("userid",mTask.getAuthorID());
                 startActivity(intent);
             }
         });
