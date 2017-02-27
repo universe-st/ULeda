@@ -59,7 +59,6 @@ public class UTaskManager {
         /*
         * TODO:访问服务器，更新任务列表。
         * */
-        mTasksInList.clear();
         mUOC=UserOperatorController.getInstance();
         if(!mUOC.getIsLogined()){
             throw new UServerAccessException(UServerAccessException.UN_LOGIN);
@@ -69,10 +68,11 @@ public class UTaskManager {
                         mUOC.getId(),
                         mUOC.getPassport(),
                         "priceDes",
-                        "4",
+                        "0",
                         "10",
                         "全部",
-                        "31.2296355001,121.4034706544");
+                        "31.2296,121.403");
+                mTasksInList.clear();
                 int length=array.length();
                 for(int i=0;i<length;i++){
                     JSONObject j=array.getJSONObject(i);
@@ -83,12 +83,10 @@ public class UTaskManager {
                             .setPostDate(j.getLong("postdate"))
                             .setPrice(new BigDecimal(j.getString("price")))
                             .setAuthorID(j.getInt("author"))
-                            .setAuthorUserName("authorUsername")
-                            .setAuthorCredit(j.getInt("authorCredit")/20)
+                            .setAuthorUserName(j.getString("authorUsername"))
+                            .setAuthorCredit(5)
                             .setPostID(j.getString("postID"))
-                            .setActiveTime(j.getLong("position"));
-                    String[] pt=j.getString("path").split(",");
-                    task.setPosition(new LatLng(Double.parseDouble(pt[0]),Double.parseDouble(pt[1])));
+                            .setActiveTime(j.getLong("activetime"));
                     mTasksInList.add(task);
                 }
             }catch (JSONException e){

@@ -389,6 +389,7 @@ public class ServerAccessApi {
     public static JSONObject getBasicInfo(@NonNull String id,@NonNull String passport,@NonNull String getByID) throws UServerAccessException{
         id=UrlEncode(id);
         passport=UrlEncode(passport);
+        String k=getByID;
         getByID= UrlEncode(getByID);
         PhalApiClientResponse response=createClient()
                 .withService("User.GetBasicInfo")
@@ -468,8 +469,9 @@ public class ServerAccessApi {
                 .withHost("https://api.uleda.top/Public/mobile/");
     }
 
-    private static String UrlEncode(@NonNull String str)throws UServerAccessException{
+    private static String UrlEncode(String str)throws UServerAccessException{
         try{
+            if(str==null)return null;
             return URLEncoder.encode(str,"UTF-8");
         }catch (UnsupportedEncodingException e){
             e.printStackTrace();
