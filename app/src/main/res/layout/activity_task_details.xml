@@ -11,6 +11,7 @@
     android:layout_width="match_parent"
     android:layout_height="75dp"
     android:id="@+id/head_line_layout"/>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -36,6 +37,7 @@
                 android:background="@drawable/half_transparent"
                 />
             <LinearLayout
+                android:id="@+id/foot_line_button_bar"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:weightSum="2"
@@ -54,7 +56,9 @@
                     android:layout_marginBottom="10dp"
                     android:layout_weight="1"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"/>
+                    android:layout_height="match_parent"
+                    android:id="@+id/comment"
+                    android:onClick="onClick" />
                 <Button
                     android:layout_marginRight="30dp"
                     android:layout_marginLeft="10dp"

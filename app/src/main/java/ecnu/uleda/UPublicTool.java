@@ -16,7 +16,7 @@ import java.util.Date;
  * Created by Shensheng on 2017/2/1.
  */
 
-public abstract class UPublicTool {
+public class UPublicTool {
     /*
     * 将某日期转化为距离现在的时间，用于在各种场合显示
     * 如果距离现在时间不到一分钟，返回 X秒前
@@ -88,5 +88,24 @@ public abstract class UPublicTool {
         point.x*=x;
         point.y*=y;
         return point;
+    }
+    //返回一个字符串的缩略形式
+    public static String forShort(String str,int n){
+        if(str.length()<=n){
+            return str;
+        }else{
+            str=str.substring(0,n)+"…";
+            return str;
+        }
+    }
+    //当这个函数里表达式的值为false时，抛出断言异常，然后终止程序。
+    public static void UAssert(boolean a){
+        if(!a) {
+            throw new AssertionError();
+        }
+    }
+
+    private UPublicTool(){
+
     }
 }
