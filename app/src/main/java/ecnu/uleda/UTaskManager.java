@@ -5,6 +5,9 @@ import android.util.Log;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import com.tencent.mapsdk.raster.model.LatLng;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -26,7 +29,7 @@ public class UTaskManager {
     * 一个表示地图上显示的任务
     * */
     private static UTaskManager sInstance=null;
-
+    private UserOperatorController mUOC;
     private ArrayList<UTask> mTasksInList;
     private ArrayList<UTask> mTasksInMap;
 
@@ -45,36 +48,6 @@ public class UTaskManager {
     private UTaskManager(){
         mTasksInList=new ArrayList<>();
         mTasksInMap=new ArrayList<>();
-        mTasksInList.add(new UTask()
-                .setActiveTime(99999)
-                .setAuthorAvatar("")
-                .setAuthorCredit(5)
-                .setAuthorUserName("张三")
-                .setPosition(null)
-                .setPrice(new BigDecimal("5.00"))
-                .setPostDate(new Date().getTime())
-                .setStatus(UTask.UNRECEIVE)
-                .setTitle("测试任务")
-                .setDescription("测试列表")
-                .setAuthorID(0)
-                .setTag("跑腿代步")
-                .setPath("甲地|乙地")
-        );
-        mTasksInList.add(new UTask()
-                .setActiveTime(99999)
-                .setAuthorAvatar("")
-                .setAuthorCredit(5)
-                .setAuthorUserName("李四")
-                .setPosition(null)
-                .setPrice(new BigDecimal("5.00"))
-                .setPostDate(new Date().getTime())
-                .setStatus(UTask.UNRECEIVE)
-                .setTitle("测试任务")
-                .setDescription("测试列表")
-                .setAuthorID(0)
-                .setTag("跑腿代步")
-                .setPath("甲地|乙地")
-        );
     }
     public ListAdapter setListView(ListView listView, Context context){
         //将一个ListView的内容设置为我们的任务
@@ -86,6 +59,41 @@ public class UTaskManager {
         /*
         * TODO:访问服务器，更新任务列表。
         * */
+        mUOC=UserOperatorController.getInstance();
+        if(!mUOC.getIsLogined()){
+            throw new UServerAccessException(UServerAccessException.UN_LOGIN);
+        }else{
+            try {
+                JSONArray array = ServerAccessApi.getTaskList(
+                        mUOC.getId(),
+                        mUOC.getPassport(),
+                        "priceDes",
+                        "0",
+                        "10",
+                        "全部",
+                        "31.2296,121.403");
+                mTasksInList.clear();
+                int length=array.length();
+                for(int i=0;i<length;i++){
+                    JSONObject j=array.getJSONObject(i);
+                    UTask task=new UTask()
+                            .setPath( j.getString("path") )
+                            .setTitle( j.getString("title") )
+                            .setTag( j.getString("tag") )
+                            .setPostDate(j.getLong("postdate"))
+                            .setPrice(new BigDecimal(j.getString("price")))
+                            .setAuthorID(j.getInt("author"))
+                            .setAuthorUserName(j.getString("authorUsername"))
+                            .setAuthorCredit(5)
+                            .setPostID(j.getString("postID"))
+                            .setActiveTime(j.getLong("activetime"));
+                    mTasksInList.add(task);
+                }
+            }catch (JSONException e){
+                e.printStackTrace();
+                System.exit(1);
+            }
+        }
     }
     public void loadMoreTaskInList(int n)throws UServerAccessException{
         //TODO：从目前任务列表的最后一项开始向后从服务器获取n个任务项

@@ -125,7 +125,9 @@ public class PhalApiClient {
      * @return PhalApiClient
      */
     public PhalApiClient withParams(String name, String value) {
-        this.params.put(name, value);
+        if(value!=null) {
+            this.params.put(name, value);
+        }
         return this;
     }
 

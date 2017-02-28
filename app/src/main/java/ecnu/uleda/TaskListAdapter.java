@@ -55,7 +55,9 @@ public class TaskListAdapter extends ArrayAdapter<UTask> {
         h+=(m/60);
         m%=60;
         String s;
-        if(h==0){
+        if(m<=0){
+            s="已失效";
+        }else if(h==0){
             s=m+"分钟";
         }else{
             s=h+"小时"+m+"分钟";
