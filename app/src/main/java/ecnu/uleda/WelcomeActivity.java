@@ -19,8 +19,14 @@ public class WelcomeActivity extends AppCompatActivity {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         }
-        Handler h=new Handler();
-        h.postDelayed(new WaitThread(),2000);
+        //如果用户已经登陆成功，则不用展示欢迎界面
+        if(UserOperatorController.getInstance().getIsLogined()){
+            startActivity(new Intent(getApplication(),UMainActivity.class));
+            WelcomeActivity.this.finish();
+        }else {
+            Handler h = new Handler();
+            h.postDelayed(new WaitThread(), 2000);
+        }
     }
     class WaitThread implements Runnable{
         @Override

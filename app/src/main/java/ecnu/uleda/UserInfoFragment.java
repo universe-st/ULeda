@@ -92,7 +92,13 @@ implements View.OnClickListener{
                 break;
             }
             case R.id.my_info:{
+                UserOperatorController uoc=UserOperatorController.getInstance();
+                if(!uoc.getIsLogined()){
+                    Toast.makeText(this.getActivity(),"请先登陆！",Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 Intent it = new Intent(getActivity().getBaseContext(),SingleUserInfoActivity.class);
+                it.putExtra("userid",UserOperatorController.getInstance().getId());
                 startActivity(it);
                 break;
             }
