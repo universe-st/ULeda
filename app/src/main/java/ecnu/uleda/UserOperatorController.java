@@ -114,7 +114,7 @@ public class UserOperatorController {
     public String getUserName(){
         return mUserName;
     }
-    private UserOperatorController(){
+    UserOperatorController(){
         //单例模式
     }
 }

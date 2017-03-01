@@ -29,6 +29,7 @@ public class LoginActivity extends AppCompatActivity {
           if(mUOC.getIsLogined()){
               finish();
               Toast.makeText(LoginActivity.this,"欢迎您，"+mUOC.getUserName()+"！",Toast.LENGTH_SHORT).show();
+
           }else{
               Toast.makeText(LoginActivity.this,"登陆错误："+mUOC.getMessage(),Toast.LENGTH_SHORT).show();
               setAllEnabled(true);
