@@ -51,7 +51,7 @@ public class UserOperatorController {
             mToken=json.getString("accessToken");
             Log.d("login","Token: "+mToken);
             mIsLogined=true;
-            mMessage="success login";
+            mMessage="successful login";
         }catch (UServerAccessException e){
             e.printStackTrace();
             mIsLogined=false;
