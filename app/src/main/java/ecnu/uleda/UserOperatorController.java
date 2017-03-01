@@ -87,6 +87,7 @@ public class UserOperatorController {
         long timeStamp=System.currentTimeMillis()/100000;
         return MD5Utils.MD5(mUserName + mToken + timeStamp);
     }
+
     public UserInfo getMyInfo() throws UServerAccessException {
         return getUserBaseInfo(mId);
     }
