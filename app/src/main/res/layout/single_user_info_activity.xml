@@ -148,7 +148,7 @@
             android:layout_height="match_parent"
             android:textColor="@color/colorUWhite"
             android:id="@+id/user_class"
-            android:text=""
+            android:text=" "
             android:textSize="15sp"
             android:gravity="left|center_vertical"
             android:layout_gravity="right"

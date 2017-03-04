@@ -152,6 +152,7 @@ public class TaskPostActivity extends AppCompatActivity {
                 string = price.substring(0,price.length() - 1);
                 mEtPrice.setText(string);
                 mEtPrice.setSelection(string.length());
+
                 //mEtPrice.setSelection(price.length());      //智障
             }
         }

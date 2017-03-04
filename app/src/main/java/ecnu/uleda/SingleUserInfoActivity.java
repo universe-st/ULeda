@@ -118,6 +118,7 @@ public class SingleUserInfoActivity extends AppCompatActivity {
                         message.what = 1;
                         message.obj = e;
                         mHandler.sendMessage(message);
+
                     }
                 }
             }.start();
