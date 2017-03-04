@@ -7,6 +7,9 @@ import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.InputType;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.WindowManager;
@@ -47,7 +50,14 @@ public class TaskPostActivity extends AppCompatActivity {
         taskPostArray.add("活动相关");
         taskPostArray.add("其他");
     }
+    private EditText mEtTitle;
+    private Spinner mSpinTag;
     private EditText mEtPrice;
+    private EditText mEtActiveTime;
+    private EditText mEtStart;
+    private EditText mEtdestination;
+    private EditText mEtDescription;
+
     private Button mButtonBack;
     private Button mButtonTaskPost;
     private Spinner spinnerTag;
@@ -67,22 +77,21 @@ public class TaskPostActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.task_post_activity);
-        mButtonBack=(Button) findViewById(R.id.button_task_post_back);
-        mButtonTaskPost=(Button)findViewById(R.id.button_task_post);
-        mEtPrice=(EditText)findViewById(R.id.task_post_payment);
+        init();
+        SpinnerInit();
 
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
-
-        SpinnerInit();
 
         mButtonBack.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 finish();
             }
         });
+
         mEtPrice.addTextChangedListener(new MyTextWatcher());
+
 
         mButtonTaskPost.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
@@ -92,6 +101,7 @@ public class TaskPostActivity extends AppCompatActivity {
                     public void run() {
                         try {
                             getTaskPost();
+                            judgeEdittext();
                             mUserOperatorController=UserOperatorController.getInstance();
                             ServerAccessApi.postTask(mId,mPpassport,mTitle,mTag,mDescription,mPrice,mPath,mActiveTime,mPosition);
                             Message message = new Message();
@@ -106,26 +116,37 @@ public class TaskPostActivity extends AppCompatActivity {
                         }
                     }
                 }.start();
-
             }
         });
     }
 
+    protected void init(){
+        mButtonBack=(Button) findViewById(R.id.button_task_post_back);
+        mButtonTaskPost=(Button)findViewById(R.id.button_task_post);
+        mEtTitle = (EditText) findViewById(R.id.task_post_title);
+        mEtPrice=(EditText)findViewById(R.id.task_post_payment);
+        mEtdestination = (EditText)findViewById(R.id.task_post_destination);
+        mEtActiveTime = (EditText)findViewById(R.id.task_post_activeTime);
+        mEtStart = (EditText)findViewById(R.id.task_post_start);
+        mEtdestination = (EditText)findViewById(R.id.task_post_description);
+        mEtDescription = (EditText)findViewById(R.id.task_post_description);
+    }
+
     private void SpinnerInit()
     {
-        spinnerTag=(Spinner) findViewById(R.id.spinner_task_post);
+        mSpinTag=(Spinner)findViewById(R.id.spinner_task_post);
         taskPostAdapter=new ArrayAdapter<>(this.getApplicationContext(),
                 R.layout.task_post_spinner,taskPostArray);
         taskPostAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-        spinnerTag.setAdapter(taskPostAdapter);
+        mSpinTag.setAdapter(taskPostAdapter);
     }
 
     private void SpinnerEvent()
     {
-        spinnerTag.setOnItemSelectedListener(new Spinner.OnItemSelectedListener(){
+        mSpinTag.setOnItemSelectedListener(new Spinner.OnItemSelectedListener(){
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                mTag=spinnerTag.getSelectedItem().toString();
+                mTag=mSpinTag.getSelectedItem().toString();
                 adapterView.setVisibility(View.VISIBLE);
             }
 
@@ -144,16 +165,14 @@ public class TaskPostActivity extends AppCompatActivity {
         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             String price=mEtPrice.getText().toString();
             int posDot=price.indexOf('.');
-            if(posDot==-1)
-                return;
+            if(posDot<=0)
+                return ;
             else if(price.length()-posDot-1>2)
             {
                 String string;
                 string = price.substring(0,price.length() - 1);
                 mEtPrice.setText(string);
                 mEtPrice.setSelection(string.length());
-
-                //mEtPrice.setSelection(price.length());      //智障
             }
         }
         public void afterTextChanged(Editable s) {
@@ -163,18 +182,47 @@ public class TaskPostActivity extends AppCompatActivity {
     private void getTaskPost()
     {
         //mId,mPpassport,mTitle,mTag,mDescription,mPrice,mPath,mActiveTime,mPosition
-        EditText etDestination = (EditText)findViewById(R.id.task_post_destination);
-
         mUserOperatorController=UserOperatorController.getInstance();
         mId = mUserOperatorController.getId();
         mPpassport = mUserOperatorController.getPassport();
-        mTitle=((EditText) findViewById(R.id.task_post_title)).getText().toString();
-        mDescription = ((EditText)findViewById(R.id.task_post_description)).getText().toString();
+        mTitle=mEtTitle.getText().toString();
+        mDescription = mEtDescription.getText().toString();
         mPrice=mEtPrice.getText().toString();
-        mPath = ((EditText)findViewById(R.id.task_post_start)).getText().toString()+"|"+etDestination.getText().toString();
-        mActiveTime = ((EditText)findViewById(R.id.task_post_activeTime)).getText().toString();
+        mPath = mEtStart.getText().toString()+"|"+mEtdestination.getText().toString();
+        mActiveTime =mEtActiveTime.getText().toString();
         mPosition="31.2296,121.403";
         //TODO:
+
+    }
+
+    //TODO: 啊啊啊这个怎么才能不跳转界面乖乖显示Toast
+    private void judgeEdittext()
+    {
+        if(mTitle.equals(""))
+        {
+            Toast.makeText(TaskPostActivity.this, "标题不能为空哦～",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(mPrice.equals(""))
+        {
+            Toast.makeText(TaskPostActivity.this, "价格不能为空哦～",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(mActiveTime.equals(""))
+        {
+            Toast.makeText(TaskPostActivity.this, "时效不能为空哦～",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(mEtStart.getText().toString().equals(""))
+        {
+            Toast.makeText(TaskPostActivity.this, "出发地不能为空哦～", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(mEtdestination.getText().toString().equals(""))
+        {
+            Toast.makeText(TaskPostActivity.this, "目的地不能为空哦～", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
     }
 
