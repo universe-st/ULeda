@@ -39,19 +39,19 @@ public class UCircleListAdapter extends ArrayAdapter<UCircle> {
             if(Circle == null)
                 return convertView;
             ImageView Iv = (ImageView) convertView.findViewById(R.id.photo);
-            Iv.setImageResource(Circle.getPHOTOId());
+            Iv.setImageResource(Circle.getmPhotoId());
             TextView Tv = (TextView) convertView.findViewById(R.id.publisher_name);
-            Tv.setText(Circle.getNAME());
+            Tv.setText(Circle.getmName());
             Tv = (TextView) convertView.findViewById(R.id.Title);
-            Tv.setText(Circle.getTITLE());
+            Tv.setText(Circle.getmTitle());
             Tv = (TextView) convertView.findViewById(R.id.article);
-            Tv.setText(Circle.getARTICLE());
+            Tv.setText(Circle.getmArticle());
 
 
-            if(Circle.getDYNAMIC_PHOTO() != 0)
+            if(Circle.getmDynamic_Photo() != 0)
             {
                 Iv = (ImageView) convertView.findViewById(R.id.dynamic_photo);
-                Iv.setImageResource(Circle.getDYNAMIC_PHOTO());
+                Iv.setImageResource(Circle.getmDynamic_Photo());
 
             }
             else
@@ -64,10 +64,10 @@ public class UCircleListAdapter extends ArrayAdapter<UCircle> {
 
 
             Tv = (TextView) convertView.findViewById(R.id.publish_time);
-            Tv.setText(Circle.getTIME());
+            Tv.setText(Circle.getmTime());
 
             Tv = (TextView)convertView.findViewById((R.id.Get_zan));
-            Tv.setText(Circle.getGET());
+            Tv.setText(Circle.getmGet());
 
 
         }
