@@ -52,6 +52,17 @@ implements View.OnClickListener{
     TextView userId;
     Uri imgUri ;    //用来引用拍照存盘的 Uri 对象
     ImageView imv;
+    private Handler mHandler=new Handler(){
+        @Override
+        public void handleMessage(Message msg){
+            if(msg.what==0){
+                putInformation();
+            }else{
+                UServerAccessException exception=(UServerAccessException)msg.obj;
+                Toast.makeText(getActivity(),"获取信息失败："+exception.getMessage(),Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
     public String[] options = {"选项1", "选项2", "选项3", "选项4", "选项5"};
     private List<AddOptions> OptionList ;
     private OptionListAdapter adapter;
@@ -63,23 +74,8 @@ implements View.OnClickListener{
     @Override
     public void onCreate(Bundle b) {
         super.onCreate(b);
-        Intent intent=getActivity().getIntent();
-        if(intent.getBooleanExtra("isGet",false)) {
-            mUserInfo = (UserInfo) intent.getSerializableExtra("userinfo");
-            putInformation();
-        }
-        else {
-            String id = intent.getStringExtra("userid");
-            UserOperatorController uoc = UserOperatorController.getInstance();
-            try {
-                mUserInfo = uoc.getUserBaseInfo(id);
-                putInformation();
-            } catch (UServerAccessException e) {
-                e.printStackTrace();
-            }
-        }
-
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle b){
@@ -92,6 +88,7 @@ implements View.OnClickListener{
         add=(ImageButton)v.findViewById(R.id.add);
         userId=(TextView)v.findViewById(R.id.id) ;
 
+
         setting.setOnClickListener(this);
         mMyInfo.setOnClickListener(this);
         mMyMoneyBag.setOnClickListener(this);
@@ -99,14 +96,35 @@ implements View.OnClickListener{
         icon.setOnClickListener(this);
         add.setOnClickListener(this);
 
+        try {
+            mUserInfo = UserOperatorController.getInstance().getMyInfo();
+        } catch (UServerAccessException e) {
+            e.printStackTrace();
+            Message message = new Message();
+            message.what = 1;
+            message.obj = e;
+            mHandler.sendMessage(message);
+        }
+        mUserOperatorController=UserOperatorController.getInstance();
+
+        new Thread() {
+            @Override
+            public void run() {
+                            if(mUserOperatorController.getIsLogined()) {
+                                Message message = new Message();
+                                message.what = 0;
+                                mHandler.sendMessage(message);
+                            }
+            }
+        }.start();
+
         return v;
 
     }
 
     private void putInformation(){
         //TODO:将用户信息显示在屏幕上
-
-        userId.setText(mUserInfo.getId());
+        userId.setText(mUserInfo.getRealName());
 
     }
 
