@@ -56,7 +56,7 @@ public class TaskPostActivity extends AppCompatActivity {
     private String mId;
     private String mPpassport;
     private String mTitle;
-    private String mTag;  //tag任务分类
+    private String mTag="跑腿代步";  //tag任务分类
     private String mDescription;
     private String mPrice;
     private String mPath;
@@ -87,11 +87,11 @@ public class TaskPostActivity extends AppCompatActivity {
         mButtonTaskPost.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 SpinnerEvent();
-                getTaskPost();
                 new Thread() {
                     @Override
                     public void run() {
                         try {
+                            getTaskPost();
                             mUserOperatorController=UserOperatorController.getInstance();
                             ServerAccessApi.postTask(mId,mPpassport,mTitle,mTag,mDescription,mPrice,mPath,mActiveTime,mPosition);
                             Message message = new Message();
@@ -162,16 +162,20 @@ public class TaskPostActivity extends AppCompatActivity {
 
     private void getTaskPost()
     {
-        mTitle=((EditText) findViewById(R.id.task_post_title)).getText().toString();
-        mPrice=mEtPrice.getText().toString();
-        mDescription = ((EditText)findViewById(R.id.task_post_description)).getText().toString();
-        mActiveTime = ((EditText)findViewById(R.id.task_post_activeTime)).getText().toString();
-        mPath = ((EditText)findViewById(R.id.task_post_start)).getText().toString()+"|"+mPosition;
-        mPosition=((EditText)findViewById(R.id.task_post_description)).getText().toString();
-        //TODO:
+        //mId,mPpassport,mTitle,mTag,mDescription,mPrice,mPath,mActiveTime,mPosition
+        EditText etDestination = (EditText)findViewById(R.id.task_post_destination);
+
         mUserOperatorController=UserOperatorController.getInstance();
         mId = mUserOperatorController.getId();
         mPpassport = mUserOperatorController.getPassport();
+        mTitle=((EditText) findViewById(R.id.task_post_title)).getText().toString();
+        mDescription = ((EditText)findViewById(R.id.task_post_description)).getText().toString();
+        mPrice=mEtPrice.getText().toString();
+        mPath = ((EditText)findViewById(R.id.task_post_start)).getText().toString()+"|"+etDestination.getText().toString();
+        mActiveTime = ((EditText)findViewById(R.id.task_post_activeTime)).getText().toString();
+        mPosition="31.2296,121.403";
+        //TODO:
+
     }
 
 }
