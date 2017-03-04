@@ -11,6 +11,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
@@ -24,9 +26,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -45,19 +49,36 @@ implements View.OnClickListener{
     CircleImageView icon;
     ImageButton add;
     PopupWindow mPopupWindow;
+    TextView userId;
     Uri imgUri ;    //用来引用拍照存盘的 Uri 对象
     ImageView imv;
     public String[] options = {"选项1", "选项2", "选项3", "选项4", "选项5"};
-
     private List<AddOptions> OptionList ;
     private OptionListAdapter adapter;
     private ListView OptionListview;
 
-
+    private UserInfo mUserInfo;
+    private UserOperatorController mUserOperatorController;
 
     @Override
     public void onCreate(Bundle b) {
         super.onCreate(b);
+        Intent intent=getActivity().getIntent();
+        if(intent.getBooleanExtra("isGet",false)) {
+            mUserInfo = (UserInfo) intent.getSerializableExtra("userinfo");
+            putInformation();
+        }
+        else {
+            String id = intent.getStringExtra("userid");
+            UserOperatorController uoc = UserOperatorController.getInstance();
+            try {
+                mUserInfo = uoc.getUserBaseInfo(id);
+                putInformation();
+            } catch (UServerAccessException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     @Override
@@ -69,6 +90,7 @@ implements View.OnClickListener{
         mMyQRCode=(LinearLayout)v.findViewById(R.id.my_qr_code);
         icon=(CircleImageView)v.findViewById(R.id.icon);
         add=(ImageButton)v.findViewById(R.id.add);
+        userId=(TextView)v.findViewById(R.id.id) ;
 
         setting.setOnClickListener(this);
         mMyInfo.setOnClickListener(this);
@@ -77,9 +99,14 @@ implements View.OnClickListener{
         icon.setOnClickListener(this);
         add.setOnClickListener(this);
 
-
-
         return v;
+
+    }
+
+    private void putInformation(){
+        //TODO:将用户信息显示在屏幕上
+
+        userId.setText(mUserInfo.getId());
 
     }
 
@@ -93,10 +120,10 @@ implements View.OnClickListener{
             }
             case R.id.my_info:{
                 UserOperatorController uoc=UserOperatorController.getInstance();
-                if(!uoc.getIsLogined()){
-                    Toast.makeText(this.getActivity(),"请先登陆！",Toast.LENGTH_SHORT).show();
-                    break;
-                }
+//                if(!uoc.getIsLogined()){
+//                    Toast.makeText(this.getActivity(),"请先登陆！",Toast.LENGTH_SHORT).show();
+//                    break;
+//                }
                 Intent it = new Intent(getActivity().getBaseContext(),SingleUserInfoActivity.class);
                 it.putExtra("userid",UserOperatorController.getInstance().getId());
                 startActivity(it);
@@ -262,12 +289,12 @@ implements View.OnClickListener{
         OptionList=createOptions();//初始化消息列表
         adapter=new OptionListAdapter(this.getActivity().getApplicationContext()
                 ,R.layout.options_list_item,OptionList);
-//        View view=inflater.inflate(R.layout.message_fragment,container,false);
+
         ListView lsvMore = (ListView) popupView.findViewById(R.id.lsvMore);
         lsvMore.setAdapter(adapter);
 
         // 创建PopupWindow对象，指定宽度和高度
-        PopupWindow window = new PopupWindow(popupView, 300, 300);
+        PopupWindow window = new PopupWindow(popupView, 150, 250);
         // 设置动画
         window.setAnimationStyle(R.style.popup_window_anim);
         // 设置背景颜色
@@ -286,14 +313,19 @@ implements View.OnClickListener{
     private List<AddOptions>createOptions(){
         List<AddOptions> AList = new ArrayList<>();
 
-        AddOptions o1=new AddOptions("社区消息",R.drawable.user3);
+        AddOptions o1=new AddOptions("加好友",R.drawable.o_addf);
         AList.add(o1);
-        AddOptions o2=new AddOptions("恭喜你发现",R.drawable.user5);
+        AddOptions o2=new AddOptions("扫一扫",R.drawable.o_scan);
         AList.add(o2);
+        AddOptions o3=new AddOptions("付款",R.drawable.o_pay);
+        AList.add(o3);
+        AddOptions o4=new AddOptions("拍摄",R.drawable.o_camera);
+        AList.add(o4);
 
         return AList;
 
     }
+
 
 }
 
