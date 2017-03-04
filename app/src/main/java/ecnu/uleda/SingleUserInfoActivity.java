@@ -35,9 +35,8 @@ public class SingleUserInfoActivity extends AppCompatActivity {
     private TextView textViewUserName;
     private TextView textViewUserSex;
     private TextView textViewUserAge;
-    //private TextView  textViewUsersign;
+    private TextView  textViewUsersign;
     private TextView textViewSchoolClass;
-    private int nowYear,userYear,year;
     private String sYear;
     private String schoolClass;
     private String[] userClass;//userClass[0]:入学年份 userClass[1]:院系 userClass[2]:专业 userClass[3]:班级
@@ -45,12 +44,12 @@ public class SingleUserInfoActivity extends AppCompatActivity {
     private Button buttonSendmsg;
 
     private void putInformation(){
-        //TODO:将用户信息显示在屏幕上
+        //将用户信息显示在屏幕上
 
         textViewUserName = (TextView) findViewById(R.id.name);
         textViewUserSex = (TextView) findViewById(R.id.user_sex);
         textViewUserAge = (TextView) findViewById(R.id.user_age);
-        //textViewUsersign = (TextView) findViewById(R.id.text_sign);
+        textViewUsersign = (TextView) findViewById(R.id.text_sign);
         textViewSchoolClass = (TextView) findViewById(R.id.user_class);
         buttonAddUser = (Button) findViewById(R.id.button_adduser);
         buttonSendmsg = (Button) findViewById(R.id.button_sendmsg);
@@ -62,6 +61,7 @@ public class SingleUserInfoActivity extends AppCompatActivity {
         else
             textViewUserSex.setText("♀");
 
+        int nowYear,userYear,year;
         Calendar c = Calendar.getInstance();
         nowYear = c.get(Calendar.YEAR);
         sYear = mUserInfo.getBirthday().substring(0,4);
@@ -69,7 +69,8 @@ public class SingleUserInfoActivity extends AppCompatActivity {
         year = nowYear-userYear;
         sYear = String.valueOf(year);
         textViewUserAge.setText(sYear);
-        //textViewUsersign.setText();
+
+        textViewUsersign.setText("求实创造 为人师表");
 
         schoolClass = mUserInfo.getSchoolClass();
         userClass = schoolClass.split("\\|");
@@ -81,6 +82,7 @@ public class SingleUserInfoActivity extends AppCompatActivity {
             buttonSendmsg.setVisibility(View.INVISIBLE);
         }
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,6 +118,7 @@ public class SingleUserInfoActivity extends AppCompatActivity {
                         message.what = 1;
                         message.obj = e;
                         mHandler.sendMessage(message);
+
                     }
                 }
             }.start();
