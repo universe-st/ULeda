@@ -51,7 +51,7 @@ public class UserOperatorController {
             mToken=json.getString("accessToken");
             Log.d("login","Token: "+mToken);
             mIsLogined=true;
-            mMessage="success login";
+            mMessage="successful login";
         }catch (UServerAccessException e){
             e.printStackTrace();
             mIsLogined=false;
@@ -87,6 +87,7 @@ public class UserOperatorController {
         long timeStamp=System.currentTimeMillis()/100000;
         return MD5Utils.MD5(mUserName + mToken + timeStamp);
     }
+
     public UserInfo getMyInfo() throws UServerAccessException {
         return getUserBaseInfo(mId);
     }
