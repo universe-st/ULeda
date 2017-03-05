@@ -201,7 +201,7 @@ public class TaskPostActivity extends AppCompatActivity {
         mPosition = "31.2296,121.403";
         //TODO:
 
-        TencentSearch tencentSearch = new TencentSearch(this);
+        //TencentSearch tencentSearch = new TencentSearch(this);
     }
 
 
