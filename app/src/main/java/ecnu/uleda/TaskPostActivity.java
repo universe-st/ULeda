@@ -106,13 +106,12 @@ public class TaskPostActivity extends AppCompatActivity {
         mButtonTaskPost.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 SpinnerEvent();
+                getTaskPost();
+                judgeEdittext();
                 new Thread() {
                     @Override
                     public void run() {
                         try {
-                            getTaskPost();
-                            judgeEdittext();
-                            mUserOperatorController=UserOperatorController.getInstance();
                             ServerAccessApi.postTask(mId,mPpassport,mTitle,mTag,mDescription,mPrice,mPath,mActiveTime,mPosition);
                             Message message = new Message();
                             message.what = 0;
@@ -189,21 +188,21 @@ public class TaskPostActivity extends AppCompatActivity {
         }
     }
 
-    private void getTaskPost()
-    {
+    private void getTaskPost() {
         //mId,mPpassport,mTitle,mTag,mDescription,mPrice,mPath,mActiveTime,mPosition
-        mUserOperatorController=UserOperatorController.getInstance();
+        mUserOperatorController = UserOperatorController.getInstance();
         mId = mUserOperatorController.getId();
         mPpassport = mUserOperatorController.getPassport();
-        mTitle=mEtTitle.getText().toString();
+        mTitle = mEtTitle.getText().toString();
         mDescription = mEtDescription.getText().toString();
-        mPrice=mEtPrice.getText().toString();
-        mPath = mEtStart.getText().toString()+"|"+mEtdestination.getText().toString();
-        mActiveTime =mEtActiveTime.getText().toString();
-        mPosition="31.2296,121.403";
+        mPrice = mEtPrice.getText().toString();
+        mPath = mEtStart.getText().toString() + "|" + mEtdestination.getText().toString();
+        mActiveTime = mEtActiveTime.getText().toString();
+        mPosition = "31.2296,121.403";
         //TODO:
 
         TencentSearch tencentSearch = new TencentSearch(this);
+    }
 
 
 
