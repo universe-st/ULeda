@@ -19,9 +19,15 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.tencent.lbssearch.TencentSearch;
+import com.tencent.lbssearch.object.Location;
 import com.tencent.lbssearch.object.param.Address2GeoParam;
+import com.tencent.lbssearch.object.param.Geo2AddressParam;
 import com.tencent.lbssearch.object.result.Address2GeoResultObject;
+import com.tencent.lbssearch.object.result.Geo2AddressResultObject;
+import com.tencent.map.geolocation.TencentLocation;
+import com.tencent.map.geolocation.TencentLocationListener;
 import com.tencent.map.geolocation.TencentLocationManager;
+import com.tencent.map.geolocation.TencentLocationRequest;
 import com.tencent.tencentmap.mapsdk.map.TencentMap;
 
 import java.util.ArrayList;
@@ -77,7 +83,11 @@ public class TaskPostActivity extends AppCompatActivity {
     private String mActiveTime;
     private String mPosition;
 
+    private  Button buttonTest ;
     private TencentLocationManager mLocationManager;
+    private float latitude = 0;
+    private float longitude = 0;
+
 
 
 
@@ -87,6 +97,8 @@ public class TaskPostActivity extends AppCompatActivity {
         setContentView(R.layout.task_post_activity);
         init();
         SpinnerInit();
+
+        mLocationManager = TencentLocationManager.getInstance(this.getApplication());
 
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -106,8 +118,12 @@ public class TaskPostActivity extends AppCompatActivity {
         mButtonTaskPost.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 SpinnerEvent();
-                getTaskPost();
-                judgeEdittext();
+                if(!getTaskPost())
+                {
+                    Toast.makeText(TaskPostActivity.this, "请输入有效数据～",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                //judgeEdittext();
                 new Thread() {
                     @Override
                     public void run() {
@@ -139,6 +155,47 @@ public class TaskPostActivity extends AppCompatActivity {
         mEtStart = (EditText)findViewById(R.id.task_post_start);
         mEtdestination = (EditText)findViewById(R.id.task_post_description);
         mEtDescription = (EditText)findViewById(R.id.task_post_description);
+
+
+        buttonTest= (Button)findViewById(R.id.button_test);
+        buttonTest.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view) {
+                mLocationManager.requestLocationUpdates(TencentLocationRequest.create()
+                        .setInterval(5000)
+                        .setRequestLevel(TencentLocationRequest.REQUEST_LEVEL_ADMIN_AREA), new TencentLocationListener() {
+                    @Override
+                    public void onLocationChanged(TencentLocation tencentLocation, int i, String s) {
+                        mLocationManager.removeUpdates(this);
+                        if (i != TencentLocation.ERROR_OK) {
+                            Toast.makeText(TaskPostActivity.this, "定位错误，请检查GPS状态", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        latitude = (float) tencentLocation.getLatitude();
+                        longitude = (float) tencentLocation.getLongitude();
+                    }
+                    @Override
+                    public void onStatusUpdate(String s, int i, String s1) {
+                    }
+                });
+
+                Toast.makeText(TaskPostActivity.this,""+longitude ,Toast.LENGTH_SHORT).show();
+            }
+
+        });
+
+        /*Geo2AddressParam param = new Geo2AddressParam().location(new Location()
+                .lat(latitude).lng(longitude));
+        param.get_poi(true);
+
+        Geo2AddressResultObject oj = new Geo2AddressResultObject();
+        String result = "坐标转地址：lat:"+String.valueOf(latitude)+"  lng:"+
+                String.valueOf(longitude) + "\n\n";
+        if(oj.result != null){
+            Log.v("demo","address:"+oj.result.address);
+            result += oj.result.address;
+        }*/
     }
 
     private void SpinnerInit()
@@ -188,7 +245,7 @@ public class TaskPostActivity extends AppCompatActivity {
         }
     }
 
-    private void getTaskPost() {
+    boolean getTaskPost() {
         //mId,mPpassport,mTitle,mTag,mDescription,mPrice,mPath,mActiveTime,mPosition
         mUserOperatorController = UserOperatorController.getInstance();
         mId = mUserOperatorController.getId();
@@ -201,13 +258,17 @@ public class TaskPostActivity extends AppCompatActivity {
         mPosition = "31.2296,121.403";
         //TODO:
 
-        //TencentSearch tencentSearch = new TencentSearch(this);
+        if(mPrice.equals("")||mActiveTime.equals("")||mEtStart.getText().toString().equals("")
+                ||(mEtdestination.getText().toString().equals("")))
+            return false;
+        //description不能为空???
+        return true;
     }
 
 
 
     //TODO: 啊啊啊这个怎么才能不跳转界面乖乖显示Toast
-    private void judgeEdittext()
+    /*private void judgeEdittext()
     {
         if(mTitle.equals(""))
         {
@@ -235,7 +296,7 @@ public class TaskPostActivity extends AppCompatActivity {
             return;
         }
 
-    }
+    }*/
 
 }
 
