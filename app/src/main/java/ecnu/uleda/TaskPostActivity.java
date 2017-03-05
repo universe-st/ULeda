@@ -7,10 +7,8 @@ import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.InputFilter;
-import android.text.InputType;
-import android.text.Spanned;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -19,6 +17,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import com.tencent.lbssearch.TencentSearch;
+import com.tencent.lbssearch.object.param.Address2GeoParam;
+import com.tencent.lbssearch.object.result.Address2GeoResultObject;
+import com.tencent.map.geolocation.TencentLocationManager;
+import com.tencent.tencentmap.mapsdk.map.TencentMap;
 
 import java.util.ArrayList;
 
@@ -60,7 +64,7 @@ public class TaskPostActivity extends AppCompatActivity {
 
     private Button mButtonBack;
     private Button mButtonTaskPost;
-    private Spinner spinnerTag;
+    //private Spinner spinnerTag;
     private ArrayAdapter<String> taskPostAdapter;
 
     private String mId;
@@ -72,6 +76,10 @@ public class TaskPostActivity extends AppCompatActivity {
     private String mPath;
     private String mActiveTime;
     private String mPosition;
+
+    private TencentLocationManager mLocationManager;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +99,8 @@ public class TaskPostActivity extends AppCompatActivity {
         });
 
         mEtPrice.addTextChangedListener(new MyTextWatcher());
+
+        //mLocationManager = TencentLocationManager.getInstance(this.getActivity());
 
 
         mButtonTaskPost.setOnClickListener(new View.OnClickListener(){
@@ -193,7 +203,9 @@ public class TaskPostActivity extends AppCompatActivity {
         mPosition="31.2296,121.403";
         //TODO:
 
-    }
+        TencentSearch tencentSearch = new TencentSearch(this);
+
+
 
     //TODO: 啊啊啊这个怎么才能不跳转界面乖乖显示Toast
     private void judgeEdittext()
