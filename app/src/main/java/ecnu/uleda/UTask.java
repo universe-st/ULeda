@@ -180,8 +180,11 @@ public class UTask implements Serializable{
         if(ret.length>1) {
             return ret[1];
         }
-        else{
+        else if(ret.length>0){
             return ret[0];
+        }
+        else{
+            return "";
         }
     }
     public long getLeftTime(){
