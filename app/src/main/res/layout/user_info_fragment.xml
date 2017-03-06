@@ -228,7 +228,7 @@
                 android:layout_margin="5dp" />
 
             <TextView
-                android:text="我的钱包"
+                android:text="我的积分"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textView13"
@@ -236,14 +236,14 @@
                 android:layout_marginTop="10dp" />
 
             <TextView
-                android:text="余额"
+                android:text="U豆"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textView14"
                 android:layout_marginTop="10dp" />
 
             <TextView
-                android:text="  ¥190"
+                android:text="  190"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textView10"
