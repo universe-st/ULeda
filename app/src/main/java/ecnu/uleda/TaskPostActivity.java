@@ -146,7 +146,7 @@ public class TaskPostActivity extends AppCompatActivity {
         mEtdestination = (EditText) findViewById(R.id.task_post_destination);
         mEtActiveTime = (EditText) findViewById(R.id.task_post_activeTime);
         mEtStart = (EditText) findViewById(R.id.task_post_start);
-        mEtdestination = (EditText) findViewById(R.id.task_post_description);
+        mEtdestination = (EditText) findViewById(R.id.task_post_destination);
         mEtDescription = (EditText) findViewById(R.id.task_post_description);
 
 
@@ -268,7 +268,7 @@ public class TaskPostActivity extends AppCompatActivity {
         mPrice = mEtPrice.getText().toString();
         mPath = mEtStart.getText().toString() + "|" + mEtdestination.getText().toString();
         mActiveTime = mEtActiveTime.getText().toString();
-        mPosition = "31.2296,121.403";
+        mPosition = latitude+","+longitude;
         //TODO:
 
         if (mPrice.equals("") || mActiveTime.equals("") || mEtStart.getText().toString().equals("")
