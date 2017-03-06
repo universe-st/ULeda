@@ -254,7 +254,7 @@
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="14">
+            android:layout_weight="7">
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -263,6 +263,23 @@
                 android:textColorHint="@color/colorUGray"
                 android:gravity="center_vertical|left" />
         </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="7">
+            <Button
+                android:id="@+id/button_task_post_start"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="选择地址"
+                android:textSize="18dp"
+                android:textColor="@color/colorUWhite"
+                android:background="@color/colorUInfo"
+                android:layout_centerHorizontal="true"
+                />
+        </FrameLayout>
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -314,13 +331,13 @@
             android:layout_height="match_parent"
             android:layout_weight="7">
             <Button
-                android:id="@+id/button_test"
+                android:id="@+id/button_task_post_destination"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="选择地址"
                 android:textSize="18dp"
                 android:textColor="@color/colorUWhite"
-                android:background="@drawable/login_shape_button"
+                android:background="@color/colorUInfo"
                 android:layout_centerHorizontal="true"
                 />
         </FrameLayout>

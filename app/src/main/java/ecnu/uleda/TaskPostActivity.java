@@ -83,7 +83,8 @@ public class TaskPostActivity extends AppCompatActivity {
     private String mActiveTime;
     private String mPosition;
 
-    private Button buttonTest;
+    private Button buttonStart;
+    private Button buttonDestination;
     private TencentLocationManager mLocationManager;
     private float latitude = 0;
     private float longitude = 0;
@@ -150,8 +151,8 @@ public class TaskPostActivity extends AppCompatActivity {
         mEtDescription = (EditText) findViewById(R.id.task_post_description);
 
 
-        buttonTest = (Button) findViewById(R.id.button_test);
-        buttonTest.setOnClickListener(new View.OnClickListener() {
+        buttonStart = (Button) findViewById(R.id.button_task_post_start);
+        buttonStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mLocationManager.requestLocationUpdates(TencentLocationRequest.create()

@@ -54,7 +54,7 @@ public class SingleUserInfoActivity extends AppCompatActivity {
         buttonAddUser = (Button) findViewById(R.id.button_adduser);
         buttonSendmsg = (Button) findViewById(R.id.button_sendmsg);
 
-        textViewUserName.setText(mUserInfo.getRealName());
+        textViewUserName.setText(mUserInfo.getUserName());
 
         if(mUserInfo.getSex()==0)
             textViewUserSex.setText("♂");
