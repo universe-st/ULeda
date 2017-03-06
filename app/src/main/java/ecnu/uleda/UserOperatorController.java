@@ -103,6 +103,7 @@ public class UserOperatorController {
                     .setSchool(json.getString("school"))
                     .setSchoolClass(json.getString("class"))
                     .setStudentId(json.getString("studentid"))
+                    .setUserName(json.getString("username"))
                     .setId(id);
             return userInfo;
         }catch (JSONException e){
