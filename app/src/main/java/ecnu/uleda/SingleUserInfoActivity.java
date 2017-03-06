@@ -39,7 +39,7 @@ public class SingleUserInfoActivity extends AppCompatActivity {
     private TextView textViewSchoolClass;
     private String sYear;
     private String schoolClass;
-    private String[] userClass;//userClass[0]:入学年份 userClass[1]:院系 userClass[2]:专业 userClass[3]:班级
+    private String userClass;//userClass[0]:入学年份 userClass[1]:院系 userClass[2]:专业 userClass[3]:班级
     private Button buttonAddUser;
     private Button buttonSendmsg;
 
@@ -73,8 +73,9 @@ public class SingleUserInfoActivity extends AppCompatActivity {
         textViewUsersign.setText("求实创造 为人师表");
 
         schoolClass = mUserInfo.getSchoolClass();
-        userClass = schoolClass.split("\\|");
-        textViewSchoolClass.setText(userClass[2]+" "+userClass[3]);
+        //userClass = schoolClass.split("\\|");
+        userClass = schoolClass.replaceAll("\\|"," ");
+        textViewSchoolClass.setText(userClass);
 
         if(mUserInfo.getId().equals(mUserOperatorController.getId()))
         {

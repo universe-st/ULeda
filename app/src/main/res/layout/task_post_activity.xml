@@ -181,7 +181,7 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:maxLength="10"
+                android:maxLength="6"
                 android:inputType="numberDecimal"
                 android:id="@+id/task_post_payment"
                 android:background="@null"
@@ -300,7 +300,7 @@
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="14">
+            android:layout_weight="7">
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -308,6 +308,21 @@
                 android:background="@null"
                 android:textColorHint="@color/colorUGray"
                 android:gravity="center_vertical|left" />
+        </FrameLayout>
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="7">
+            <Button
+                android:id="@+id/button_test"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="选择地址"
+                android:textSize="18dp"
+                android:textColor="@color/colorUWhite"
+                android:background="@drawable/login_shape_button"
+                android:layout_centerHorizontal="true"
+                />
         </FrameLayout>
         <LinearLayout
             android:layout_width="0dp"
