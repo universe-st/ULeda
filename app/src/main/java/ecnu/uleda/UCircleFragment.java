@@ -59,7 +59,7 @@ public class UCircleFragment extends Fragment {
                 .setmTitle("报仇")
                 .setmArticle("完颜洪烈这个贼人，害我亲生父母，并且让我认贼作父20多年，我要杀了你")
                 .setmTime("11分钟前")
-                .setmGet("111")
+                .setmGet("11")
                 .setmDynamic_Photo(0)
         );
         mCircleList.add(new UCircle()
@@ -68,7 +68,7 @@ public class UCircleFragment extends Fragment {
                 .setmTitle("报杀父之仇")
                 .setmArticle("当年在牛家村，完颜洪烈指使贼人杀我亲父，我要报仇！！！！！")
                 .setmTime("100分钟前")
-                .setmGet("111")
+                .setmGet("11")
                 .setmDynamic_Photo(R.drawable.kk)
         );
         mCircleList.add(new UCircle()
@@ -76,7 +76,7 @@ public class UCircleFragment extends Fragment {
                 .setmName("黄蓉")
                 .setmTitle("找郭靖")
                 .setmArticle("婧哥哥你去哪里蓉儿就去哪里")
-                .setmTime("九分钟前")
+                .setmTime("9分钟前")
                 .setmGet("9")
                 .setmDynamic_Photo(0)
         );
