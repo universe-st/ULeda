@@ -153,9 +153,14 @@ public class TaskListFragment extends Fragment {
                     @Override
                     public void run(){
                         try {
-                            mUTaskManager.loadMoreTaskInList(2);
+                            mUTaskManager.loadMoreTaskInList(5);
                         }catch (UServerAccessException e){
                             //TODO:根据异常的状态决定向主线程的handle发送哪些信息
+                            e.printStackTrace();
+                            Message message=new Message();
+                            message.what=ERROR;
+                            message.obj=e.getMessage();
+                            mRefreshHandler.sendMessage(message);
                         }
                         Message message=new Message();
                         message.what=LOAD_MORE;

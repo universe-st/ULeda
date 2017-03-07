@@ -37,6 +37,12 @@ public class UserOperatorController {
     public boolean getIsLogined(){
         return mIsLogined;
     }
+    public void exitLogin(){
+        mToken=null;
+        mPassword=null;
+        mUserName=null;
+        mIsLogined=false;
+    }
     public void login(String userName,String password){
         if(mIsLogined){
             return;
@@ -104,7 +110,8 @@ public class UserOperatorController {
                     .setSchoolClass(json.getString("class"))
                     .setStudentId(json.getString("studentid"))
                     .setUserName(json.getString("username"))
-                    .setId(id);
+                    .setId(id)
+                    .setSignature(json.getString("signature"));
             return userInfo;
         }catch (JSONException e){
             e.printStackTrace();
