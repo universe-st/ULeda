@@ -6,6 +6,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -26,10 +28,19 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.tencent.mapsdk.raster.model.BitmapDescriptor;
+import com.tencent.mapsdk.raster.model.BitmapDescriptorFactory;
+import com.tencent.mapsdk.raster.model.LatLng;
+import com.tencent.mapsdk.raster.model.Marker;
+import com.tencent.mapsdk.raster.model.MarkerOptions;
 import com.tencent.tencentmap.mapsdk.map.MapView;
 import com.tencent.tencentmap.mapsdk.map.TencentMap;
 
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -49,6 +60,18 @@ implements View.OnClickListener{
     private TextView mTaskDetailInfo;
     private PopupWindow mPopupWindow;
     private EditText mPostCommentEdit;
+    private Handler mHandler=new Handler(){
+        @Override
+        public void handleMessage(Message msg){
+            if(msg.what==0){
+                mTask=(UTask)msg.obj;
+                listViewInit();
+                mapInit();
+            }else{
+                Toast.makeText(TaskDetailsActivity.this,"错误："+(String)msg.obj,Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -146,7 +169,26 @@ implements View.OnClickListener{
     }
     private ArrayList<UserChatItem> mUserChatItems=new ArrayList<>();
 
-
+    @Override
+    public void onResume(){
+        mMapView.onResume();
+        super.onResume();
+    }
+    @Override
+    public void onStop(){
+        mMapView.onStop();
+        super.onStop();
+    }
+    @Override
+    public void onPause(){
+        mMapView.onPause();
+        super.onPause();
+    }
+    @Override
+    public void onDestroy(){
+        mMapView.onDestroy();
+        super.onDestroy();
+    }
     //测试代码
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,9 +196,52 @@ implements View.OnClickListener{
         setContentView(R.layout.activity_task_details);
         Intent intent=getIntent();
         mTask=(UTask)intent.getSerializableExtra("UTask");
+        final UserOperatorController uoc=UserOperatorController.getInstance();
+        mMapView=(MapView)findViewById(R.id.task_map_view);
+        mTencentMap=mMapView.getMap();
+        mMapView.onCreate(savedInstanceState);
+        if(!uoc.getIsLogined())return;
+        new Thread(){
+            @Override
+            public void run(){
+                try{
+                    JSONObject j=ServerAccessApi.getTaskPost(uoc.getId(),uoc.getPassport(),mTask.getPostID());
+                    UTask task=new UTask()
+                            .setPath( j.getString("path") )
+                            .setTitle( j.getString("title") )
+                            .setTag( j.getString("tag") )
+                            .setPostDate(j.getLong("postdate"))
+                            .setPrice(new BigDecimal(j.getString("price")))
+                            .setAuthorID(j.getInt("author"))
+                            .setDescription(j.getString("description"))
+                            .setAuthorUserName(j.getString("authorUsername"))
+                            .setAuthorCredit(5)
+                            .setPostID(mTask.getPostID())
+                            .setActiveTime(j.getLong("activetime"))
+                            .setStatus(0);
+                    String[] ps=j.getString("position").split(",");
+                    task.setPosition(
+                            new LatLng(Double.parseDouble(ps[0]),Double.parseDouble(ps[1]))
+                    );
+                    Message message = new Message();
+                    message.what=0;
+                    message.obj=task;
+                    mHandler.sendMessage(message);
+                }
+                catch(UServerAccessException e){
+                    e.printStackTrace();
+                    Message message=new Message();
+                    message.obj=e.getMessage();
+                    message.what=1;
+                    mHandler.sendMessage(message);
+                }
+                catch (JSONException e){
+                    e.printStackTrace();
+                    System.exit(1);
+                }
+            }
+        }.start();
         init();
-        mapInit();
-        listViewInit();
     }
 
 
@@ -176,7 +261,7 @@ implements View.OnClickListener{
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(TaskDetailsActivity.this,SingleUserInfoActivity.class);
-                intent.putExtra("userid",mTask.getAuthorID());
+                intent.putExtra("userid",String.valueOf(mTask.getAuthorID()));
                 startActivity(intent);
             }
         });
@@ -236,8 +321,6 @@ implements View.OnClickListener{
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
-        mMapView=(MapView)findViewById(R.id.task_map_view);
-        mTencentMap=mMapView.getMap();
         mHeadlineLayout=(UHeadlineLayout)findViewById(R.id.head_line_layout);
         mHeadlineLayout.setTitleRed(mTask.getTitle());
         mHeadlineLayout.setTitleWhite(mTask.getTitle());
@@ -250,5 +333,12 @@ implements View.OnClickListener{
         });
     }
     public void mapInit(){
+        mTencentMap.setZoom(18);
+        mTencentMap.setCenter(mTask.getPosition());
+        Marker marker=mTencentMap.addMarker(new MarkerOptions()
+                        .position(mTask.getPosition())
+                        .icon(BitmapDescriptorFactory.defaultMarker()).draggable(false)
+        );
+        marker.setTitle(mTask.getToWhere());
     }
 }

@@ -55,8 +55,9 @@ public class TaskListFragment extends Fragment {
                     Toast.makeText(TaskListFragment.this.getActivity(),"加载成功",Toast.LENGTH_SHORT).show();
                     break;
                 case ERROR:
+                    String error=msg.obj.toString();
                     mListView.completeRefresh();
-                    Toast.makeText(TaskListFragment.this.getActivity(),"网络异常",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(TaskListFragment.this.getActivity(),"网络异常："+error,Toast.LENGTH_SHORT).show();
                 default:
                     break;
             }
@@ -138,6 +139,7 @@ public class TaskListFragment extends Fragment {
                             e.printStackTrace();
                             Message message=new Message();
                             message.what=ERROR;
+                            message.obj=e.getMessage();
                             mRefreshHandler.sendMessage(message);
                         }
                     }
@@ -151,9 +153,14 @@ public class TaskListFragment extends Fragment {
                     @Override
                     public void run(){
                         try {
-                            mUTaskManager.loadMoreTaskInList(2);
+                            mUTaskManager.loadMoreTaskInList(5);
                         }catch (UServerAccessException e){
                             //TODO:根据异常的状态决定向主线程的handle发送哪些信息
+                            e.printStackTrace();
+                            Message message=new Message();
+                            message.what=ERROR;
+                            message.obj=e.getMessage();
+                            mRefreshHandler.sendMessage(message);
                         }
                         Message message=new Message();
                         message.what=LOAD_MORE;

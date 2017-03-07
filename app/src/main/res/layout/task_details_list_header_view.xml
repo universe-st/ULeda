@@ -32,7 +32,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:textColor="@android:color/black"
-                android:text="帮忙带饭到五舍"
+                android:text=""
                 android:textSize="18sp"
                 android:paddingLeft="10dp"
                 android:gravity="center_vertical|start"/>
@@ -42,7 +42,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:textColor="@android:color/black"
-                android:text="华东师范大学中北校区学生宿舍五舍"
+                android:text=""
                 android:gravity="center_vertical|start"
                 android:paddingLeft="10dp"/>
         </LinearLayout>
@@ -50,7 +50,7 @@
             android:id="@+id/task_details_reward"
             android:layout_width="120dp"
             android:layout_height="match_parent"
-            android:text="¥2"
+            android:text=""
             android:gravity="center"
             android:paddingRight="20dp"
             android:textSize="30sp"
@@ -67,7 +67,7 @@
             android:layout_margin="20dp"
             android:id="@+id/task_detail_info"
             android:textColor="@android:color/darker_gray"
-            android:text="223321312123123"/>
+            android:text=""/>
     </LinearLayout>
     <RelativeLayout
         android:layout_width="match_parent"

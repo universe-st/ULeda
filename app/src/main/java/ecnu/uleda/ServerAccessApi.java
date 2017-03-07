@@ -40,7 +40,7 @@ public class ServerAccessApi {
     public static String getLoginToken(@NonNull String userName)throws UServerAccessException{
         //断言，保证传入参数的正确性，在DEBUG模式下才启用。
         if(BuildConfig.DEBUG){
-            UPublicTool.UAssert( userName.length()>=4 && userName.length()<=25 );
+            UPublicTool.UAssert( byteCount(userName)>=4 && byteCount(userName)<=25 );
             //当这个函数里表达式的值为false时，抛出断言异常，然后终止程序。
             //这么做是为了保证调用者进行了参数检查。参数的范围在文档里提到过。
         }
@@ -159,7 +159,7 @@ public class ServerAccessApi {
                                   String activeTime,String position)throws UServerAccessException{
         if(BuildConfig.DEBUG){
             if(title!=null)
-            UPublicTool.UAssert( title.length()>=5 && title.length()<=30 );
+            UPublicTool.UAssert( byteCount(title)>=5 && byteCount(title)<=30 );
             if(tag!=null)
             UPublicTool.UAssert( tag.length()<=30 );
             if(description!=null)
@@ -277,12 +277,12 @@ public class ServerAccessApi {
                                   @NonNull String tag,String description,@NonNull String price,String path,
                                   @NonNull String activeTime,@NonNull String position)throws UServerAccessException{
         if(BuildConfig.DEBUG){
-            UPublicTool.UAssert( title.length()>=5 && title.length()<=30 );
-            UPublicTool.UAssert( tag.length()<=30 );
+            UPublicTool.UAssert( byteCount(title)>=5 && byteCount(title)<=30 );
+            UPublicTool.UAssert( byteCount(title)<=30 );
             if(description!=null)
-            UPublicTool.UAssert( description.length()<=450);
+            UPublicTool.UAssert( byteCount(description)<=450);
             if(path!=null)
-            UPublicTool.UAssert( path.length()<=400 );
+            UPublicTool.UAssert( byteCount(path)<=400 );
         }
 
         id=UrlEncode(id);
@@ -327,7 +327,7 @@ public class ServerAccessApi {
     public static String postComment(@NonNull String id,@NonNull String passport,
                                      @NonNull String postID,@NonNull String comment)throws UServerAccessException{
         if(BuildConfig.DEBUG){
-            UPublicTool.UAssert( comment.length()<=300 );
+            UPublicTool.UAssert( byteCount(comment)<=300 );
         }
         id=UrlEncode(id);
         passport=UrlEncode(passport);
@@ -412,7 +412,7 @@ public class ServerAccessApi {
 
     public static JSONObject login(@NonNull String username,@NonNull String passport) throws UServerAccessException{
         if(BuildConfig.DEBUG){
-            UPublicTool.UAssert(username.length()>=4&&username.length()<=300 );
+            UPublicTool.UAssert(byteCount(username)>=4 && byteCount(username)<=25 );
         }
         username=UrlEncode(username);
         passport=UrlEncode(passport);
@@ -479,6 +479,9 @@ public class ServerAccessApi {
         }
     }
 
+    private static int byteCount(String s){
+        return s.getBytes().length;
+    }
     private ServerAccessApi(){
         //该类不生成实例
     }

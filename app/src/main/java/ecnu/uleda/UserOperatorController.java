@@ -37,6 +37,12 @@ public class UserOperatorController {
     public boolean getIsLogined(){
         return mIsLogined;
     }
+    public void exitLogin(){
+        mToken=null;
+        mPassword=null;
+        mUserName=null;
+        mIsLogined=false;
+    }
     public void login(String userName,String password){
         if(mIsLogined){
             return;
@@ -51,7 +57,7 @@ public class UserOperatorController {
             mToken=json.getString("accessToken");
             Log.d("login","Token: "+mToken);
             mIsLogined=true;
-            mMessage="success login";
+            mMessage="successful login";
         }catch (UServerAccessException e){
             e.printStackTrace();
             mIsLogined=false;
@@ -87,6 +93,7 @@ public class UserOperatorController {
         long timeStamp=System.currentTimeMillis()/100000;
         return MD5Utils.MD5(mUserName + mToken + timeStamp);
     }
+
     public UserInfo getMyInfo() throws UServerAccessException {
         return getUserBaseInfo(mId);
     }
@@ -102,7 +109,9 @@ public class UserOperatorController {
                     .setSchool(json.getString("school"))
                     .setSchoolClass(json.getString("class"))
                     .setStudentId(json.getString("studentid"))
-                    .setId(id);
+                    .setUserName(json.getString("username"))
+                    .setId(id)
+                    .setSignature(json.getString("signature"));
             return userInfo;
         }catch (JSONException e){
             e.printStackTrace();
@@ -114,7 +123,7 @@ public class UserOperatorController {
     public String getUserName(){
         return mUserName;
     }
-    private UserOperatorController(){
+    UserOperatorController(){
         //单例模式
     }
 }
