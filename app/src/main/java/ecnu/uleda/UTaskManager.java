@@ -105,6 +105,13 @@ public class UTaskManager {
             }catch (JSONException e){
                 e.printStackTrace();
                 System.exit(1);
+            }catch (UServerAccessException e){
+                if(e.getStatus()==416){
+                    e.printStackTrace();
+                    mTasksInList.clear();
+                }else{
+                    throw e;
+                }
             }
         }
     }
