@@ -35,6 +35,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+
 /**
  * Created by Shensheng on 2016/11/11.
  */
@@ -96,28 +97,27 @@ implements View.OnClickListener{
         icon.setOnClickListener(this);
         add.setOnClickListener(this);
 
-        try {
-            mUserInfo = UserOperatorController.getInstance().getMyInfo();
-        } catch (UServerAccessException e) {
-            e.printStackTrace();
-            Message message = new Message();
-            message.what = 1;
-            message.obj = e;
-            mHandler.sendMessage(message);
-        }
         mUserOperatorController=UserOperatorController.getInstance();
 
         new Thread() {
             @Override
             public void run() {
-                            if(mUserOperatorController.getIsLogined()) {
-                                Message message = new Message();
-                                message.what = 0;
-                                mHandler.sendMessage(message);
-                            }
+                try {
+                    mUserInfo = UserOperatorController.getInstance().getMyInfo();
+                    if(mUserOperatorController.getIsLogined()) {
+                        Message message = new Message();
+                        message.what = 0;
+                        mHandler.sendMessage(message);
+                    }
+                } catch (UServerAccessException e) {
+                    e.printStackTrace();
+                    Message message = new Message();
+                    message.what = 1;
+                    message.obj = e;
+                    mHandler.sendMessage(message);
+                }
             }
-        }.start();
-
+            }.start();
         return v;
 
     }
