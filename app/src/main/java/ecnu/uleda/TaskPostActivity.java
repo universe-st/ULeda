@@ -1,6 +1,7 @@
 package ecnu.uleda;
 
 //import android.graphics.PorterDuff;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
@@ -38,6 +39,7 @@ public class TaskPostActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == 0) {
+                Toast.makeText(TaskPostActivity.this, "恭喜您，提交成功～", Toast.LENGTH_SHORT).show();
                 finish();
             } else {
                 UServerAccessException exception = (UServerAccessException) msg.obj;
@@ -113,11 +115,15 @@ public class TaskPostActivity extends AppCompatActivity {
         mButtonTaskPost.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 SpinnerEvent();
-                if (!getTaskPost()) {
-                    Toast.makeText(TaskPostActivity.this, "请输入有效数据～", Toast.LENGTH_SHORT).show();
+                getTaskPost();
+                if (!judgeEdittext()) {
+                    //Toast.makeText(TaskPostActivity.this, "请输入有效数据～", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                //judgeEdittext();
+                int time = Integer.parseInt(mPrice);
+                time *=60;
+                mPrice = String.valueOf(time);
+
                 new Thread() {
                     @Override
                     public void run() {
@@ -144,16 +150,19 @@ public class TaskPostActivity extends AppCompatActivity {
         mButtonTaskPost = (Button) findViewById(R.id.button_task_post);
         mEtTitle = (EditText) findViewById(R.id.task_post_title);
         mEtPrice = (EditText) findViewById(R.id.task_post_payment);
-        mEtdestination = (EditText) findViewById(R.id.task_post_destination);
         mEtActiveTime = (EditText) findViewById(R.id.task_post_activeTime);
-        mEtStart = (EditText) findViewById(R.id.task_post_start);
-        mEtdestination = (EditText) findViewById(R.id.task_post_destination);
+        //mEtStart = (EditText) findViewById(R.id.task_post_start);
+        //mEtdestination = (EditText) findViewById(R.id.task_post_destination);
         mEtDescription = (EditText) findViewById(R.id.task_post_description);
 
 
         buttonStart = (Button) findViewById(R.id.button_task_post_start);
         buttonStart.setOnClickListener(new View.OnClickListener() {
-            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(TaskPostActivity.this,LocationListActivity.class);
+                startActivity(intent);
+            }
+            /*@Override
             public void onClick(View view) {
                 mLocationManager.requestLocationUpdates(TencentLocationRequest.create()
                         .setInterval(5000)
@@ -174,13 +183,13 @@ public class TaskPostActivity extends AppCompatActivity {
                     }
                 });
                 //Toast.makeText(TaskPostActivity.this,""+longitude ,Toast.LENGTH_SHORT).show();
-                getNearAdd();
-            }
+                //getNearAdd();
+            }*/
 
         });
     }
 
-    private void getNearAdd() {
+    /*private void getNearAdd() {
 
         TencentSearch mtencentSearch = new TencentSearch(getApplicationContext());
         Geo2AddressParam param = new Geo2AddressParam().location(new Location().lat(latitude).lng(longitude));
@@ -196,10 +205,10 @@ public class TaskPostActivity extends AppCompatActivity {
 
                     Geo2AddressResultObject oj = (Geo2AddressResultObject) baseObject;
                     String result = oj.result.address;
-                    /*if (oj.result != null) {
+                    *//*if (oj.result != null) {
                         Log.v("demo", "address:" + oj.result.address);
                         result += oj.result.address;
-                    }*/
+                    }*//*
                     Toast.makeText(TaskPostActivity.this, result, Toast.LENGTH_SHORT).show();
                     // result += oj.result.address;
                 }
@@ -210,7 +219,7 @@ public class TaskPostActivity extends AppCompatActivity {
 
             }
         });
-    }
+    }*/
 
     private void SpinnerInit() {
         mSpinTag = (Spinner) findViewById(R.id.spinner_task_post);
@@ -259,7 +268,7 @@ public class TaskPostActivity extends AppCompatActivity {
         }
     }
 
-    boolean getTaskPost() {
+    private void getTaskPost() {
         //mId,mPpassport,mTitle,mTag,mDescription,mPrice,mPath,mActiveTime,mPosition
         mUserOperatorController = UserOperatorController.getInstance();
         mId = mUserOperatorController.getId();
@@ -267,49 +276,59 @@ public class TaskPostActivity extends AppCompatActivity {
         mTitle = mEtTitle.getText().toString();
         mDescription = mEtDescription.getText().toString();
         mPrice = mEtPrice.getText().toString();
-        mPath = mEtStart.getText().toString() + "|" + mEtdestination.getText().toString();
+        mPath = "五舍|四舍";//mEtStart.getText().toString() + "|" + mEtdestination.getText().toString();
         mActiveTime = mEtActiveTime.getText().toString();
         mPosition = latitude+","+longitude;
         //TODO:
 
-        if (mPrice.equals("") || mActiveTime.equals("") || mEtStart.getText().toString().equals("")
-                || (mEtdestination.getText().toString().equals("")))
+        /*if (mPrice.equals("") || mActiveTime.equals("")||mTitle.length()<5||mTitle.length()>25)
             return false;
         //description不能为空???
-        return true;
+        return true;*/
     }
 
 
-    //TODO: 啊啊啊这个怎么才能不跳转界面乖乖显示Toast
-    /*private void judgeEdittext()
+    private boolean judgeEdittext()
     {
-        if(mTitle.equals(""))
+        if(mTitle.length()==0)
         {
             Toast.makeText(TaskPostActivity.this, "标题不能为空哦～",Toast.LENGTH_SHORT).show();
-            return;
+            return false;
         }
-        if(mPrice.equals(""))
+        if(mTitle.length()<5)
+        {
+            Toast.makeText(TaskPostActivity.this, "标题不能少于5个字符哦～",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(mPrice.length()==0)
         {
             Toast.makeText(TaskPostActivity.this, "价格不能为空哦～",Toast.LENGTH_SHORT).show();
-            return;
+            return false;
         }
-        if(mActiveTime.equals(""))
+        if(Integer.parseInt(mPrice)<0.5)
+        {
+            Toast.makeText(TaskPostActivity.this, "价格不能低于0.5元哦～",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(mActiveTime.length()==0)
         {
             Toast.makeText(TaskPostActivity.this, "时效不能为空哦～",Toast.LENGTH_SHORT).show();
-            return;
+            return false;
         }
-        if(mEtStart.getText().toString().equals(""))
+        /*if(mEtStart.getText().toString().equals(""))
         {
             Toast.makeText(TaskPostActivity.this, "出发地不能为空哦～", Toast.LENGTH_SHORT).show();
-            return;
+            return false;
         }
         if(mEtdestination.getText().toString().equals(""))
         {
             Toast.makeText(TaskPostActivity.this, "目的地不能为空哦～", Toast.LENGTH_SHORT).show();
-            return;
-        }
+            return false;
+        }*/
 
-    }*/
+        return true;
+
+    }
 
 }
 
