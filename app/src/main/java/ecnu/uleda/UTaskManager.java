@@ -33,14 +33,27 @@ public class UTaskManager {
     private ArrayList<UTask> mTasksInList;
     private ArrayList<UTask> mTasksInMap;
 
-    private int mNumber;
+    public static final String PRICE_DES="priceDes";
+    public static final String PRICE_ASC="priceAsc";
+    public static final String DISTANCE="distance";
+    private String mSortBy=PRICE_DES;
+    private String mTag="全部";
+    private String mLocation="31.2296,121.403";
     public static UTaskManager getInstance(){
         if(sInstance==null){
             sInstance=new UTaskManager();
         }
         return sInstance;
     }
-
+    public void setLocation(String loc){
+        mLocation=loc;
+    }
+    public void setSortBy(String sortBy){
+        mSortBy=sortBy;
+    }
+    public void setTag(String tag){
+        mTag=tag;
+    }
     public ArrayList<UTask> getTasksInList(){
         return mTasksInList;
     }
@@ -67,11 +80,11 @@ public class UTaskManager {
                 JSONArray array = ServerAccessApi.getTaskList(
                         mUOC.getId(),
                         mUOC.getPassport(),
-                        "priceDes",
+                        mSortBy,
                         "0",
                         "10",
-                        "全部",
-                        "31.2296,121.403");
+                        mTag,
+                        mLocation);
                 mTasksInList.clear();
                 int length=array.length();
                 for(int i=0;i<length;i++){
@@ -97,6 +110,41 @@ public class UTaskManager {
     }
     public void loadMoreTaskInList(int n)throws UServerAccessException{
         //TODO：从目前任务列表的最后一项开始向后从服务器获取n个任务项
+        mUOC=UserOperatorController.getInstance();
+        String start=mTasksInList.get(mTasksInList.size()-1).getPostID();
+        if(!mUOC.getIsLogined()){
+            throw new UServerAccessException(UServerAccessException.UN_LOGIN);
+        }else{
+            try {
+                JSONArray array = ServerAccessApi.getTaskList(
+                        mUOC.getId(),
+                        mUOC.getPassport(),
+                        mSortBy,
+                        start,
+                        String.valueOf(n),
+                        mTag,
+                        mLocation);
+                int length=array.length();
+                for(int i=0;i<length;i++){
+                    JSONObject j=array.getJSONObject(i);
+                    UTask task=new UTask()
+                            .setPath( j.getString("path") )
+                            .setTitle( j.getString("title") )
+                            .setTag( j.getString("tag") )
+                            .setPostDate(j.getLong("postdate"))
+                            .setPrice(new BigDecimal(j.getString("price")))
+                            .setAuthorID(j.getInt("author"))
+                            .setAuthorUserName(j.getString("authorUsername"))
+                            .setAuthorCredit(5)
+                            .setPostID(j.getString("postID"))
+                            .setActiveTime(j.getLong("activetime"));
+                    mTasksInList.add(task);
+                }
+            }catch (JSONException e){
+                e.printStackTrace();
+                System.exit(1);
+            }
+        }
     }
     public void init()throws UServerAccessException{
         //TODO:初始化任务列表
