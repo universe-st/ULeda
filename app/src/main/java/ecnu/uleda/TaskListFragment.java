@@ -93,6 +93,7 @@ public class TaskListFragment extends Fragment {
                     UServerAccessException e=(UServerAccessException)msg.obj;
                     String error=e.getMessage();
                     mListView.completeRefresh();
+                    if(e.getStatus()!=UServerAccessException.DATABASE_ERROR)
                     Toast.makeText(TaskListFragment.this.getActivity(),"网络异常："+error,Toast.LENGTH_SHORT).show();
                 default:
                     break;
