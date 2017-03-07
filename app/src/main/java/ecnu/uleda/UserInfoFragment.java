@@ -103,8 +103,8 @@ implements View.OnClickListener{
             @Override
             public void run() {
                 try {
-                    mUserInfo = UserOperatorController.getInstance().getMyInfo();
                     if(mUserOperatorController.getIsLogined()) {
+                        mUserInfo = UserOperatorController.getInstance().getMyInfo();
                         Message message = new Message();
                         message.what = 0;
                         mHandler.sendMessage(message);

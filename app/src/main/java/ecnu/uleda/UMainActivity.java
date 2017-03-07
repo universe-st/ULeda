@@ -123,7 +123,7 @@ public class UMainActivity extends AppCompatActivity {
 
             }
         });
-        mViewPager.setOffscreenPageLimit(5);
+        mViewPager.setOffscreenPageLimit(2);
         mButtons = new Button[5];
         mButtons[0] = (Button) findViewById(R.id.map_button);
         mButtons[1] = (Button) findViewById(R.id.task_button);
