@@ -65,6 +65,7 @@ implements View.OnClickListener{
         public void handleMessage(Message msg){
             if(msg.what==0){
                 mTask=(UTask)msg.obj;
+                listViewInit();
                 mapInit();
             }else{
                 Toast.makeText(TaskDetailsActivity.this,"错误："+(String)msg.obj,Toast.LENGTH_SHORT).show();
@@ -212,6 +213,7 @@ implements View.OnClickListener{
                             .setPostDate(j.getLong("postdate"))
                             .setPrice(new BigDecimal(j.getString("price")))
                             .setAuthorID(j.getInt("author"))
+                            .setDescription(j.getString("description"))
                             .setAuthorUserName(j.getString("authorUsername"))
                             .setAuthorCredit(5)
                             .setPostID(mTask.getPostID())
@@ -240,7 +242,6 @@ implements View.OnClickListener{
             }
         }.start();
         init();
-        listViewInit();
     }
 
 
