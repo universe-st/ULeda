@@ -60,7 +60,7 @@ public class LocationListActivity extends AppCompatActivity {
 
         getLocation();
 
-        getNearBy();
+        //getNearBy();
 
 
 
@@ -99,6 +99,7 @@ public class LocationListActivity extends AppCompatActivity {
                 }
                 latitude = (float) tencentLocation.getLatitude();
                 longitude = (float) tencentLocation.getLongitude();
+                getNearBy();
             }
 
             @Override
@@ -115,7 +116,7 @@ public class LocationListActivity extends AppCompatActivity {
         SearchParam.Nearby mNearBy = new SearchParam.Nearby().point(mLocation);
         mNearBy.r(2000);//= 2000f;
         SearchParam mSearchParam = new SearchParam().keyword("银行").boundary(mNearBy);
-        //mSearchParam.page_size(20);
+        mSearchParam.page_size(20);
 
         mTencentSearch.search(mSearchParam,new HttpResponseListener() {
             @Override
@@ -125,7 +126,7 @@ public class LocationListActivity extends AppCompatActivity {
                     result = "poi";
                     for (SearchResultObject.SearchResultData data : oj.data) {
                         Log.v("demo", "title:" + data.address);
-                        result = data.address + "\n";
+                        result = data.address + "";
 
                     }
                 }

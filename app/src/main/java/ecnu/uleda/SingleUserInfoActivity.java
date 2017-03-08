@@ -70,7 +70,7 @@ public class SingleUserInfoActivity extends AppCompatActivity {
         sYear = String.valueOf(year);
         textViewUserAge.setText(sYear);
 
-        textViewUsersign.setText("求实创造 为人师表");
+        textViewUsersign.setText(mUserInfo.getSignature());
 
         schoolClass = mUserInfo.getSchoolClass();
         //userClass = schoolClass.split("\\|");
