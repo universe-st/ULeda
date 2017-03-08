@@ -153,8 +153,11 @@ public class UMainActivity extends AppCompatActivity {
             Intent it = new Intent(this, LoginActivity.class);
             startActivity(it);
         }
-        else  changeToView(i);
+        else{
+
+            changeToView(i);
         }
+    }
 
     //主Activity翻页
     public void changeToView(int i) {
