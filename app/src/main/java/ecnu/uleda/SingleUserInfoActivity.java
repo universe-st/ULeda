@@ -54,7 +54,7 @@ public class SingleUserInfoActivity extends AppCompatActivity {
         buttonAddUser = (Button) findViewById(R.id.button_adduser);
         buttonSendmsg = (Button) findViewById(R.id.button_sendmsg);
 
-        textViewUserName.setText(mUserInfo.getRealName());
+        textViewUserName.setText(mUserInfo.getUserName());
 
         if(mUserInfo.getSex()==0)
             textViewUserSex.setText("♂");
@@ -70,7 +70,7 @@ public class SingleUserInfoActivity extends AppCompatActivity {
         sYear = String.valueOf(year);
         textViewUserAge.setText(sYear);
 
-        textViewUsersign.setText("求实创造 为人师表");
+        textViewUsersign.setText(mUserInfo.getSignature());
 
         schoolClass = mUserInfo.getSchoolClass();
         //userClass = schoolClass.split("\\|");
