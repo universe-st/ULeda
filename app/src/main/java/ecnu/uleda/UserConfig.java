@@ -30,50 +30,33 @@ public class UserConfig {
     private boolean msoundIsOn;
     private String username;
     private String userpassword;
-    private   String USER_SETTINGS = "ueserSettings.json";
+    private static final String USER_SETTINGS = "ueserSettings.json";
     private Context context;
 
     private UserConfig(Context context){
         this.context = context;
+        String jsonData = Read();
+        try{
+            JSONObject j = new JSONObject(jsonData);
+            msoundIsOn = j.getBoolean("soundIsOn");
+            username = j.getString("username");
+            userpassword = j.getString("userpassword");
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
     }
 
     public String getSavedUsernamePassword()
     {
         //TODO:读取用户密码
-        String jsonData = null;
-        jsonData = Read();
-        if(jsonData != null)
-        {
-            try{
-                JSONObject j = new JSONObject(jsonData);
-                String muserpassword = j.getString("userpassword");
-                return muserpassword;
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-        }
-
-        return null;
+        return userpassword;
     }
     public String getSavedUsername()
     {
-        String jsonData = null;
-        jsonData = Read();
-        if(jsonData != null)
-        {
-            try{
-                JSONObject j = new JSONObject(jsonData);
-                String musername = j.getString("username");
-                return musername;
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-        }
-         return null;
+       return username;
     }
     public void setSavedUsernamePassword(String musername,String muserpassword)throws Exception
     {
@@ -85,34 +68,12 @@ public class UserConfig {
 
     public boolean soundIsOn(){
         //TODO:加入判断声音是否开启的代码
-        String jsonData = null;
-        jsonData = Read();
-        if(jsonData != null)
-        {
-            try{
-                JSONObject j = new JSONObject(jsonData);
-                boolean ison = j.getBoolean("soundIsOn");
-                if(ison == false)
-                {
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
 
-        }
-       return true;
+         return msoundIsOn;
     }
 
     public void setSoundOn(boolean set)throws Exception{
         //TODO:设置声音是否开启
-
         msoundIsOn = set;
         saveConfigToFile();
     }
@@ -147,12 +108,12 @@ public class UserConfig {
         }
         return content.toString();
     }
-    private JSONObject toJSON() throws JSONException
+    public JSONObject toJSON() throws JSONException
     {
         JSONObject j = new JSONObject();
+        j.put("soundIsOn",msoundIsOn);
         j.put("username",username);
         j.put("userpassword",userpassword);
-        j.put("soundIsOn",msoundIsOn);
         return j;
     }
     public void saveConfigToFile()throws FileNotFoundException{
@@ -163,9 +124,7 @@ public class UserConfig {
             w = new BufferedWriter(new OutputStreamWriter(output));
             JSONObject j = new JSONObject();
             j = toJSON();
-            JSONArray ja = new JSONArray();
-            ja.put(j);
-            w.write(ja.toString());
+            w.write(j.toString());
         }
         catch (Exception e)
         {
