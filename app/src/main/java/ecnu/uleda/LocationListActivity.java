@@ -71,7 +71,6 @@ public class LocationListActivity extends AppCompatActivity {
 
         getLocation();
 
-
         //mTaskListAdapter=(TaskListAdapter)mUTaskManager
           //      .setListView(mListView,this.getActivity().getApplicationContext());
 
@@ -117,7 +116,7 @@ public class LocationListActivity extends AppCompatActivity {
         Location mLocation = new Location().lat(latitude).lng(longitude);
         SearchParam.Nearby mNearBy = new SearchParam.Nearby().point(mLocation);
         mNearBy.r(4000);//= 2000f;
-        SearchParam object = new SearchParam().keyword("舍").boundary(mNearBy);
+        SearchParam object = new SearchParam().keyword("华东师范").boundary(mNearBy);
         object.page_size(20);
 
         mTencentSearch.search(object,new HttpResponseListener() {
@@ -128,7 +127,7 @@ public class LocationListActivity extends AppCompatActivity {
                     //result = "poi";
                     for (SearchResultObject.SearchResultData data : oj.data) {
                         //Log.v("demo", "title:" + data.address);
-                        list.add(data.address);
+                        list.add(data.title);
                     }
                 }
                 address = list.toArray(new String[list.size()]);
