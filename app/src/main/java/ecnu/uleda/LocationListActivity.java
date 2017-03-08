@@ -41,10 +41,12 @@ public class LocationListActivity extends AppCompatActivity {
     private float latitude = 0;
     private float longitude = 0;
     private String result;
+    private String[] address=new String[50];
     private ListView mlistView;
     private List LocationList;
 
-    private Button mButtontest ;
+    private ArrayList<String> list = new ArrayList<String>();
+    //private Button mButtontest ;
 
 
     @Override
@@ -56,19 +58,18 @@ public class LocationListActivity extends AppCompatActivity {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
 
-        mButtontest= (Button)findViewById(R.id.test);
+        /*mButtontest= (Button)findViewById(R.id.test);
 
-        getLocation();
+
 
         //getNearBy();
-
-
-
         mButtontest.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                mButtontest.setText(result);
+                mButtontest.setText(address[1]);
             }
-        });
+        });*/
+
+        getLocation();
 
 
         //mTaskListAdapter=(TaskListAdapter)mUTaskManager
@@ -83,7 +84,7 @@ public class LocationListActivity extends AppCompatActivity {
         setListViewClick();*/
     }
 
-    private void  getLocation()
+    private void getLocation()
     {
         mLocationManager = TencentLocationManager.getInstance(this.getApplication());
 
@@ -99,6 +100,7 @@ public class LocationListActivity extends AppCompatActivity {
                 }
                 latitude = (float) tencentLocation.getLatitude();
                 longitude = (float) tencentLocation.getLongitude();
+
                 getNearBy();
             }
 
@@ -114,22 +116,23 @@ public class LocationListActivity extends AppCompatActivity {
         mTencentSearch = new TencentSearch(getApplicationContext());
         Location mLocation = new Location().lat(latitude).lng(longitude);
         SearchParam.Nearby mNearBy = new SearchParam.Nearby().point(mLocation);
-        mNearBy.r(2000);//= 2000f;
-        SearchParam mSearchParam = new SearchParam().keyword("银行").boundary(mNearBy);
-        mSearchParam.page_size(20);
+        mNearBy.r(4000);//= 2000f;
+        SearchParam object = new SearchParam().keyword("舍").boundary(mNearBy);
+        object.page_size(20);
 
-        mTencentSearch.search(mSearchParam,new HttpResponseListener() {
+        mTencentSearch.search(object,new HttpResponseListener() {
             @Override
             public void onSuccess(int i, BaseObject baseObject) {
                 SearchResultObject oj = (SearchResultObject) baseObject;
                 if (oj.data != null) {
-                    result = "poi";
+                    //result = "poi";
                     for (SearchResultObject.SearchResultData data : oj.data) {
-                        Log.v("demo", "title:" + data.address);
-                        result = data.address + "";
-
+                        //Log.v("demo", "title:" + data.address);
+                        list.add(data.address);
                     }
                 }
+                address = list.toArray(new String[list.size()]);
+                listInit();
             }
             @Override
             public void onFailure(int i, String s, Throwable throwable) {
@@ -148,6 +151,13 @@ public class LocationListActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    private void listInit(){
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>
+                (LocationListActivity.this,android.R.layout.simple_list_item_1,address);
+        ListView listview = (ListView)findViewById(R.id.list_view_location);
+        listview.setAdapter(adapter);
     }
 
 }
