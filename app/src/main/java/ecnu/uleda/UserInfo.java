@@ -1,40 +1,136 @@
 package ecnu.uleda;
 
-import android.util.Log;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.io.Serializable;
 
 /**
  * Created by Shensheng on 2016/10/28.
+ * 用户信息
  */
 
-public class UserInfo {
-    public static final String NAME="name";
-    public static final String AVATAR="avatar";
-    //测试代码
-    public int mResource;
-    //传入头像资源ID
-    //测试代码
-    private JSONObject mJSON;
-    public UserInfo(JSONObject json){
-        mJSON=json;
-    }
-    public String getName(){
-        return get(NAME);
+public class UserInfo implements Serializable {
+    public static int FORBID=-1;
+    public static int NORMAL=0;
+
+    public static int MALE=0;
+    public static int FEMALE=1;
+
+    private String mUserName;
+    private int mUserType;
+    private int mSex;
+    private String mBirthday;
+    private String mAvatar;
+    private String mSchool;
+    private String mSchoolClass;
+    private String mStudentId;
+    private String mRealName;
+    private String mPhone;
+    private String mId;
+    private String mSignature;
+
+    public String getSignature() {
+        return mSignature;
     }
 
-    public String getAvatar(){
-        return get(AVATAR);
+    public UserInfo setSignature(String signature) {
+        mSignature = signature;
+        return this;
     }
 
-    private String get(String key){
-        String ret="#undefined";
-        try{
-            ret=mJSON.getString(key);
-        }catch (JSONException e){
-            Log.d("UserInfo",e.toString());
-        }
-        return ret;
+    public String getUserName(){
+        return mUserName;
+    }
+    public UserInfo setUserName(String userName){
+        mUserName=userName;
+        return this;
+    }
+    public String getId() {
+        return mId;
+    }
+
+    public UserInfo setId(String id) {
+        mId = id;
+        return this;
+    }
+
+    public int getUserType() {
+        return mUserType;
+    }
+
+    public UserInfo setUserType(int userType) {
+        mUserType = userType;
+        return this;
+    }
+
+    public int getSex() {
+        return mSex;
+    }
+
+    public UserInfo setSex(int sex) {
+        mSex = sex;
+        return this;
+    }
+
+    public String getBirthday() {
+        return mBirthday;
+    }
+
+    public UserInfo setBirthday(String birthday) {
+        mBirthday = birthday;
+        return this;
+    }
+
+    public String getAvatar() {
+        return mAvatar;
+    }
+
+    public UserInfo setAvatar(String avatar) {
+        mAvatar = avatar;
+        return this;
+    }
+
+    public String getSchool() {
+        return mSchool;
+    }
+
+    public UserInfo setSchool(String school) {
+        mSchool = school;
+        return this;
+    }
+
+    public String getSchoolClass() {
+        return mSchoolClass;
+    }
+
+    public UserInfo setSchoolClass(String schoolClass) {
+        mSchoolClass = schoolClass;
+        return this;
+    }
+
+    public String getStudentId() {
+        return mStudentId;
+    }
+
+    public UserInfo setStudentId(String studentId) {
+        mStudentId = studentId;
+        return this;
+    }
+
+    public String getRealName() {
+        return mRealName;
+    }
+
+    public UserInfo setRealName(String realName) {
+        mRealName = realName;
+        return this;
+    }
+
+    public String getPhone() {
+        return mPhone;
+    }
+
+    public UserInfo setPhone(String phone) {
+        mPhone = phone;
+        return this;
     }
 }

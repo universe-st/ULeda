@@ -34,14 +34,52 @@ public class UCircleFragment extends Fragment {
 
         //测试代码
         mCircleList = new ArrayList<>();
-        UCircle uc1 = new UCircle(R.drawable.model1,"heikezy","高数求解","求一操作系统要跪求一位大神带带高数跪求！！","4分钟前","5",0);
-        UCircle uc2 = new UCircle(R.drawable.model2,"杨先生","求操作系统答案","操作系统！","8分钟前","5",0);
-        UCircle uc3 = new UCircle(R.drawable.model3,"大佬","求虐","精通c++java线代数论，求虐求暴打！233333333333","4分钟前","5",R.drawable.kk);
-        UCircle uc4 = new UCircle(R.drawable.model4,"美少女","找男友","过年带回家玩耍","4分钟前","5",0);
-        mCircleList.add(uc1);
-        mCircleList.add(uc2);
-        mCircleList.add(uc3);
-        mCircleList.add(uc4);
+        mCircleList.add(new UCircle()
+                .setmPhotoId(R.drawable.user1)
+                .setmName("黄老邪")
+                .setmTitle("找黄蓉")
+                .setmArticle("黄蓉这个臭丫头又和郭靖那个傻小子跑了，谁把她找回来，" +
+                        "本岛主重重有赏")
+                .setmTime("9分钟前")
+                .setmGet("9")
+                .setmDynamic_Photo(0)
+        );
+        mCircleList.add(new UCircle()
+                .setmPhotoId(R.drawable.user2)
+                .setmName("老顽童")
+                .setmTitle("寻找九阴真经")
+                .setmArticle("黄老邪和他鬼灵精怪的老婆把我师兄给我的九阴真经给骗走了！！！！")
+                .setmTime("10分钟前")
+                .setmGet("9")
+                .setmDynamic_Photo(0)
+        );
+        mCircleList.add(new UCircle()
+                .setmPhotoId(R.drawable.user3)
+                .setmName("杨康")
+                .setmTitle("报仇")
+                .setmArticle("完颜洪烈这个贼人，害我亲生父母，并且让我认贼作父20多年，我要杀了你")
+                .setmTime("11分钟前")
+                .setmGet("11")
+                .setmDynamic_Photo(0)
+        );
+        mCircleList.add(new UCircle()
+                .setmPhotoId(R.drawable.user4)
+                .setmName("郭靖")
+                .setmTitle("报杀父之仇")
+                .setmArticle("当年在牛家村，完颜洪烈指使贼人杀我亲父，我要报仇！！！！！")
+                .setmTime("100分钟前")
+                .setmGet("11")
+                .setmDynamic_Photo(R.drawable.kk)
+        );
+        mCircleList.add(new UCircle()
+                .setmPhotoId(R.drawable.user5)
+                .setmName("黄蓉")
+                .setmTitle("找郭靖")
+                .setmArticle("婧哥哥你去哪里蓉儿就去哪里")
+                .setmTime("9分钟前")
+                .setmGet("9")
+                .setmDynamic_Photo(0)
+        );
 
         mlistView.setAdapter(new UCircleListAdapter(this.getActivity(),mCircleList));
         return v;

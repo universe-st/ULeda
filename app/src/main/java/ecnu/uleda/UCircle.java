@@ -16,51 +16,76 @@ import java.util.List;
 
 public class UCircle {
 
-    public  int PHOTOId;
-    public  String NAME = "publisher_name";
-    public  String TITLE = "Title";
-    public  String ARTICLE = "article";
-    public  String TIME = "publish_time";
-    public  String GET = "Get_zan";
-    public  int DYNAMIC_PHOTO;
-    public UCircle(int PHOTOId,String NAME,String TITLE,String ARTICLE,String TIME,String GET,int DYNAMIC_PHOTO)
-    {
-        this.PHOTOId = PHOTOId;
-        this.NAME = NAME;
-        this.TITLE = TITLE;
-        this.ARTICLE = ARTICLE;
-        this.TIME = TIME;
-        this.GET = GET;
-        this.DYNAMIC_PHOTO = DYNAMIC_PHOTO;
-    }
-    public int getDYNAMIC_PHOTO()
-    {
-        return DYNAMIC_PHOTO;
+    private   int mPhotoId;
+    private   String mName ;
+    private   String mTitle;
+    private   String mArticle ;
+    private   String mTime ;
+    private   String mGet ;
+    private   int mDynamic_Photo;
+
+    public String getmName() {
+        return mName;
     }
 
-    public int getPHOTOId()
-    {
-        return PHOTOId;
-    }
-    public String getNAME()
-    {
-        return NAME;
+    public UCircle setmName(String mName) {
+        this.mName = mName;
+        return this;
     }
 
-    public String getTITLE()
-    {
-        return TITLE;
+
+
+    public int getmDynamic_Photo() {
+        return mDynamic_Photo;
     }
-    public String getARTICLE()
-    {
-        return ARTICLE;
+
+    public UCircle setmDynamic_Photo(int mDynamic_Photo) {
+        this.mDynamic_Photo = mDynamic_Photo;
+        return this;
     }
-    public String getTIME()
-    {
-        return TIME;
+
+    public String getmGet() {
+        return mGet;
     }
-    public String getGET()
-    {
-        return GET;
+
+    public UCircle setmGet(String mGet) {
+        this.mGet = mGet;
+        return this;
+    }
+
+    public String getmTime() {
+        return mTime;
+    }
+
+    public UCircle setmTime(String mTime) {
+        this.mTime = mTime;
+        return this;
+    }
+
+    public String getmArticle() {
+        return mArticle;
+    }
+
+    public UCircle setmArticle(String mArticle) {
+        this.mArticle = mArticle;
+        return this;
+    }
+
+    public String getmTitle() {
+        return mTitle;
+    }
+
+    public UCircle setmTitle(String mTitle) {
+        this.mTitle = mTitle;
+        return this;
+    }
+
+    public int getmPhotoId() {
+        return mPhotoId;
+    }
+
+    public UCircle setmPhotoId(int mPhotoId) {
+        this.mPhotoId = mPhotoId;
+        return this;
     }
 }

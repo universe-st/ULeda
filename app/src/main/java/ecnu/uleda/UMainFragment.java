@@ -1,13 +1,23 @@
 package ecnu.uleda;
 
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.tencent.lbssearch.object.Location;
+import com.tencent.map.geolocation.TencentLocation;
+import com.tencent.map.geolocation.TencentLocationListener;
+import com.tencent.map.geolocation.TencentLocationManager;
+import com.tencent.map.geolocation.TencentLocationRequest;
 import com.tencent.mapsdk.raster.model.BitmapDescriptorFactory;
 import com.tencent.mapsdk.raster.model.LatLng;
 import com.tencent.mapsdk.raster.model.Marker;
@@ -16,6 +26,7 @@ import com.tencent.tencentmap.mapsdk.map.MapView;
 import com.tencent.tencentmap.mapsdk.map.TencentMap;
 
 import java.util.ArrayList;
+import android.Manifest;
 
 
 public class UMainFragment extends Fragment {
@@ -26,10 +37,12 @@ public class UMainFragment extends Fragment {
     private MapView mMapView;
     private TencentMap mTencentMap;
     private ArrayList<Marker> mMarkers=new ArrayList<>();
-    private UTaskManager mUTaskManager=UTaskManager.getInstance();
+    private UTaskManager mUTaskManager = UTaskManager.getInstance();
+    private TencentLocationManager mLocationManager;
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        mLocationManager = TencentLocationManager.getInstance(this.getActivity());
     }
 
     @Override
@@ -41,6 +54,7 @@ public class UMainFragment extends Fragment {
         mTencentMap.setCenter(new LatLng(31.2284994411d,121.4063922732d));
         //测试代码
         mTencentMap.setZoom(18);
+
         return v;
     }
 
@@ -71,6 +85,13 @@ public class UMainFragment extends Fragment {
     private void init(View v){
         mFab=(FloatingActionButton)v.findViewById(R.id.float_button);
         mFab.setAlpha(0.7f);
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(UMainFragment.this.getActivity(),TaskPostActivity.class);
+                startActivity(intent);
+            }
+        });
         mButtons=new Button[5];
         mButtons[0]=(Button)v.findViewById(R.id.recommended_bt);
         mButtons[1]=(Button)v.findViewById(R.id.help_each_other_bt);
@@ -107,6 +128,27 @@ public class UMainFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 setCurrent(4);
+                mLocationManager.requestLocationUpdates(TencentLocationRequest.create()
+                        .setInterval(5000)
+                        .setRequestLevel(TencentLocationRequest.REQUEST_LEVEL_ADMIN_AREA), new TencentLocationListener() {
+                    @Override
+                    public void onLocationChanged(TencentLocation tencentLocation, int i, String s) {
+                        mLocationManager.removeUpdates(this);
+                        if(i!=TencentLocation.ERROR_OK){
+                            Toast.makeText(UMainFragment.this.getActivity(),"定位错误，请检查GPS状态",Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        Navigation.getInstance(UMainFragment.this.getActivity(),mTencentMap)
+                                .startNavigation(new Location((float) tencentLocation.getLatitude(),
+                                        (float)tencentLocation.getLongitude()),
+                                        new Location(31.2296355001f,121.4034706544f));
+                    }
+
+                    @Override
+                    public void onStatusUpdate(String s, int i, String s1) {
+
+                    }
+                });
             }
         });
         setCurrent(0);
@@ -126,7 +168,6 @@ public class UMainFragment extends Fragment {
             }
         }
     }
-
     private void showMarkers(){
         if(mMarkers!=null){
             for(Marker m :mMarkers){
@@ -148,33 +189,6 @@ public class UMainFragment extends Fragment {
     }
 
     private void onPressHelpEachOtherButton(){
-        ArrayList<UTask> tasks=mUTaskManager.getTasks();
-        for(UTask t:tasks){
-            LatLng fromLocation=t.getFromLocation();
-            LatLng toLocation=t.getToLocation();
-            if(fromLocation==null && toLocation==null){
-                break;
-            }else if(toLocation==null){
-                Marker marker=mTencentMap.addMarker(new MarkerOptions()
-                        .position(fromLocation)
-                        .title(t.getShortType())
-                        .anchor(0.5f,0.5f)
-                        .icon(BitmapDescriptorFactory
-                                .defaultMarker())
-                );
-                mMarkers.add(marker);
-                showMarkers();
-            }else{
-                Marker marker=mTencentMap.addMarker(new MarkerOptions()
-                        .position(toLocation)
-                        .title(t.getShortType())
-                        .anchor(0.5f,0.5f)
-                        .icon(BitmapDescriptorFactory
-                                .defaultMarker())
-                );
-                mMarkers.add(marker);
-                showMarkers();
-            }
-        }
+        //TODO:设置【互助】按钮按下后的操作
     }
 }

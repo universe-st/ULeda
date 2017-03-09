@@ -2,23 +2,27 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+>
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="40dp">
+        android:layout_height="40dp"
+        android:background="#F8F8F8">
 
         <ImageView
             android:layout_height="match_parent"
             app:srcCompat="@drawable/add2"
             android:id="@+id/optionsimage"
-            android:layout_width="40dp" />
+            android:layout_width="40dp"
+            android:padding="7dp" />
 
         <TextView
             android:text="TextView"
             android:layout_height="match_parent"
             android:id="@+id/optionsname"
-            android:layout_width="match_parent" />
+            android:layout_width="match_parent"
+            android:gravity="center_vertical" />
     </LinearLayout>
 </LinearLayout>

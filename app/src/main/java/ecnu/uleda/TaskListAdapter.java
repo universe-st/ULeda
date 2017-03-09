@@ -41,24 +41,32 @@ public class TaskListAdapter extends ArrayAdapter<UTask> {
         }
         if(task==null)return LayoutInflater.from(getContext().getApplicationContext()).inflate(R.layout.task_list_item,parent,false);
         TextView tv=(TextView)convertView.findViewById(R.id.task_type);
-        tv.setText(task.getShortType());
+        tv.setText(task.getTag().substring(0,2));
         tv=(TextView)convertView.findViewById(R.id.publisher_name);
-        tv.setText(task.getPublisherName());
+        tv.setText(task.getAuthorUserName());
         tv=(TextView)convertView.findViewById(R.id.publisher_stars);
         tv.setText(task.getStarString());
         tv=(TextView)convertView.findViewById(R.id.task_info);
-        tv.setText(task.getShortInfo(30));
+        tv.setText(task.getTitle());
         tv=(TextView)convertView.findViewById(R.id.task_reward);
-        tv.setText(String.format(Locale.ENGLISH,"¥%.2f",task.getReward()));
-        int h=0;
-        int m=task.getLeftTime();
-        h+=(m/60);
-        m%=60;
+        tv.setText(String.format(Locale.ENGLISH,"¥%.2f",task.getPrice()));
+        long hour;
+        long min;
+        long sec;
+        long time=task.getLeftTime();
+        hour=time/3600;
+        min=(time-hour*3600)/60;
+        sec=time%60;
         String s;
-        if(h==0){
-            s=m+"分钟";
+        if(time<=0){
+            s="已失效";
+        }else if(min==0 && hour==0){
+            s=sec+"秒";
+        }
+        else if(hour==0){
+            s=min+"分钟";
         }else{
-            s=h+"小时"+m+"分钟";
+            s=hour+"小时"+min+"分钟";
         }
         tv=(TextView)convertView.findViewById(R.id.time_limit);
         tv.setText(s);

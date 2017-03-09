@@ -44,15 +44,35 @@
                 android:text="高数求解"
                 android:textSize="20sp"
                 />
-            <TextView
-                android:id="@+id/article"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:paddingLeft="5dp"
-                android:text="哪位大神能够带带高数啊跪求!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-                android:textSize="14dp"
-                android:textColor="@android:color/darker_gray"
-                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="9.5"
+                    >
+
+
+                    <TextView
+                        android:id="@+id/article"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:paddingLeft="5dp"
+                        android:text="哪位大神能够带带高数啊跪求!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+                        android:textSize="14dp"
+                        android:textColor="@android:color/darker_gray"
+                        />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    >
+
+
+                </LinearLayout>
+            </LinearLayout>
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -71,7 +91,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
 
-              >
+                >
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -80,15 +100,15 @@
                     >
 
 
-                <TextView
-                    android:id="@+id/publish_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    <TextView
+                        android:id="@+id/publish_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
 
-                    android:text="4分钟"
-                    android:paddingLeft="5dp"
+                        android:text="4分钟"
+                        android:paddingLeft="5dp"
 
-                    />
+                        />
 
                 </LinearLayout>
 
@@ -110,20 +130,20 @@
                         android:layout_height="match_parent"
                         android:layout_weight="4"
                         >
-                <ImageView
-                    android:layout_width="37dp"
-                    android:layout_height="37dp"
-                    android:src="@drawable/zan"
-                    android:paddingBottom="12dp"
-                    />
-                    <TextView
-                        android:id="@+id/Get_zan"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="5"
-                        android:textColor="@android:color/darker_gray"
+                        <ImageView
+                            android:layout_width="37dp"
+                            android:layout_height="37dp"
+                            android:src="@drawable/zan"
+                            android:paddingBottom="12dp"
+                            />
+                        <TextView
+                            android:id="@+id/Get_zan"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="5"
+                            android:textColor="@android:color/darker_gray"
 
-                        />
+                            />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
