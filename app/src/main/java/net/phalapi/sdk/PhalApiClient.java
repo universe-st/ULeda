@@ -159,7 +159,7 @@ public class PhalApiClient {
         	String rs = this.doRequest(url, this.params, this.timeoutMs);
         	return this.parser.parse(rs);
         } catch (Exception ex) {
-        	return new PhalApiClientResponse(408, "", ex.getMessage());
+        	return new PhalApiClientResponse(500, "", ex.getMessage());
         }
     }
     

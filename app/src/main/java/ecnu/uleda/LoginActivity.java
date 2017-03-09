@@ -27,7 +27,9 @@ public class LoginActivity extends AppCompatActivity {
       @Override
       public void handleMessage(Message msg){
           if(mUOC.getIsLogined()){
-              finish();
+              Intent intent=new Intent(LoginActivity.this,UMainActivity.class);
+              startActivity(intent);
+              LoginActivity.this.finish();
               Toast.makeText(LoginActivity.this,"欢迎您，"+mUOC.getUserName()+"！",Toast.LENGTH_SHORT).show();
           }else{
               Toast.makeText(LoginActivity.this,"登陆错误："+mUOC.getMessage(),Toast.LENGTH_SHORT).show();
@@ -61,6 +63,13 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void run(){
                         mUOC.login(mUserName.getText().toString(),mPassword.getText().toString());
+                        try {
+                            if(mUOC.getIsLogined()) {
+                                UTaskManager.getInstance().refreshTaskInList();
+                            }
+                        }catch (UServerAccessException e){
+                            e.printStackTrace();
+                        }
                         Log.d("LoginActivity",mUOC.getMessage());
                         Message message=new Message();
                         mHandler.sendMessage(message);

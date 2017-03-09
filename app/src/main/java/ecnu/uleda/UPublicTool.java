@@ -104,7 +104,9 @@ public class UPublicTool {
             throw new AssertionError();
         }
     }
-
+    public static int byteCount(String str){
+        return str.getBytes().length;
+    }
     private UPublicTool(){
 
     }

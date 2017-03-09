@@ -15,6 +15,7 @@ public class UserInfo implements Serializable {
     public static int MALE=0;
     public static int FEMALE=1;
 
+    private String mUserName;
     private int mUserType;
     private int mSex;
     private String mBirthday;
@@ -25,7 +26,24 @@ public class UserInfo implements Serializable {
     private String mRealName;
     private String mPhone;
     private String mId;
+    private String mSignature;
 
+    public String getSignature() {
+        return mSignature;
+    }
+
+    public UserInfo setSignature(String signature) {
+        mSignature = signature;
+        return this;
+    }
+
+    public String getUserName(){
+        return mUserName;
+    }
+    public UserInfo setUserName(String userName){
+        mUserName=userName;
+        return this;
+    }
     public String getId() {
         return mId;
     }

@@ -180,12 +180,15 @@ public class UTask implements Serializable{
         if(ret.length>1) {
             return ret[1];
         }
-        else{
+        else if(ret.length>0){
             return ret[0];
+        }
+        else{
+            return "";
         }
     }
     public long getLeftTime(){
-        return (mPostDate+mActiveTime-new Date().getTime()/1000);
+        return (mPostDate+mActiveTime-System.currentTimeMillis()/1000);
     }
     public String getStarString(){
         int c=mAuthorCredit;
