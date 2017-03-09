@@ -1,6 +1,7 @@
 package ecnu.uleda;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.icu.text.SimpleDateFormat;
 import android.os.Build;
 import android.os.Handler;
@@ -59,7 +60,10 @@ public class SingleUserInfoActivity extends AppCompatActivity {
         if(mUserInfo.getSex()==0)
             textViewUserSex.setText("♂");
         else
+        {
             textViewUserSex.setText("♀");
+            textViewUserSex.setTextColor(Color.parseColor("#FF4081"));
+        }
 
         int nowYear,userYear,year;
         Calendar c = Calendar.getInstance();
