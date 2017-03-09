@@ -39,6 +39,7 @@ public class LocationListActivity extends AppCompatActivity {
     private EditText mEditText;
     private String mKeyWord="华东师范大学";
     private Button mButton;
+    private Button mButtonBack;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,6 +96,15 @@ public class LocationListActivity extends AppCompatActivity {
             }
         });
         getLocation();
+
+        mButtonBack = (Button)findViewById(R.id.button_location_list_back);
+        mButtonBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
     }
     private void searchPOIAndPut(){
         mButton.setEnabled(false);

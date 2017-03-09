@@ -29,7 +29,7 @@ public class TaskPostActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == 0) {
-                Toast.makeText(TaskPostActivity.this, "恭喜您，提交成功～", Toast.LENGTH_SHORT).show();
+                Toast.makeText(TaskPostActivity.this, "提交成功～", Toast.LENGTH_SHORT).show();
                 finish();
             } else {
                 UServerAccessException exception = (UServerAccessException) msg.obj;
