@@ -25,8 +25,8 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2"
-            android:text="〈 返回"
-            android:textSize="20sp"
+            android:text="〈 "
+            android:textSize="25sp"
             android:gravity="left|center"
             android:background="@android:color/transparent"
             android:textColor="@android:color/white"/>
@@ -85,7 +85,7 @@
                 android:maxLength="25"
                 android:id="@+id/task_post_title"
                 android:background="@null"
-                android:hint="限25字"
+                android:hint="限5~25字"
                 android:textColorHint="@color/colorUGray"
                 android:gravity="center_vertical|left" />
         </FrameLayout>
@@ -251,18 +251,23 @@
                 android:textColor="@android:color/black"
                 android:gravity="center_vertical|left"/>
         </FrameLayout>
+
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="14">
-            <EditText
+            <Button
+                android:id="@+id/button_task_post_start"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/task_post_start"
-                android:background="@null"
-                android:textColorHint="@color/colorUGray"
-                android:gravity="center_vertical|left" />
+                android:layout_height="wrap_content"
+                android:text="选择地址"
+                android:textSize="18dp"
+                android:textColor="@color/colorUWhite"
+                android:background="@color/colorUInfo"
+                android:layout_centerHorizontal="true"
+                />
         </FrameLayout>
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -300,27 +305,15 @@
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="7">
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/task_post_destination"
-                android:background="@null"
-                android:textColorHint="@color/colorUGray"
-                android:gravity="center_vertical|left" />
-        </FrameLayout>
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="7">
+            android:layout_weight="14">
             <Button
-                android:id="@+id/button_test"
+                android:id="@+id/button_task_post_destination"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="选择地址"
                 android:textSize="18dp"
                 android:textColor="@color/colorUWhite"
-                android:background="@drawable/login_shape_button"
+                android:background="@color/colorUInfo"
                 android:layout_centerHorizontal="true"
                 />
         </FrameLayout>
