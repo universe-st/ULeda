@@ -213,7 +213,9 @@ public class TaskPostActivity extends AppCompatActivity {
         mDescription = mEtDescription.getText().toString();
         mPrice = mEtPrice.getText().toString();
         mPath = buttonStart.getText()+"|"+buttonDestination.getText();
-        mActiveTime = String.valueOf(Integer.parseInt(mEtActiveTime.getText().toString())*60);
+        String time=mEtActiveTime.getText().toString();
+        if(time.length()==0)time="0";
+        mActiveTime = String.valueOf(Integer.parseInt(time)*60);
         mPosition = latitude+","+longitude;
     }
 
