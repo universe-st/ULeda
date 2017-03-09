@@ -1,6 +1,6 @@
 package ecnu.uleda;
 
-//import android.graphics.PorterDuff;
+
 import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
@@ -17,17 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
-
-import com.tencent.lbssearch.TencentSearch;
-import com.tencent.lbssearch.httpresponse.BaseObject;
-import com.tencent.lbssearch.httpresponse.HttpResponseListener;
-import com.tencent.lbssearch.object.Location;
-import com.tencent.lbssearch.object.param.Geo2AddressParam;
-import com.tencent.lbssearch.object.result.Geo2AddressResultObject;
-import com.tencent.map.geolocation.TencentLocation;
-import com.tencent.map.geolocation.TencentLocationListener;
 import com.tencent.map.geolocation.TencentLocationManager;
-import com.tencent.map.geolocation.TencentLocationRequest;
 
 import java.util.ArrayList;
 
@@ -52,7 +42,6 @@ public class TaskPostActivity extends AppCompatActivity {
 
     static {
         taskPostArray = new ArrayList<>();
-        taskPostArray.add("全部");
         taskPostArray.add("跑腿代步");
         taskPostArray.add("生活服务");
         taskPostArray.add("学习帮助");
@@ -66,13 +55,10 @@ public class TaskPostActivity extends AppCompatActivity {
     private Spinner mSpinTag;
     private EditText mEtPrice;
     private EditText mEtActiveTime;
-    private EditText mEtStart;
-    private EditText mEtdestination;
     private EditText mEtDescription;
 
     private Button mButtonBack;
     private Button mButtonTaskPost;
-    //private Spinner spinnerTag;
     private ArrayAdapter<String> taskPostAdapter;
 
     private String mId;
@@ -87,7 +73,6 @@ public class TaskPostActivity extends AppCompatActivity {
 
     private Button buttonStart;
     private Button buttonDestination;
-    private TencentLocationManager mLocationManager;
     private float latitude = 0;
     private float longitude = 0;
 
@@ -97,8 +82,7 @@ public class TaskPostActivity extends AppCompatActivity {
         setContentView(R.layout.task_post_activity);
         init();
         SpinnerInit();
-
-        mLocationManager = TencentLocationManager.getInstance(this.getApplication());
+        SpinnerEvent();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -114,16 +98,10 @@ public class TaskPostActivity extends AppCompatActivity {
 
         mButtonTaskPost.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                SpinnerEvent();
                 getTaskPost();
-                if (!judgeEdittext()) {
-                    //Toast.makeText(TaskPostActivity.this, "请输入有效数据～", Toast.LENGTH_SHORT).show();
+                if (!judgeEditText()) {
                     return;
                 }
-                int time = Integer.parseInt(mPrice);
-                time *=60;
-                mPrice = String.valueOf(time);
-
                 new Thread() {
                     @Override
                     public void run() {
@@ -144,15 +122,23 @@ public class TaskPostActivity extends AppCompatActivity {
             }
         });
     }
-
+    @Override
+    public void onActivityResult(int request,int result,Intent data){
+        if(data==null)return;
+        if(request==100){
+            buttonStart.setText(data.getStringExtra("title"));
+        }else if(request==200){
+            buttonDestination.setText(data.getStringExtra("title"));
+            latitude=data.getFloatExtra("lat",0f);
+            longitude=data.getFloatExtra("lng",0f);
+        }
+    }
     protected void init() {
         mButtonBack = (Button) findViewById(R.id.button_task_post_back);
         mButtonTaskPost = (Button) findViewById(R.id.button_task_post);
         mEtTitle = (EditText) findViewById(R.id.task_post_title);
         mEtPrice = (EditText) findViewById(R.id.task_post_payment);
         mEtActiveTime = (EditText) findViewById(R.id.task_post_activeTime);
-        //mEtStart = (EditText) findViewById(R.id.task_post_start);
-        //mEtdestination = (EditText) findViewById(R.id.task_post_destination);
         mEtDescription = (EditText) findViewById(R.id.task_post_description);
 
 
@@ -160,66 +146,19 @@ public class TaskPostActivity extends AppCompatActivity {
         buttonStart.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Intent intent=new Intent(TaskPostActivity.this,LocationListActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent,100);
             }
-            /*@Override
+        });
+        buttonDestination=(Button)findViewById(R.id.button_task_post_destination);
+        buttonDestination.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View view) {
-                mLocationManager.requestLocationUpdates(TencentLocationRequest.create()
-                        .setInterval(5000)
-                        .setRequestLevel(TencentLocationRequest.REQUEST_LEVEL_ADMIN_AREA), new TencentLocationListener() {
-                    @Override
-                    public void onLocationChanged(TencentLocation tencentLocation, int i, String s) {
-                        mLocationManager.removeUpdates(this);
-                        if (i != TencentLocation.ERROR_OK) {
-                            Toast.makeText(TaskPostActivity.this, "定位错误，请检查GPS状态", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        latitude = (float) tencentLocation.getLatitude();
-                        longitude = (float) tencentLocation.getLongitude();
-                    }
-
-                    @Override
-                    public void onStatusUpdate(String s, int i, String s1) {
-                    }
-                });
-                //Toast.makeText(TaskPostActivity.this,""+longitude ,Toast.LENGTH_SHORT).show();
-                //getNearAdd();
-            }*/
-
+                Intent intent=new Intent(TaskPostActivity.this,LocationListActivity.class);
+                startActivityForResult(intent,200);
+            }
         });
     }
 
-    /*private void getNearAdd() {
-
-        TencentSearch mtencentSearch = new TencentSearch(getApplicationContext());
-        Geo2AddressParam param = new Geo2AddressParam().location(new Location().lat(latitude).lng(longitude));
-        param.get_poi(true);
-        mtencentSearch.geo2address(param, new HttpResponseListener() {
-            @Override
-            public void onSuccess(int i, BaseObject baseObject) {
-                if (baseObject != null) {
-
-
-                    Geo2AddressParam param = new Geo2AddressParam().location(new Location().lat(latitude).lng(longitude));
-                    param.get_poi(true);
-
-                    Geo2AddressResultObject oj = (Geo2AddressResultObject) baseObject;
-                    String result = oj.result.address;
-                    *//*if (oj.result != null) {
-                        Log.v("demo", "address:" + oj.result.address);
-                        result += oj.result.address;
-                    }*//*
-                    Toast.makeText(TaskPostActivity.this, result, Toast.LENGTH_SHORT).show();
-                    // result += oj.result.address;
-                }
-            }
-
-            @Override
-            public void onFailure(int i, String s, Throwable throwable) {
-
-            }
-        });
-    }*/
 
     private void SpinnerInit() {
         mSpinTag = (Spinner) findViewById(R.id.spinner_task_post);
@@ -254,9 +193,7 @@ public class TaskPostActivity extends AppCompatActivity {
         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             String price = mEtPrice.getText().toString();
             int posDot = price.indexOf('.');
-            if (posDot <= 0)
-                return;
-            else if (price.length() - posDot - 1 > 2) {
+            if (posDot>0 &&price.length() - posDot - 1 > 2) {
                 String string;
                 string = price.substring(0, price.length() - 1);
                 mEtPrice.setText(string);
@@ -269,35 +206,32 @@ public class TaskPostActivity extends AppCompatActivity {
     }
 
     private void getTaskPost() {
-        //mId,mPpassport,mTitle,mTag,mDescription,mPrice,mPath,mActiveTime,mPosition
         mUserOperatorController = UserOperatorController.getInstance();
         mId = mUserOperatorController.getId();
         mPpassport = mUserOperatorController.getPassport();
         mTitle = mEtTitle.getText().toString();
         mDescription = mEtDescription.getText().toString();
         mPrice = mEtPrice.getText().toString();
-        mPath = "五舍|四舍";//mEtStart.getText().toString() + "|" + mEtdestination.getText().toString();
-        mActiveTime = mEtActiveTime.getText().toString();
+        mPath = buttonStart.getText()+"|"+buttonDestination.getText();
+        mActiveTime = String.valueOf(Integer.parseInt(mEtActiveTime.getText().toString())*60);
         mPosition = latitude+","+longitude;
-        //TODO:
-
-        /*if (mPrice.equals("") || mActiveTime.equals("")||mTitle.length()<5||mTitle.length()>25)
-            return false;
-        //description不能为空???
-        return true;*/
     }
 
 
-    private boolean judgeEdittext()
+    private boolean judgeEditText()
     {
         if(mTitle.length()==0)
         {
             Toast.makeText(TaskPostActivity.this, "标题不能为空哦～",Toast.LENGTH_SHORT).show();
             return false;
         }
-        if(mTitle.length()<5)
+        if(UPublicTool.byteCount(mTitle)<5)
         {
-            Toast.makeText(TaskPostActivity.this, "标题不能少于5个字符哦～",Toast.LENGTH_SHORT).show();
+            Toast.makeText(TaskPostActivity.this, "标题不能少于5个字节哦～",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(UPublicTool.byteCount(mTitle)>30){
+            Toast.makeText(TaskPostActivity.this, "标题不能多于30个字节哦～",Toast.LENGTH_SHORT).show();
             return false;
         }
         if(mPrice.length()==0)
@@ -305,7 +239,10 @@ public class TaskPostActivity extends AppCompatActivity {
             Toast.makeText(TaskPostActivity.this, "价格不能为空哦～",Toast.LENGTH_SHORT).show();
             return false;
         }
-        if(Integer.parseInt(mPrice)<0.5)
+        if(UPublicTool.byteCount(mDescription)>450){
+            Toast.makeText(TaskPostActivity.this, "描述不能多于225个字哦～",Toast.LENGTH_SHORT).show();
+        }
+        if(Float.parseFloat(mPrice)<0.5f)
         {
             Toast.makeText(TaskPostActivity.this, "价格不能低于0.5元哦～",Toast.LENGTH_SHORT).show();
             return false;
@@ -315,17 +252,6 @@ public class TaskPostActivity extends AppCompatActivity {
             Toast.makeText(TaskPostActivity.this, "时效不能为空哦～",Toast.LENGTH_SHORT).show();
             return false;
         }
-        /*if(mEtStart.getText().toString().equals(""))
-        {
-            Toast.makeText(TaskPostActivity.this, "出发地不能为空哦～", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if(mEtdestination.getText().toString().equals(""))
-        {
-            Toast.makeText(TaskPostActivity.this, "目的地不能为空哦～", Toast.LENGTH_SHORT).show();
-            return false;
-        }*/
-
         return true;
 
     }
