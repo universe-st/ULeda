@@ -1,16 +1,17 @@
 package ecnu.uleda;
 
-import android.content.Intent;
+
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,21 +21,16 @@ import com.tencent.lbssearch.httpresponse.BaseObject;
 import com.tencent.lbssearch.httpresponse.HttpResponseListener;
 import com.tencent.lbssearch.object.Location;
 import com.tencent.lbssearch.object.param.SearchParam;
-import com.tencent.lbssearch.object.result.Geo2AddressResultObject;
 import com.tencent.lbssearch.object.result.SearchResultObject;
 import com.tencent.map.geolocation.TencentLocation;
 import com.tencent.map.geolocation.TencentLocationListener;
 import com.tencent.map.geolocation.TencentLocationManager;
 import com.tencent.map.geolocation.TencentLocationRequest;
-
 import java.util.ArrayList;
-import java.util.List;
 
 public class LocationListActivity extends AppCompatActivity {
 
     private TencentLocationManager mLocationManager;
-    private SearchResultObject mSearchResultObject;
-    private SearchResultObject.SearchResultData mSearchResultData;
     private TencentSearch mTencentSearch;
     private float latitude = 0;
     private float longitude = 0;
@@ -42,8 +38,9 @@ public class LocationListActivity extends AppCompatActivity {
     private Location mLocation=null;
     private int mPageIndex=1;
     private ArrayList<String[]> list = new ArrayList<>();
-
-
+    private EditText mEditText;
+    private String mKeyWord="华东师范大学";
+    private Button mButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +48,24 @@ public class LocationListActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
+        mEditText=(EditText)findViewById(R.id.location_edit_text);
+        mEditText.setText(mKeyWord);
+        mEditText.setSelection(mKeyWord.length());
+        mButton=(Button)findViewById(R.id.location_choose_button);
+        mButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String str=mEditText.getText().toString();
+                if(str.length()==0){
+                    Toast.makeText(LocationListActivity.this,"不能为空",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                list.clear();
+                mPageIndex=0;
+                mKeyWord=str;
+                searchPOIAndPut();
+            }
+        });
         mListView=(ListView)findViewById(R.id.list_view_location);
         mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
@@ -71,9 +86,10 @@ public class LocationListActivity extends AppCompatActivity {
         getLocation();
     }
     private void searchPOIAndPut(){
+        mButton.setEnabled(false);
         SearchParam.Nearby mNearBy = new SearchParam.Nearby().point(mLocation);
         mNearBy.r(5000);
-        SearchParam object = new SearchParam().keyword("华东师范").boundary(mNearBy);
+        SearchParam object = new SearchParam().keyword(mKeyWord).boundary(mNearBy);
         object.page_size(20);
         object.page_index(mPageIndex);
         mTencentSearch.search(object,new HttpResponseListener() {
@@ -87,10 +103,12 @@ public class LocationListActivity extends AppCompatActivity {
                     }
                 }
                 setListViewAdapter();
-                mListView.setSelection(loc+1);
+                mListView.setSelection(loc==0?0:loc+1);
+                mButton.setEnabled(true);
             }
             @Override
             public void onFailure(int i, String s, Throwable throwable) {
+                mButton.setEnabled(true);
             }
         });
     }
