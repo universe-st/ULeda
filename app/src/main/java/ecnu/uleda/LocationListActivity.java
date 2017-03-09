@@ -1,19 +1,17 @@
 package ecnu.uleda;
 
 
+import android.content.Intent;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tencent.lbssearch.TencentSearch;
@@ -37,7 +35,7 @@ public class LocationListActivity extends AppCompatActivity {
     private ListView mListView;
     private Location mLocation=null;
     private int mPageIndex=1;
-    private ArrayList<String[]> list = new ArrayList<>();
+    private ArrayList<SearchResultObject.SearchResultData> list = new ArrayList<>();
     private EditText mEditText;
     private String mKeyWord="华东师范大学";
     private Button mButton;
@@ -52,6 +50,7 @@ public class LocationListActivity extends AppCompatActivity {
         mEditText.setText(mKeyWord);
         mEditText.setSelection(mKeyWord.length());
         mButton=(Button)findViewById(R.id.location_choose_button);
+        mButton.setEnabled(false);
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -83,6 +82,18 @@ public class LocationListActivity extends AppCompatActivity {
 
             }
         });
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                SearchResultObject.SearchResultData a=list.get(i);
+                Intent intent=new Intent();
+                intent.putExtra("title",a.title);
+                intent.putExtra("lat",a.location.lat);
+                intent.putExtra("lng",a.location.lng);
+                LocationListActivity.this.setResult(0,intent);
+                LocationListActivity.this.finish();
+            }
+        });
         getLocation();
     }
     private void searchPOIAndPut(){
@@ -99,7 +110,7 @@ public class LocationListActivity extends AppCompatActivity {
                 int loc=mListView.getFirstVisiblePosition();
                 if (oj.data != null) {
                     for (SearchResultObject.SearchResultData data : oj.data) {
-                        list.add(new String[]{data.title,data.address});
+                        list.add(data);
                     }
                 }
                 setListViewAdapter();
