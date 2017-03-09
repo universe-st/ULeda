@@ -50,7 +50,8 @@
         <activity android:name=".SettingUserPhoneActivity" />
         <activity android:name=".bottom_dialog" />
         <activity android:name=".Mywallet_RechargeActivity" />
-        <activity android:name=".PopupwindowActivity"></activity>
+        <activity android:name=".PopupwindowActivity" />
+        <activity android:name=".Community"></activity>
     </application>
 
 </manifest>
