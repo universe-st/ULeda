@@ -70,9 +70,13 @@ public class TaskPostActivity extends AppCompatActivity {
     private String mPath;
     private String mActiveTime;
     private String mPosition;
+    private String mStart;
+    private String mDestination;
 
     private Button buttonStart;
     private Button buttonDestination;
+    private Button buttonDeleteStart;
+    private Button buttonDeleteDestination;
     private float latitude = 0;
     private float longitude = 0;
 
@@ -157,6 +161,18 @@ public class TaskPostActivity extends AppCompatActivity {
                 startActivityForResult(intent,200);
             }
         });
+        buttonDeleteStart=(Button)findViewById(R.id.button_delete_start);
+        buttonDeleteStart.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View view){
+                buttonStart.setText("选择地址");
+            }
+        });
+        buttonDeleteDestination=(Button)findViewById(R.id.button_delete_destination);
+        buttonDeleteDestination.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View view){
+                buttonDestination.setText("选择地址");
+            }
+        });
     }
 
 
@@ -212,7 +228,9 @@ public class TaskPostActivity extends AppCompatActivity {
         mTitle = mEtTitle.getText().toString();
         mDescription = mEtDescription.getText().toString();
         mPrice = mEtPrice.getText().toString();
-        mPath = buttonStart.getText()+"|"+buttonDestination.getText();
+        mStart = buttonStart.getText().toString();
+        mDestination = buttonDestination.getText().toString();
+        mPath = mStart+"|"+mDestination;
         String time=mEtActiveTime.getText().toString();
         if(time.length()==0)time="0";
         mActiveTime = String.valueOf(Integer.parseInt(time)*60);
@@ -254,6 +272,22 @@ public class TaskPostActivity extends AppCompatActivity {
             Toast.makeText(TaskPostActivity.this, "时效不能为空哦～",Toast.LENGTH_SHORT).show();
             return false;
         }
+        if(!mStart.equals("选择地址") && mDestination.equals("选择地址") )
+        {
+            Toast.makeText(TaskPostActivity.this,"请选择目的地哦～",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(mStart.equals("选择地址") && !mDestination.equals("选择地址"))
+        {
+            mPath = ""+"|"+mDestination;
+            return true;
+        }
+        if(mStart.equals("选择地址") && mDestination.equals("选择地址"))
+        {
+            mPath = "|";
+            return true;
+        }
+
         return true;
 
     }

@@ -64,11 +64,12 @@
                 android:id="@+id/location_edit_text"
                 android:background="@color/colorUWhite"
                 android:hint="搜索其他位置"
+                android:paddingLeft="5dp"
                 android:textColorHint="@color/colorUGray"
                 android:layout_marginTop="7dp"
                 android:layout_marginBottom="7dp"
                 android:layout_marginLeft="7dp"
-                android:layout_marginRight="7dp" />
+                android:layout_marginRight="7dp"/>
             <Button
                 android:background="@drawable/login_shape_button"
                 android:textColor="@android:color/white"
