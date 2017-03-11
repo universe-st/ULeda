@@ -17,17 +17,17 @@ import java.util.List;
 
 public class Community extends AppCompatActivity {
     private List<Msg> messageList = new ArrayList<Msg>();
+    private Button button_back;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_community);
 
-        Button button_back = (Button)findViewById(R.id.button_back);
+        button_back = (Button)findViewById(R.id.button_back);
         button_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Community.this,MessageFragment.class);
-                startActivity(intent);
+                finish();
             }
         });
 

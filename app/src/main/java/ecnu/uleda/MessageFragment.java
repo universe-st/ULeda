@@ -1,6 +1,7 @@
 package ecnu.uleda;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -41,6 +43,20 @@ public class MessageFragment extends Fragment {
         View view=inflater.inflate(R.layout.message_fragment,container,false);
         MessageListview=(ListView)view.findViewById(R.id.message_list_view);
         MessageListview.setAdapter(adapter);
+        MessageListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(MessageList.get(position).equals("社区消息"));
+                {
+                    Intent i = new Intent(MessageFragment.this.getActivity(),Community.class);
+                    startActivity(i);
+                }
+            }
+        });
+
+
+
+
         return view;
     }
 
