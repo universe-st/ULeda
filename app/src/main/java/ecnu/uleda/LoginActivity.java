@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -23,6 +24,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button mLogin;
     private EditText mUserName;
     private EditText mPassword;
+    private TextView mRegister;
     private Handler mHandler=new Handler(){
       @Override
       public void handleMessage(Message msg){
@@ -51,6 +53,7 @@ public class LoginActivity extends AppCompatActivity {
         mLogin=(Button)findViewById(R.id.login_button);
         mUserName=(EditText)findViewById(R.id.user_name);
         mPassword=(EditText)findViewById(R.id.password);
+        mRegister = (TextView)findViewById(R.id.login_text);
         //测试
         mUserName.setText("dizy");
         mPassword.setText("zy980018");
@@ -75,6 +78,14 @@ public class LoginActivity extends AppCompatActivity {
                         mHandler.sendMessage(message);
                     }
                 }.start();
+            }
+        });
+        mRegister.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v)
+            {
+                Intent i = new Intent(LoginActivity.this,UserRegister.class);
+                startActivity(i);
             }
         });
     }
