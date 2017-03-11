@@ -333,7 +333,7 @@ implements View.OnClickListener{
         lsvMore.setAdapter(adapter);
 
         // 创建PopupWindow对象，指定宽度和高度
-        PopupWindow window = new PopupWindow(popupView,250,WRAP_CONTENT);
+        PopupWindow window = new PopupWindow(popupView,270,WRAP_CONTENT);
         // 设置动画
         window.setAnimationStyle(R.style.popup_window_anim);
         // 设置背景颜色

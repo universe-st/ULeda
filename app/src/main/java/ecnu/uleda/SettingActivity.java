@@ -28,6 +28,11 @@ implements View.OnClickListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
+        ActivityCollector.addActivity(this);
+        if (!UserOperatorController.getInstance().getIsLogined()) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+        }
 
         if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.LOLLIPOP){
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -45,6 +50,12 @@ implements View.OnClickListener{
         feedback.setOnClickListener(this);
         exit.setOnClickListener(this);
 
+
+    }
+
+    protected void onDestroy(){
+        super.onDestroy();
+        ActivityCollector.removeActivity(this);
 
     }
 
