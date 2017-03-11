@@ -28,7 +28,6 @@ implements View.OnClickListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
-        ActivityCollector.addActivity(this);
         if (!UserOperatorController.getInstance().getIsLogined()) {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
@@ -53,11 +52,6 @@ implements View.OnClickListener{
 
     }
 
-    protected void onDestroy(){
-        super.onDestroy();
-        ActivityCollector.removeActivity(this);
-
-    }
 
     @Override
     public void onClick(View v) {

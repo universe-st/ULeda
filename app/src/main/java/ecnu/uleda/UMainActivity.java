@@ -47,11 +47,24 @@ public class UMainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
         }
-        ActivityCollector.addActivity(this);
+
         checkMapPermission();
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+    }
+
+    public static final String TAG_EXIT = "exit";
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent != null) {
+            boolean isExit = intent.getBooleanExtra(TAG_EXIT, false);
+            if (isExit) {
+                this.finish();
+            }
+        }
     }
 
     private void checkMapPermission() {
@@ -258,10 +271,4 @@ public class UMainActivity extends AppCompatActivity {
         client.disconnect();
     }
 
-    @Override
-    protected void onDestroy(){
-        super.onDestroy();
-        ActivityCollector.removeActivity(this);
-
-    }
 }

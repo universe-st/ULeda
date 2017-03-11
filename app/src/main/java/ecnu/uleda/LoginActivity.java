@@ -91,7 +91,9 @@ public class LoginActivity extends AppCompatActivity {
 
             } else{
                 finish();
-                ActivityCollector.finishAll();
+                Intent intent = new Intent(this,UMainActivity.class);
+                intent.putExtra(UMainActivity.TAG_EXIT, true);
+                startActivity(intent);
             }
             return true;
         }

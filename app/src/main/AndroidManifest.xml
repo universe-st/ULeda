@@ -32,6 +32,7 @@
             android:value="DYXBZ-ALP33-ZZV3L-3LKO5-PLDRF-AKFEO" />
 
         <activity
+            android:launchMode="singleTask"
             android:name=".UMainActivity"
             android:screenOrientation="portrait" />
         <activity
