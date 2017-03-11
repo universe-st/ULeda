@@ -37,6 +37,7 @@ public class UMainActivity extends AppCompatActivity {
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
+    public static final String TAG_EXIT = "exit";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +55,7 @@ public class UMainActivity extends AppCompatActivity {
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
-    public static final String TAG_EXIT = "exit";
+
 
     @Override
     protected void onNewIntent(Intent intent) {
