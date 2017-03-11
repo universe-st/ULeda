@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -27,13 +28,15 @@ public class LoginActivity extends AppCompatActivity {
     long mExitTime = System.currentTimeMillis();
     int keyCode;
     KeyEvent event;
+    private TextView mRegister;
     private Handler mHandler=new Handler(){
       @Override
       public void handleMessage(Message msg){
           if(mUOC.getIsLogined()){
-              finish();
+              Intent intent=new Intent(LoginActivity.this,UMainActivity.class);
+              startActivity(intent);
+              LoginActivity.this.finish();
               Toast.makeText(LoginActivity.this,"欢迎您，"+mUOC.getUserName()+"！",Toast.LENGTH_SHORT).show();
-
           }else{
               Toast.makeText(LoginActivity.this,"登陆错误："+mUOC.getMessage(),Toast.LENGTH_SHORT).show();
               setAllEnabled(true);
@@ -55,6 +58,7 @@ public class LoginActivity extends AppCompatActivity {
         mLogin=(Button)findViewById(R.id.login_button);
         mUserName=(EditText)findViewById(R.id.user_name);
         mPassword=(EditText)findViewById(R.id.password);
+        mRegister = (TextView)findViewById(R.id.login_text);
         //测试
         mUserName.setText("dizy");
         mPassword.setText("zy980018");
@@ -67,11 +71,27 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void run(){
                         mUOC.login(mUserName.getText().toString(),mPassword.getText().toString());
+                        try {
+                            if(mUOC.getIsLogined()) {
+                                UTaskManager.getInstance().refreshTaskInList();
+                            }
+                        }catch (UServerAccessException e){
+                            e.printStackTrace();
+                        }
                         Log.d("LoginActivity",mUOC.getMessage());
                         Message message=new Message();
                         mHandler.sendMessage(message);
                     }
                 }.start();
+            }
+        });
+
+        mRegister.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v)
+            {
+                Intent i = new Intent(LoginActivity.this,UserRegister.class);
+                startActivity(i);
             }
         });
 

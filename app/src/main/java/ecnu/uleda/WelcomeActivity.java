@@ -25,13 +25,13 @@ public class WelcomeActivity extends AppCompatActivity {
             WelcomeActivity.this.finish();
         }else {
             Handler h = new Handler();
-            h.postDelayed(new WaitThread(), 2000);
+            h.postDelayed(new WaitThread(), 1500);
         }
     }
     class WaitThread implements Runnable{
         @Override
         public void run(){
-            startActivity(new Intent(getApplication(),UMainActivity.class));
+            startActivity(new Intent(getApplication(),LoginActivity.class));
             WelcomeActivity.this.finish();
         }
     }

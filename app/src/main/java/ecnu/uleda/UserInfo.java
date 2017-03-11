@@ -26,6 +26,16 @@ public class UserInfo implements Serializable {
     private String mRealName;
     private String mPhone;
     private String mId;
+    private String mSignature;
+
+    public String getSignature() {
+        return mSignature;
+    }
+
+    public UserInfo setSignature(String signature) {
+        mSignature = signature;
+        return this;
+    }
 
     public String getUserName(){
         return mUserName;
