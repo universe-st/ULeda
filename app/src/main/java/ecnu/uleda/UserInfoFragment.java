@@ -35,6 +35,8 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static android.widget.ListPopupWindow.WRAP_CONTENT;
+
 
 /**
  * Created by Shensheng on 2016/11/11.
@@ -59,8 +61,7 @@ implements View.OnClickListener{
             if(msg.what==0){
                 putInformation();
             }else{
-                UServerAccessException exception=(UServerAccessException)msg.obj;
-                Toast.makeText(getActivity(),"获取信息失败："+exception.getMessage(),Toast.LENGTH_SHORT).show();
+                tryGetUserInfo();
             }
         }
     };
@@ -98,7 +99,6 @@ implements View.OnClickListener{
         add.setOnClickListener(this);
 
         mUserOperatorController=UserOperatorController.getInstance();
-
         new Thread() {
             @Override
             public void run() {
@@ -117,15 +117,36 @@ implements View.OnClickListener{
                     mHandler.sendMessage(message);
                 }
             }
-            }.start();
+        }.start();
+
         return v;
 
     }
 
+    private void tryGetUserInfo() {
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    mUserInfo = UserOperatorController.getInstance().getMyInfo();
+                    if (mUserOperatorController.getIsLogined()) {
+                        Message message = new Message();
+                        message.what = 0;
+                        mHandler.sendMessage(message);
+                    }
+                } catch (UServerAccessException e) {
+                    e.printStackTrace();
+                    Message message = new Message();
+                    message.what = 1;
+                    message.obj = e;
+                    mHandler.sendMessage(message);
+                }
+            }
+        }.start();}
+
     private void putInformation(){
         //TODO:将用户信息显示在屏幕上
         userId.setText(mUserInfo.getRealName());
-
     }
 
     @Override
@@ -312,7 +333,7 @@ implements View.OnClickListener{
         lsvMore.setAdapter(adapter);
 
         // 创建PopupWindow对象，指定宽度和高度
-        PopupWindow window = new PopupWindow(popupView, 150, 250);
+        PopupWindow window = new PopupWindow(popupView,250,WRAP_CONTENT);
         // 设置动画
         window.setAnimationStyle(R.style.popup_window_anim);
         // 设置背景颜色

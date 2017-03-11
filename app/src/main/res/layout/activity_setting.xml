@@ -204,17 +204,19 @@
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#ededed">
+        android:background="#ededed"
+        android:orientation="vertical">
+
         <Button
-            android:text="退出登录"
+            android:id="@+id/exit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/button"
             android:layout_marginTop="20dp"
             android:background="@color/colorUMain"
+            android:onClick="onClick"
+            android:text="退出登录"
             android:textColor="#ffffff"
             android:textSize="18sp" />
 
