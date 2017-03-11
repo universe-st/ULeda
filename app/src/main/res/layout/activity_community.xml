@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="100">
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/red_headline"
+            android:orientation="vertical"
+            android:layout_above="@id/red_headline">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                android:background="@color/colorUMain"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal"
+                android:background="@color/colorUMain"
+                android:weightSum="20">
+                <Button
+                    style="@style/Base.Widget.AppCompat.Button.Borderless"
+                    android:layout_weight="4"
+                    android:layout_width="0dp"
+                    android:textSize="18sp"
+                    android:layout_height="match_parent"
+                    android:text="@string/back_str"
+                    android:background="@color/colorUMain"
+                    android:gravity="left|center_vertical"
+                    android:id="@+id/button_back"
+                    android:textColor="@android:color/white"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="12.53"
+                    android:layout_height="match_parent"
+                    android:text="社区消息"
+                    android:gravity="center"
+                    android:textColor="@android:color/white"
+                    android:textSize="27sp"
+                    android:id="@+id/red_headline_title"/>
+            </LinearLayout>
+            <ListView
+                android:id="@+id/message_list_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#ededed">
+
+            </ListView>
+        </LinearLayout>
+    </RelativeLayout>
+
+</LinearLayout>
+

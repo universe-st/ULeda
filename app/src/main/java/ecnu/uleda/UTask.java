@@ -188,7 +188,7 @@ public class UTask implements Serializable{
         }
     }
     public long getLeftTime(){
-        return (mPostDate+mActiveTime-new Date().getTime()/1000);
+        return (mPostDate+mActiveTime-System.currentTimeMillis()/1000);
     }
     public String getStarString(){
         int c=mAuthorCredit;
