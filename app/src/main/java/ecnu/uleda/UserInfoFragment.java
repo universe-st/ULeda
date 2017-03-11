@@ -55,6 +55,7 @@ implements View.OnClickListener{
     TextView userId;
     Uri imgUri ;    //用来引用拍照存盘的 Uri 对象
     ImageView imv;
+    TextView mTextView;
     private Handler mHandler=new Handler(){
         @Override
         public void handleMessage(Message msg){
@@ -77,7 +78,6 @@ implements View.OnClickListener{
     public void onCreate(Bundle b) {
         super.onCreate(b);
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle b){
@@ -119,6 +119,11 @@ implements View.OnClickListener{
             }
         }.start();
 
+
+
+
+        mTextView = (TextView)v.findViewById(R.id.textView);
+        mTextView.setOnClickListener(this);
         return v;
 
     }
@@ -155,6 +160,11 @@ implements View.OnClickListener{
             case R.id.setting:{
                 Intent it = new Intent(getActivity().getBaseContext(), SettingActivity.class);
                 startActivity(it);
+                break;
+            }
+            case R.id.textView:{
+                Intent i = new Intent(getActivity().getBaseContext(),AlreadyRelease.class);
+                startActivity(i);
                 break;
             }
             case R.id.my_info:{

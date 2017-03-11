@@ -68,6 +68,8 @@
         <activity android:name=".Community"/>
         <activity android:name=".UserRegister">
         </activity>
+        <activity android:name=".AlreadyRelease">
+        </activity>
     </application>
 
 </manifest>
