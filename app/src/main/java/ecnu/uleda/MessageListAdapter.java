@@ -44,7 +44,15 @@ public class MessageListAdapter extends ArrayAdapter<UMessage> {
         time.setText(umessage.getTime());
         message.setText(umessage.getMessage());
         hint.setImageResource(umessage.getHint());
-
+        switch (umessage.getName())
+        {
+            case "社区消息":
+                view.setTag(1);
+                break;
+            default:
+                view.setTag(0);
+                break;
+        }
         return view;
 
 
