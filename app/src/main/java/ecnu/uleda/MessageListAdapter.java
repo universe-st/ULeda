@@ -1,6 +1,7 @@
 package ecnu.uleda;
 
 import android.content.Context;
+import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,22 +29,25 @@ public class MessageListAdapter extends ArrayAdapter<UMessage> {
         public View getView ( int position, View convertView, ViewGroup parent) {
         UMessage umessage = getItem(position);
         View view;
+        ViewHolder viewHolder;
         if(convertView==null){
-            view=LayoutInflater.from(getContext()).inflate(resourceId1,null);
+            view = LayoutInflater.from(getContext().getApplicationContext()).inflate(R.layout.message_list_item,parent,false);
+            viewHolder = new ViewHolder();
+            viewHolder.userImage=(ImageView)view.findViewById(R.id.userImage);
+            viewHolder.userName=(TextView)view.findViewById(R.id.userName);
+            viewHolder.time=(TextView)view.findViewById(R.id.time);
+            viewHolder.message=(TextView)view.findViewById(R.id.message);
+            viewHolder.hint=(ImageView)view.findViewById(R.id.hint);
+            view.setTag(viewHolder);
         }else{
-            view=convertView;
+            view = convertView;
+            viewHolder = (ViewHolder)view.getTag();
         }
-        ImageView userimage=(ImageView)view.findViewById(R.id.userImage);
-        TextView  username=(TextView)view.findViewById(R.id.userName);
-        TextView  time=(TextView)view.findViewById(R.id.time);
-        TextView  message=(TextView)view.findViewById(R.id.message);
-        ImageView  hint=(ImageView)view.findViewById(R.id.hint);
-
-        userimage.setImageResource(umessage.getImageId());
-        username.setText(umessage.getName());
-        time.setText(umessage.getTime());
-        message.setText(umessage.getMessage());
-        hint.setImageResource(umessage.getHint());
+        viewHolder.userImage.setImageResource(umessage.getImageId());
+        viewHolder.userName.setText(umessage.getName());
+        viewHolder.time.setText(umessage.getTime());
+        viewHolder.message.setText(umessage.getMessage());
+        viewHolder.hint.setImageResource(umessage.getHint());
         switch (umessage.getName())
         {
             case "社区消息":
@@ -55,6 +59,15 @@ public class MessageListAdapter extends ArrayAdapter<UMessage> {
         }
         return view;
 
+
+    }
+    class ViewHolder
+    {
+        ImageView userImage;
+        TextView userName;
+        TextView time;
+        TextView message;
+        ImageView hint;
 
     }
 }
