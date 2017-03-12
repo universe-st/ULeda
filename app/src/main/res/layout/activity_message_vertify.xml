@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:baselineAligned="false">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:gravity="bottom"
+        android:weightSum="1"
+        android:background="@color/colorUMain"
+        android:layout_height="50dp">
+
+        <Button
+            style="@style/Base.Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:textSize="18sp"
+            android:layout_height="match_parent"
+            android:text="@string/back_str"
+            android:background="@color/colorUMain"
+            android:gravity="left|center_vertical"
+            android:id="@+id/vertify_back"
+            android:textColor="@android:color/white"
+            android:layout_weight="0.15"
+            />
+
+
+        <TextView
+            android:text="输入手机号码"
+            android:layout_width="163dp"
+            android:layout_height="match_parent"
+            android:gravity="bottom|center_horizontal"
+            android:textSize="23sp"
+            android:layout_marginBottom="0dp"
+            android:paddingBottom="11dp"
+            android:textColor="#ffffff"
+            android:id="@+id/textView40" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:background="#ededed"></LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="64dp"
+            android:layout_height="35sp"
+            android:text="号码:"
+            android:textSize="24sp"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="5dp"
+            android:background="#ffffff"
+            android:gravity="top"
+            android:maxLines="1"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/editText_phoneNumber"
+            android:textSize="24sp"
+            android:hint=" 请输入手机号码"
+            android:layout_marginTop="10dp"
+            android:background="#ffffff"
+            android:gravity="top"
+            android:maxLines="1"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:background="#ededed"
+        android:layout_height="match_parent"
+        android:weightSum="1">
+
+        <Button
+            android:text="确定"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/button_vertify"
+            android:layout_marginTop="12dp"
+            android:layout_marginLeft="7dp"
+            android:layout_marginRight="7dp"
+            android:background="@color/colorUMain"
+            android:textColor="#ffffff"
+            android:textSize="24sp" />
+
+    </LinearLayout>
+
+</LinearLayout>
