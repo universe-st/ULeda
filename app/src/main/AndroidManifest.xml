@@ -72,7 +72,7 @@
         <activity android:name=".GetBackByNumber" />
         <activity android:name=".MessageVertify"></activity>
         <activity android:name=".UserRegister"></activity>
-        <activity android:name=".AlreadyRelease"></activity>
+        <activity android:name=".MyTaskInFo"></activity>
 
 
     </application>
