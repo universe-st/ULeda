@@ -8,10 +8,12 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -23,6 +25,11 @@ public class LoginActivity extends AppCompatActivity {
     private Button mLogin;
     private EditText mUserName;
     private EditText mPassword;
+    long mExitTime = System.currentTimeMillis();
+    int keyCode;
+    KeyEvent event;
+    private TextView mRegister;
+    private TextView mPasswordForget;
     private Handler mHandler=new Handler(){
       @Override
       public void handleMessage(Message msg){
@@ -43,7 +50,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         init();
-        UStatusBarUtils.setWindowStatusBarColor(LoginActivity.this,R.color.colorUMain);
+        onKeyDown( keyCode,  event);
+
     }
 
 
@@ -51,6 +59,8 @@ public class LoginActivity extends AppCompatActivity {
         mLogin=(Button)findViewById(R.id.login_button);
         mUserName=(EditText)findViewById(R.id.user_name);
         mPassword=(EditText)findViewById(R.id.password);
+        mRegister = (TextView)findViewById(R.id.login_text);
+        mPasswordForget = (TextView)findViewById(R.id.password_forgotten) ;
         //测试
         mUserName.setText("dizy");
         mPassword.setText("zy980018");
@@ -77,11 +87,45 @@ public class LoginActivity extends AppCompatActivity {
                 }.start();
             }
         });
+
+        mRegister.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v)
+            {
+                Intent i = new Intent(LoginActivity.this,UserRegister.class);
+                startActivity(i);
+            }
+        });
+       mPasswordForget.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v)
+            {
+                Intent i = new Intent(LoginActivity.this,ForgetPassword.class);
+                startActivity(i);
+            }
+        });
     }
 
     private void setAllEnabled(boolean a){
         mUserName.setEnabled(a);
         mPassword.setEnabled(a);
         mLogin.setEnabled(a);
+    }
+
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if ((System.currentTimeMillis() - mExitTime) > 2000) {
+                Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+                mExitTime= System.currentTimeMillis();
+
+            } else{
+                finish();
+                Intent intent = new Intent(this,UMainActivity.class);
+                intent.putExtra(UMainActivity.TAG_EXIT, true);
+                startActivity(intent);
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }
