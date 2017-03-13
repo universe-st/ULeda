@@ -30,7 +30,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -55,7 +54,11 @@ implements View.OnClickListener{
     TextView userId;
     Uri imgUri ;    //用来引用拍照存盘的 Uri 对象
     ImageView imv;
-    TextView mTextView;
+    LinearLayout T1;
+    LinearLayout T2;
+    LinearLayout T3;
+    LinearLayout T4;
+    LinearLayout T5;
     private Handler mHandler=new Handler(){
         @Override
         public void handleMessage(Message msg){
@@ -89,6 +92,12 @@ implements View.OnClickListener{
         icon=(CircleImageView)v.findViewById(R.id.icon);
         add=(ImageButton)v.findViewById(R.id.add);
         userId=(TextView)v.findViewById(R.id.id) ;
+        T1=(LinearLayout)v.findViewById(R.id.T1);
+        T2=(LinearLayout)v.findViewById(R.id.T2);
+        T3=(LinearLayout)v.findViewById(R.id.T3);
+        T4=(LinearLayout)v.findViewById(R.id.T4);
+        T5=(LinearLayout)v.findViewById(R.id.T5);
+
 
 
         setting.setOnClickListener(this);
@@ -97,6 +106,11 @@ implements View.OnClickListener{
         mMyQRCode.setOnClickListener(this);
         icon.setOnClickListener(this);
         add.setOnClickListener(this);
+        T1.setOnClickListener(this);
+        T2.setOnClickListener(this);
+        T3.setOnClickListener(this);
+        T4.setOnClickListener(this);
+        T5.setOnClickListener(this);
 
         mUserOperatorController=UserOperatorController.getInstance();
         new Thread() {
@@ -119,11 +133,6 @@ implements View.OnClickListener{
             }
         }.start();
 
-
-
-
-        mTextView = (TextView)v.findViewById(R.id.textView);
-        mTextView.setOnClickListener(this);
         return v;
 
     }
@@ -160,11 +169,6 @@ implements View.OnClickListener{
             case R.id.setting:{
                 Intent it = new Intent(getActivity().getBaseContext(), SettingActivity.class);
                 startActivity(it);
-                break;
-            }
-            case R.id.textView:{
-                Intent i = new Intent(getActivity().getBaseContext(),AlreadyRelease.class);
-                startActivity(i);
                 break;
             }
             case R.id.my_info:{
@@ -217,6 +221,41 @@ implements View.OnClickListener{
             case R.id.add:
             showaddPopMenu();
                 break;
+            case R.id.T1:{
+                int data=1;
+                Intent i = new Intent(getActivity().getBaseContext(),MyTaskInFo.class);
+                i.putExtra("data",String.valueOf(data));
+                startActivity(i);
+                break;
+            }
+            case R.id.T2:{
+                int data=2;
+                Intent i = new Intent(getActivity().getBaseContext(),MyTaskInFo.class);
+                i.putExtra("data",String.valueOf(data));
+                startActivity(i);
+                break;
+            }
+            case R.id.T3:{
+                int data=3;
+                Intent i = new Intent(getActivity().getBaseContext(),MyTaskInFo.class);
+                i.putExtra("data",String.valueOf(data));
+                startActivity(i);
+                break;
+            }
+            case R.id.T4:{
+                int data=4;
+                Intent i = new Intent(getActivity().getBaseContext(),MyTaskInFo.class);
+                i.putExtra("data",String.valueOf(data));
+                startActivity(i);
+                break;
+            }
+            case R.id.T5:{
+                int data=5;
+                Intent i = new Intent(getActivity().getBaseContext(),MyTaskInFo.class);
+                i.putExtra("data",String.valueOf(data));
+                startActivity(i);
+                break;
+            }
         }
     }
 
