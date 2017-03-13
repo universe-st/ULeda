@@ -51,6 +51,7 @@
         </activity>
         <activity
             android:name=".TaskDetailsActivity"
+
             android:screenOrientation="portrait"/>
         <activity android:name=".SettingActivity"/>
         <activity android:name=".SingleUserInfoActivity"/>
@@ -67,10 +68,13 @@
         <activity android:name=".TaskPostActivity"/>
         <activity android:name=".LocationListActivity"/>
         <activity android:name=".Community"/>
-        <activity android:name=".UserRegister">
-        </activity>
-        <activity android:name=".AlreadyRelease">
-        </activity>
+        <activity android:name=".ForgetPassword" />
+        <activity android:name=".GetBackByNumber" />
+        <activity android:name=".MessageVertify"></activity>
+        <activity android:name=".UserRegister"></activity>
+        <activity android:name=".AlreadyRelease"></activity>
+
+
     </application>
 
 </manifest>

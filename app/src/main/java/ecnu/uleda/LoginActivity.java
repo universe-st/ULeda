@@ -29,6 +29,7 @@ public class LoginActivity extends AppCompatActivity {
     int keyCode;
     KeyEvent event;
     private TextView mRegister;
+    private TextView mPasswordForget;
     private Handler mHandler=new Handler(){
       @Override
       public void handleMessage(Message msg){
@@ -59,6 +60,7 @@ public class LoginActivity extends AppCompatActivity {
         mUserName=(EditText)findViewById(R.id.user_name);
         mPassword=(EditText)findViewById(R.id.password);
         mRegister = (TextView)findViewById(R.id.login_text);
+        mPasswordForget = (TextView)findViewById(R.id.password_forgotten) ;
         //测试
         mUserName.setText("dizy");
         mPassword.setText("zy980018");
@@ -94,7 +96,14 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
-
+       mPasswordForget.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v)
+            {
+                Intent i = new Intent(LoginActivity.this,ForgetPassword.class);
+                startActivity(i);
+            }
+        });
     }
 
     private void setAllEnabled(boolean a){

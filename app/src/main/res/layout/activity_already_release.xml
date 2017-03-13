@@ -5,7 +5,8 @@
               android:layout_height="match_parent"
               android:weightSum="100"
     >
-    <LinearLayout
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="11"
@@ -14,38 +15,81 @@
         >
 
 
-
         <ImageButton
             android:id="@+id/Release_back"
             android:layout_width="27dp"
             android:layout_height="27dp"
+            android:layout_marginTop="29dp"
             android:background="#00000000"
             android:onClick="onClick"
             android:src="@drawable/back"
-            android:layout_marginTop="29dp"
             />
 
         <TextView
             android:id="@+id/textView40"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="27dp"
             android:gravity="center"
-            android:text="已发布"
+            android:text="我的订单"
             android:textColor="@color/colorUWhite"
             android:textSize="27dp"
-            android:layout_marginTop="27dp"
 
             />
-    </LinearLayout>
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="89"
+        android:layout_weight="6.35"
+        android:orientation="horizontal"
+        android:weightSum="100"
         >
 
+        <Button
+            android:id="@+id/released"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="20"
+            android:text="已发布"
+            />
 
+        <Button
+            android:id="@+id/doing"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="20"
+            android:text="进行中"/>
+
+        <Button
+            android:id="@+id/waiting_evaluate"
+            android:layout_width="0dp"
+            android:layout_weight="20"
+            android:layout_height="40dp"
+            android:text="待评价"
+            />
+        <Button
+            android:id="@+id/done"
+            android:layout_width="0dp"
+            android:layout_weight="20"
+            android:layout_height="40dp"
+            android:text="已完成"
+            />
+        <Button
+            android:id="@+id/my_evaluate"
+            android:layout_width="0dp"
+            android:layout_weight="20"
+            android:layout_height="40dp"
+            android:text="我的评价"
+            />
     </LinearLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="84"
+    />
+
+
 
 
 
