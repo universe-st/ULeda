@@ -41,27 +41,7 @@ public class MyTaskInFo extends AppCompatActivity implements
     @Override
     public void onClick(View v)
     {
-        switch (v.getId())
-        {
-            case R.id.released:
-                mViewPager.setCurrentItem(0);
-                break;
-            case R.id.doing:
-                mViewPager.setCurrentItem(1);
-                break;
-            case R.id.evaluate:
-                mViewPager.setCurrentItem(2);
-                break;
-            case R.id.done:
-                mViewPager.setCurrentItem(3);
-                break;
-            case R.id.evaluation:
-                mViewPager.setCurrentItem(4);
-                break;
-            case R.id.Release_back:
-                finish();
-                break;
-        }
+       mSwitch(v.getId());
     }
     public void initial()
     {
@@ -86,33 +66,30 @@ public class MyTaskInFo extends AppCompatActivity implements
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId)
     {
-        switch (checkedId)
+        mSwitch(checkedId);
+    }
+    public void mSwitch(int Id)
+    {
+        switch (Id)
         {
             case R.id.released:
-            {
                 mViewPager.setCurrentItem(0);
                 break;
-            }
             case R.id.doing:
-            {
                 mViewPager.setCurrentItem(1);
                 break;
-            }
             case R.id.evaluate:
-            {
                 mViewPager.setCurrentItem(2);
                 break;
-            }
             case R.id.done:
-            {
                 mViewPager.setCurrentItem(3);
                 break;
-            }
             case R.id.evaluation:
-            {
                 mViewPager.setCurrentItem(4);
                 break;
-            }
+            case R.id.Release_back:
+                finish();
+                break;
         }
     }
     public void init()
