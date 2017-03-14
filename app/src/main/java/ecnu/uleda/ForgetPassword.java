@@ -21,7 +21,7 @@ public class ForgetPassword extends AppCompatActivity {
         findBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ForgetPassword.this,MessageVertify.class);
+                Intent intent = new Intent(ForgetPassword.this,GetBackByNumber.class);
                 startActivity(intent);
             }
         });
