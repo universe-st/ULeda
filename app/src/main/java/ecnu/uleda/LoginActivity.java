@@ -2,34 +2,49 @@ package ecnu.uleda;
 
 import android.content.Intent;
 import android.content.res.ObbInfo;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import static android.view.ViewGroup.*;
 
 /**
  * Created by Shensheng on 2016/10/17.
  */
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
 
     private Button mLogin;
     private EditText mUserName;
     private EditText mPassword;
+    private PopupWindow mPopupWindow;
     long mExitTime = System.currentTimeMillis();
     int keyCode;
     KeyEvent event;
+
     private TextView mRegister;
     private TextView mPasswordForget;
+
+    private Button FindPassWord;
+    private Button MessageLogin;
+    private Button CancelFindBack;
+
     private Handler mHandler=new Handler(){
       @Override
       public void handleMessage(Message msg){
@@ -61,6 +76,7 @@ public class LoginActivity extends AppCompatActivity {
         mPassword=(EditText)findViewById(R.id.password);
         mRegister = (TextView)findViewById(R.id.login_text);
         mPasswordForget = (TextView)findViewById(R.id.password_forgotten) ;
+
         //测试
         mUserName.setText("dizy");
         mPassword.setText("zy980018");
@@ -87,23 +103,9 @@ public class LoginActivity extends AppCompatActivity {
                 }.start();
             }
         });
+        mRegister.setOnClickListener(this);
 
-        mRegister.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v)
-            {
-                Intent i = new Intent(LoginActivity.this,UserRegister.class);
-                startActivity(i);
-            }
-        });
-       mPasswordForget.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v)
-            {
-                Intent i = new Intent(LoginActivity.this,ForgetPassword.class);
-                startActivity(i);
-            }
-        });
+        mPasswordForget.setOnClickListener(this);
     }
 
     private void setAllEnabled(boolean a){
@@ -128,4 +130,67 @@ public class LoginActivity extends AppCompatActivity {
         }
         return super.onKeyDown(keyCode, event);
     }
+    @Override
+    public void onClick(View v)
+    {
+        switch (v.getId())
+        {
+            case R.id.login_text:
+            {
+                Intent i = new Intent(LoginActivity.this,UserRegister.class);
+                startActivity(i);
+                break;
+            }
+            case R.id.password_forgotten:
+            {
+                showPopMenu();
+                break;
+            }
+            case R.id.cancelFindBack:
+            {
+                mPopupWindow.dismiss();
+                break;
+            }
+        }
+    }
+    private void showPopMenu()
+    {
+        View view = View.inflate(this.getApplicationContext(),R.layout.activity_forget_password,null);
+
+        FindPassWord = (Button)findViewById(R.id.findBackPassword);
+        MessageLogin = (Button) findViewById(R.id.messageLogin);
+        CancelFindBack = (Button) findViewById(R.id.cancelFindBack);
+
+        FindPassWord.setOnClickListener(this);
+        MessageLogin.setOnClickListener(this);
+        CancelFindBack.setOnClickListener(this);
+
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPopupWindow.dismiss();
+            }
+        });
+        view.startAnimation(AnimationUtils.loadAnimation(this.getApplicationContext(), R.anim.fade_in));
+        LinearLayout ll_popup = (LinearLayout) view.findViewById(R.id.forget_password);
+        ll_popup.startAnimation(AnimationUtils.loadAnimation(this.getApplicationContext(), R.anim.push_bottom_in));
+
+        if(mPopupWindow==null){
+            mPopupWindow = new PopupWindow(this);
+            mPopupWindow.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
+            mPopupWindow.setHeight(ViewGroup.LayoutParams.MATCH_PARENT);
+            mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
+
+            mPopupWindow.setFocusable(true);
+            mPopupWindow.setOutsideTouchable(true);
+        }
+        mPopupWindow.setContentView(view);
+        mPopupWindow.showAtLocation(mPasswordForget, Gravity.BOTTOM, 0, 0);
+        mPopupWindow.update();
+
+    }
+
+
+
+
 }
