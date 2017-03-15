@@ -56,6 +56,7 @@ public class MyinfoFragmentAdapter extends FragmentPagerAdapter {
                 break;
             case MyTaskInFo.PAGE_FIVE:
                 fragment = mMyTask_myEvaluationFragment;
+                break;
         }
         return fragment;
     }
