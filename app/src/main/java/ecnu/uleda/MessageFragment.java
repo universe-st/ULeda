@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 
@@ -29,7 +30,7 @@ public class MessageFragment extends Fragment {
     private List<UMessage> MessageList ;
     private MessageListAdapter adapter;
     private ListView MessageListview;
-
+    private Button AddFriends;
     @Override
     public void onCreate(Bundle b){
         super.onCreate(b);
@@ -56,8 +57,14 @@ public class MessageFragment extends Fragment {
             }
         });
 
-
-
+        AddFriends = (Button)view.findViewById(R.id.add_friends);
+        AddFriends.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(MessageFragment.this.getActivity(),AddNewFriends.class);
+                startActivity(i);
+            }
+        });
 
         return view;
     }

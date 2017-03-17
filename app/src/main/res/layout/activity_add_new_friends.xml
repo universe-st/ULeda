@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:baselineAligned="false"
+    android:weightSum="1">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/colorUMain"
+        android:gravity="bottom"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <Button
+            android:id="@+id/Add_Back"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.15"
+            android:background="@color/colorUMain"
+            android:gravity="left|center_vertical"
+            android:text="@string/back_str"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            />
+
+
+        <TextView
+            android:id="@+id/textView40"
+            android:layout_width="163dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="0dp"
+            android:layout_weight="0.45"
+            android:gravity="bottom|center_horizontal"
+            android:paddingBottom="11dp"
+            android:text="添加"
+            android:textColor="#ffffff"
+            android:textSize="24sp"/>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="15dp"
+        android:background="#ededed"></LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:background="#ededed"
+        android:layout_height="54dp"
+        android:weightSum="1">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="35sp"
+            android:id="@+id/editText_add"
+            android:textSize="24sp"
+            android:hint="   账号/邮箱地址"
+            android:layout_marginTop="10dp"
+            android:background="#ffffff"
+            android:gravity="top"
+            android:maxLines="1"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="34dp"
+        android:orientation="horizontal"
+        android:background="@color/colorUWhite">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="28dp"
+            android:src="@drawable/phone"
+            android:id="@+id/imageView7" />
+
+        <Button
+            android:id="@+id/findByPhoneNumber"
+            android:layout_width="300dp"
+            android:layout_height="35dp"
+            android:background="@color/colorUWhite"
+            android:text="添加手机联系人"
+            android:textSize="22dp"
+            />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/stick"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="10sp"></LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="34dp"
+        android:orientation="horizontal"
+        android:background="@color/colorUWhite">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="28dp"
+            android:src="@drawable/paint"
+            />
+
+        <Button
+            android:layout_width="300dp"
+            android:layout_height="35dp"
+            android:id="@+id/findByPaint"
+            android:text="扫一扫添加好友"
+            android:textSize="22dp"
+            android:background="@color/colorUWhite"
+            />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/stick"
+            />
+    </LinearLayout>
+
+</LinearLayout>
