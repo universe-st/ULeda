@@ -47,6 +47,7 @@
                 android:textAlignment="center"/>
         </FrameLayout>
         <Button
+            android:id="@+id/add_friends"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
