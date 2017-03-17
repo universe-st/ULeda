@@ -35,7 +35,21 @@ public class UMainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
         }
+
         checkMapPermission();
+    }
+
+    public static final String TAG_EXIT = "exit";
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent != null) {
+            boolean isExit = intent.getBooleanExtra(TAG_EXIT, false);
+            if (isExit) {
+                this.finish();
+            }
+        }
     }
 
     private void checkMapPermission() {
@@ -208,6 +222,4 @@ public class UMainActivity extends AppCompatActivity {
                 throw new RuntimeException("Error button code.");
         }
     }
-
-
 }

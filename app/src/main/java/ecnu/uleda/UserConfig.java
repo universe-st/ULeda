@@ -34,7 +34,7 @@ public class UserConfig {
     private Context context;
 
     private UserConfig(Context context){
-        this.context = context;
+        this.context = context.getApplicationContext();
         String jsonData = Read();
         try{
             JSONObject j = new JSONObject(jsonData);
@@ -46,7 +46,6 @@ public class UserConfig {
         {
             e.printStackTrace();
         }
-
     }
 
     public String getSavedUsernamePassword()
@@ -145,8 +144,8 @@ public class UserConfig {
     }
 
     public static UserConfig getInstance(Context context){
-        if(sUserConfig==null){
-            sUserConfig=new UserConfig(context);
+        if(sUserConfig == null){
+            sUserConfig  = new UserConfig(context);
         }
         return sUserConfig;
     }

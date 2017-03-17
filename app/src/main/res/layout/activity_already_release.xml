@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:weightSum="100"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="11"
+        android:background="@color/colorUMain"
+        android:orientation="horizontal"
+        >
+
+
+
+        <ImageButton
+            android:id="@+id/Release_back"
+            android:layout_width="27dp"
+            android:layout_height="27dp"
+            android:background="#00000000"
+            android:onClick="onClick"
+            android:src="@drawable/back"
+            android:layout_marginTop="29dp"
+            />
+
+        <TextView
+            android:id="@+id/textView40"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="已发布"
+            android:textColor="@color/colorUWhite"
+            android:textSize="27dp"
+            android:layout_marginTop="27dp"
+
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="89"
+        >
+
+
+    </LinearLayout>
+
+
+
+
+
+</LinearLayout>
