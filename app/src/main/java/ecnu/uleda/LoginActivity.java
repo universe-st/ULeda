@@ -108,8 +108,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         });
         mRegister.setOnClickListener(this);
-
-
         mPasswordForget.setOnClickListener(this);
 
 
@@ -159,15 +157,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 mPopupWindow.dismiss();
                 break;
             }
+            case R.id.findBackPassword:
+            {
+                Intent i = new Intent(LoginActivity.this,GetBackByNumber.class);
+                startActivity(i);
+            }
         }
     }
     private void showPopMenu()
     {
         View view = View.inflate(this.getApplicationContext(),R.layout.activity_forget_password,null);
 
-        FindPassWord = (Button)findViewById(R.id.findBackPassword);
-        MessageLogin = (Button) findViewById(R.id.messageLogin);
-        CancelFindBack = (Button) findViewById(R.id.cancelFindBack);
+        FindPassWord = (Button)view.findViewById(R.id.findBackPassword);
+        MessageLogin = (Button) view.findViewById(R.id.messageLogin);
+        CancelFindBack = (Button) view.findViewById(R.id.cancelFindBack);
 
         FindPassWord.setOnClickListener(this);
         MessageLogin.setOnClickListener(this);
@@ -179,12 +182,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 mPopupWindow.dismiss();
             }
         });
-        view.startAnimation(AnimationUtils.loadAnimation(this.getApplicationContext(), R.anim.fade_in));
+        view.startAnimation(AnimationUtils.loadAnimation(LoginActivity.this.getApplicationContext(), R.anim.fade_in));
         LinearLayout ll_popup = (LinearLayout) view.findViewById(R.id.forget_password);
-        ll_popup.startAnimation(AnimationUtils.loadAnimation(this.getApplicationContext(), R.anim.push_bottom_in));
+        ll_popup.startAnimation(AnimationUtils.loadAnimation(LoginActivity.this.getApplicationContext(), R.anim.push_bottom_in));
 
         if(mPopupWindow==null){
-            mPopupWindow = new PopupWindow(this);
+            mPopupWindow = new PopupWindow(LoginActivity.this);
             mPopupWindow.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
             mPopupWindow.setHeight(ViewGroup.LayoutParams.MATCH_PARENT);
             mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
