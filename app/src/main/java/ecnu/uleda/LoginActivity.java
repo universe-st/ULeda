@@ -151,6 +151,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 mPopupWindow.dismiss();
                 break;
             }
+            case R.id.findBackPassword:
+            {
+                mPopupWindow.dismiss();
+                break;
+            }
+            case R.id.messageLogin:
+            {
+                mPopupWindow.dismiss();
+                break;
+            }
         }
     }
     private void showPopMenu()
