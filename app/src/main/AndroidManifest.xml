@@ -61,7 +61,6 @@
         <activity android:name=".MyWalletActivity"/>
         <activity android:name=".MyQrActivity"/>
         <activity android:name=".SettingUserPhoneActivity"/>
-        <activity android:name=".bottom_dialog"/>
         <activity android:name=".Mywallet_RechargeActivity"/>
         <activity android:name=".PopupwindowActivity"/>
         <activity android:name=".TaskPostActivity"/>

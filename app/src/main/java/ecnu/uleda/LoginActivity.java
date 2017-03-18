@@ -159,6 +159,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
             case R.id.findBackPassword:
             {
+                mPopupWindow.dismiss();
+                break;
+            }
+            case R.id.messageLogin:
+            {
                 Intent i = new Intent(LoginActivity.this,GetBackByNumber.class);
                 startActivity(i);
             }
