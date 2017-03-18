@@ -33,8 +33,8 @@
             android:value="DYXBZ-ALP33-ZZV3L-3LKO5-PLDRF-AKFEO"/>
 
         <activity
-            android:launchMode="singleTask"
             android:name=".UMainActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".LoginActivity"
@@ -51,7 +51,6 @@
         </activity>
         <activity
             android:name=".TaskDetailsActivity"
-
             android:screenOrientation="portrait"/>
         <activity android:name=".SettingActivity"/>
         <activity android:name=".SingleUserInfoActivity"/>
@@ -67,12 +66,12 @@
         <activity android:name=".TaskPostActivity"/>
         <activity android:name=".LocationListActivity"/>
         <activity android:name=".Community"/>
-        <activity android:name=".GetBackByNumber" />
-        <activity android:name=".MessageVertify"></activity>
-        <activity android:name=".UserRegister"></activity>
-        <activity android:name=".MyTaskInFo"></activity>
-
-
+        <activity android:name=".GetBackByNumber"/>
+        <activity android:name=".MessageVertify"/>
+        <activity android:name=".UserRegister"/>
+        <activity android:name=".MyTaskInFo"/>
+        <activity android:name=".AddNewFriends">
+        </activity>
     </application>
 
 </manifest>

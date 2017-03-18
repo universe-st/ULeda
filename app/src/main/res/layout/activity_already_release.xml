@@ -46,44 +46,69 @@
         android:orientation="horizontal"
         >
         <RadioButton
+            android:textColor="@drawable/checkrbtn"
+
+            android:button="@null"
             android:id="@+id/released"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight="20"
             android:onClick="onClick"
-            android:text="已发布" />
+            android:text="已发布"
+            android:gravity="center"
+            />
 
         <RadioButton
+            android:textColor="@drawable/checkrbtn"
+
+            android:button="@null"
             android:id="@+id/doing"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight="20"
             android:onClick="onClick"
-            android:text="进行中" />
+            android:text="进行中"
+            android:gravity="center"
+            />
 
         <RadioButton
+            android:textColor="@drawable/checkrbtn"
+            android:button="@null"
             android:id="@+id/evaluate"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight="20"
             android:onClick="onClick"
-            android:text="待评价" />
+
+            android:text="待评价"
+            android:gravity="center"
+            />
 
         <RadioButton
+            android:textColor="@drawable/checkrbtn"
+
+            android:button="@null"
             android:id="@+id/done"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight="20"
             android:onClick="onClick"
-            android:text="已完成" />
+            android:text="已完成"
+            android:gravity="center"
+            />
 
         <RadioButton
+            android:textColor="@drawable/checkrbtn"
+
+            android:button="@null"
             android:id="@+id/evaluation"
             android:layout_width="0dp"
             android:layout_height="47dp"
             android:layout_weight="20.05"
             android:onClick="onClick"
-            android:text="我的评价" />
+            android:text="我的评价"
+            android:gravity="center"
+            />
     </RadioGroup>
 
 

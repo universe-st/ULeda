@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -19,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +31,7 @@ import static android.view.ViewGroup.*;
  */
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
+
 
     private Button mLogin;
     private EditText mUserName;
@@ -75,6 +78,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mUserName=(EditText)findViewById(R.id.user_name);
         mPassword=(EditText)findViewById(R.id.password);
         mRegister = (TextView)findViewById(R.id.login_text);
+
         mPasswordForget = (TextView)findViewById(R.id.password_forgotten) ;
 
         //测试
@@ -104,9 +108,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         });
         mRegister.setOnClickListener(this);
-
         mPasswordForget.setOnClickListener(this);
+
+
     }
+
 
     private void setAllEnabled(boolean a){
         mUserName.setEnabled(a);
@@ -158,8 +164,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
             case R.id.messageLogin:
             {
-                mPopupWindow.dismiss();
-                break;
+                Intent i = new Intent(LoginActivity.this,GetBackByNumber.class);
+                startActivity(i);
             }
         }
     }
@@ -167,9 +173,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     {
         View view = View.inflate(this.getApplicationContext(),R.layout.activity_forget_password,null);
 
-        FindPassWord = (Button)findViewById(R.id.findBackPassword);
-        MessageLogin = (Button) findViewById(R.id.messageLogin);
-        CancelFindBack = (Button) findViewById(R.id.cancelFindBack);
+        FindPassWord = (Button)view.findViewById(R.id.findBackPassword);
+        MessageLogin = (Button) view.findViewById(R.id.messageLogin);
+        CancelFindBack = (Button) view.findViewById(R.id.cancelFindBack);
 
         FindPassWord.setOnClickListener(this);
         MessageLogin.setOnClickListener(this);
@@ -181,12 +187,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 mPopupWindow.dismiss();
             }
         });
-        view.startAnimation(AnimationUtils.loadAnimation(this.getApplicationContext(), R.anim.fade_in));
+        view.startAnimation(AnimationUtils.loadAnimation(LoginActivity.this.getApplicationContext(), R.anim.fade_in));
         LinearLayout ll_popup = (LinearLayout) view.findViewById(R.id.forget_password);
-        ll_popup.startAnimation(AnimationUtils.loadAnimation(this.getApplicationContext(), R.anim.push_bottom_in));
+        ll_popup.startAnimation(AnimationUtils.loadAnimation(LoginActivity.this.getApplicationContext(), R.anim.push_bottom_in));
 
         if(mPopupWindow==null){
-            mPopupWindow = new PopupWindow(this);
+            mPopupWindow = new PopupWindow(LoginActivity.this);
             mPopupWindow.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
             mPopupWindow.setHeight(ViewGroup.LayoutParams.MATCH_PARENT);
             mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
