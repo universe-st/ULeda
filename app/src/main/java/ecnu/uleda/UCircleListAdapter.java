@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static android.R.attr.visible;
@@ -27,7 +28,7 @@ import static android.R.attr.visible;
 
 public class UCircleListAdapter extends ArrayAdapter<UCircle> {
 
-    public UCircleListAdapter(Context context, List<UCircle>objects)
+    public UCircleListAdapter(Context context, ArrayList<UCircle> objects)
     {
         super(context,R.layout.u_circle_list_item,objects);
     }

@@ -61,13 +61,11 @@
         <activity android:name=".MyWalletActivity"/>
         <activity android:name=".MyQrActivity"/>
         <activity android:name=".SettingUserPhoneActivity"/>
-        <activity android:name=".bottom_dialog"/>
         <activity android:name=".Mywallet_RechargeActivity"/>
         <activity android:name=".PopupwindowActivity"/>
         <activity android:name=".TaskPostActivity"/>
         <activity android:name=".LocationListActivity"/>
         <activity android:name=".Community"/>
-        <activity android:name=".ForgetPassword"/>
         <activity android:name=".GetBackByNumber"/>
         <activity android:name=".MessageVertify"/>
         <activity android:name=".UserRegister"/>
