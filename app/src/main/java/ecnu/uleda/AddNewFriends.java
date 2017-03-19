@@ -8,18 +8,17 @@ import android.widget.Button;
 
 public class AddNewFriends extends AppCompatActivity {
 
-   /* private Button button_phoneNumber ;
-    private Button button_paint ;
-    private Button button_back ;*/
+    //private Button button_phoneNumber ;
+    //private Button button_paint ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_friends);
 
-        /*button_back.findViewById(R.id.Add_Back);
-        button_phoneNumber.findViewById(R.id.findByPhoneNumber);
-        button_paint.findViewById(R.id.findByPaint);
+         Button button_back =(Button) findViewById(R.id.add_Back);
+       // button_phoneNumber.findViewById(R.id.findByPhoneNumber);
+        //button_paint.findViewById(R.id.findByPaint);
 
        button_back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -28,7 +27,7 @@ public class AddNewFriends extends AppCompatActivity {
             }
         });
 
-        button_phoneNumber.setOnClickListener(new View.OnClickListener() {
+        /*button_phoneNumber.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(AddNewFriends.this,)

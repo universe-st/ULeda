@@ -16,7 +16,7 @@
         android:weightSum="1">
 
         <Button
-            android:id="@+id/Add_Back"
+            android:id="@+id/add_Back"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="0.15"
