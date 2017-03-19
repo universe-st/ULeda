@@ -274,8 +274,11 @@ public class TaskPostActivity extends AppCompatActivity {
         }
         if(!mStart.equals("选择地址") && mDestination.equals("选择地址") )
         {
-            Toast.makeText(TaskPostActivity.this,"请选择目的地哦～",Toast.LENGTH_SHORT).show();
-            return false;
+//            Toast.makeText(TaskPostActivity.this,"请选择目的地哦～",Toast.LENGTH_SHORT).show();
+//            return false;
+            mPosition="31.2267104411"+","+"121.4044582732";
+            mPath="|";
+            return true;
         }
         if(mStart.equals("选择地址") && !mDestination.equals("选择地址"))
         {
