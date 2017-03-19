@@ -397,10 +397,9 @@
                 android:layout_height="match_parent"
                 android:ems="20"
                 android:maxLines="6"
-                android:maxLength="115"
                 android:id="@+id/task_post_description"
                 android:background="@null"
-                android:hint="您对订单的详细要求，没有可不填，限120字内。"
+                android:hint="您对订单的详细要求，没有可不填，限225字节内。"
                 android:textColorHint="@color/colorUGray"
                 android:gravity="top|left" />
         </FrameLayout>
