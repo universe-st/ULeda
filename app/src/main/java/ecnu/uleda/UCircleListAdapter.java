@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.opengl.Visibility;
 import android.support.annotation.NonNull;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -16,7 +17,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static android.R.attr.visible;
 
 /**
  * Created by 胡楠 on 2017/1/24.
@@ -24,7 +28,7 @@ import java.util.List;
 
 public class UCircleListAdapter extends ArrayAdapter<UCircle> {
 
-    public UCircleListAdapter(Context context, List<UCircle>objects)
+    public UCircleListAdapter(Context context, ArrayList<UCircle> objects)
     {
         super(context,R.layout.u_circle_list_item,objects);
     }
@@ -33,45 +37,65 @@ public class UCircleListAdapter extends ArrayAdapter<UCircle> {
     public View getView(int position, View convertView, @NonNull ViewGroup parent)
     {
         UCircle Circle = getItem(position);
+        View view;
+        ViewHolder viewHolder;
         if(convertView == null)
         {
-            convertView= LayoutInflater.from(getContext().getApplicationContext()).inflate(R.layout.u_circle_list_item,parent,false);
-            if(Circle == null)
-                return convertView;
-            ImageView Iv = (ImageView) convertView.findViewById(R.id.photo);
-            Iv.setImageResource(Circle.getmPhotoId());
-            TextView Tv = (TextView) convertView.findViewById(R.id.publisher_name);
-            Tv.setText(Circle.getmName());
-            Tv = (TextView) convertView.findViewById(R.id.Title);
-            Tv.setText(Circle.getmTitle());
-            Tv = (TextView) convertView.findViewById(R.id.article);
-            Tv.setText(Circle.getmArticle());
+            view = LayoutInflater.from(getContext().getApplicationContext()).inflate(R.layout.u_circle_list_item,parent,false);
+            viewHolder = new ViewHolder();
 
+            viewHolder.photoImage = (ImageView) view.findViewById(R.id.photo);
+
+            viewHolder.publishername = (TextView) view.findViewById(R.id.publisher_name);
+
+            viewHolder.title = (TextView) view.findViewById(R.id.Title);
+
+            viewHolder.article = (TextView) view.findViewById(R.id.article);
 
             if(Circle.getmDynamic_Photo() != 0)
             {
-                Iv = (ImageView) convertView.findViewById(R.id.dynamic_photo);
-                Iv.setImageResource(Circle.getmDynamic_Photo());
-
+               viewHolder.dynamicphoto = (ImageView) view.findViewById(R.id.dynamic_photo);
             }
-            else
-            {
-                Iv = (ImageView) convertView.findViewById(R.id.dynamic_photo);
-                Iv.setVisibility(View.GONE);
-            }
+            viewHolder.publishtime = (TextView) view.findViewById(R.id.publish_time);
 
 
+            viewHolder.Getzan = (TextView)view.findViewById((R.id.Get_zan));
 
 
-            Tv = (TextView) convertView.findViewById(R.id.publish_time);
-            Tv.setText(Circle.getmTime());
-
-            Tv = (TextView)convertView.findViewById((R.id.Get_zan));
-            Tv.setText(Circle.getmGet());
-
-
+            view.setTag(viewHolder);
         }
-        return convertView;
+        else
+        {
+            view = convertView;
+            viewHolder = (ViewHolder) view.getTag();
+        }
+        viewHolder.photoImage.setImageResource(Circle.getmPhotoId());
+        viewHolder.publishername.setText(Circle.getmName());
+        viewHolder.title.setText(Circle.getmTitle());
+        viewHolder.article.setText(Circle.getmArticle());
+        if(Circle.getmDynamic_Photo() != 0)
+        {
+            viewHolder.dynamicphoto = (ImageView) view.findViewById(R.id.dynamic_photo);
+            viewHolder.dynamicphoto.setImageResource(Circle.getmDynamic_Photo());
+        }
+        else
+        {
+            viewHolder.dynamicphoto = (ImageView) view.findViewById(R.id.dynamic_photo);
+            viewHolder.dynamicphoto.setVisibility(View.GONE);
+        }
+        viewHolder.publishtime.setText(Circle.getmTime());
+        viewHolder.Getzan.setText(Circle.getmGet());
+        return view;
+    }
+    class ViewHolder
+    {
+        ImageView photoImage;
+        TextView publishername;
+        TextView title;
+        TextView article;
+        ImageView dynamicphoto;
+        TextView publishtime;
+        TextView Getzan;
     }
 
 

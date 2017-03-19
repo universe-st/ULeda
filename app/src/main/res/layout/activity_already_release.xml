@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:weightSum="100"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="11"
+        android:background="@color/colorUMain"
+        android:orientation="horizontal"
+        >
+
+
+        <ImageButton
+            android:id="@+id/Release_back"
+            android:layout_width="27dp"
+            android:layout_height="27dp"
+            android:layout_marginTop="29dp"
+            android:background="#00000000"
+            android:onClick="onClick"
+            android:src="@drawable/back"
+            />
+
+        <TextView
+            android:id="@+id/textView40"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="27dp"
+            android:gravity="center"
+            android:text="我的订单"
+            android:textColor="@color/colorUWhite"
+            android:textSize="27dp"
+
+            />
+    </RelativeLayout>
+
+
+    <RadioGroup
+        android:id="@+id/radio_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+        <RadioButton
+            android:textColor="@drawable/checkrbtn"
+
+            android:button="@null"
+            android:id="@+id/released"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="20"
+            android:onClick="onClick"
+            android:text="已发布"
+            android:gravity="center"
+            />
+
+        <RadioButton
+            android:textColor="@drawable/checkrbtn"
+
+            android:button="@null"
+            android:id="@+id/doing"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="20"
+            android:onClick="onClick"
+            android:text="进行中"
+            android:gravity="center"
+            />
+
+        <RadioButton
+            android:textColor="@drawable/checkrbtn"
+            android:button="@null"
+            android:id="@+id/evaluate"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="20"
+            android:onClick="onClick"
+
+            android:text="待评价"
+            android:gravity="center"
+            />
+
+        <RadioButton
+            android:textColor="@drawable/checkrbtn"
+
+            android:button="@null"
+            android:id="@+id/done"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="20"
+            android:onClick="onClick"
+            android:text="已完成"
+            android:gravity="center"
+            />
+
+        <RadioButton
+            android:textColor="@drawable/checkrbtn"
+
+            android:button="@null"
+            android:id="@+id/evaluation"
+            android:layout_width="0dp"
+            android:layout_height="47dp"
+            android:layout_weight="20.05"
+            android:onClick="onClick"
+            android:text="我的评价"
+            android:gravity="center"
+            />
+    </RadioGroup>
+
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/task_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="84" />
+
+
+</LinearLayout>

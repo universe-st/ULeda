@@ -43,6 +43,7 @@ public class UserOperatorController {
         mUserName=null;
         mIsLogined=false;
     }
+    public void setIsLogined(boolean x){ mIsLogined=x;}
     public void login(String userName,String password){
         if(mIsLogined){
             return;
