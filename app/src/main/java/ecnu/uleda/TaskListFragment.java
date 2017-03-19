@@ -113,6 +113,7 @@ public class TaskListFragment extends Fragment {
         mMainArray.add("寻物启示");
         mMainArray.add("活动相关");
         mMainArray.add("其他");
+        mSortArray.add("最新");
         mSortArray.add("报酬从高到低");
         mSortArray.add("报酬从低到高");
         mSortArray.add("距离从近到远");
@@ -173,7 +174,7 @@ public class TaskListFragment extends Fragment {
         mSortSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String[] sortBy={UTaskManager.PRICE_DES,UTaskManager.PRICE_ASC,UTaskManager.DISTANCE};
+                String[] sortBy={UTaskManager.TIME_LAST,UTaskManager.PRICE_DES,UTaskManager.PRICE_ASC,UTaskManager.DISTANCE};
                 mUTaskManager.setSortBy(sortBy[i]);
                 new RefreshThread().start();
             }

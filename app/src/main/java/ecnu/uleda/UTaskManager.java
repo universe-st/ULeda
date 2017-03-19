@@ -32,7 +32,7 @@ public class UTaskManager {
     private UserOperatorController mUOC;
     private ArrayList<UTask> mTasksInList;
     private ArrayList<UTask> mTasksInMap;
-
+    public static final String TIME_LAST="time";
     public static final String PRICE_DES="priceDes";
     public static final String PRICE_ASC="priceAsc";
     public static final String DISTANCE="distance";
