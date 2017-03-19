@@ -33,8 +33,8 @@
             android:value="DYXBZ-ALP33-ZZV3L-3LKO5-PLDRF-AKFEO"/>
 
         <activity
-            android:launchMode="singleTask"
             android:name=".UMainActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".LoginActivity"
@@ -61,15 +61,16 @@
         <activity android:name=".MyWalletActivity"/>
         <activity android:name=".MyQrActivity"/>
         <activity android:name=".SettingUserPhoneActivity"/>
-        <activity android:name=".bottom_dialog"/>
         <activity android:name=".Mywallet_RechargeActivity"/>
         <activity android:name=".PopupwindowActivity"/>
         <activity android:name=".TaskPostActivity"/>
         <activity android:name=".LocationListActivity"/>
         <activity android:name=".Community"/>
-        <activity android:name=".UserRegister">
-        </activity>
-        <activity android:name=".AlreadyRelease">
+        <activity android:name=".GetBackByNumber"/>
+        <activity android:name=".MessageVertify"/>
+        <activity android:name=".UserRegister"/>
+        <activity android:name=".MyTaskInFo"/>
+        <activity android:name=".AddNewFriends">
         </activity>
     </application>
 

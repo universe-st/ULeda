@@ -25,6 +25,8 @@ public class UMainActivity extends AppCompatActivity {
      boolean mIsLogined=Controller.getIsLogined();
 
 
+    public static final String TAG_EXIT = "exit";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +41,7 @@ public class UMainActivity extends AppCompatActivity {
         checkMapPermission();
     }
 
-    public static final String TAG_EXIT = "exit";
+
 
     @Override
     protected void onNewIntent(Intent intent) {
