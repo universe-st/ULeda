@@ -60,6 +60,8 @@ implements View.OnClickListener{
     private TextView mTaskDetailInfo;
     private PopupWindow mPopupWindow;
     private EditText mPostCommentEdit;
+    private Button mButtonLeft;
+    private Button mButtonRight;
     private Handler mHandler=new Handler(){
         @Override
         public void handleMessage(Message msg){
@@ -75,7 +77,7 @@ implements View.OnClickListener{
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.comment: {
+            case R.id.comment_bt: {
                 showPopupWindow();
                 mListView.setSelection(mListView.getCount()-1);
                 mPostCommentEdit.requestFocus();
@@ -218,7 +220,7 @@ implements View.OnClickListener{
                             .setAuthorCredit(5)
                             .setPostID(mTask.getPostID())
                             .setActiveTime(j.getLong("activetime"))
-                            .setStatus(0);
+                            .setStatus(j.getInt("status"));
                     String[] ps=j.getString("position").split(",");
                     task.setPosition(
                             new LatLng(Double.parseDouble(ps[0]),Double.parseDouble(ps[1]))
@@ -331,6 +333,9 @@ implements View.OnClickListener{
                 finish();
             }
         });
+        mButtonLeft=(Button)findViewById(R.id.comment_bt);
+        mButtonLeft.setOnClickListener(this);
+        mButtonRight=(Button)findViewById(R.id.right_button);
     }
     public void mapInit(){
         mTencentMap.setZoom(18);

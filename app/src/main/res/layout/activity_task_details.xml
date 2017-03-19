@@ -57,8 +57,8 @@
                     android:layout_weight="1"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:id="@+id/comment"
-                    android:onClick="onClick" />
+                    android:id="@+id/comment_bt"
+                    />
                 <Button
                     android:layout_marginRight="30dp"
                     android:layout_marginLeft="10dp"
@@ -71,6 +71,7 @@
                     style="@style/Base.Widget.AppCompat.Button.Borderless"
                     android:layout_width="0dp"
                     android:layout_weight="1"
+                    android:id="@+id/right_button"
                     android:layout_height="match_parent"/>
             </LinearLayout>
         </LinearLayout>
