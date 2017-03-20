@@ -72,6 +72,8 @@
         <activity android:name=".MyTaskInFo"/>
         <activity android:name=".AddNewFriends">
         </activity>
+        <activity android:name=".TaskEditActivity">
+        </activity>
     </application>
 
 </manifest>
