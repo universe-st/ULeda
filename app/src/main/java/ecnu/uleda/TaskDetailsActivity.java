@@ -69,11 +69,39 @@ implements View.OnClickListener{
                 mTask=(UTask)msg.obj;
                 listViewInit();
                 mapInit();
+                final UserOperatorController uoc=UserOperatorController.getInstance();
+                if(mTask.getAuthorID()==Integer.parseInt(uoc.getId())){
+                    mButtonRight.setText("编辑任务");
+                    mButtonRight.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent =new Intent(TaskDetailsActivity.this,TaskEditActivity.class);
+                            intent.putExtra("Task",mTask);
+                            startActivityForResult(intent,1);
+                        }
+                    });
+                }else if(mTask.getStatus()!=0){
+                    mButtonRight.setEnabled(false);
+                }
             }else{
                 Toast.makeText(TaskDetailsActivity.this,"错误："+(String)msg.obj,Toast.LENGTH_SHORT).show();
             }
         }
     };
+
+    @Override
+    public void onActivityResult(int requestCode,int resultCode,Intent intent){
+        if(intent==null)return;
+        if(resultCode==1){
+            Message msg=new Message();
+            msg.obj=intent.getSerializableExtra("Task");
+            msg.what=0;
+            mHandler.sendMessage(msg);
+        }else if(resultCode == 2){
+            finish();
+        }
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
