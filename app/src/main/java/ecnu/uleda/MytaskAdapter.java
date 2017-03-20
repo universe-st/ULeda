@@ -10,17 +10,16 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Locale;
 
 /**
- * Created by TonyDanid on 2017/3/18.
+ * Created by VinnyHu on 2017/3/20.
  */
 
-public class MyOrderAdapter extends ArrayAdapter<MyOrder> {
-    public MyOrderAdapter(Context context, List<MyOrder> objects){
-        super(context,R.layout.my_order_item,objects);
+public class MytaskAdapter extends ArrayAdapter<MyOrder> {
+    public MytaskAdapter(Context context, List<MyOrder> objects){
+        super(context,R.layout.my_task,objects);
     }
 
     @Override
@@ -32,7 +31,7 @@ public class MyOrderAdapter extends ArrayAdapter<MyOrder> {
 
         if(convertView==null)
         {
-            v = LayoutInflater.from(getContext().getApplicationContext()).inflate(R.layout.my_order_item,parent,false);
+            v = LayoutInflater.from(getContext().getApplicationContext()).inflate(R.layout.my_task,parent,false);
             viewHolder = new ViewHolder();
             viewHolder.tasktype = (TextView) v.findViewById(R.id.task_type);
             viewHolder.publishername = (TextView)v.findViewById(R.id.publisher_name);
@@ -42,7 +41,6 @@ public class MyOrderAdapter extends ArrayAdapter<MyOrder> {
             viewHolder.timelimit = (TextView)v.findViewById(R.id.time_limit);
             viewHolder.fromandto = (TextView)v.findViewById(R.id.from_and_to);
             v.setTag(viewHolder);
-
         }
         else
         {
@@ -109,8 +107,7 @@ public class MyOrderAdapter extends ArrayAdapter<MyOrder> {
         TextView taskreward;
         TextView timelimit;
         TextView fromandto;
-
+        TextView getperson;
     }
-
 
 }
