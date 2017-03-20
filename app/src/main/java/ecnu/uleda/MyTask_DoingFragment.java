@@ -7,83 +7,51 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import static ecnu.uleda.R.id.parent;
 
 public class MyTask_DoingFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private ListView mListView;
+    private List<MyOrder> doinglist;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
-
-    public MyTask_DoingFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment MyTask_DoingFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static MyTask_DoingFragment newInstance(String param1, String param2) {
-        MyTask_DoingFragment fragment = new MyTask_DoingFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, ViewGroup  parent,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_my_task__doing, container, false);
+
+        View v =  inflater.inflate(R.layout.fragment_my_task__doing, parent, false);
+        mListView = (ListView)v.findViewById(R.id.doing_item);
+        doinglist = new ArrayList<>();
+
+        doinglist.add(new MyOrder()
+                .setTitle("捉拿胡楠")
+                .setDescription("捉拿胡楠捉拿胡楠捉拿胡楠")
+                .setPrice(BigDecimal.valueOf(15))
+                .setActiveTime(15)
+                .setAuthorCredit(5)
+                .setAuthorID(110)
+                .setAuthorUserName("赵铁柱")
+                .setPath("从5舍到7舍")
+                .setTag("生活任务")
+                .setGetperson("张无忌")
+
+        );
+        mListView.setAdapter(new MydoingAdapter(this.getActivity(),doinglist));
+
+
+        return v;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
 }

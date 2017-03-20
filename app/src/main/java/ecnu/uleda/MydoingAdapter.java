@@ -10,17 +10,16 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Locale;
 
 /**
- * Created by TonyDanid on 2017/3/18.
+ * Created by VinnyHu on 2017/3/19.
  */
 
-public class MyOrderAdapter extends ArrayAdapter<MyOrder> {
-    public MyOrderAdapter(Context context, List<MyOrder> objects){
-        super(context,R.layout.my_order_item,objects);
+public class MydoingAdapter extends ArrayAdapter<MyOrder> {
+    public MydoingAdapter(Context context, List<MyOrder> objects){
+        super(context,R.layout.doingitem,objects);
     }
 
     @Override
@@ -32,7 +31,7 @@ public class MyOrderAdapter extends ArrayAdapter<MyOrder> {
 
         if(convertView==null)
         {
-            v = LayoutInflater.from(getContext().getApplicationContext()).inflate(R.layout.my_order_item,parent,false);
+            v = LayoutInflater.from(getContext().getApplicationContext()).inflate(R.layout.doingitem,parent,false);
             viewHolder = new ViewHolder();
             viewHolder.tasktype = (TextView) v.findViewById(R.id.task_type);
             viewHolder.publishername = (TextView)v.findViewById(R.id.publisher_name);
@@ -41,6 +40,7 @@ public class MyOrderAdapter extends ArrayAdapter<MyOrder> {
             viewHolder.taskreward = (TextView)v.findViewById(R.id.task_reward);
             viewHolder.timelimit = (TextView)v.findViewById(R.id.time_limit);
             viewHolder.fromandto = (TextView)v.findViewById(R.id.from_and_to);
+            viewHolder.getperson = (TextView)v.findViewById(R.id.getperson_name);
             v.setTag(viewHolder);
 
         }
@@ -58,6 +58,7 @@ public class MyOrderAdapter extends ArrayAdapter<MyOrder> {
 
         viewHolder.taskinfo.setText(order.getTitle());
         viewHolder.taskreward.setText(String.format(Locale.ENGLISH,"¥%.2f",order.getPrice()));
+        viewHolder.getperson.setText(order.getGetperson());
         long hour;
         long min;
         long sec;
@@ -109,6 +110,7 @@ public class MyOrderAdapter extends ArrayAdapter<MyOrder> {
         TextView taskreward;
         TextView timelimit;
         TextView fromandto;
+        TextView getperson;
 
     }
 
