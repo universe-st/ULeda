@@ -18,7 +18,7 @@ import java.util.List;
 public class MyTask_ReleasedFragment extends Fragment {
 
     private ListView mlistView;
-    private List<MyOrder> releasedList=new ArrayList<>();
+    private List<MyOrder> releasedList;
 
 
     @Override
@@ -30,7 +30,7 @@ public class MyTask_ReleasedFragment extends Fragment {
 
         View v=inflater.inflate(R.layout.fragment_my_task__released,parent,false);
         mlistView = (ListView) v.findViewById(R.id.list_view);
-
+        releasedList = new ArrayList<>();
         releasedList.add(new MyOrder()
                 .setTitle("捉拿胡楠")
                 .setDescription("捉拿胡楠捉拿胡楠捉拿胡楠")

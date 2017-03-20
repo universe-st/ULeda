@@ -9,12 +9,8 @@ import java.math.BigDecimal;
  */
 
 public class MyOrder {
-    public static final int UNRECEIVE=0;
-    public static final int IS_RECEIVED=1;
-    public static final int WAIT_REWARD=2;
-    public static final int IS_DONE=3;
-    public static final int INVAILDATION=4;
-    public static final int IN_DISPUTE=5;
+
+
 
 
 
@@ -33,6 +29,16 @@ public class MyOrder {
     private BigDecimal mPrice;
     private LatLng mPosition;
     private String mPostID;
+    private static String mGetperson;
+
+    public String  getGetperson() {
+        return mGetperson;
+    }
+
+    public MyOrder setGetperson(String getperson) {
+        mGetperson = getperson;
+        return this;
+    }
 
     public String getPostID() {
         return mPostID;
