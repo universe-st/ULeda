@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 public class MyTaskInFo extends AppCompatActivity implements
  ViewPager.OnPageChangeListener,RadioGroup.OnCheckedChangeListener,OnClickListener {
@@ -51,7 +52,7 @@ public class MyTaskInFo extends AppCompatActivity implements
         evaluate=(RadioButton)findViewById(R.id.evaluate) ;
         done=(RadioButton)findViewById(R.id.done) ;
         evaluation=(RadioButton)findViewById(R.id.evaluation) ;
-        mback = (ImageButton)findViewById(R.id.Release_back);
+        mback = (ImageButton) findViewById(R.id.Release_back);
         group.setOnCheckedChangeListener(this);
         mViewPager = (ViewPager)findViewById(R.id.task_layout);
         mViewPager.setAdapter(mAdapter);
