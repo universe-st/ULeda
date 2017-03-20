@@ -91,6 +91,7 @@ implements View.OnClickListener{
 
     @Override
     public void onActivityResult(int requestCode,int resultCode,Intent intent){
+        if(intent==null)return;
         if(resultCode==1){
             Message msg=new Message();
             msg.obj=intent.getSerializableExtra("Task");
