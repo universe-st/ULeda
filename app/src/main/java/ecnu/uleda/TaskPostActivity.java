@@ -259,8 +259,9 @@ public class TaskPostActivity extends AppCompatActivity {
             Toast.makeText(TaskPostActivity.this, "价格不能为空哦～",Toast.LENGTH_SHORT).show();
             return false;
         }
-        if(UPublicTool.byteCount(mDescription)>450){
-            Toast.makeText(TaskPostActivity.this, "描述不能多于225个字哦～",Toast.LENGTH_SHORT).show();
+        if(UPublicTool.byteCount(mDescription)>225){
+            Toast.makeText(TaskPostActivity.this, "描述不能多于225个字节哦～",Toast.LENGTH_SHORT).show();
+            return false;
         }
         if(Float.parseFloat(mPrice)<0.5f)
         {
@@ -284,6 +285,7 @@ public class TaskPostActivity extends AppCompatActivity {
         }
         if(mStart.equals("选择地址") && mDestination.equals("选择地址"))
         {
+            mPosition="31.2267104411"+","+"121.4044582732";
             mPath = "|";
             return true;
         }
