@@ -36,7 +36,8 @@ public class UTask implements Serializable{
 
 
     private BigDecimal mPrice;
-    private LatLng mPosition;
+    private double mLat;
+    private double mLng;
     private String mPostID;
 
     public String getPostID() {
@@ -155,11 +156,12 @@ public class UTask implements Serializable{
     }
 
     public LatLng getPosition() {
-        return mPosition;
+        return new LatLng(mLat,mLng);
     }
 
     public UTask setPosition(LatLng position) {
-        mPosition = position;
+        mLat=position.getLatitude();
+        mLng=position.getLongitude();
         return this;
     }
 
@@ -191,7 +193,7 @@ public class UTask implements Serializable{
         return (mPostDate+mActiveTime-System.currentTimeMillis()/1000);
     }
     public String getStarString(){
-        int c=mAuthorCredit;
+        int c=mAuthorCredit/20;
         StringBuilder s=new StringBuilder();
         for(int i=0;i<5;i++){
             if(i<c){

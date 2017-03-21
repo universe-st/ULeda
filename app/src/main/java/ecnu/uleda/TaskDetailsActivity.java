@@ -2,6 +2,7 @@ package ecnu.uleda;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
@@ -9,6 +10,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
@@ -69,11 +71,79 @@ implements View.OnClickListener{
                 mTask=(UTask)msg.obj;
                 listViewInit();
                 mapInit();
+                final UserOperatorController uoc=UserOperatorController.getInstance();
+                if(mTask.getAuthorID()==Integer.parseInt(uoc.getId())){
+                    mButtonRight.setText("编辑任务");
+                    mButtonRight.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent =new Intent(TaskDetailsActivity.this,TaskEditActivity.class);
+                            intent.putExtra("Task",mTask);
+                            startActivityForResult(intent,1);
+                        }
+                    });
+                }else if(mTask.getStatus()!=0){
+                    mButtonRight.setEnabled(false);
+                    mButtonRight.setBackgroundColor(ContextCompat.getColor(TaskDetailsActivity.this,android.R.color.darker_gray));
+                    switch (mTask.getStatus()){
+                        case 4:
+                            mButtonRight.setText("已失效");
+                            break;
+                        default:
+                            mButtonRight.setText("已被领取");
+                            break;
+                    }
+                }else{
+                    mButtonRight.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            new Thread(){
+                                @Override
+                                public void run(){
+                                    try {
+                                        String s=ServerAccessApi.acceptTask(uoc.getId(),uoc.getPassport(),mTask.getPostID());
+                                        if(s.equals("success")){
+                                            Message msg=new Message();
+                                            msg.what=3;
+                                            mHandler.sendMessage(msg);
+                                        }
+                                    }catch (UServerAccessException e){
+                                        e.printStackTrace();
+                                        Message msg=new Message();
+                                        msg.what=1;
+                                        msg.obj=e.getMessage();
+                                        mHandler.sendMessage(msg);
+                                    }
+                                }
+                            }.start();
+                        }
+                    });
+                }
+            }else if (msg.what==3){
+                Toast.makeText(TaskDetailsActivity.this,"成功接受任务",Toast.LENGTH_SHORT).show();
+                mButtonRight.setEnabled(false);
+                mTask.setStatus(1);
+                mButtonRight.setText("已被领取");
+                mButtonRight.setBackgroundColor(ContextCompat.getColor(TaskDetailsActivity.this,android.R.color.darker_gray));
             }else{
-                Toast.makeText(TaskDetailsActivity.this,"错误："+(String)msg.obj,Toast.LENGTH_SHORT).show();
+                Toast.makeText(TaskDetailsActivity.this,"错误："+msg.obj,Toast.LENGTH_SHORT).show();
             }
         }
     };
+
+    @Override
+    public void onActivityResult(int requestCode,int resultCode,Intent intent){
+        if(intent==null)return;
+        if(resultCode==1){
+            Message msg=new Message();
+            msg.obj=intent.getSerializableExtra("Task");
+            msg.what=0;
+            mHandler.sendMessage(msg);
+        }else if(resultCode == 2){
+            finish();
+        }
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -217,7 +287,7 @@ implements View.OnClickListener{
                             .setAuthorID(j.getInt("author"))
                             .setDescription(j.getString("description"))
                             .setAuthorUserName(j.getString("authorUsername"))
-                            .setAuthorCredit(5)
+                            .setAuthorCredit(j.getInt("authorCredit"))
                             .setPostID(mTask.getPostID())
                             .setActiveTime(j.getLong("activetime"))
                             .setStatus(j.getInt("status"));

@@ -21,7 +21,7 @@
         android:background="@color/colorUMain"
         android:weightSum="10">
         <Button
-            android:id="@+id/button_task_post_back"
+            android:id="@+id/button_task_edit_back"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2"
@@ -35,7 +35,7 @@
             android:layout_height="match_parent"
             android:layout_weight="6">
             <TextView
-                android:text="发布任务"
+                android:text="编辑任务"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -83,7 +83,7 @@
                 android:ems="10"
                 android:maxLines="3"
                 android:maxLength="25"
-                android:id="@+id/task_post_title"
+                android:id="@+id/task_edit_title"
                 android:background="@null"
                 android:hint="限5~25字"
                 android:textColorHint="@color/colorUGray"
@@ -131,7 +131,7 @@
             <Spinner
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/spinner_task_post"
+                android:id="@+id/spinner_task_edit"
                 android:textAlignment="center"
                 >
 
@@ -143,7 +143,7 @@
             android:layout_weight="6">
 
         </LinearLayout>
-        </LinearLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:orientation="vertical"
@@ -183,7 +183,7 @@
                 android:layout_height="match_parent"
                 android:maxLength="6"
                 android:inputType="numberDecimal"
-                android:id="@+id/task_post_payment"
+                android:id="@+id/task_edit_payment"
                 android:background="@null"
                 android:hint="最低0.5元 "
                 android:textColorHint="@color/colorUGray"
@@ -210,7 +210,7 @@
                 android:layout_height="match_parent"
                 android:maxLength="10"
                 android:inputType="numberDecimal"
-                android:id="@+id/task_post_activeTime"
+                android:id="@+id/task_edit_activeTime"
                 android:background="@null"
                 android:hint="最低10min"
                 android:textColorHint="@color/colorUGray"
@@ -256,7 +256,7 @@
             android:layout_height="match_parent"
             android:layout_weight="12">
             <Button
-                android:id="@+id/button_task_post_start"
+                android:id="@+id/button_task_edit_start"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="选择地址"
@@ -271,7 +271,7 @@
             android:layout_height="match_parent"
             android:layout_weight="3">
             <Button
-                android:id="@+id/button_delete_start"
+                android:id="@+id/button_delete_start_edit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="删除"
@@ -316,7 +316,7 @@
             android:layout_height="match_parent"
             android:layout_weight="12">
             <Button
-                android:id="@+id/button_task_post_destination"
+                android:id="@+id/button_task_edit_destination"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="选择地址"
@@ -331,7 +331,7 @@
             android:layout_height="match_parent"
             android:layout_weight="3">
             <Button
-                android:id="@+id/button_delete_destination"
+                android:id="@+id/button_delete_destination_edit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="删除"
@@ -397,7 +397,7 @@
                 android:layout_height="match_parent"
                 android:ems="20"
                 android:maxLines="6"
-                android:id="@+id/task_post_description"
+                android:id="@+id/task_edit_description"
                 android:background="@null"
                 android:hint="您对订单的详细要求，没有可不填，限225字节内。"
                 android:textColorHint="@color/colorUGray"
@@ -420,17 +420,36 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="10"
-        android:weightSum="10">
+        android:weightSum="22">
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"/>
+            android:layout_weight="2"/>
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="8">
             <Button
-                android:id="@+id/button_task_post"
+                android:id="@+id/button_task_delete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="删除订单"
+                android:textSize="18dp"
+                android:textColor="@color/colorUWhite"
+                android:background="@drawable/login_shape_button"
+                android:layout_centerHorizontal="true"
+                />
+        </FrameLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"/>
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="8">
+            <Button
+                android:id="@+id/button_task_post_edit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="发布订单"
@@ -443,7 +462,7 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"/>
+            android:layout_weight="2"/>
     </LinearLayout>
 
 </LinearLayout>

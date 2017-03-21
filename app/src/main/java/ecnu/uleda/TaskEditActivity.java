@@ -1,10 +1,10 @@
 package ecnu.uleda;
 
-
 import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -17,23 +17,27 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
-import com.tencent.map.geolocation.TencentLocationManager;
 
+import com.tencent.mapsdk.raster.model.LatLng;
+import com.tencent.tencentmap.mapsdk.map.MapView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
-public class TaskPostActivity extends AppCompatActivity {
-
-    private UserOperatorController mUserOperatorController;
+public class TaskEditActivity extends AppCompatActivity {
 
     private Handler mClickHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == 0) {
-                Toast.makeText(TaskPostActivity.this, "提交成功～", Toast.LENGTH_SHORT).show();
+                Toast.makeText(TaskEditActivity.this, "提交成功～", Toast.LENGTH_SHORT).show();
                 finish();
             } else {
                 UServerAccessException exception = (UServerAccessException) msg.obj;
-                Toast.makeText(TaskPostActivity.this, "提交任务失败：" + exception.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(TaskEditActivity.this, "提交任务失败：" + exception.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -51,6 +55,9 @@ public class TaskPostActivity extends AppCompatActivity {
         taskPostArray.add("其他");
     }
 
+    private UTask mTask;
+    private UserOperatorController mUserOperatorController;
+
     private EditText mEtTitle;
     private Spinner mSpinTag;
     private EditText mEtPrice;
@@ -63,6 +70,7 @@ public class TaskPostActivity extends AppCompatActivity {
 
     private String mId;
     private String mPpassport;
+    private String mPostId;
     private String mTitle;
     private String mTag = "跑腿代步";  //tag任务分类
     private String mDescription;
@@ -83,8 +91,15 @@ public class TaskPostActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.task_post_activity);
+        setContentView(R.layout.activity_task_edit);
+
+        mTask=(UTask)getIntent().getSerializableExtra("Task");
+        final UserOperatorController uoc=UserOperatorController.getInstance();
+        if(!uoc.getIsLogined())
+            return;
+        //
         init();
+
         SpinnerInit();
         SpinnerEvent();
 
@@ -92,17 +107,16 @@ public class TaskPostActivity extends AppCompatActivity {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
 
+        mButtonBack = (Button) findViewById(R.id.button_task_edit_back);
         mButtonBack.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 finish();
             }
         });
-
-        mEtPrice.addTextChangedListener(new MyTextWatcher());
-
+        mEtPrice.addTextChangedListener(new TaskEditActivity.MyTextWatcher());
         mButtonTaskPost.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                getTaskPost();
+                getTaskEdit();
                 if (!judgeEditText()) {
                     return;
                 }
@@ -110,7 +124,7 @@ public class TaskPostActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         try {
-                            ServerAccessApi.postTask(mId, mPpassport, mTitle, mTag, mDescription, mPrice, mPath, mActiveTime, mPosition);
+                            ServerAccessApi.editTask(mId, mPpassport, mPostId,mTitle, mTag, mDescription, mPrice, mPath, mActiveTime, mPosition);
                             Message message = new Message();
                             message.what = 0;
                             mClickHandler.sendMessage(message);
@@ -125,6 +139,7 @@ public class TaskPostActivity extends AppCompatActivity {
                 }.start();
             }
         });
+
     }
     @Override
     public void onActivityResult(int request,int result,Intent data){
@@ -138,36 +153,48 @@ public class TaskPostActivity extends AppCompatActivity {
         }
     }
     protected void init() {
-        mButtonBack = (Button) findViewById(R.id.button_task_post_back);
-        mButtonTaskPost = (Button) findViewById(R.id.button_task_post);
-        mEtTitle = (EditText) findViewById(R.id.task_post_title);
-        mEtPrice = (EditText) findViewById(R.id.task_post_payment);
-        mEtActiveTime = (EditText) findViewById(R.id.task_post_activeTime);
-        mEtDescription = (EditText) findViewById(R.id.task_post_description);
+        final UserOperatorController uoc=UserOperatorController.getInstance();
+        mId = uoc.getId();
+        mPpassport = uoc.getPassport();
+        mPostId=mTask.getPostID();
+
+        mButtonTaskPost = (Button) findViewById(R.id.button_task_post_edit);
+        mEtTitle = (EditText) findViewById(R.id.task_edit_title);
+        mEtPrice = (EditText) findViewById(R.id.task_edit_payment);
+        mEtActiveTime = (EditText) findViewById(R.id.task_edit_activeTime);
+        mEtDescription = (EditText) findViewById(R.id.task_edit_description);
+
+        mEtTitle.setText(mTask.getTitle());
+        mEtActiveTime.setText(String.valueOf(mTask.getLeftTime()));
+        mEtPrice.setText(String.valueOf(mTask.getPrice()));
+        mEtDescription.setText(mTask.getDescription());
 
 
-        buttonStart = (Button) findViewById(R.id.button_task_post_start);
+        String[] pos=mTask.getPath().split("\\|");
+        buttonStart = (Button) findViewById(R.id.button_task_edit_start);
+        buttonStart.setText(pos[0]);
         buttonStart.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                Intent intent=new Intent(TaskPostActivity.this,LocationListActivity.class);
+                Intent intent=new Intent(TaskEditActivity.this,LocationListActivity.class);
                 startActivityForResult(intent,100);
             }
         });
-        buttonDestination=(Button)findViewById(R.id.button_task_post_destination);
+        buttonDestination=(Button)findViewById(R.id.button_task_edit_destination);
+        buttonDestination.setText(pos[1]);
         buttonDestination.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(TaskPostActivity.this,LocationListActivity.class);
+                Intent intent=new Intent(TaskEditActivity.this,LocationListActivity.class);
                 startActivityForResult(intent,200);
             }
         });
-        buttonDeleteStart=(Button)findViewById(R.id.button_delete_start);
+        buttonDeleteStart=(Button)findViewById(R.id.button_delete_start_edit);
         buttonDeleteStart.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view){
                 buttonStart.setText("选择地址");
             }
         });
-        buttonDeleteDestination=(Button)findViewById(R.id.button_delete_destination);
+        buttonDeleteDestination=(Button)findViewById(R.id.button_delete_destination_edit);
         buttonDeleteDestination.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view){
                 buttonDestination.setText("选择地址");
@@ -177,7 +204,8 @@ public class TaskPostActivity extends AppCompatActivity {
 
 
     private void SpinnerInit() {
-        mSpinTag = (Spinner) findViewById(R.id.spinner_task_post);
+        mSpinTag = (Spinner) findViewById(R.id.spinner_task_edit);
+        //mSpinTag.setTag();
         taskPostAdapter = new ArrayAdapter<>(this.getApplicationContext(),
                 R.layout.task_post_spinner, taskPostArray);
         taskPostAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
@@ -221,10 +249,10 @@ public class TaskPostActivity extends AppCompatActivity {
         }
     }
 
-    private void getTaskPost() {
-        mUserOperatorController = UserOperatorController.getInstance();
-        mId = mUserOperatorController.getId();
-        mPpassport = mUserOperatorController.getPassport();
+    private void getTaskEdit() {
+        //mUserOperatorController = UserOperatorController.getInstance();
+        //mId = mUserOperatorController.getId();
+        //mPpassport = mUserOperatorController.getPassport();
         mTitle = mEtTitle.getText().toString();
         mDescription = mEtDescription.getText().toString();
         mPrice = mEtPrice.getText().toString();
@@ -242,40 +270,40 @@ public class TaskPostActivity extends AppCompatActivity {
     {
         if(mTitle.length()==0)
         {
-            Toast.makeText(TaskPostActivity.this, "标题不能为空哦～",Toast.LENGTH_SHORT).show();
+            Toast.makeText(TaskEditActivity.this, "标题不能为空哦～",Toast.LENGTH_SHORT).show();
             return false;
         }
         if(UPublicTool.byteCount(mTitle)<5)
         {
-            Toast.makeText(TaskPostActivity.this, "标题不能少于5个字节哦～",Toast.LENGTH_SHORT).show();
+            Toast.makeText(TaskEditActivity.this, "标题不能少于5个字节哦～",Toast.LENGTH_SHORT).show();
             return false;
         }
         if(UPublicTool.byteCount(mTitle)>30){
-            Toast.makeText(TaskPostActivity.this, "标题不能多于30个字节哦～",Toast.LENGTH_SHORT).show();
+            Toast.makeText(TaskEditActivity.this, "标题不能多于30个字节哦～",Toast.LENGTH_SHORT).show();
             return false;
         }
         if(mPrice.length()==0)
         {
-            Toast.makeText(TaskPostActivity.this, "价格不能为空哦～",Toast.LENGTH_SHORT).show();
+            Toast.makeText(TaskEditActivity.this, "价格不能为空哦～",Toast.LENGTH_SHORT).show();
             return false;
         }
         if(UPublicTool.byteCount(mDescription)>225){
-            Toast.makeText(TaskPostActivity.this, "描述不能多于225个字节哦～",Toast.LENGTH_SHORT).show();
+            Toast.makeText(TaskEditActivity.this, "描述不能多于225个字节哦～",Toast.LENGTH_SHORT).show();
             return false;
         }
         if(Float.parseFloat(mPrice)<0.5f)
         {
-            Toast.makeText(TaskPostActivity.this, "价格不能低于0.5元哦～",Toast.LENGTH_SHORT).show();
+            Toast.makeText(TaskEditActivity.this, "价格不能低于0.5元哦～",Toast.LENGTH_SHORT).show();
             return false;
         }
         if(mActiveTime.length()==0)
         {
-            Toast.makeText(TaskPostActivity.this, "时效不能为空哦～",Toast.LENGTH_SHORT).show();
+            Toast.makeText(TaskEditActivity.this, "时效不能为空哦～",Toast.LENGTH_SHORT).show();
             return false;
         }
         if(!mStart.equals("选择地址") && mDestination.equals("选择地址") )
         {
-            Toast.makeText(TaskPostActivity.this,"请选择目的地哦～",Toast.LENGTH_SHORT).show();
+            Toast.makeText(TaskEditActivity.this,"请选择目的地哦～",Toast.LENGTH_SHORT).show();
             return false;
         }
         if(mStart.equals("选择地址") && !mDestination.equals("选择地址"))
@@ -295,5 +323,3 @@ public class TaskPostActivity extends AppCompatActivity {
     }
 
 }
-
-
