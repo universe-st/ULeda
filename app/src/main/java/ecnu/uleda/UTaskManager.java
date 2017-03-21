@@ -97,7 +97,7 @@ public class UTaskManager {
                             .setPrice(new BigDecimal(j.getString("price")))
                             .setAuthorID(j.getInt("author"))
                             .setAuthorUserName(j.getString("authorUsername"))
-                            .setAuthorCredit(5)
+                            .setAuthorCredit(j.getInt("authorCredit"))
                             .setPostID(j.getString("postID"))
                             .setActiveTime(j.getLong("activetime"));
                     mTasksInList.add(task);
@@ -142,7 +142,7 @@ public class UTaskManager {
                             .setPrice(new BigDecimal(j.getString("price")))
                             .setAuthorID(j.getInt("author"))
                             .setAuthorUserName(j.getString("authorUsername"))
-                            .setAuthorCredit(5)
+                            .setAuthorCredit(j.getInt("authorCredit"))
                             .setPostID(j.getString("postID"))
                             .setActiveTime(j.getLong("activetime"));
                     mTasksInList.add(task);

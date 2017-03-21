@@ -287,7 +287,7 @@ implements View.OnClickListener{
                             .setAuthorID(j.getInt("author"))
                             .setDescription(j.getString("description"))
                             .setAuthorUserName(j.getString("authorUsername"))
-                            .setAuthorCredit(5)
+                            .setAuthorCredit(j.getInt("authorCredit"))
                             .setPostID(mTask.getPostID())
                             .setActiveTime(j.getLong("activetime"))
                             .setStatus(j.getInt("status"));
