@@ -5,7 +5,8 @@
     <item
         android:state_checked="true" android:color="#cc0000"
 
-        />
+       />
+
 
     <!-- not selected -->
     <item android:color="#000000"/>

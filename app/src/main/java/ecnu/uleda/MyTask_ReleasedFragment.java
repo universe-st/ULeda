@@ -32,15 +32,15 @@ public class MyTask_ReleasedFragment extends Fragment {
         mlistView = (ListView) v.findViewById(R.id.list_view);
         releasedList = new ArrayList<>();
         releasedList.add(new MyOrder()
-                .setTitle("捉拿胡楠")
-                .setDescription("捉拿胡楠捉拿胡楠捉拿胡楠")
+                .setTitle("帮忙重装操作系统")
+                .setDescription("")
                 .setPrice(BigDecimal.valueOf(15))
                 .setActiveTime(15)
                 .setAuthorCredit(5)
                 .setAuthorID(110)
-                .setAuthorUserName("赵铁柱")
+                .setAuthorUserName("张三")
                 .setPath("从5舍到7舍")
-                .setTag("生活任务")
+                .setTag("学习任务")
         );
 
 
