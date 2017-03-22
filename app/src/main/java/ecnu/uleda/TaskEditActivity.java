@@ -56,7 +56,6 @@ public class TaskEditActivity extends AppCompatActivity {
     }
 
     private UTask mTask;
-    private UserOperatorController mUserOperatorController;
 
     private EditText mEtTitle;
     private Spinner mSpinTag;
@@ -165,14 +164,14 @@ public class TaskEditActivity extends AppCompatActivity {
         mEtDescription = (EditText) findViewById(R.id.task_edit_description);
 
         mEtTitle.setText(mTask.getTitle());
-        mEtActiveTime.setText(String.valueOf(mTask.getLeftTime()));
+        mEtActiveTime.setText(String.valueOf(mTask.getActiveTime()/60));
         mEtPrice.setText(String.valueOf(mTask.getPrice()));
         mEtDescription.setText(mTask.getDescription());
 
 
-        String[] pos=mTask.getPath().split("\\|");
+        String[] pos={mTask.getFromWhere(),mTask.getToWhere()};
         buttonStart = (Button) findViewById(R.id.button_task_edit_start);
-        buttonStart.setText(pos[0]);
+        buttonStart.setText(pos[0].length()==0?"选择地址":pos[0]);
         buttonStart.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Intent intent=new Intent(TaskEditActivity.this,LocationListActivity.class);
@@ -180,7 +179,7 @@ public class TaskEditActivity extends AppCompatActivity {
             }
         });
         buttonDestination=(Button)findViewById(R.id.button_task_edit_destination);
-        buttonDestination.setText(pos[1]);
+        buttonDestination.setText(pos[1].length()==0?"选择地址":pos[1]);
         buttonDestination.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -200,6 +199,8 @@ public class TaskEditActivity extends AppCompatActivity {
                 buttonDestination.setText("选择地址");
             }
         });
+        latitude=(float)mTask.getPosition().getLatitude();
+        longitude=(float)mTask.getPosition().getLongitude();
     }
 
 
