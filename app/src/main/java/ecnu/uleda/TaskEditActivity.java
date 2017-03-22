@@ -65,7 +65,7 @@ public class TaskEditActivity extends AppCompatActivity {
     private EditText mEtDescription;
 
     private Button mButtonBack;
-    private Button mButtonTaskPost;
+    private Button mButtonTaskEdit;
     private ArrayAdapter<String> taskPostAdapter;
 
     private String mId;
@@ -114,7 +114,7 @@ public class TaskEditActivity extends AppCompatActivity {
             }
         });
         mEtPrice.addTextChangedListener(new TaskEditActivity.MyTextWatcher());
-        mButtonTaskPost.setOnClickListener(new View.OnClickListener() {
+        mButtonTaskEdit.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 getTaskEdit();
                 if (!judgeEditText()) {
@@ -158,7 +158,7 @@ public class TaskEditActivity extends AppCompatActivity {
         mPpassport = uoc.getPassport();
         mPostId=mTask.getPostID();
 
-        mButtonTaskPost = (Button) findViewById(R.id.button_task_post_edit);
+        mButtonTaskEdit = (Button) findViewById(R.id.button_task_post_edit);
         mEtTitle = (EditText) findViewById(R.id.task_edit_title);
         mEtPrice = (EditText) findViewById(R.id.task_edit_payment);
         mEtActiveTime = (EditText) findViewById(R.id.task_edit_activeTime);
@@ -253,6 +253,11 @@ public class TaskEditActivity extends AppCompatActivity {
         //mUserOperatorController = UserOperatorController.getInstance();
         //mId = mUserOperatorController.getId();
         //mPpassport = mUserOperatorController.getPassport();
+        final UserOperatorController uoc=UserOperatorController.getInstance();
+        mId = uoc.getId();
+        mPpassport = uoc.getPassport();
+        mPostId=mTask.getPostID();
+
         mTitle = mEtTitle.getText().toString();
         mDescription = mEtDescription.getText().toString();
         mPrice = mEtPrice.getText().toString();
