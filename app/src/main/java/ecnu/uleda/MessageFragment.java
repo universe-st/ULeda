@@ -54,7 +54,15 @@ public class MessageFragment extends Fragment {
                         Intent i = new Intent(MessageFragment.this.getActivity(),Community.class);
                         startActivity(i);
                     }
-            }
+                    else if(view.getTag().equals(3))
+                    {
+                        Intent i = new Intent(MessageFragment.this.getActivity(),Chart.class);
+                        startActivity(i);
+
+                    }
+
+                    }
+
         });
 
         AddFriends = (Button)view.findViewById(R.id.add_friends);
