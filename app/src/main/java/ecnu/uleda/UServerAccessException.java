@@ -26,7 +26,7 @@ public class UServerAccessException extends Exception {
     public static final int BAD_ID=408;//错误的ID
     public static final int WRONG_LOCATION=415;//坐标格式错误
     public static final int NO_EXIST_TASK=413;//不存在的任务
-
+    public static final int TASK_CANNOT_ACCEPT=420;//任务已经被接受或者失效
     public UServerAccessException(int status){
         super(getStatusInString(status));
         mStatus=status;
@@ -72,6 +72,8 @@ public class UServerAccessException extends Exception {
                 return "地址参数错误";
             case NO_EXIST_TASK:
                 return "不存在的任务";
+            case TASK_CANNOT_ACCEPT:
+                return "任务已经被接受或者失效";
             case UNKNOWN:
             default:
                 return "未知异常";

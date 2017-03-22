@@ -433,7 +433,24 @@ public class ServerAccessApi {
             throw new UServerAccessException(response.getRet());
         }
     }
-
+    public static String acceptTask(@NonNull String id,@NonNull String passport,@NonNull String postID)throws UServerAccessException{
+        id=UrlEncode(id);
+        passport=UrlEncode(passport);
+        postID=UrlEncode(postID);
+        PhalApiClient client=createClient();
+        PhalApiClientResponse response = client
+                .withService("Task.Accept")
+                .withParams("id",id)
+                .withParams("passport",passport)
+                .withParams("postID",postID)
+                .withTimeout(SET_TIME_OUT)
+                .request();
+        if(response.getRet()==200){
+            return "success";
+        }else{
+            throw new UServerAccessException(response.getRet());
+        }
+    }
     public static String unfollowUser(@NonNull String id,@NonNull String passport,@NonNull String unfollowByID)throws UServerAccessException{
         id=UrlEncode(id);
         passport=UrlEncode(passport);
@@ -466,7 +483,7 @@ public class ServerAccessApi {
     private static PhalApiClient createClient(){
         //这个函数创造一个客户端实例
         return PhalApiClient.create()
-                .withHost("https://api.uleda.top/Public/mobile/");
+                .withHost("http://api.uleda.top/Public/mobile/");
     }
 
     private static String UrlEncode(String str)throws UServerAccessException{

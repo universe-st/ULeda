@@ -218,7 +218,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.92"
                 android:gravity="center_horizontal"
-                android:text="我的评价"
+                android:text="我的订单"
                 android:textSize="13sp" />
 
         </LinearLayout>

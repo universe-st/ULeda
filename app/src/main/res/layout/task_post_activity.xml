@@ -251,27 +251,36 @@
                 android:textColor="@android:color/black"
                 android:gravity="center_vertical|left"/>
         </FrameLayout>
-
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="14">
+            android:layout_weight="12">
             <Button
                 android:id="@+id/button_task_post_start"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="选择地址"
-                android:textSize="18dp"
+                android:textSize="17dp"
                 android:textColor="@color/colorUWhite"
                 android:background="@color/colorUInfo"
                 android:layout_centerHorizontal="true"
                 />
         </FrameLayout>
-
-        <LinearLayout
+        <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"/>
+            android:layout_weight="3">
+            <Button
+                android:id="@+id/button_delete_start"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="删除"
+                android:textSize="16dp"
+                android:textColor="@color/colorUGray"
+                android:background="@color/colorULightGray"
+                android:layout_centerHorizontal="true"
+                />
+        </FrameLayout>
     </LinearLayout>
     <LinearLayout
         android:orientation="vertical"
@@ -305,22 +314,33 @@
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="14">
+            android:layout_weight="12">
             <Button
                 android:id="@+id/button_task_post_destination"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="选择地址"
-                android:textSize="18dp"
+                android:textSize="17dp"
                 android:textColor="@color/colorUWhite"
                 android:background="@color/colorUInfo"
                 android:layout_centerHorizontal="true"
                 />
         </FrameLayout>
-        <LinearLayout
+        <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"/>
+            android:layout_weight="3">
+            <Button
+                android:id="@+id/button_delete_destination"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="删除"
+                android:textSize="16dp"
+                android:textColor="@color/colorUGray"
+                android:background="@color/colorULightGray"
+                android:layout_centerHorizontal="true"
+                />
+        </FrameLayout>
     </LinearLayout>
 
     <LinearLayout
