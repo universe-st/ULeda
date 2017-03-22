@@ -32,7 +32,7 @@ import static android.view.ViewGroup.*;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
 
-
+    private UserConfig mUserConfig;
     private Button mLogin;
     private EditText mUserName;
     private EditText mPassword;
@@ -65,6 +65,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private UserOperatorController mUOC=UserOperatorController.getInstance();
     @Override
     protected void onCreate(Bundle  savedInstanceState){
+        mUserConfig=UserConfig.getInstance(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         init();
@@ -86,13 +87,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mPasswordForget = (TextView)findViewById(R.id.password_forgotten) ;
 
         //测试
-        mUserName.setText("dizy");
-        mPassword.setText("zy980018");
+        mUserName.setText(mUserConfig.getSavedUsername());
+        mPassword.setText(mUserConfig.getSavedPassword());
         //测试
         mLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setAllEnabled(false);
+                mUserConfig.setSavedUsernamePassword(mUserName.getText().toString(),mPassword.getText().toString());
                 new Thread(){
                     @Override
                     public void run(){
