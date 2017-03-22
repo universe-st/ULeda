@@ -209,8 +209,28 @@ public class ServerAccessApi {
         }
     }
 
-
-
+    public static JSONArray getUserTasks(@NonNull String id,@NonNull String passport,int page,int flag)throws UServerAccessException{
+        id=UrlEncode(id);
+        passport = UrlEncode(passport);
+        PhalApiClientResponse response=createClient()
+                .withService("Task.GetUserTasks")
+                .withParams("id",id)
+                .withParams("passport",passport)
+                .withParams("page",String.valueOf(page))
+                .withParams("flag",String.valueOf(flag))
+                .withTimeout(SET_TIME_OUT)
+                .request();
+        if(response.getRet()==200){
+            try {
+                return new JSONArray(response.getData());
+            }catch (JSONException e){
+                e.printStackTrace();
+                throw new UServerAccessException(UServerAccessException.ERROR_DATA);
+            }
+        }else{
+            throw new UServerAccessException(response.getRet());
+        }
+    }
     public static JSONObject getComment(@NonNull String id,@NonNull String passport,@NonNull String postID,
                                         String start) throws UServerAccessException{
         id=UrlEncode(id);
@@ -483,7 +503,7 @@ public class ServerAccessApi {
     private static PhalApiClient createClient(){
         //这个函数创造一个客户端实例
         return PhalApiClient.create()
-                .withHost("http://api.uleda.top/Public/mobile/");
+                .withHost("https://api.uleda.top/Public/mobile/");
     }
 
     private static String UrlEncode(String str)throws UServerAccessException{
