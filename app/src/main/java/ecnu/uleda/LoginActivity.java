@@ -2,11 +2,22 @@ package ecnu.uleda;
 
 import android.content.Intent;
 import android.content.res.ObbInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
@@ -201,8 +212,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             mPopupWindow = new PopupWindow(LoginActivity.this);
             mPopupWindow.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
             mPopupWindow.setHeight(ViewGroup.LayoutParams.MATCH_PARENT);
-            mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
-
+            Point point=UPublicTool.getScreenSize(this,1,1);
+            mPopupWindow.setBackgroundDrawable(new BitmapDrawable(getResources(), Bitmap.createBitmap(point.x,point.y, Bitmap.Config.ALPHA_8)));
             mPopupWindow.setFocusable(true);
             mPopupWindow.setOutsideTouchable(true);
         }
