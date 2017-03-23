@@ -32,15 +32,15 @@ public class MyTask_MyEvaluationFragment extends Fragment {
         doinglist = new ArrayList<>();
 
         doinglist.add(new MyOrder()
-                .setTitle("帮忙重装操作系统")
+                .setTitle("带饭到宿舍425")
                 .setDescription("")
-                .setPrice(BigDecimal.valueOf(15))
+                .setPrice(BigDecimal.valueOf(45))
                 .setActiveTime(15)
                 .setAuthorCredit(5)
                 .setAuthorID(110)
-                .setAuthorUserName("张三")
-                .setPath("从5舍到7舍")
-                .setTag("学习帮助")
+                .setAuthorUserName("")
+                .setPath("到五舍")
+                .setTag("跑腿代步")
                 .setGetperson("李四")
 
         );

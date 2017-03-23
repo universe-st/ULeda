@@ -31,16 +31,16 @@ public class MyTask_ToEvaluateFragment extends Fragment {
         doinglist = new ArrayList<>();
 
         doinglist.add(new MyOrder()
-                .setTitle("帮忙重装操作系统")
+                .setTitle("寻教书院遗失U盘")
                 .setDescription("")
-                .setPrice(BigDecimal.valueOf(15))
+                .setPrice(BigDecimal.valueOf(3))
                 .setActiveTime(15)
                 .setAuthorCredit(5)
                 .setAuthorID(110)
-                .setAuthorUserName("张三")
-                .setPath("从5舍到7舍")
-                .setTag("学习帮助")
-                .setGetperson("李四")
+                .setAuthorUserName("克贡")
+                .setPath("到5舍426")
+                .setTag("寻物启事")
+                .setGetperson("胡楠")
 
         );
         mListView.setAdapter(new My_toevaluateAdapter(this.getActivity(),doinglist));

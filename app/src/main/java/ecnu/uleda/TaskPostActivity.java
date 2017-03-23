@@ -48,6 +48,9 @@ public class TaskPostActivity extends AppCompatActivity {
         taskPostArray.add("技术难题");
         taskPostArray.add("寻物启示");
         taskPostArray.add("活动相关");
+        taskPostArray.add("运动锻炼");
+        taskPostArray.add("项目招人");
+        taskPostArray.add("招聘实习");
         taskPostArray.add("其他");
     }
 

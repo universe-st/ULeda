@@ -35,16 +35,18 @@ public class MyTask_DoingFragment extends Fragment {
         doinglist = new ArrayList<>();
 
         doinglist.add(new MyOrder()
-                .setTitle("帮忙重装操作系统")
+                .setTitle("帮忙重装系统")
                 .setDescription("")
-                .setPrice(BigDecimal.valueOf(15))
+                .setPrice(BigDecimal.valueOf(10))
                 .setActiveTime(15)
                 .setAuthorCredit(5)
                 .setAuthorID(110)
-                .setAuthorUserName("张三")
-                .setPath("从5舍到7舍")
+                .setAuthorUserName("TonyDanid")
+                .setPath("到理科大楼")
                 .setTag("学习帮助")
-                .setGetperson("李四")
+                .setGetperson("徐洪义")
+                .setActiveTime(1260)
+
 
         );
         mListView.setAdapter(new MydoingAdapter(this.getActivity(),doinglist));
