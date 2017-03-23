@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content">
+<LinearLayout
+    android:layout_width="150dp"
+    android:layout_height="30dp"
+    android:background="@color/colorUMain"
+    android:orientation="horizontal">
+    <ImageView
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:src="@drawable/time_ico"
+        android:scaleType="fitXY"/>
+    <TextView
+        android:layout_width="125dp"
+        android:layout_height="30dp"
+        android:textColor="@android:color/white"
+        android:text="任务"
+        android:gravity="center_vertical"
+        android:textSize="15sp"/>
+</LinearLayout>
+    <ListView
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+        android:background="@android:color/white"
+        android:id="@+id/marker_info_list_view"/>
+    <Button
+        android:layout_width="150dp"
+        android:layout_height="30dp"
+        android:background="@color/colorUMain"
+        android:textColor="@android:color/white"
+        android:textSize="15sp"
+        android:id="@+id/marker_info_navigation_bt"
+        android:text="导航"/>
+</LinearLayout>

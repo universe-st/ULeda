@@ -1,7 +1,8 @@
 package ecnu.uleda;
 
 import android.content.Intent;
-import android.content.res.ObbInfo;
+import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,7 +12,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -20,11 +20,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import static android.view.ViewGroup.*;
 
 /**
  * Created by Shensheng on 2016/10/17.
@@ -32,7 +30,7 @@ import static android.view.ViewGroup.*;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
 
-
+    private UserConfig mUserConfig;
     private Button mLogin;
     private EditText mUserName;
     private EditText mPassword;
@@ -43,28 +41,42 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private TextView mRegister;
     private TextView mPasswordForget;
-
+    private boolean mIsWaiting=false;
     private Button FindPassWord;
     private Button MessageLogin;
     private Button CancelFindBack;
 
+    private static final String[] sLoginWaitDot={""," . "," . . "," . . . "};
+    private int mLoginWaitDotCount=0;
     private Handler mHandler=new Handler(){
       @Override
       public void handleMessage(Message msg){
-          if(mUOC.getIsLogined()){
-              Intent intent=new Intent(LoginActivity.this,UMainActivity.class);
-              startActivity(intent);
-              LoginActivity.this.finish();
-              Toast.makeText(LoginActivity.this,"欢迎您，"+mUOC.getUserName()+"！",Toast.LENGTH_SHORT).show();
-          }else{
-              Toast.makeText(LoginActivity.this,"登陆错误："+mUOC.getMessage(),Toast.LENGTH_SHORT).show();
-              setAllEnabled(true);
+          switch (msg.what){
+              case 0:{
+                  mIsWaiting=false;
+                  if(mUOC.getIsLogined()){
+                      Intent intent=new Intent(LoginActivity.this,UMainActivity.class);
+                      startActivity(intent);
+                      LoginActivity.this.finish();
+                      Toast.makeText(LoginActivity.this,"欢迎您，"+mUOC.getUserName()+"！",Toast.LENGTH_SHORT).show();
+                  }else{
+                      Toast.makeText(LoginActivity.this,"登陆错误："+mUOC.getMessage(),Toast.LENGTH_SHORT).show();
+                      setAllEnabled(true);
+                      mLogin.setText("登 陆");
+                  }
+                  break;
+              }
+              case 1:{
+                  mLogin.setText(sLoginWaitDot[mLoginWaitDotCount]+"登 陆"+sLoginWaitDot[mLoginWaitDotCount]);
+                  mLoginWaitDotCount = (mLoginWaitDotCount+1)%4;
+              }
           }
       }
     };
     private UserOperatorController mUOC=UserOperatorController.getInstance();
     @Override
     protected void onCreate(Bundle  savedInstanceState){
+        mUserConfig=UserConfig.getInstance(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         init();
@@ -86,13 +98,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mPasswordForget = (TextView)findViewById(R.id.password_forgotten) ;
 
         //测试
-        mUserName.setText("dizy");
-        mPassword.setText("zy980018");
+        mUserName.setText(mUserConfig.getSavedUsername());
+        mPassword.setText(mUserConfig.getSavedPassword());
         //测试
         mLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setAllEnabled(false);
+                mIsWaiting=true;
+                mUserConfig.setSavedUsernamePassword(mUserName.getText().toString(),mPassword.getText().toString());
                 new Thread(){
                     @Override
                     public void run(){
@@ -106,11 +120,28 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         }
                         Log.d("LoginActivity",mUOC.getMessage());
                         Message message=new Message();
+                        message.what=0;
                         mHandler.sendMessage(message);
+                    }
+                }.start();
+                new Thread(){
+                    @Override
+                    public void run(){
+                        while(mIsWaiting) {
+                            try {
+                                Thread.sleep(300);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            Message message = new Message();
+                            message.what = 1;
+                            mHandler.sendMessage(message);
+                        }
                     }
                 }.start();
             }
         });
+        mLogin.setText("登 陆");
         mRegister.setOnClickListener(this);
         mPasswordForget.setOnClickListener(this);
 
@@ -199,8 +230,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             mPopupWindow = new PopupWindow(LoginActivity.this);
             mPopupWindow.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
             mPopupWindow.setHeight(ViewGroup.LayoutParams.MATCH_PARENT);
-            mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
-
+            Point point=UPublicTool.getScreenSize(this,1,1);
+            mPopupWindow.setBackgroundDrawable(new BitmapDrawable(getResources(), Bitmap.createBitmap(point.x,point.y, Bitmap.Config.ALPHA_8)));
             mPopupWindow.setFocusable(true);
             mPopupWindow.setOutsideTouchable(true);
         }

@@ -39,7 +39,7 @@ public class Navigation implements HttpResponseListener,TencentLocationListener{
     private TencentMap mMap;
     private Polyline mPolyline;
     private TencentLocationManager mManager;
-
+    private boolean mIsWorking=false;
     public interface OnArriveListener {
         void onArrive();
     }
@@ -56,6 +56,7 @@ public class Navigation implements HttpResponseListener,TencentLocationListener{
 
     public void startNavigation(Location start, Location end){
         endNavigation();
+        mIsWorking=true;
         TencentSearch tencentSearch = new TencentSearch(mContext);
         WalkingParam walkingParam = new WalkingParam();
         walkingParam.from(start);
@@ -102,9 +103,11 @@ public class Navigation implements HttpResponseListener,TencentLocationListener{
     public void onLocationChanged(TencentLocation tencentLocation, int i, String s) {
         if(mMarker==null){
             mMarker=mMap.addMarker(new MarkerOptions()
-            .position(new LatLng(tencentLocation.getLatitude(),tencentLocation.getLongitude()))
-            .icon(BitmapDescriptorFactory
-                    .defaultMarker()));
+                    .position(new LatLng(tencentLocation.getLatitude(),tencentLocation.getLongitude()))
+                    .title("你的位置")
+                    .icon(BitmapDescriptorFactory
+                        .defaultMarker())
+                    );
         }else{
             mMarker.setPosition(new LatLng( tencentLocation.getLatitude(),tencentLocation.getLongitude() ) );
         }
@@ -119,10 +122,17 @@ public class Navigation implements HttpResponseListener,TencentLocationListener{
         //todo:路线计算失败的提示
     }
     public void endNavigation(){
+        mIsWorking=false;
+        mManager.pauseLocationUpdates();
         if(mPolyline!=null) {
             mPolyline.remove();
+        }
+        if(mMarker!=null){
             mMarker.remove();
         }
+    }
+    public boolean isWorking(){
+        return mIsWorking;
     }
     private void showText(String s){
         Toast.makeText(mContext,s,Toast.LENGTH_SHORT).show();

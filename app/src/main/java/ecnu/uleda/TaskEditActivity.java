@@ -33,11 +33,33 @@ public class TaskEditActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == 0) {
-                Toast.makeText(TaskEditActivity.this, "提交成功～", Toast.LENGTH_SHORT).show();
+                //Intent intent=new Intent();
+                //intent.putExtra("Task", );
+                //TaskEditActivity.this.setResult(1,intent);
+
+                Toast.makeText(TaskEditActivity.this, "编辑任务成功～", Toast.LENGTH_SHORT).show();
                 finish();
             } else {
                 UServerAccessException exception = (UServerAccessException) msg.obj;
-                Toast.makeText(TaskEditActivity.this, "提交任务失败：" + exception.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(TaskEditActivity.this, "编辑任务失败：" + exception.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
+
+    private Handler mClickHandlerDelete = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == 0) {
+                Intent intent=new Intent();
+                //intent.putExtra("Task", );
+                TaskEditActivity.this.setResult(2,intent);
+                Toast.makeText(TaskEditActivity.this, "删除成功～", Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                UServerAccessException exception = (UServerAccessException) msg.obj;
+                Intent intent=new Intent();
+                intent.putExtra("Task", exception);
+                Toast.makeText(TaskEditActivity.this, "删除任务失败：" + exception.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -56,7 +78,6 @@ public class TaskEditActivity extends AppCompatActivity {
     }
 
     private UTask mTask;
-    private UserOperatorController mUserOperatorController;
 
     private EditText mEtTitle;
     private Spinner mSpinTag;
@@ -65,11 +86,12 @@ public class TaskEditActivity extends AppCompatActivity {
     private EditText mEtDescription;
 
     private Button mButtonBack;
-    private Button mButtonTaskPost;
+    private Button mButtonTaskEdit;
+    private Button mBUttonTaskDelete;
     private ArrayAdapter<String> taskPostAdapter;
 
     private String mId;
-    private String mPpassport;
+    private String mPassport;
     private String mPostId;
     private String mTitle;
     private String mTag = "跑腿代步";  //tag任务分类
@@ -114,7 +136,7 @@ public class TaskEditActivity extends AppCompatActivity {
             }
         });
         mEtPrice.addTextChangedListener(new TaskEditActivity.MyTextWatcher());
-        mButtonTaskPost.setOnClickListener(new View.OnClickListener() {
+        mButtonTaskEdit.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 getTaskEdit();
                 if (!judgeEditText()) {
@@ -124,7 +146,7 @@ public class TaskEditActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         try {
-                            ServerAccessApi.editTask(mId, mPpassport, mPostId,mTitle, mTag, mDescription, mPrice, mPath, mActiveTime, mPosition);
+                            ServerAccessApi.editTask(mId, mPassport, mPostId,mTitle, mTag, mDescription, mPrice, mPath, mActiveTime, mPosition);
                             Message message = new Message();
                             message.what = 0;
                             mClickHandler.sendMessage(message);
@@ -134,6 +156,34 @@ public class TaskEditActivity extends AppCompatActivity {
                             message.what = 1;
                             message.obj = e;
                             mClickHandler.sendMessage(message);
+                        }
+                    }
+                }.start();
+            }
+        });
+
+        mBUttonTaskDelete.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+
+                final UserOperatorController uoc=UserOperatorController.getInstance();
+                mId = uoc.getId();
+                mPassport = uoc.getPassport();
+                mPostId=mTask.getPostID();
+
+                new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            ServerAccessApi.cancelTask(mId,mPassport,mPostId);
+                            Message message = new Message();
+                            message.what = 0;
+                            mClickHandlerDelete.sendMessage(message);
+                        } catch (UServerAccessException e) {
+                            e.printStackTrace();
+                            Message message = new Message();
+                            message.what = 1;
+                            message.obj = e;
+                            mClickHandlerDelete.sendMessage(message);
                         }
                     }
                 }.start();
@@ -155,24 +205,26 @@ public class TaskEditActivity extends AppCompatActivity {
     protected void init() {
         final UserOperatorController uoc=UserOperatorController.getInstance();
         mId = uoc.getId();
-        mPpassport = uoc.getPassport();
+        mPassport = uoc.getPassport();
         mPostId=mTask.getPostID();
 
-        mButtonTaskPost = (Button) findViewById(R.id.button_task_post_edit);
+        mButtonTaskEdit = (Button) findViewById(R.id.button_task_post_edit);
+        mBUttonTaskDelete = (Button) findViewById(R.id.button_task_delete);
+
         mEtTitle = (EditText) findViewById(R.id.task_edit_title);
         mEtPrice = (EditText) findViewById(R.id.task_edit_payment);
         mEtActiveTime = (EditText) findViewById(R.id.task_edit_activeTime);
         mEtDescription = (EditText) findViewById(R.id.task_edit_description);
 
         mEtTitle.setText(mTask.getTitle());
-        mEtActiveTime.setText(String.valueOf(mTask.getLeftTime()));
+        mEtActiveTime.setText(String.valueOf(mTask.getActiveTime()/60));
         mEtPrice.setText(String.valueOf(mTask.getPrice()));
         mEtDescription.setText(mTask.getDescription());
 
 
-        String[] pos=mTask.getPath().split("\\|");
+        String[] pos={mTask.getFromWhere(),mTask.getToWhere()};
         buttonStart = (Button) findViewById(R.id.button_task_edit_start);
-        buttonStart.setText(pos[0]);
+        buttonStart.setText(pos[0].length()==0?"选择地址":pos[0]);
         buttonStart.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Intent intent=new Intent(TaskEditActivity.this,LocationListActivity.class);
@@ -180,7 +232,7 @@ public class TaskEditActivity extends AppCompatActivity {
             }
         });
         buttonDestination=(Button)findViewById(R.id.button_task_edit_destination);
-        buttonDestination.setText(pos[1]);
+        buttonDestination.setText(pos[1].length()==0?"选择地址":pos[1]);
         buttonDestination.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -200,6 +252,13 @@ public class TaskEditActivity extends AppCompatActivity {
                 buttonDestination.setText("选择地址");
             }
         });
+        latitude=(float)mTask.getPosition().getLatitude();
+        longitude=(float)mTask.getPosition().getLongitude();
+
+        //mTask.setActiveTime(Integer.valueOf(mActiveTime));
+        //mTask.setDescription(mDescription);
+        //mTask.setPath(mPath);
+        //////////////////////
     }
 
 
@@ -253,6 +312,11 @@ public class TaskEditActivity extends AppCompatActivity {
         //mUserOperatorController = UserOperatorController.getInstance();
         //mId = mUserOperatorController.getId();
         //mPpassport = mUserOperatorController.getPassport();
+        final UserOperatorController uoc=UserOperatorController.getInstance();
+        mId = uoc.getId();
+        mPassport = uoc.getPassport();
+        mPostId=mTask.getPostID();
+
         mTitle = mEtTitle.getText().toString();
         mDescription = mEtDescription.getText().toString();
         mPrice = mEtPrice.getText().toString();

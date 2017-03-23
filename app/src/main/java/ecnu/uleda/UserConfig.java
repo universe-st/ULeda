@@ -1,23 +1,21 @@
 package ecnu.uleda;
 
-import android.app.Activity;
 import android.content.Context;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
+
 import java.io.OutputStreamWriter;
-import java.io.Writer;
+
 
 /**
  * Created by Shensheng on 2017/2/9.
@@ -27,9 +25,9 @@ import java.io.Writer;
 public class UserConfig {
     //TODO:该类遵循单例模式。用于在各大场合获取用户的配置信息，例如声音是否开启等。
     private static UserConfig sUserConfig = null;
-    private boolean msoundIsOn;
-    private String username;
-    private String userpassword;
+    private boolean mSoundIsOn;
+    private String mUsername;
+    private String mUserPassword;
     private static final String USER_SETTINGS = "ueserSettings.json";
     private Context context;
 
@@ -38,9 +36,14 @@ public class UserConfig {
         String jsonData = Read();
         try{
             JSONObject j = new JSONObject(jsonData);
-            msoundIsOn = j.getBoolean("soundIsOn");
-            username = j.getString("username");
-            userpassword = j.getString("userpassword");
+            mSoundIsOn = j.has("soundIsOn") && j.getBoolean("soundIsOn");
+            if(j.has("username") && j.has("userpassword")) {
+                mUsername = j.getString("username");
+                mUserPassword = j.getString("userpassword");
+            }else{
+                mUsername="";
+                mUserPassword="";
+            }
         }
         catch (Exception e)
         {
@@ -48,43 +51,43 @@ public class UserConfig {
         }
     }
 
-    public String getSavedUsernamePassword()
+    public String getSavedPassword()
     {
         //TODO:读取用户密码
-        return userpassword;
+        return mUserPassword;
     }
     public String getSavedUsername()
     {
-       return username;
+       return mUsername;
     }
-    public void setSavedUsernamePassword(String musername,String muserpassword)throws Exception
+    public void setSavedUsernamePassword(String username,String password)
     {
         //TODO:保存用户名和密码
-        username = musername;
-        userpassword = muserpassword;
+        mUsername = username;
+        mUserPassword = password;
         saveConfigToFile();
     }
 
     public boolean soundIsOn(){
         //TODO:加入判断声音是否开启的代码
 
-         return msoundIsOn;
+         return mSoundIsOn;
     }
 
-    public void setSoundOn(boolean set)throws Exception{
+    public void setSoundOn(boolean set){
         //TODO:设置声音是否开启
-        msoundIsOn = set;
+        mSoundIsOn = set;
         saveConfigToFile();
     }
-    public String Read()
+    private String Read()
     {
-        FileInputStream in = null;
+        FileInputStream in;
         BufferedReader reader = null;
         StringBuilder content = new StringBuilder();
         try{
             in = context.openFileInput(USER_SETTINGS);
             reader = new BufferedReader(new InputStreamReader(in));
-            String line = "";
+            String line;
             while((line = reader.readLine()) != null)
             {
                 content.append(line);
@@ -93,6 +96,7 @@ public class UserConfig {
         catch (Exception e)
         {
             e.printStackTrace();
+            return new JSONObject().toString();
         }
         finally {
             if(reader != null)
@@ -107,22 +111,21 @@ public class UserConfig {
         }
         return content.toString();
     }
-    public JSONObject toJSON() throws JSONException
+    private JSONObject toJSON() throws JSONException
     {
         JSONObject j = new JSONObject();
-        j.put("soundIsOn",msoundIsOn);
-        j.put("username",username);
-        j.put("userpassword",userpassword);
+        j.put("soundIsOn",mSoundIsOn);
+        j.put("username",mUsername);
+        j.put("userpassword",mUserPassword);
         return j;
     }
-    public void saveConfigToFile()throws FileNotFoundException{
+    private void saveConfigToFile(){
         //TODO:将配置保存在文件中
         BufferedWriter w = null;
         try {
             FileOutputStream output = context.openFileOutput(USER_SETTINGS, Context.MODE_PRIVATE);
             w = new BufferedWriter(new OutputStreamWriter(output));
-            JSONObject j = new JSONObject();
-            j = toJSON();
+            JSONObject j = toJSON();
             w.write(j.toString());
         }
         catch (Exception e)

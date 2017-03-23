@@ -1,6 +1,7 @@
 package ecnu.uleda;
 
 import android.content.Context;
+import android.provider.Settings;
 import android.util.Log;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -29,6 +30,7 @@ public class UTaskManager {
     * 一个表示地图上显示的任务
     * */
     private static UTaskManager sInstance=null;
+    private long mLastRefreshTime=0;
     private UserOperatorController mUOC;
     private ArrayList<UTask> mTasksInList;
     private ArrayList<UTask> mTasksInMap;
@@ -154,16 +156,78 @@ public class UTaskManager {
         }
     }
     public void init()throws UServerAccessException{
-        //TODO:初始化任务列表
         refreshTaskInList();
-        refreshTasksInMap();
     }
-
     public void refreshTasksInMap()throws UServerAccessException{
-        //TODO:重新从服务器获取显示在地图上的任务
-
+        mTasksInMap=new ArrayList<>();
+        JSONArray array = ServerAccessApi.getTaskList(
+                mUOC.getId(),
+                mUOC.getPassport(),
+                TIME_LAST,
+                String.valueOf(0),
+                String.valueOf(100),
+                "全部",
+                mLocation);
+        int size=array.length();
+        try {
+            for (int i = 0; i < size; i++) {
+                JSONObject j = array.getJSONObject(i);
+                UTask task = new UTask()
+                        .setPath( j.getString("path") )
+                        .setTitle( j.getString("title") )
+                        .setTag( j.getString("tag") )
+                        .setPostDate(j.getLong("postdate"))
+                        .setPrice(new BigDecimal(j.getString("price")))
+                        .setAuthorID(j.getInt("author"))
+                        .setAuthorUserName(j.getString("authorUsername"))
+                        .setAuthorCredit(j.getInt("authorCredit"))
+                        .setPostID(j.getString("postID"))
+                        .setActiveTime(j.getLong("activetime"));
+                String[] pos=j.getString("position").split(",");
+                task.setPosition(new LatLng(Double.parseDouble(pos[0]),Double.parseDouble(pos[1])));
+                mTasksInMap.add(task);
+            }
+        }catch (JSONException e){
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
-    public ArrayList<UTask> getTasksInMap(){
-        return mTasksInMap;
+    public void waitRefreshTasksInMap()throws UServerAccessException{
+        long time=System.currentTimeMillis();
+        if(time-mLastRefreshTime>5000 || mTasksInMap.size()==0){
+            mLastRefreshTime=time;
+            refreshTasksInMap();
+        }
+    }
+    public static final int RECOMMEND=0;
+    public static final int HELP_EACH_OTHER=1;
+    public static final int U_ACTIVITY=2;
+    public static final int FOLLOW=3;
+    public ArrayList<UTask> getTasksInMap(int flag){
+        ArrayList<UTask> tasks=new ArrayList<>();
+        switch (flag){
+            case RECOMMEND:
+                return mTasksInMap;
+            case HELP_EACH_OTHER:
+                for(UTask task:mTasksInMap){
+                    String tag=task.getTag();
+                    if( tag.equals("跑腿代步") || tag.equals("生活服务") || tag.equals("学习帮助") || tag.equals("技术难题") || tag.equals("寻物启示")){
+                        tasks.add(task);
+                    }
+                }
+                return tasks;
+            case U_ACTIVITY:
+                for(UTask task:mTasksInMap){
+                    String tag=task.getTag();
+                    if( tag.equals("活动相关")){
+                        tasks.add(task);
+                    }
+                }
+                return tasks;
+            case FOLLOW:
+                return tasks;
+            default:
+                return tasks;
+        }
     }
 }
