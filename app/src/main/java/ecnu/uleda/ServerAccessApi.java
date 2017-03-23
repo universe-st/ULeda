@@ -13,9 +13,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
 
-/**
- * Created by Shensheng on 2017/2/10.
- */
+
+
 
 public class ServerAccessApi {
     private static final int SET_TIME_OUT = 9999;
@@ -246,9 +245,9 @@ public class ServerAccessApi {
 
 
     public static JSONArray getTaskList(@NonNull String id,@NonNull String passport,
-                                         @NonNull String orderBy,@NonNull String start,
-                                         @NonNull String num,@NonNull String tag,
-                                         @NonNull String position) throws UServerAccessException{
+            @NonNull String orderBy,@NonNull String start,
+            @NonNull String num,@NonNull String tag,
+            @NonNull String position) throws UServerAccessException{
         id=UrlEncode(id);
         passport=UrlEncode(passport);
         orderBy=UrlEncode(orderBy);

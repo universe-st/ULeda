@@ -38,9 +38,6 @@ public class Community extends AppCompatActivity {
     }
     private void initMessage()
     {
-        Msg m1 = new Msg("欢迎使用U乐达，您在这里可以发布任务，接手任务并获得一定的酬劳，感谢您的使用");
-        messageList.add(m1);
-        Msg m2 = new Msg("您所接手的任务将在2016年12月15日15：00逾期，请尽快完成");
-        messageList.add(m2);
+
     }
 }

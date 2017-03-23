@@ -16,7 +16,7 @@
         android:weightSum="1">
 
         <Button
-            android:id="@+id/Add_Back"
+            android:id="@+id/add_Back"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="0.15"
@@ -33,7 +33,7 @@
             android:layout_width="163dp"
             android:layout_height="match_parent"
             android:layout_marginBottom="0dp"
-            android:layout_weight="0.45"
+            android:layout_weight="0.21"
             android:gravity="bottom|center_horizontal"
             android:paddingBottom="11dp"
             android:text="添加"
@@ -73,13 +73,15 @@
         android:layout_width="wrap_content"
         android:layout_height="34dp"
         android:orientation="horizontal"
-        android:background="@color/colorUWhite">
+        android:background="@color/colorUWhite"
+        android:weightSum="100">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="28dp"
             android:src="@drawable/phone"
-            android:id="@+id/imageView7" />
+            android:id="@+id/imageView7"
+            android:layout_weight="20"/>
 
         <Button
             android:id="@+id/findByPhoneNumber"
@@ -88,12 +90,14 @@
             android:background="@color/colorUWhite"
             android:text="添加手机联系人"
             android:textSize="22dp"
+            android:layout_weight="70"
             />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/stick"
+            android:layout_weight="10"
             />
     </LinearLayout>
     <LinearLayout
@@ -103,12 +107,14 @@
         android:layout_width="wrap_content"
         android:layout_height="34dp"
         android:orientation="horizontal"
-        android:background="@color/colorUWhite">
+        android:background="@color/colorUWhite"
+        android:weightSum="100">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="28dp"
             android:src="@drawable/paint"
+            android:layout_weight="20"
             />
 
         <Button
@@ -118,11 +124,13 @@
             android:text="扫一扫添加好友"
             android:textSize="22dp"
             android:background="@color/colorUWhite"
+            android:layout_weight="70"
             />
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/stick"
+            android:layout_weight="20"
             />
     </LinearLayout>
 

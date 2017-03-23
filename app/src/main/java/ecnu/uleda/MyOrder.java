@@ -10,10 +10,6 @@ import java.math.BigDecimal;
 
 public class MyOrder {
 
-
-
-
-
     private String mTitle;
     private int mStatus;
     private int mAuthorID;
