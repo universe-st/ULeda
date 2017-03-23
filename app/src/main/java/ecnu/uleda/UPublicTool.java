@@ -17,6 +17,20 @@ import java.util.Date;
  */
 
 public class UPublicTool {
+    public static String timeLeft(Date date){
+        Date now = new Date();
+        long timeLeft=(date.getTime()-now.getTime())/1000;
+        if(timeLeft<60){
+            return timeLeft+"秒";
+        }
+        if(timeLeft/60 < 60){
+            return timeLeft/60+"分钟"+timeLeft%60+"秒";
+        }
+        if(timeLeft/3600<24){
+            return timeLeft/3600+"小时"+timeLeft%3600/60+"分钟"+timeLeft%60+"秒";
+        }
+        return timeLeft/(3600*24)+"天";
+    }
     /*
     * 将某日期转化为距离现在的时间，用于在各种场合显示
     * 如果距离现在时间不到一分钟，返回 X秒前

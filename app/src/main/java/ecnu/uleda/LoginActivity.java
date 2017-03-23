@@ -2,11 +2,22 @@ package ecnu.uleda;
 
 import android.content.Intent;
 import android.content.res.ObbInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
@@ -32,7 +43,7 @@ import static android.view.ViewGroup.*;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
 
-
+    private UserConfig mUserConfig;
     private Button mLogin;
     private EditText mUserName;
     private EditText mPassword;
@@ -65,6 +76,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private UserOperatorController mUOC=UserOperatorController.getInstance();
     @Override
     protected void onCreate(Bundle  savedInstanceState){
+        mUserConfig=UserConfig.getInstance(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         init();
@@ -86,13 +98,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mPasswordForget = (TextView)findViewById(R.id.password_forgotten) ;
 
         //测试
-        mUserName.setText("dizy");
-        mPassword.setText("zy980018");
+        mUserName.setText(mUserConfig.getSavedUsername());
+        mPassword.setText(mUserConfig.getSavedPassword());
         //测试
         mLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setAllEnabled(false);
+                mUserConfig.setSavedUsernamePassword(mUserName.getText().toString(),mPassword.getText().toString());
                 new Thread(){
                     @Override
                     public void run(){
@@ -199,8 +212,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             mPopupWindow = new PopupWindow(LoginActivity.this);
             mPopupWindow.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
             mPopupWindow.setHeight(ViewGroup.LayoutParams.MATCH_PARENT);
-            mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
-
+            Point point=UPublicTool.getScreenSize(this,1,1);
+            mPopupWindow.setBackgroundDrawable(new BitmapDrawable(getResources(), Bitmap.createBitmap(point.x,point.y, Bitmap.Config.ALPHA_8)));
             mPopupWindow.setFocusable(true);
             mPopupWindow.setOutsideTouchable(true);
         }
