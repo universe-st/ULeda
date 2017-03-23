@@ -1,5 +1,6 @@
 package ecnu.uleda;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,17 +11,24 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tencent.map.geolocation.TencentLocationManager;
+import com.tencent.mapsdk.raster.model.BitmapDescriptorFactory;
 import com.tencent.mapsdk.raster.model.LatLng;
 import com.tencent.mapsdk.raster.model.Marker;
+import com.tencent.mapsdk.raster.model.MarkerOptions;
 import com.tencent.tencentmap.mapsdk.map.MapView;
 import com.tencent.tencentmap.mapsdk.map.TencentMap;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 public class UMainFragment extends Fragment {
@@ -73,7 +81,7 @@ public class UMainFragment extends Fragment {
         mTencentMap.setCenter(new LatLng(31.2284994411d,121.4063922732d));
         //测试代码
         mTencentMap.setZoom(18);
-
+        new RefreshMapMarkerThread().start();
         return v;
     }
 
@@ -160,14 +168,56 @@ public class UMainFragment extends Fragment {
             @Override
             public View getInfoWindow(Marker marker) {
                 View v=View.inflate(UMainFragment.this.getActivity(),R.layout.u_marker_info_window,null);
+                @SuppressWarnings("unchecked")
+                ArrayList<UTask> tasks=(ArrayList<UTask>)marker.getTag();
+                ListView listView=(ListView) v.findViewById(R.id.marker_info_list_view);
+                listView.setAdapter(new MarkerListAdapter(getContext(),tasks));
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        UTask task=(UTask)adapterView.getItemAtPosition(i);
+                        Intent intent = new Intent(UMainFragment.this.getActivity(),TaskDetailsActivity.class);
+                        intent.putExtra("UTask",task);
+                        startActivity(intent);
+                    }
+                });
+                Button button=(Button)v.findViewById(R.id.marker_info_navigation_bt);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //TODO:启动导航
+                    }
+                });
                 return v;
             }
 
             @Override
             public void onInfoWindowDettached(Marker marker, View view) {
-
+                //无需回收view
             }
         });
+    }
+    private static class MarkerListAdapter extends ArrayAdapter<UTask>{
+        MarkerListAdapter(Context context, List<UTask> tasks){
+            super(context,R.layout.marker_list_item,tasks);
+        }
+
+        @Override
+        @NonNull
+        public View getView(int position,View convertView,@NonNull ViewGroup parent){
+            UTask task=getItem(position);
+            if(convertView==null) {
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.marker_list_item, parent, false);
+            }
+            View v=convertView;
+            if(task!=null) {
+                TextView tv=(TextView) v.findViewById(R.id.marker_item_text_title);
+                tv.setText(UPublicTool.forShort(task.getTitle(), 3));
+                tv=(TextView)v.findViewById(R.id.marker_item_text_price);
+                tv.setText(String.format(Locale.ENGLISH,"¥%.2f",task.getPrice()));
+            }
+            return v;
+        }
     }
     public void setCurrent(int p){
         mCurrent=p;
@@ -192,7 +242,33 @@ public class UMainFragment extends Fragment {
         }
     }
     private void putMarkers(ArrayList<UTask> tasks){
-        //TODO:放好Markers
+        hideMarkers();
+        mMarkers=new ArrayList<>();
+        HashMap<LatLng,ArrayList<UTask>> map=new HashMap<>();
+        for(UTask task:tasks){
+            if(task.getToWhere().length()>0){
+                LatLng latLng = task.getPosition();
+                if(map.containsKey(latLng)){
+                    map.get(latLng).add(task);
+                }else{
+                    ArrayList<UTask> a=new ArrayList<>();
+                    a.add(task);
+                    map.put(latLng,a);
+                }
+            }
+        }
+        Set<LatLng> set=map.keySet();
+        for(LatLng latLng:set){
+            Marker marker = mTencentMap.addMarker(new MarkerOptions()
+                    .title("位置")
+            .position(latLng)
+            .draggable(false)
+            .icon(BitmapDescriptorFactory.defaultMarker())
+            .anchor(0.5f,0.5f)
+            .tag(map.get(latLng)));
+            mMarkers.add(marker);
+        }
+        showMarkers();
     }
     private void hideMarkers(){
         if(mMarkers!=null){
@@ -203,21 +279,36 @@ public class UMainFragment extends Fragment {
             }
         }
     }
+    private class RefreshMapMarkerThread extends Thread{
+        @Override
+        public void run(){
+            try {
+                mUTaskManager.waitRefreshTasksInMap();
+                Message message=new Message();
+                message.what=0;
+                mHandler.sendMessage(message);
+            }catch (UServerAccessException e){
+                e.printStackTrace();
+                Message message=new Message();
+                message.obj=e.getMessage();
+                message.what=1;
+                mHandler.sendMessage(message);
+            }
+        }
+    }
     private void onPressRecommendButton(){
-        hideMarkers();
-        mMarkers=new ArrayList<>();
-
+        new RefreshMapMarkerThread().start();
     }
     private void onPressHelpEachOtherButton(){
-
+        new RefreshMapMarkerThread().start();
     }
     private void onPressActivityButton(){
-
+        new RefreshMapMarkerThread().start();
     }
     private void onPressFollowButton(){
-
+        new RefreshMapMarkerThread().start();
     }
     private void onPressNavigationButton(){
-
+        hideMarkers();
     }
 }
