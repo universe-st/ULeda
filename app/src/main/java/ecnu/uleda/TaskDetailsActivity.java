@@ -44,6 +44,7 @@ import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -345,6 +346,11 @@ implements View.OnClickListener{
             Point size=UPublicTool.getScreenSize(this.getApplicationContext(),0.03,0.03);
             SpannableStringBuilder str=UPublicTool.addICONtoString(this.getApplicationContext(),"#LO"+mTask.getToWhere(),"#LO",R.drawable.location,size.x,size.y);
             mTaskLocation.setText(str);
+        }
+        tv=(TextView)v.findViewById(R.id.task_detail_state);
+        if(mTask.getStatus()==0){
+            Date date=new Date((mTask.getPostDate()+mTask.getActiveTime())*1000);
+            tv.setText("剩余时间"+UPublicTool.timeLeft(date));
         }
         mListView=(ListView)findViewById(R.id.task_detail_list_view);
        // mListView.addHeaderView(tv);

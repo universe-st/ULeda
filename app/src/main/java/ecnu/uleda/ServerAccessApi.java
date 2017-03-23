@@ -107,14 +107,7 @@ public class ServerAccessApi {
                 .withTimeout(SET_TIME_OUT)
                 .request();
         if(response.getRet()==200){//200的意思是正常返回
-            try{
-                JSONObject data=new JSONObject(response.getData());
-                return data.getString("success");
-            }catch (JSONException e){
-                Log.e("ServerAccessApi",e.toString());
-                //数据包无法解析，向上抛出一个异常
-                throw new UServerAccessException(UServerAccessException.ERROR_DATA);
-            }
+            return response.getData();
         }else{
             //网络访问失败，抛出一个网络异常
             throw new UServerAccessException(response.getRet());
