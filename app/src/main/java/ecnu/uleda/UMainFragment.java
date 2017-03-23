@@ -18,7 +18,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.tencent.lbssearch.object.Location;
+import com.tencent.map.geolocation.TencentLocation;
+import com.tencent.map.geolocation.TencentLocationListener;
 import com.tencent.map.geolocation.TencentLocationManager;
+import com.tencent.map.geolocation.TencentLocationRequest;
 import com.tencent.mapsdk.raster.model.BitmapDescriptorFactory;
 import com.tencent.mapsdk.raster.model.LatLng;
 import com.tencent.mapsdk.raster.model.Marker;
@@ -40,7 +44,10 @@ public class UMainFragment extends Fragment {
     private TencentMap mTencentMap;
     private ArrayList<Marker> mMarkers=new ArrayList<>();
     private UTaskManager mUTaskManager = UTaskManager.getInstance();
-    private TencentLocationManager mLocationManager;
+    private TencentLocationManager mLocationManager=null;
+    private Navigation mNavigation=null;
+    private LatLng mCurrentDestination=null;
+    private LatLng mCenter=new LatLng(31.2284994411d,121.4063922732d);
     private Handler mHandler=new Handler(){
       @Override
       public void handleMessage(Message msg){
@@ -71,16 +78,36 @@ public class UMainFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mLocationManager = TencentLocationManager.getInstance(this.getActivity());
     }
+    private class ULocationListener implements TencentLocationListener{
+        @Override
+        public void onLocationChanged(TencentLocation tencentLocation, int i, String s) {
+            mLocationManager.removeUpdates(this);
+            mCenter=new LatLng(tencentLocation.getLatitude(),
+                    tencentLocation.getLongitude());
+            mTencentMap.setCenter(mCenter);
+            mUTaskManager.setLocation(mCenter.getLatitude()+","+mCenter.getLongitude());
+        }
 
+        @Override
+        public void onStatusUpdate(String s, int i, String s1) {
+            //Toast.makeText(getActivity(),"请检查GPS状态",Toast.LENGTH_SHORT).show();
+        }
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         View v=inflater.inflate(R.layout.u_main_fragment,parent,false);
         init(v);
+        mLocationManager=TencentLocationManager.getInstance(this.getContext());
+        //每15秒定位一次
+        mLocationManager.requestLocationUpdates(TencentLocationRequest.create()
+                        .setInterval(15000)
+                        .setRequestLevel(TencentLocationRequest.REQUEST_LEVEL_ADMIN_AREA),new ULocationListener());
         mMapView.onCreate(savedInstanceState);
         //测试代码
-        mTencentMap.setCenter(new LatLng(31.2284994411d,121.4063922732d));
+        mTencentMap.setCenter(mCenter);
         //测试代码
         mTencentMap.setZoom(18);
+        mNavigation=Navigation.getInstance(getContext(),mTencentMap);
         new RefreshMapMarkerThread().start();
         return v;
     }
@@ -88,22 +115,34 @@ public class UMainFragment extends Fragment {
     @Override
     public void onResume(){
         mMapView.onResume();
+        if(mLocationManager!=null) {
+            mLocationManager.resumeLocationUpdates();
+        }
         super.onResume();
     }
 
     @Override
     public void onStop(){
         mMapView.onStop();
+        if(mLocationManager!=null) {
+            mLocationManager.pauseLocationUpdates();
+        }
         super.onStop();
     }
     @Override
     public void onPause(){
         mMapView.onPause();
+        if(mLocationManager!=null) {
+            mLocationManager.pauseLocationUpdates();
+        }
         super.onPause();
     }
     @Override
     public void onDestroy(){
         mMapView.onDestroy();
+        if(mLocationManager!=null) {
+            mLocationManager.pauseLocationUpdates();
+        }
         super.onDestroy();
     }
     public MapView getMapView(){
@@ -164,9 +203,13 @@ public class UMainFragment extends Fragment {
         setCurrent(0);
         mMapView=(MapView)v.findViewById(R.id.map_view);
         mTencentMap=mMapView.getMap();
+        //设置弹出窗口的视图
         mTencentMap.setInfoWindowAdapter(new TencentMap.InfoWindowAdapter() {
             @Override
             public View getInfoWindow(Marker marker) {
+                if(mNavigation!=null && mNavigation.isWorking()){
+                    return null;
+                }
                 View v=View.inflate(UMainFragment.this.getActivity(),R.layout.u_marker_info_window,null);
                 @SuppressWarnings("unchecked")
                 ArrayList<UTask> tasks=(ArrayList<UTask>)marker.getTag();
@@ -181,11 +224,14 @@ public class UMainFragment extends Fragment {
                         startActivity(intent);
                     }
                 });
+                final LatLng position=marker.getPosition();
                 Button button=(Button)v.findViewById(R.id.marker_info_navigation_bt);
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        //TODO:启动导航
+                        mCurrentDestination=position;
+                        setCurrent(4);
+                        onPressNavigationButton();
                     }
                 });
                 return v;
@@ -212,7 +258,7 @@ public class UMainFragment extends Fragment {
             View v=convertView;
             if(task!=null) {
                 TextView tv=(TextView) v.findViewById(R.id.marker_item_text_title);
-                tv.setText(UPublicTool.forShort(task.getTitle(), 3));
+                tv.setText(UPublicTool.forShort(task.getTitle(), 5));
                 tv=(TextView)v.findViewById(R.id.marker_item_text_price);
                 tv.setText(String.format(Locale.ENGLISH,"¥%.2f",task.getPrice()));
             }
@@ -260,7 +306,6 @@ public class UMainFragment extends Fragment {
         Set<LatLng> set=map.keySet();
         for(LatLng latLng:set){
             Marker marker = mTencentMap.addMarker(new MarkerOptions()
-                    .title("位置")
             .position(latLng)
             .draggable(false)
             .icon(BitmapDescriptorFactory.defaultMarker())
@@ -297,18 +342,42 @@ public class UMainFragment extends Fragment {
         }
     }
     private void onPressRecommendButton(){
+        mNavigation.endNavigation();
         new RefreshMapMarkerThread().start();
     }
     private void onPressHelpEachOtherButton(){
+        mNavigation.endNavigation();
         new RefreshMapMarkerThread().start();
     }
     private void onPressActivityButton(){
+        mNavigation.endNavigation();
         new RefreshMapMarkerThread().start();
     }
     private void onPressFollowButton(){
+        mNavigation.endNavigation();
         new RefreshMapMarkerThread().start();
     }
     private void onPressNavigationButton(){
         hideMarkers();
+        if(mCurrentDestination==null){
+            Toast.makeText(getActivity(),"请先选择任务！",Toast.LENGTH_SHORT).show();
+            setCurrent(0);
+            onPressRecommendButton();
+            return;
+        }
+        mLocationManager.requestLocationUpdates(TencentLocationRequest.create()
+                .setInterval(15000)
+                .setRequestLevel(TencentLocationRequest.REQUEST_LEVEL_ADMIN_AREA),
+                new ULocationListener(){
+                    @Override
+                    public void onLocationChanged(TencentLocation tencentLocation, int i, String s) {
+                        super.onLocationChanged(tencentLocation,i,s);
+                        mNavigation.startNavigation(
+                                new Location((float) mCenter.getLatitude(),(float)mCenter.getLongitude()),
+                                new Location((float)mCurrentDestination.getLatitude(),
+                                        (float)mCurrentDestination.getLongitude())
+                        );
+                    }
+                });
     }
 }

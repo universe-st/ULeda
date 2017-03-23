@@ -194,7 +194,7 @@ public class UTaskManager {
     }
     public void waitRefreshTasksInMap()throws UServerAccessException{
         long time=System.currentTimeMillis();
-        if(time-mLastRefreshTime>20000 || mTasksInMap.size()==0){
+        if(time-mLastRefreshTime>5000 || mTasksInMap.size()==0){
             mLastRefreshTime=time;
             refreshTasksInMap();
         }
