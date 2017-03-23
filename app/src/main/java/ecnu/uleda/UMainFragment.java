@@ -1,33 +1,27 @@
 package ecnu.uleda;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.tencent.lbssearch.object.Location;
-import com.tencent.map.geolocation.TencentLocation;
-import com.tencent.map.geolocation.TencentLocationListener;
 import com.tencent.map.geolocation.TencentLocationManager;
-import com.tencent.map.geolocation.TencentLocationRequest;
-import com.tencent.mapsdk.raster.model.BitmapDescriptorFactory;
 import com.tencent.mapsdk.raster.model.LatLng;
 import com.tencent.mapsdk.raster.model.Marker;
-import com.tencent.mapsdk.raster.model.MarkerOptions;
 import com.tencent.tencentmap.mapsdk.map.MapView;
 import com.tencent.tencentmap.mapsdk.map.TencentMap;
-
 import java.util.ArrayList;
-import android.Manifest;
-
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
 public class UMainFragment extends Fragment {
     //主界面的Fragment
@@ -39,6 +33,31 @@ public class UMainFragment extends Fragment {
     private ArrayList<Marker> mMarkers=new ArrayList<>();
     private UTaskManager mUTaskManager = UTaskManager.getInstance();
     private TencentLocationManager mLocationManager;
+    private Handler mHandler=new Handler(){
+      @Override
+      public void handleMessage(Message msg){
+          if(msg.what==0){
+              switch (mCurrent){
+                  case 0:
+                      putMarkers(mUTaskManager.getTasksInMap(UTaskManager.RECOMMEND));
+                      break;
+                  case 1:
+                      putMarkers(mUTaskManager.getTasksInMap(UTaskManager.HELP_EACH_OTHER));
+                      break;
+                  case 2:
+                      putMarkers(mUTaskManager.getTasksInMap(UTaskManager.U_ACTIVITY));
+                      break;
+                  case 3:
+                      putMarkers(mUTaskManager.getTasksInMap(UTaskManager.FOLLOW));
+                      break;
+                  default:
+                      break;
+              }
+          }else if(msg.what==1){
+              Toast.makeText(UMainFragment.this.getActivity(),"错误："+msg.obj,Toast.LENGTH_SHORT).show();
+          }
+      }
+    };
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -103,6 +122,7 @@ public class UMainFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 setCurrent(0);
+                onPressRecommendButton();
             }
         });
         mButtons[1].setOnClickListener(new View.OnClickListener() {
@@ -116,44 +136,38 @@ public class UMainFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 setCurrent(2);
+                onPressActivityButton();
             }
         });
         mButtons[3].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setCurrent(3);
+                onPressFollowButton();
             }
         });
         mButtons[4].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setCurrent(4);
-                mLocationManager.requestLocationUpdates(TencentLocationRequest.create()
-                        .setInterval(5000)
-                        .setRequestLevel(TencentLocationRequest.REQUEST_LEVEL_ADMIN_AREA), new TencentLocationListener() {
-                    @Override
-                    public void onLocationChanged(TencentLocation tencentLocation, int i, String s) {
-                        mLocationManager.removeUpdates(this);
-                        if(i!=TencentLocation.ERROR_OK){
-                            Toast.makeText(UMainFragment.this.getActivity(),"定位错误，请检查GPS状态",Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        Navigation.getInstance(UMainFragment.this.getActivity(),mTencentMap)
-                                .startNavigation(new Location((float) tencentLocation.getLatitude(),
-                                        (float)tencentLocation.getLongitude()),
-                                        new Location(31.2296355001f,121.4034706544f));
-                    }
-
-                    @Override
-                    public void onStatusUpdate(String s, int i, String s1) {
-
-                    }
-                });
+                onPressNavigationButton();
             }
         });
         setCurrent(0);
         mMapView=(MapView)v.findViewById(R.id.map_view);
         mTencentMap=mMapView.getMap();
+        mTencentMap.setInfoWindowAdapter(new TencentMap.InfoWindowAdapter() {
+            @Override
+            public View getInfoWindow(Marker marker) {
+                View v=View.inflate(UMainFragment.this.getActivity(),R.layout.u_marker_info_window,null);
+                return v;
+            }
+
+            @Override
+            public void onInfoWindowDettached(Marker marker, View view) {
+
+            }
+        });
     }
     public void setCurrent(int p){
         mCurrent=p;
@@ -177,7 +191,9 @@ public class UMainFragment extends Fragment {
             }
         }
     }
-
+    private void putMarkers(ArrayList<UTask> tasks){
+        //TODO:放好Markers
+    }
     private void hideMarkers(){
         if(mMarkers!=null){
             for(Marker m:mMarkers){
@@ -187,8 +203,21 @@ public class UMainFragment extends Fragment {
             }
         }
     }
+    private void onPressRecommendButton(){
+        hideMarkers();
+        mMarkers=new ArrayList<>();
 
+    }
     private void onPressHelpEachOtherButton(){
-        //TODO:设置【互助】按钮按下后的操作
+
+    }
+    private void onPressActivityButton(){
+
+    }
+    private void onPressFollowButton(){
+
+    }
+    private void onPressNavigationButton(){
+
     }
 }
