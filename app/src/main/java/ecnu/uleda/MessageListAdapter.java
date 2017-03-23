@@ -53,8 +53,11 @@ public class MessageListAdapter extends ArrayAdapter<UMessage> {
             case "社区消息":
                 view.setTag(1);
                 break;
+            case "任务已完成":
+                view.setTag(2);
+                break;
             default:
-                view.setTag(0);
+                view.setTag(3);
                 break;
         }
         return view;

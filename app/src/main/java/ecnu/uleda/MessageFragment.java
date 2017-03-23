@@ -54,7 +54,15 @@ public class MessageFragment extends Fragment {
                         Intent i = new Intent(MessageFragment.this.getActivity(),Community.class);
                         startActivity(i);
                     }
-            }
+                    else if(view.getTag().equals(3))
+                    {
+                        Intent i = new Intent(MessageFragment.this.getActivity(),Chart.class);
+                        startActivity(i);
+
+                    }
+
+                    }
+
         });
 
         AddFriends = (Button)view.findViewById(R.id.add_friends);
@@ -72,7 +80,7 @@ public class MessageFragment extends Fragment {
     private List<UMessage>createUser(){
         List<UMessage> MList= new ArrayList<>();
 
-        UMessage m1=new UMessage("您的跑腿任务已完成",R.drawable.user2,
+        UMessage m1=new UMessage("任务已完成",R.drawable.user2,
                 "刚刚","点击对对方进行评价",R.drawable.white);
         MList.add(m1);
         UMessage m2=new UMessage("社区消息",R.drawable.user3,"昨天","[管理员@了你]",
