@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by VinnyHu on 2017/3/22.
@@ -19,7 +20,7 @@ public class UMyTaskManager {
 
     private static UMyTaskManager sInstance=null;
     private UserOperatorController mUOC;
-    private ArrayList<MyOrder> mTasksInList;
+    private List<MyOrder> mTasksInList;
     private String mLocation="31.2296,121.403";
     public static UMyTaskManager getInstance(){
         if(sInstance==null){
@@ -30,7 +31,7 @@ public class UMyTaskManager {
     public void setLocation(String loc){
         mLocation=loc;
     }
-    public ArrayList<MyOrder> getTasksInList()
+    public List<MyOrder> getTasksInList()
     {
         return mTasksInList;
     }
@@ -44,7 +45,7 @@ public class UMyTaskManager {
         listView.setAdapter(la);
         return la;
     }
-    public void RefreshTaskInList(int n)throws UServerAccessException
+    public List<MyOrder> RefreshTaskInList(int n)throws UServerAccessException
     {
         mUOC=UserOperatorController.getInstance();
         if(!mUOC.getIsLogined())
@@ -94,7 +95,7 @@ public class UMyTaskManager {
             }
         }
 
-
+        return mTasksInList;
     }
 
 
