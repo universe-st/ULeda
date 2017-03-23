@@ -123,6 +123,7 @@ public class Navigation implements HttpResponseListener,TencentLocationListener{
     }
     public void endNavigation(){
         mIsWorking=false;
+        mManager.pauseLocationUpdates();
         if(mPolyline!=null) {
             mPolyline.remove();
         }
