@@ -17,7 +17,7 @@ import java.net.URLEncoder;
 
 
 public class ServerAccessApi {
-    private static final int SET_TIME_OUT=500;
+    private static final int SET_TIME_OUT = 9999;
 
     public static String getMainKey()throws UServerAccessException{
         PhalApiClient client=createClient();

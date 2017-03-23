@@ -30,6 +30,7 @@ public class UTaskManager {
     * 一个表示地图上显示的任务
     * */
     private static UTaskManager sInstance=null;
+    private long mLastRefreshTime=0;
     private UserOperatorController mUOC;
     private ArrayList<UTask> mTasksInList;
     private ArrayList<UTask> mTasksInMap;
@@ -155,7 +156,6 @@ public class UTaskManager {
         }
     }
     public void init()throws UServerAccessException{
-        //TODO:初始化任务列表
         refreshTaskInList();
     }
     public void refreshTasksInMap()throws UServerAccessException{
@@ -183,11 +183,20 @@ public class UTaskManager {
                         .setAuthorCredit(j.getInt("authorCredit"))
                         .setPostID(j.getString("postID"))
                         .setActiveTime(j.getLong("activetime"));
+                String[] pos=j.getString("position").split(",");
+                task.setPosition(new LatLng(Double.parseDouble(pos[0]),Double.parseDouble(pos[1])));
                 mTasksInMap.add(task);
             }
         }catch (JSONException e){
             e.printStackTrace();
             System.exit(1);
+        }
+    }
+    public void waitRefreshTasksInMap()throws UServerAccessException{
+        long time=System.currentTimeMillis();
+        if(time-mLastRefreshTime>5000 || mTasksInMap.size()==0){
+            mLastRefreshTime=time;
+            refreshTasksInMap();
         }
     }
     public static final int RECOMMEND=0;
