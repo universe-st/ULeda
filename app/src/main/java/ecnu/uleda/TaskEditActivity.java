@@ -33,11 +33,33 @@ public class TaskEditActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == 0) {
-                Toast.makeText(TaskEditActivity.this, "提交成功～", Toast.LENGTH_SHORT).show();
+                //Intent intent=new Intent();
+                //intent.putExtra("Task", );
+                //TaskEditActivity.this.setResult(1,intent);
+
+                Toast.makeText(TaskEditActivity.this, "编辑任务成功～", Toast.LENGTH_SHORT).show();
                 finish();
             } else {
                 UServerAccessException exception = (UServerAccessException) msg.obj;
-                Toast.makeText(TaskEditActivity.this, "提交任务失败：" + exception.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(TaskEditActivity.this, "编辑任务失败：" + exception.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
+
+    private Handler mClickHandlerDelete = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == 0) {
+                Intent intent=new Intent();
+                //intent.putExtra("Task", );
+                TaskEditActivity.this.setResult(2,intent);
+                Toast.makeText(TaskEditActivity.this, "删除成功～", Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                UServerAccessException exception = (UServerAccessException) msg.obj;
+                Intent intent=new Intent();
+                intent.putExtra("Task", exception);
+                Toast.makeText(TaskEditActivity.this, "删除任务失败：" + exception.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -65,10 +87,11 @@ public class TaskEditActivity extends AppCompatActivity {
 
     private Button mButtonBack;
     private Button mButtonTaskEdit;
+    private Button mBUttonTaskDelete;
     private ArrayAdapter<String> taskPostAdapter;
 
     private String mId;
-    private String mPpassport;
+    private String mPassport;
     private String mPostId;
     private String mTitle;
     private String mTag = "跑腿代步";  //tag任务分类
@@ -123,7 +146,7 @@ public class TaskEditActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         try {
-                            ServerAccessApi.editTask(mId, mPpassport, mPostId,mTitle, mTag, mDescription, mPrice, mPath, mActiveTime, mPosition);
+                            ServerAccessApi.editTask(mId, mPassport, mPostId,mTitle, mTag, mDescription, mPrice, mPath, mActiveTime, mPosition);
                             Message message = new Message();
                             message.what = 0;
                             mClickHandler.sendMessage(message);
@@ -133,6 +156,34 @@ public class TaskEditActivity extends AppCompatActivity {
                             message.what = 1;
                             message.obj = e;
                             mClickHandler.sendMessage(message);
+                        }
+                    }
+                }.start();
+            }
+        });
+
+        mBUttonTaskDelete.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+
+                final UserOperatorController uoc=UserOperatorController.getInstance();
+                mId = uoc.getId();
+                mPassport = uoc.getPassport();
+                mPostId=mTask.getPostID();
+
+                new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            ServerAccessApi.cancelTask(mId,mPassport,mPostId);
+                            Message message = new Message();
+                            message.what = 0;
+                            mClickHandlerDelete.sendMessage(message);
+                        } catch (UServerAccessException e) {
+                            e.printStackTrace();
+                            Message message = new Message();
+                            message.what = 1;
+                            message.obj = e;
+                            mClickHandlerDelete.sendMessage(message);
                         }
                     }
                 }.start();
@@ -154,10 +205,12 @@ public class TaskEditActivity extends AppCompatActivity {
     protected void init() {
         final UserOperatorController uoc=UserOperatorController.getInstance();
         mId = uoc.getId();
-        mPpassport = uoc.getPassport();
+        mPassport = uoc.getPassport();
         mPostId=mTask.getPostID();
 
         mButtonTaskEdit = (Button) findViewById(R.id.button_task_post_edit);
+        mBUttonTaskDelete = (Button) findViewById(R.id.button_task_delete);
+
         mEtTitle = (EditText) findViewById(R.id.task_edit_title);
         mEtPrice = (EditText) findViewById(R.id.task_edit_payment);
         mEtActiveTime = (EditText) findViewById(R.id.task_edit_activeTime);
@@ -201,6 +254,11 @@ public class TaskEditActivity extends AppCompatActivity {
         });
         latitude=(float)mTask.getPosition().getLatitude();
         longitude=(float)mTask.getPosition().getLongitude();
+
+        //mTask.setActiveTime(Integer.valueOf(mActiveTime));
+        //mTask.setDescription(mDescription);
+        //mTask.setPath(mPath);
+        //////////////////////
     }
 
 
@@ -256,7 +314,7 @@ public class TaskEditActivity extends AppCompatActivity {
         //mPpassport = mUserOperatorController.getPassport();
         final UserOperatorController uoc=UserOperatorController.getInstance();
         mId = uoc.getId();
-        mPpassport = uoc.getPassport();
+        mPassport = uoc.getPassport();
         mPostId=mTask.getPostID();
 
         mTitle = mEtTitle.getText().toString();
