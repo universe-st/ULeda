@@ -164,7 +164,7 @@ implements View.OnClickListener{
                 }
                 UserChatItem uci=new UserChatItem();
                 uci.imageID=R.drawable.model1;
-                uci.timeBefore="1小时前";
+                uci.timeBefore="刚刚";
                 uci.name="你";
                 uci.sayWhat=text;
                 mUserChatItems.add(uci);
