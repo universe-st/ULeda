@@ -83,6 +83,10 @@ implements View.OnClickListener{
             case R.id.exit: {
                 mUserOperatorController = UserOperatorController.getInstance();
                 mUserOperatorController.setIsLogined(false);
+//                Intent intent = new Intent(this,UMainActivity.class);
+//                intent.putExtra(UMainActivity.TAG_EXIT, true);
+//                startActivity(intent);
+                
                 Toast.makeText(SettingActivity.this, "成功退出登录", Toast.LENGTH_SHORT).show();
                 Intent it = new Intent(this, LoginActivity.class);
                 startActivity(it);

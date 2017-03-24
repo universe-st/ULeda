@@ -32,16 +32,16 @@ public class MyTask_DoneFragment extends Fragment {
         doinglist = new ArrayList<>();
 
         doinglist.add(new MyOrder()
-                .setTitle("帮忙重装操作系统")
+                .setTitle("一起打篮球")
                 .setDescription("")
-                .setPrice(BigDecimal.valueOf(15))
+                .setPrice(BigDecimal.valueOf(30))
                 .setActiveTime(15)
                 .setAuthorCredit(5)
                 .setAuthorID(110)
-                .setAuthorUserName("张三")
-                .setPath("从5舍到7舍")
-                .setTag("学习帮助")
-                .setGetperson("李四")
+                .setAuthorUserName("胡楠")
+                .setPath("篮球场")
+                .setTag("运动锻炼")
+                .setGetperson("匡神")
 
         );
         mListView.setAdapter(new MydoneAdapter(this.getActivity(),doinglist));
