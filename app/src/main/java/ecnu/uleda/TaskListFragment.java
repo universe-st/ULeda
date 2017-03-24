@@ -112,6 +112,9 @@ public class TaskListFragment extends Fragment {
         mMainArray.add("技术难题");
         mMainArray.add("寻物启示");
         mMainArray.add("活动相关");
+        mMainArray.add("运动锻炼");
+        mMainArray.add("项目招人");
+        mMainArray.add("招聘实习");
         mMainArray.add("其他");
         mSortArray.add("最新");
         mSortArray.add("报酬从高到低");

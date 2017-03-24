@@ -17,6 +17,13 @@ import android.widget.Button;
 
 
 public class UMainActivity extends AppCompatActivity {
+    private static UMainActivity sHolder;
+    public static void finishMainActivity(){
+        if(sHolder!=null){
+            sHolder.finish();
+            sHolder=null;
+        }
+    }
     //MainActivity
     private ViewPager mViewPager;
     private Fragment[] mFragments = null;
@@ -31,6 +38,7 @@ public class UMainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sHolder=this;
         setContentView(R.layout.activity_umain);
         init();
         if (!UserOperatorController.getInstance().getIsLogined()) {
