@@ -1,5 +1,6 @@
 package ecnu.uleda;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import org.json.JSONObject;
@@ -18,20 +20,21 @@ import java.util.List;
  * Created by Shensheng on 2016/11/11.
  */
 
-public class UCircleFragment extends Fragment {
+public class UCircleFragment extends Fragment implements View.OnClickListener{
 
     private ListView mlistView;
     private ArrayList<UCircle> mCircleList;
+    private Button mAddButton;
 
     @Override
     public void onCreate(Bundle b){
         super.onCreate(b);
+
     }
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle b)
     {
         View v=inflater.inflate(R.layout.u_circle_fragment,parent,false);
-        mlistView = (ListView) v.findViewById(R.id.u_circle_list_view);
-
+        init(v);
         //测试代码
         mCircleList = new ArrayList<>();
         mCircleList.add(new UCircle()
@@ -84,6 +87,23 @@ public class UCircleFragment extends Fragment {
         mlistView.setAdapter(new UCircleListAdapter(this.getActivity(),mCircleList));
         return v;
     }
-
+    public void onClick(View view)
+    {
+        switch (view.getId())
+        {
+            case R.id.u_circle_button:
+            {
+                Intent i = new Intent(UCircleFragment.this.getActivity(),ReleasedUcircleActivity.class);
+                startActivity(i);
+                break;
+            }
+        }
+    }
+    public void init(View v)
+    {
+        mlistView = (ListView) v.findViewById(R.id.u_circle_list_view);
+        mAddButton = (Button) v.findViewById(R.id.u_circle_button);
+        mAddButton.setOnClickListener(this);
+    }
 
 }

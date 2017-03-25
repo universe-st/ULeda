@@ -28,23 +28,7 @@ public class MyTask_ReleasedFragment extends Fragment {
 
     private ListView mlistView;
     private List<MyOrder> releasedList;
-    private UserOperatorController mUOC;
-    private List<MyOrder> mTasksInList;
-    private int index = 0;
-    private Handler mHandler = new Handler(){
-        public void handleMessage(Message msg)
-        {
-            switch (msg.what)
-            {
-                case 1:
-                {
-                    releasedList = new ArrayList<>();
-                    releasedList = (List<MyOrder>)msg.obj;
-                    break;
-                }
-            }
-        }
-    };
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,52 +38,20 @@ public class MyTask_ReleasedFragment extends Fragment {
         mlistView = (ListView) v.findViewById(R.id.list_view);
 
         releasedList = new ArrayList<>();
-        new Thread(new Runnable() {
-            @Override
-            public void run()
-            {
-                mUOC = UserOperatorController.getInstance();
-                mTasksInList = new ArrayList<>();
-                try
-                {
-                    JSONArray jsonArray = ServerAccessApi.getUserTasks(
-                            mUOC.getId(),
-                            mUOC.getPassport(),
-                            index,
-                            0
-                    );
-                    mTasksInList.clear();
-                    int length = jsonArray.length();
-                    for(int i = 0;i < length;i++)
-                    {
-                        JSONObject j = jsonArray.getJSONObject(i);
-                        MyOrder order = new MyOrder()
-                                .setTitle(j.getString("title"))
-                                .setAuthorUserName(j.getString("authorUsername"))
-                                .setAuthorCredit(j.getInt("authorCredit"))
-                                .setDescription(j.getString("description"))
-                                .setActiveTime(j.getLong("activetime"))
-                                .setPostID(j.getString("postID"))
-                                .setAuthorID(j.getInt("author"))
-                                .setPath( j.getString("path") )
-                                .setPrice(new BigDecimal(j.getString("price")))
-                                .setPostDate(j.getLong("postdate"))
-                                .setTag( j.getString("tag") );
-                        mTasksInList.add(order);
-                    }
-                    Message msg = new Message();
-                    msg.what = 1;
-                    msg.obj = mTasksInList;
-                    mHandler.sendMessage(msg);
-                }catch (UServerAccessException e)
-                {
-                    e.printStackTrace();
-                }catch (JSONException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+        releasedList.add(new MyOrder()
+                .setTitle("帮忙重装系统")
+                .setDescription("")
+                .setPrice(BigDecimal.valueOf(10))
+                .setActiveTime(15)
+                .setAuthorCredit(5)
+                .setAuthorID(110)
+                .setAuthorUserName("TonyDanid")
+                .setPath("到理科大楼")
+                .setTag("学习帮助")
+                .setGetperson("徐洪义")
+                .setActiveTime(1260)
+        );
+
         mlistView.setAdapter(new MyOrderAdapter(this.getActivity(),releasedList));
         return v;
     }
