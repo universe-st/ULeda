@@ -77,7 +77,7 @@
             style="@style/Base.Widget.AppCompat.Button.Borderless"
             android:drawableRight="@drawable/filtrate_bt"/>
     </LinearLayout>
-    <ecnu.uleda.RefreshListView
+    <ecnu.uleda.view_controller.RefreshListView
         android:id="@+id/task_list_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
