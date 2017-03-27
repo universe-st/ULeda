@@ -6,8 +6,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ecnu.uleda.TaskDetailsActivity">
-    <ecnu.uleda.UHeadlineLayout
+    tools:context="ecnu.uleda.view_controller.TaskDetailsActivity">
+    <ecnu.uleda.view_controller.UHeadlineLayout
     android:layout_width="match_parent"
     android:layout_height="75dp"
     android:id="@+id/head_line_layout"/>
