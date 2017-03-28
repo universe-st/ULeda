@@ -8,7 +8,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.8"
+        android:layout_weight="1.3"
         android:background="@color/colorUMain"
         >
         <TextView
@@ -41,18 +41,20 @@
             />
 
     </RelativeLayout>
+
     <EditText
         android:id="@+id/information"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="4"
         android:background="@null"
-
         />
+
     <ImageView
         android:id="@+id/TakePhoto"
         android:layout_width="85dp"
         android:layout_height="85dp"
         android:src="@drawable/releasedphoto"
         />
+
 </LinearLayout>

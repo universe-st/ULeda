@@ -1,11 +1,13 @@
 package ecnu.uleda.view_controller;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -27,12 +29,12 @@ public class UCircleFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onCreate(Bundle b){
         super.onCreate(b);
-
     }
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle b)
     {
         View v=inflater.inflate(R.layout.u_circle_fragment,parent,false);
         init(v);
+
         //测试代码
         mCircleList = new ArrayList<>();
         mCircleList.add(new UCircle()
