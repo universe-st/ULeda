@@ -110,4 +110,6 @@
             android:layout_height="match_parent">
         </com.tencent.tencentmap.mapsdk.map.MapView>
     </android.support.design.widget.CoordinatorLayout>
+
+    <include layout="@layout/view_add"/>
 </LinearLayout>

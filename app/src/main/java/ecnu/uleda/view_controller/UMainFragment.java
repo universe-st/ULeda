@@ -1,5 +1,6 @@
 package ecnu.uleda.view_controller;
 
+import android.support.v7.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,12 +9,17 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.text.Layout;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,7 +48,7 @@ import ecnu.uleda.model.UTask;
 import ecnu.uleda.function_module.UTaskManager;
 import ecnu.uleda.function_module.Navigation;
 
-public class UMainFragment extends Fragment {
+public class UMainFragment extends Fragment implements View.OnTouchListener,View.OnClickListener{
     //主界面的Fragment
     private Button[] mButtons;
     private FloatingActionButton mFab;
@@ -55,6 +61,107 @@ public class UMainFragment extends Fragment {
     private Navigation mNavigation=null;
     private LatLng mCurrentDestination=null;
     private LatLng mCenter=new LatLng(31.2284994411d,121.4063922732d);
+    //下弹出动画
+    private View mPanelView;
+    private View mCloseButton;
+
+    private View mTask;
+    private View mProject;
+    private View mActivity;
+
+    private Animation mButtonInAnimation;
+    private Animation mButtonOutAnimation;
+    private Animation mButtonScaleLargeAnimation;
+    private Animation mButtonScaleSmallAnimation;
+    private Animation mCloseRotateAnimation;
+    private void initView(View v)
+    {
+        mPanelView = v.findViewById(R.id.panel);
+        mCloseButton = v.findViewById(R.id.close);
+
+        mActivity =  v.findViewById(R.id.activity);
+        mProject =  v.findViewById(R.id.project);
+        mTask = v.findViewById(R.id.task);
+
+        mCloseButton.setOnClickListener(this);
+
+        mActivity.setOnTouchListener(this);
+        mProject.setOnTouchListener(this);
+        mTask.setOnTouchListener(this);
+    }
+    private void initAnimation() {
+        mButtonInAnimation = AnimationUtils.loadAnimation(this.getActivity(), R.anim.button_in);
+        mButtonOutAnimation = AnimationUtils.loadAnimation(this.getActivity(), R.anim.button_out);
+        mButtonScaleLargeAnimation = AnimationUtils.loadAnimation(this.getActivity(), R.anim.button_scale_to_large);
+        mButtonScaleSmallAnimation = AnimationUtils.loadAnimation(this.getActivity(), R.anim.button_scale_to_small);
+        mCloseRotateAnimation = AnimationUtils.loadAnimation(this.getActivity(), R.anim.close_rotate);
+
+        mButtonOutAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                // 6个按钮的退出动画执行完毕后，将面板隐藏
+                mPanelView.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+    }
+    private void openPanelView() {
+        mPanelView.setVisibility(View.VISIBLE);
+
+        mProject.startAnimation(mButtonInAnimation);
+        mTask.startAnimation(mButtonInAnimation);
+        mActivity.startAnimation(mButtonInAnimation);
+
+        mCloseButton.startAnimation(mCloseRotateAnimation);
+    }
+    private void closePanelView() {
+        // 给6个按钮添加退出动画
+        mProject.startAnimation(mButtonOutAnimation);
+        mTask.startAnimation(mButtonOutAnimation);
+        mActivity.startAnimation(mButtonOutAnimation);
+    }
+
+    @Override
+    public boolean onTouch(final View v, MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                // 手指按下，按钮执行放大动画
+                v.startAnimation(mButtonScaleLargeAnimation);
+                break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                // 手指移开，按钮执行缩小动画
+                v.startAnimation(mButtonScaleSmallAnimation);
+                v.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // 缩小动画执行完毕后，将按钮的动画清除。这里的150毫秒是缩小动画的执行时间。
+                        v.clearAnimation();
+                    }
+                }, 150);
+                break;
+        }
+        return true;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.float_button:// 添加按钮
+                openPanelView();
+                break;
+            case R.id.close:// 关闭按钮
+                closePanelView();
+                break;
+        }
+    }
     private Handler mHandler=new Handler(){
       @Override
       public void handleMessage(Message msg){
@@ -84,6 +191,8 @@ public class UMainFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         mLocationManager = TencentLocationManager.getInstance(this.getActivity());
+
+
     }
     private class ULocationListener implements TencentLocationListener{
         @Override
@@ -104,6 +213,10 @@ public class UMainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         View v=inflater.inflate(R.layout.u_main_fragment,parent,false);
         init(v);
+        initView(v);
+        initAnimation();
+
+
         mLocationManager=TencentLocationManager.getInstance(this.getContext());
         //每15秒定位一次
         mLocationManager.requestLocationUpdates(TencentLocationRequest.create()
@@ -158,13 +271,7 @@ public class UMainFragment extends Fragment {
     private void init(View v){
         mFab=(FloatingActionButton)v.findViewById(R.id.float_button);
         mFab.setAlpha(0.7f);
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent=new Intent(UMainFragment.this.getActivity(),TaskPostActivity.class);
-                startActivity(intent);
-            }
-        });
+        mFab.setOnClickListener(this);
         mButtons=new Button[5];
         mButtons[0]=(Button)v.findViewById(R.id.recommended_bt);
         mButtons[1]=(Button)v.findViewById(R.id.help_each_other_bt);
