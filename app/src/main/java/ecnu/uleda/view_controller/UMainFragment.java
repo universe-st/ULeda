@@ -64,7 +64,7 @@ public class UMainFragment extends Fragment implements View.OnTouchListener,View
     //下弹出动画
     private View mPanelView;
     private View mCloseButton;
-
+    private LinearLayout mBlank;
     private View mTask;
     private View mProject;
     private View mActivity;
@@ -79,10 +79,13 @@ public class UMainFragment extends Fragment implements View.OnTouchListener,View
         mPanelView = v.findViewById(R.id.panel);
         mCloseButton = v.findViewById(R.id.close);
 
+        mBlank = (LinearLayout)v.findViewById(R.id.blank);
+
         mActivity =  v.findViewById(R.id.activity);
         mProject =  v.findViewById(R.id.project);
         mTask = v.findViewById(R.id.task);
 
+        mBlank.setOnClickListener(this);
         mCloseButton.setOnClickListener(this);
 
         mActivity.setOnTouchListener(this);
@@ -154,12 +157,27 @@ public class UMainFragment extends Fragment implements View.OnTouchListener,View
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.float_button:// 添加按钮
+            case R.id.float_button:
+            {
+                // 添加按钮
                 openPanelView();
+                mFab.setVisibility(View.GONE);
                 break;
+            }
+
             case R.id.close:// 关闭按钮
+            {
                 closePanelView();
+                mFab.setVisibility(View.VISIBLE);
                 break;
+            }
+            case R.id.blank:
+            {
+                closePanelView();
+                mFab.setVisibility(View.VISIBLE);
+                break;
+            }
+
         }
     }
     private Handler mHandler=new Handler(){

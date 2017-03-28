@@ -118,6 +118,7 @@
         </com.tencent.tencentmap.mapsdk.map.MapView>
     </android.support.design.widget.CoordinatorLayout>
     </LinearLayout>
+
     <include layout="@layout/view_add"/>
 
     </RelativeLayout>
