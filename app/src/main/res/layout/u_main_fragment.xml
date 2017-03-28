@@ -4,8 +4,15 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clipToPadding="true"
-    android:weightSum="100">
+    android:clipToPadding="true">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="100">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -110,6 +117,8 @@
             android:layout_height="match_parent">
         </com.tencent.tencentmap.mapsdk.map.MapView>
     </android.support.design.widget.CoordinatorLayout>
-
+    </LinearLayout>
     <include layout="@layout/view_add"/>
+
+    </RelativeLayout>
 </LinearLayout>
