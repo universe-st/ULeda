@@ -37,4 +37,7 @@
 
     <color name="colorUDarkregister">#000000</color>
 
+    <color name="add_bg_normal">#ff8200</color>
+    <color name="add_bg_pressed">#d46403</color>
+
 </resources>
