@@ -43,12 +43,17 @@
                 android:textColor="@color/colorUWhite" />
         </FrameLayout>
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/colorUMain"/>
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2">
+        android:layout_weight="3">
     </LinearLayout>
 
     <LinearLayout
@@ -70,7 +75,7 @@
                 android:layout_height="match_parent"
                 android:text="标题"
                 android:textSize="20sp"
-                android:textColor="@android:color/black"
+                android:textColor="#404040"
                 android:gravity="center_vertical|left"/>
         </FrameLayout>
         <FrameLayout
@@ -98,8 +103,7 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2">
+        android:layout_height="1dp">
     </LinearLayout>
 
     <LinearLayout
@@ -115,19 +119,19 @@
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="5">
+            android:layout_weight="4">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="任务类型"
+                android:text="分类"
                 android:textSize="20sp"
-                android:textColor="@android:color/black"
+                android:textColor="#404040"
                 android:gravity="center_vertical|left"/>
         </FrameLayout>
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="8">
+            android:layout_weight="14">
             <Spinner
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -140,16 +144,60 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="6">
-
+            android:layout_weight="1">
         </LinearLayout>
-        </LinearLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
+        android:layout_height="1dp">
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2">
+        android:layout_weight="12"
+        android:background="@color/colorUWhite"
+        android:weightSum="20">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="报酬"
+                android:textSize="20sp"
+                android:textColor="#404040"
+                android:gravity="center_vertical|left"/>
+        </FrameLayout>
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="14">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:maxLength="6"
+                android:inputType="numberDecimal"
+                android:id="@+id/task_post_payment"
+                android:background="@null"
+                android:hint="￥0.5 "
+                android:textSize="30dp"
+                android:textColorHint="@color/colorUMain"
+                android:gravity="center_vertical|left" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="1dp">
     </LinearLayout>
 
     <LinearLayout
@@ -165,46 +213,19 @@
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="3">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="报酬"
-                android:textSize="20sp"
-                android:textColor="@android:color/black"
-                android:gravity="center_vertical|left"/>
-        </FrameLayout>
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="6">
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:maxLength="6"
-                android:inputType="numberDecimal"
-                android:id="@+id/task_post_payment"
-                android:background="@null"
-                android:hint="最低0.5元 "
-                android:textColorHint="@color/colorUGray"
-                android:gravity="center_vertical|left" />
-        </FrameLayout>
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="3">
+            android:layout_weight="4">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="时效"
                 android:textSize="20sp"
-                android:textColor="@android:color/black"
+                android:textColor="#404040"
                 android:gravity="center_vertical|left"/>
         </FrameLayout>
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="6">
+            android:layout_weight="14">
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -216,17 +237,14 @@
                 android:textColorHint="@color/colorUGray"
                 android:gravity="center_vertical|left" />
         </FrameLayout>
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"/>
     </LinearLayout>
+
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2">
+        android:layout_weight="3">
     </LinearLayout>
 
     <LinearLayout
@@ -248,7 +266,7 @@
                 android:layout_height="match_parent"
                 android:text="出发地"
                 android:textSize="20sp"
-                android:textColor="@android:color/black"
+                android:textColor="#404040"
                 android:gravity="center_vertical|left"/>
         </FrameLayout>
         <FrameLayout
@@ -261,8 +279,8 @@
                 android:layout_height="wrap_content"
                 android:text="选择地址"
                 android:textSize="17dp"
-                android:textColor="@color/colorUWhite"
-                android:background="@color/colorUInfo"
+                android:textColor="@color/colorUGray"
+                android:background="@color/colorUWhite"
                 android:layout_centerHorizontal="true"
                 />
         </FrameLayout>
@@ -285,8 +303,7 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2">
+        android:layout_height="1dp">
     </LinearLayout>
 
     <LinearLayout
@@ -308,7 +325,7 @@
                 android:layout_height="match_parent"
                 android:text="目的地"
                 android:textSize="20sp"
-                android:textColor="@android:color/black"
+                android:textColor="#404040"
                 android:gravity="center_vertical|left"/>
         </FrameLayout>
         <FrameLayout
@@ -321,8 +338,8 @@
                 android:layout_height="wrap_content"
                 android:text="选择地址"
                 android:textSize="17dp"
-                android:textColor="@color/colorUWhite"
-                android:background="@color/colorUInfo"
+                android:textColor="@color/colorUGray"
+                android:background="@color/colorUWhite"
                 android:layout_centerHorizontal="true"
                 />
         </FrameLayout>
@@ -347,35 +364,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2">
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="8"
-        android:background="@color/colorUWhite"
-        android:weightSum="20">
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"/>
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="5">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="详细描述"
-                android:textSize="20sp"
-                android:textColor="@android:color/black"
-                android:gravity="center_vertical|left"/>
-        </FrameLayout>
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="14"/>
+        android:layout_weight="3">
     </LinearLayout>
 
     <LinearLayout
@@ -388,10 +377,18 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4"
+            android:gravity="center|left"
+            android:text="详情"
+            android:textSize="20dp"
+            android:textColor="#404040"/>
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="18">
+            android:layout_weight="14">
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -401,6 +398,7 @@
                 android:background="@null"
                 android:hint="您对订单的详细要求，没有可不填，限225字节内。"
                 android:textColorHint="@color/colorUGray"
+                android:paddingTop="10dp"
                 android:gravity="top|left" />
         </FrameLayout>
         <LinearLayout
@@ -413,7 +411,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2">
+        android:layout_weight="3">
     </LinearLayout>
 
     <LinearLayout
@@ -421,29 +419,16 @@
         android:layout_height="0dp"
         android:layout_weight="10"
         android:weightSum="10">
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"/>
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="8">
             <Button
                 android:id="@+id/button_task_post"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="发布订单"
-                android:textSize="18dp"
+                android:text="发布"
+                android:textSize="20dp"
                 android:textColor="@color/colorUWhite"
-                android:background="@drawable/login_shape_button"
+                android:background="@color/colorUMain"
                 android:layout_centerHorizontal="true"
                 />
-        </FrameLayout>
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"/>
     </LinearLayout>
 
 </LinearLayout>
