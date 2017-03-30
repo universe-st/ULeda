@@ -81,7 +81,7 @@ public class UMainActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
+    super.onActivityResult(requestCode,resultCode,data);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -235,4 +235,5 @@ public class UMainActivity extends AppCompatActivity {
                 throw new RuntimeException("Error button code.");
         }
     }
+
 }
