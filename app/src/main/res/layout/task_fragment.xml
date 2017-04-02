@@ -1,47 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:weightSum="100">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="100">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="3"
-        android:background="@color/colorUMain"/>
-    <LinearLayout
+        android:background="@color/colorUMain" />
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="10"
         android:background="@color/colorUMain"
         android:weightSum="10">
-        <LinearLayout
-            android:layout_width="0dp"
+
+
+        <!--<FrameLayout-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_weight="8">-->
+
+            <!--<TextView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:gravity="center"-->
+                <!--android:text="@string/task_str"-->
+                <!--android:textAlignment="center"-->
+                <!--android:textColor="@android:color/white"-->
+                <!--android:textSize="20sp" />-->
+        <!--</FrameLayout>-->
+
+        <ecnu.uleda.view_controller.SelectableTitleView
+            android:id="@+id/titles"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="1"/>
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="8">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="@string/task_str"
-                android:textSize="20sp"
-                android:textColor="@android:color/white"
-                android:gravity="center"
-                android:textAlignment="center"/>
-        </FrameLayout>
+            android:layout_gravity="center"
+            android:layout_marginTop="7dp"
+            android:layout_marginBottom="7dp"
+            app:horizontalPadding="3dp"
+            app:radius="4dp"
+            app:textSize="18sp"
+            app:strokeWidth="3px"/>
         <Button
-            android:layout_width="0dp"
+            android:id="@+id/task_post"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:id="@+id/task_post"
-            android:text="＋"
-            android:textSize="22sp"
+            android:gravity="right|center_vertical"
             android:background="@android:color/transparent"
-            android:textColor="@android:color/white"/>
-    </LinearLayout>
+            android:text="＋"
+            android:layout_gravity="right"
+            android:layout_marginRight="8dp"
+            android:textColor="@android:color/white"
+            android:textSize="22sp" />
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -51,35 +68,38 @@
         android:weightSum="99">
 
         <Spinner
-            android:layout_width="0dp"
-            android:layout_weight="29"
-            android:layout_height="match_parent"
             android:id="@+id/spinner0"
-            />
-        <Spinner
             android:layout_width="0dp"
-            android:layout_weight="39"
             android:layout_height="match_parent"
+            android:layout_weight="29"
+            android:textAlignment="center" />
+
+        <Spinner
             android:id="@+id/spinner1"
-            />
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="39" />
 
         <Button
+            android:id="@+id/filtrate_button"
+            style="@style/Base.Widget.AppCompat.Button.Borderless"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="31"
-            android:id="@+id/filtrate_button"
-            android:background="@color/colorUSwitch"
-            android:text="@string/filtrate_str"
             android:layout_gravity="end"
-            android:textSize="18sp"
+            android:layout_weight="31"
+            android:background="@color/colorUSwitch"
+            android:drawablePadding="8dp"
+            android:drawableRight="@drawable/ic_sort_white_24dp"
+            android:paddingRight="8dp"
+            android:text="@string/filtrate_str"
             android:textAlignment="textEnd"
             android:textColor="@android:color/white"
-            style="@style/Base.Widget.AppCompat.Button.Borderless"
-            android:drawableRight="@drawable/filtrate_bt"/>
+            android:textSize="18sp" />
     </LinearLayout>
+
     <ecnu.uleda.view_controller.RefreshListView
         android:id="@+id/task_list_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="81"/>
+        android:layout_weight="81" />
 </LinearLayout>

@@ -1,6 +1,7 @@
 package ecnu.uleda.view_controller;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
@@ -300,6 +301,11 @@ public class TaskPostActivity extends AppCompatActivity {
 
         return true;
 
+    }
+
+    public static void startActivity(Context context) {
+        Intent intent = new Intent(context, TaskPostActivity.class);
+        context.startActivity(intent);
     }
 
 }
