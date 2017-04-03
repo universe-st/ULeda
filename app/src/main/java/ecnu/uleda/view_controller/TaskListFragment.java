@@ -37,7 +37,7 @@ import ecnu.uleda.function_module.UTaskManager;
  * Created by Shensheng on 2016/11/11.
  */
 
-public class TaskListFragment extends Fragment {
+public class TaskListFragment extends Fragment implements SelectableTitleView.OnTitleSelectedListner {
 
     private static final String[] SORT_BY = {UTaskManager.TIME_LAST, UTaskManager.PRICE_DES,
             UTaskManager.PRICE_ASC, UTaskManager.DISTANCE};
@@ -62,7 +62,6 @@ public class TaskListFragment extends Fragment {
     SelectableTitleView mTitleView;
 
     private Unbinder mUnbinder;
-
 
     private class RefreshThread extends Thread {
         @Override
@@ -239,6 +238,7 @@ public class TaskListFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mTitleView.setTitles(mTitles);
+        mTitleView.setOnTitleSelectedListner(this);
     }
 
     @Override
@@ -252,5 +252,10 @@ public class TaskListFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         mUnbinder.unbind();
+    }
+
+    @Override
+    public void onItemSelected(int pos, String title) {
+        //TODO 三大类的切换
     }
 }

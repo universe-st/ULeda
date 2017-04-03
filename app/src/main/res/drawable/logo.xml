@@ -6,6 +6,8 @@
         </shape>
     </item>
 
-    <item android:drawable="@drawable/welcome_bg">
-        </item>
+    <item>
+        <bitmap
+            android:src="@drawable/welcome_bg" />
+    </item>
 </layer-list>

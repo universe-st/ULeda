@@ -42,7 +42,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="7dp"
             android:layout_marginBottom="7dp"
-            app:horizontalPadding="3dp"
+            app:horizontalPadding="5dp"
             app:radius="4dp"
             app:textSize="18sp"
             app:strokeWidth="3px"/>
@@ -64,21 +64,22 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="6"
-        android:background="@color/colorUSwitch"
-        android:weightSum="99">
+        android:background="@color/colorUSwitch">
 
         <Spinner
             android:id="@+id/spinner0"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="29"
+            android:layout_weight="1"
+            android:spinnerMode="dropdown"
             android:textAlignment="center" />
 
         <Spinner
             android:id="@+id/spinner1"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="39" />
+            android:spinnerMode="dropdown"
+            android:layout_weight="1" />
 
         <Button
             android:id="@+id/filtrate_button"
@@ -86,7 +87,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_gravity="end"
-            android:layout_weight="31"
+            android:layout_weight="1"
             android:background="@color/colorUSwitch"
             android:drawablePadding="8dp"
             android:drawableRight="@drawable/ic_sort_white_24dp"

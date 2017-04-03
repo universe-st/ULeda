@@ -52,6 +52,11 @@ public class SelectableTitleView extends View {
 
     //touch
     private int mTouchSlop;
+    private OnTitleSelectedListner mListner;
+
+    public void setOnTitleSelectedListner(OnTitleSelectedListner listner) {
+        this.mListner = listner;
+    }
 
     public SelectableTitleView(Context context) {
         this(context, null);
@@ -148,7 +153,7 @@ public class SelectableTitleView extends View {
                     mHeight - mStrokeWidth);
             canvas.drawRoundRect(rectF, mRadius, mRadius, mBackgroundPaint);
             canvas.drawRect(mWidth - 2 * mHorizontalPadding - 2 * mStrokeWidth - getTextWidth(mTitles.get(mTitles.size() - 1)),
-                    0, mWidth - mHorizontalPadding, mHeight, mBackgroundPaint);
+                    mStrokeWidth, mWidth - mHorizontalPadding, mHeight-mStrokeWidth, mBackgroundPaint);
         } else {
             float l = 0;
             for (int i = 0; i < mSelected; i++) {
@@ -211,6 +216,9 @@ public class SelectableTitleView extends View {
                 if (mSelected != i) {
                     mSelected = i;
                     invalidate();
+                    if (mListner != null) {
+                        mListner.onItemSelected(i, mTitles.get(i));
+                    }
                 }
                 break;
             }
@@ -240,5 +248,9 @@ public class SelectableTitleView extends View {
     private float dp2px(float dp) {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
                 getResources().getDisplayMetrics());
+    }
+
+    public interface OnTitleSelectedListner {
+        void onItemSelected(int pos, String title);
     }
 }
