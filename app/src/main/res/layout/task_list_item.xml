@@ -1,91 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:textSize="15sp"
             android:id="@+id/task_type"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:background="@drawable/task_type_shape"
             android:text="跑腿"
-            android:layout_margin="5dp"
             android:textColor="@android:color/white"
-            android:background="@drawable/task_type_shape"/>
+            android:textSize="15sp" />
+
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
             android:id="@+id/publisher_name"
-            android:layout_margin="5dp"
-            android:text="赵铁柱"
-            android:gravity="center_vertical"
-            android:textColor="@android:color/black"/>
-        <TextView
-            android:layout_margin="5dp"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/publisher_stars"
-            android:textColor="@color/colorUBlue"
+            android:layout_margin="5dp"
             android:gravity="center_vertical"
-            android:text="★★★★★"/>
+            android:text="赵铁柱"
+            android:textColor="@android:color/black" />
+
+        <TextView
+            android:id="@+id/publisher_stars"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:gravity="center_vertical"
+            android:text="★★★★★"
+            android:textColor="@color/colorUBlue" />
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
         <TextView
-            android:layout_width="220dp"
-            android:layout_height="match_parent"
             android:id="@+id/task_info"
-            android:textColor="@color/colorUDeepGray"
-            android:text="谁顺路的帮我去邮局寄一封信好嘛？"
-            android:gravity="center_vertical"
-            android:layout_marginTop="0dp"
+            android:layout_width="0dp"
+            android:layout_weight="6"
+            android:layout_height="match_parent"
             android:layout_marginBottom="0dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:textColor="@color/colorUMain"
-            android:id="@+id/task_reward"
-            android:text="￥1.00"
-            android:textSize="30sp"
-            android:layout_gravity="right"
+            android:layout_marginTop="0dp"
             android:gravity="center_vertical"
-            />
+            android:text="谁顺路的帮我去邮局寄一封信好嘛？"
+            android:textColor="@color/colorUDeepGray" />
+
+        <TextView
+            android:id="@+id/task_reward"
+            android:layout_width="0dp"
+            android:layout_weight="4"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|right"
+            android:paddingRight="16dp"
+            android:text="￥1.00"
+            android:textColor="@color/colorUMain"
+            android:textSize="30sp" />
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="剩余时间: "
-            android:textSize="12sp"
-            android:textColor="@color/colorUGray"/>
+            android:textColor="@color/colorUGray"
+            android:textSize="12sp" />
+
         <TextView
+            android:id="@+id/time_limit"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="1小时43分钟"
-            android:textSize="12sp"
             android:textColor="@color/colorUGray"
-            android:id="@+id/time_limit"/>
+            android:textSize="12sp" />
+
         <LinearLayout
             android:layout_width="10dp"
             android:layout_height="match_parent"
-            android:background="@android:color/transparent"/>
+            android:background="@android:color/transparent" />
+
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/from_and_to"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:paddingRight="16dp"
             android:layout_height="match_parent"
+            android:gravity="right"
             android:text="从  五舍到  邮局"
-            android:textSize="12sp"
             android:textColor="@color/colorUGray"
-            android:id="@+id/from_and_to"/>
+            android:textSize="12sp" />
     </LinearLayout>
 </LinearLayout>

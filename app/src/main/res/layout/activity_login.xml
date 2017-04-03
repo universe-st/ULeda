@@ -243,7 +243,7 @@
             android:layout_height="match_parent"
             android:layout_weight="18"
             android:id="@+id/login_text"
-            android:text="注册"
+            android:text="注册   "
             android:textColor="@color/colorUGrayLogin"
             android:gravity="right|center"
             />
@@ -258,7 +258,7 @@
             android:id="@+id/password_forgotten"
             android:text="忘记密码？"
             android:textColor="@color/colorUGrayLogin"
-            android:gravity="center|left"
+            android:gravity="left"
             />
     </LinearLayout>
 
