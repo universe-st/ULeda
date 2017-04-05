@@ -11,7 +11,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import ecnu.uleda.exception.UServerAccessException;
 import ecnu.uleda.model.UTask;
@@ -70,12 +73,12 @@ public class UTaskManager {
         mTasksInMap = new ArrayList<>();
     }
 
-    public ListAdapter setListView(ListView listView, Context context) {
-        //将一个ListView的内容设置为我们的任务
-        ListAdapter la = new TaskListAdapter(context, mTasksInList);
-        listView.setAdapter(la);
-        return la;
-    }
+//    public ListAdapter setListView(ListView listView, Context context) {
+//        //将一个ListView的内容设置为我们的任务
+//        ListAdapter la = new TaskListAdapter(context, mTasksInList);
+//        listView.setAdapter(la);
+//        return la;
+//    }
 
     public void refreshTaskInList() throws UServerAccessException {
         /*

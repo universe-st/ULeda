@@ -1,21 +1,35 @@
 package ecnu.uleda.view_controller;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.jcodecraeer.xrecyclerview.ProgressStyle;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,6 +61,7 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
     private ArrayAdapter<String> mMainAdapter;
     private ArrayAdapter<String> mSortAdapter;
     private List<String> mTitles;
+    private List<UTask> mTasksInList = new ArrayList<>();
 
     //Widgets go here.
     @BindView(R.id.spinner0)
@@ -55,11 +70,15 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
     @BindView(R.id.spinner1)
     Spinner mSortSpinner;
 
-    @BindView(R.id.task_list_view)
-    RefreshListView mListView;
-
     @BindView(R.id.titles)
     SelectableTitleView mTitleView;
+
+    @BindView(R.id.task_list_view)
+    XRecyclerView mTaskListView;
+
+    @BindView(R.id.task_post)
+    TextView mPostView;
+
 
     private Unbinder mUnbinder;
 
@@ -111,20 +130,22 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case REFRESH:
-                    mListView.completeRefresh();
-                    mUTaskManager.setListView(mListView, TaskListFragment.this.getActivity());
-                    mTaskListAdapter.notifyDataSetChanged();
+                    mTaskListView.refreshComplete();
+                    mTasksInList = mUTaskManager.getTasksInList();
+//                    mUTaskManager.setListView(mListView, TaskListFragment.this.getActivity());
+                    mTaskListAdapter.updateDataSource(mTasksInList);
                     Toast.makeText(TaskListFragment.this.getActivity(), "刷新成功", Toast.LENGTH_SHORT).show();
                     break;
                 case LOAD_MORE:
-                    mListView.completeRefresh();
-                    mTaskListAdapter.notifyDataSetChanged();
+                    mTaskListView.loadMoreComplete();
+                    mTaskListAdapter.updateDataSource(mTasksInList);
                     Toast.makeText(TaskListFragment.this.getActivity(), "加载成功", Toast.LENGTH_SHORT).show();
                     break;
                 case ERROR:
                     UServerAccessException e = (UServerAccessException) msg.obj;
                     String error = e.getMessage();
-                    mListView.completeRefresh();
+                    mTaskListView.refreshComplete();
+                    mTaskListView.loadMoreComplete();
                     if (e.getStatus() != UServerAccessException.DATABASE_ERROR)
                         Toast.makeText(TaskListFragment.this.getActivity(), "网络异常：" + error, Toast.LENGTH_SHORT).show();
                 default:
@@ -169,13 +190,13 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
         return v;
     }
 
-    @OnItemClick(R.id.task_list_view)
-    void onListItemClick(ListView v, int pos) {
-        UTask task = (UTask) v.getItemAtPosition(pos);
-        Intent intent = new Intent(getActivity().getApplicationContext(), TaskDetailsActivity.class);
-        intent.putExtra("UTask", task);
-        startActivity(intent);
-    }
+//    @OnItemClick(R.id.task_list_view)
+//    void onListItemClick(ListView v, int pos) {
+//        UTask task = (UTask) v.getItemAtPosition(pos);
+//        Intent intent = new Intent(getActivity().getApplicationContext(), TaskDetailsActivity.class);
+//        intent.putExtra("UTask", task);
+//        startActivity(intent);
+//    }
 
 //    private void setListViewClick() {
 //        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -201,7 +222,8 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
 
     @OnClick(R.id.task_post)
     void postTask() {
-        TaskPostActivity.startActivity(getContext());
+        PostTaskWindow popUpWindow = new PostTaskWindow(getContext());
+        popUpWindow.showAsDropDown(mPostView);
     }
 
     private void init() {
@@ -218,20 +240,37 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
                 mSortArray);
         mSortAdapter.setDropDownViewResource(R.layout.u_spiner_dropdown_item);
         mSortSpinner.setAdapter(mSortAdapter);
-        mTaskListAdapter = (TaskListAdapter) mUTaskManager
-                .setListView(mListView, this.getActivity().getApplicationContext());
-        mListView.setOnRefreshListener(new RefreshListView.OnRefreshListener() {
+        initRecyclerView();
+        mTitles = new ArrayList<>(Arrays.asList(TITLES));
+    }
+
+    private void initRecyclerView() {
+        mTasksInList = mUTaskManager.getTasksInList();
+        mTaskListAdapter = new TaskListAdapter(getActivity(), mTasksInList);
+        mTaskListView.setAdapter(mTaskListAdapter);
+        mTaskListView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        mTaskListView.setRefreshProgressStyle(ProgressStyle.Pacman);
+        mTaskListView.setLoadingMoreProgressStyle(ProgressStyle.Pacman);
+        mTaskListView.setArrowImageView(R.drawable.pull_to_refresh_arrow);
+        mTaskListAdapter.setOnItemClickListener(new TaskListAdapter.OnItemClickListener() {
             @Override
-            public void onPullRefresh() {
+            public void onItemClicked(View v, UTask task) {
+                Intent intent = new Intent(getActivity().getApplicationContext(), TaskDetailsActivity.class);
+                intent.putExtra("UTask", task);
+                startActivity(intent);
+            }
+        });
+        mTaskListView.setLoadingListener(new XRecyclerView.LoadingListener() {
+            @Override
+            public void onRefresh() {
                 new RefreshThread().start();
             }
 
             @Override
-            public void onLoadingMore() {
+            public void onLoadMore() {
                 new LoadMoreThread().start();
             }
         });
-        mTitles = new ArrayList<>(Arrays.asList(TITLES));
     }
 
     @Override
@@ -244,8 +283,8 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
     @Override
     public void onResume() {
         super.onResume();
-        mUTaskManager.setListView(mListView, this.getActivity().getApplicationContext());
-        mTaskListAdapter.notifyDataSetChanged();
+//        mUTaskManager.setListView(mListView, this.getActivity().getApplicationContext());
+//        mTaskListAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -257,5 +296,67 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
     @Override
     public void onItemSelected(int pos, String title) {
         //TODO 三大类的切换
+    }
+
+    class PostTaskWindow extends PopupWindow implements PopupWindow.OnDismissListener {
+
+        @BindView(R.id.post_study)
+        CardView mCvStudy;
+
+        @BindView(R.id.post_living)
+        CardView mCvLiving;
+
+        @BindView(R.id.post_entertain)
+        CardView mCvEntertain;
+
+        @OnClick(R.id.post_study)
+        void postStudy() {
+            post(1);
+        }
+        @OnClick(R.id.post_entertain)
+        void postEntertain() {
+            post(2);
+        }
+        @OnClick(R.id.post_living)
+        void postLiving() {
+            post(3);
+        }
+
+        public PostTaskWindow(Context context) {
+            super(context);
+            setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+            setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+            View contentView = LayoutInflater.from(context).inflate(R.layout.popup_post_task, null);
+            ButterKnife.bind(this, contentView);
+            setContentView(contentView);
+            setFocusable(true);
+            setTouchable(true);
+            setBackgroundDrawable(new BitmapDrawable());
+            setOutsideTouchable(true);
+            setAnimationStyle(R.style.post_window_anim);
+            setOnDismissListener(this);
+        }
+
+        public void showAsDropDown(View v) {
+            Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.item_pop_up);
+            mCvStudy.startAnimation(animation);
+            mCvLiving.startAnimation(animation);
+            mCvEntertain.startAnimation(animation);
+            super.showAsDropDown(v);
+        }
+
+        private void post(int type) {
+            dismiss();
+            TaskPostActivity.startActivity(getActivity(), type);
+        }
+
+        @Override
+        public void onDismiss() {
+            AlphaAnimation animation = new AlphaAnimation(1, 0);
+            animation.setDuration(200);
+            mCvEntertain.startAnimation(animation);
+            mCvLiving.startAnimation(animation);
+            mCvStudy.startAnimation(animation);
+        }
     }
 }

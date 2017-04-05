@@ -29,6 +29,11 @@ import ecnu.uleda.function_module.ServerAccessApi;
 
 public class TaskPostActivity extends AppCompatActivity {
 
+    private static final String EXTRA_POST_TYPE = "extra_post_type";
+    public static final int TYPE_STUDY = 1;
+    public static final int TYPE_ENTERTAIN = 2;
+    public static final int TYPE_LIVING = 3;
+
     private UserOperatorController mUserOperatorController;
 
     private Handler mClickHandler = new Handler() {
@@ -303,8 +308,9 @@ public class TaskPostActivity extends AppCompatActivity {
 
     }
 
-    public static void startActivity(Context context) {
+    public static void startActivity(Context context, int type) {
         Intent intent = new Intent(context, TaskPostActivity.class);
+        intent.putExtra(EXTRA_POST_TYPE, type);
         context.startActivity(intent);
     }
 

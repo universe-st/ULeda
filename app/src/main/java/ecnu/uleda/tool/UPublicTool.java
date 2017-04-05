@@ -9,6 +9,7 @@ import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
 import android.view.WindowManager;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -17,6 +18,32 @@ import java.util.Date;
  */
 
 public class UPublicTool {
+
+    public static String parseTime(long second) {
+        int mi = 60;
+        int hh = mi * 60;
+        int dd = hh * 24;
+        long day = second / dd;
+        long hour = (second - day * dd) / hh;
+        long minute = (second - day * dd - hour * hh) / mi;
+        if (day > 0) {
+            if (day <= 7) {
+                return day + "天" + hour + "小时";
+            } else {
+                Calendar calendar = Calendar.getInstance();
+                calendar.add(Calendar.SECOND, (int) second);
+                return (calendar.get(Calendar.MONTH) + 1) + "月" + calendar.get(Calendar.DAY_OF_MONTH) + "日";
+            }
+        }
+        if (hour > 0) {
+            return hour + "小时" + minute + "分钟";
+        }
+        if (minute >= 0) {
+            return minute + "分钟前";
+        }
+        return second + "秒";
+    }
+
     public static String timeLeft(Date date){
         Date now = new Date();
         long timeLeft=(date.getTime()-now.getTime())/1000;

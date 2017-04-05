@@ -42,6 +42,11 @@
         <item name="android:windowExitAnimation">@anim/out</item>
     </style>
 
+    <style name="post_window_anim">
+        <item name="android:windowEnterAnimation">@null</item>
+        <item name="android:windowExitAnimation">@anim/out</item>
+    </style>
+
     <style name="Widget.Design.AppBarLayout" parent="android:Widget">
         <item name="elevation">0dp</item>
         <item name="android:background">?attr/colorPrimary</item>
