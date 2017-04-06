@@ -1,6 +1,7 @@
 package ecnu.uleda.view_controller;
 
-import android.support.v7.app.AppCompatActivity;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,17 +10,17 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -64,7 +65,7 @@ public class UMainFragment extends Fragment implements View.OnTouchListener,View
     //下弹出动画
     private View mPanelView;
     private View mCloseButton;
-    private LinearLayout mBlank;
+    private View mBlank;
     private View mTask;
     private View mProject;
     private View mActivity;
@@ -79,7 +80,7 @@ public class UMainFragment extends Fragment implements View.OnTouchListener,View
         mPanelView = v.findViewById(R.id.panel);
         mCloseButton = v.findViewById(R.id.close);
 
-        mBlank = (LinearLayout)v.findViewById(R.id.blank);
+        mBlank = v.findViewById(R.id.blank);
 
         mActivity =  v.findViewById(R.id.activity);
         mProject =  v.findViewById(R.id.project);
@@ -95,8 +96,8 @@ public class UMainFragment extends Fragment implements View.OnTouchListener,View
     private void initAnimation() {
         mButtonInAnimation = AnimationUtils.loadAnimation(this.getActivity(), R.anim.button_in);
         mButtonOutAnimation = AnimationUtils.loadAnimation(this.getActivity(), R.anim.button_out);
-        mButtonScaleLargeAnimation = AnimationUtils.loadAnimation(this.getActivity(), R.anim.button_scale_to_large);
-        mButtonScaleSmallAnimation = AnimationUtils.loadAnimation(this.getActivity(), R.anim.button_scale_to_small);
+        mButtonScaleLargeAnimation = AnimationUtils.loadAnimation(this.getActivity(), R.anim.button_scale_small);
+        mButtonScaleSmallAnimation = AnimationUtils.loadAnimation(this.getActivity(), R.anim.button_scale_large);
         mCloseRotateAnimation = AnimationUtils.loadAnimation(this.getActivity(), R.anim.close_rotate);
 
         mButtonOutAnimation.setAnimationListener(new Animation.AnimationListener() {
@@ -116,8 +117,11 @@ public class UMainFragment extends Fragment implements View.OnTouchListener,View
         });
     }
     private void openPanelView() {
+        hideFab();
+        AlphaAnimation animation = new AlphaAnimation(0, 1);
+        animation.setDuration(100);
         mPanelView.setVisibility(View.VISIBLE);
-
+        mPanelView.startAnimation(animation);
         mProject.startAnimation(mButtonInAnimation);
         mTask.startAnimation(mButtonInAnimation);
         mActivity.startAnimation(mButtonInAnimation);
@@ -125,10 +129,30 @@ public class UMainFragment extends Fragment implements View.OnTouchListener,View
         mCloseButton.startAnimation(mCloseRotateAnimation);
     }
     private void closePanelView() {
+        showFab();
         // 给6个按钮添加退出动画
         mProject.startAnimation(mButtonOutAnimation);
         mTask.startAnimation(mButtonOutAnimation);
         mActivity.startAnimation(mButtonOutAnimation);
+        Animation animation = new AlphaAnimation(1, 0);
+        animation.setDuration(100);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mPanelView.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        mPanelView.startAnimation(animation);
     }
 
     @Override
@@ -142,6 +166,7 @@ public class UMainFragment extends Fragment implements View.OnTouchListener,View
             case MotionEvent.ACTION_CANCEL:
                 // 手指移开，按钮执行缩小动画
                 v.startAnimation(mButtonScaleSmallAnimation);
+                gotoPost(v.getId());
                 v.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -158,28 +183,46 @@ public class UMainFragment extends Fragment implements View.OnTouchListener,View
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.float_button:
-            {
                 // 添加按钮
                 openPanelView();
-                mFab.setVisibility(View.GONE);
+//                hideFab();
                 break;
-            }
 
             case R.id.close:// 关闭按钮
-            {
                 closePanelView();
-                mFab.setVisibility(View.VISIBLE);
+//                showFab();
                 break;
-            }
             case R.id.blank:
-            {
                 closePanelView();
-                mFab.setVisibility(View.VISIBLE);
                 break;
-            }
 
         }
     }
+
+    private void gotoPost(int id) {
+        switch (id) {
+            case R.id.task:
+                quicklyClosePanel();
+                TaskPostActivity.startActivity(getActivity(), TaskPostActivity.TYPE_TASK);
+                break;
+            case R.id.project:
+                quicklyClosePanel();
+                TaskPostActivity.startActivity(getActivity(), TaskPostActivity.TYPE_PROJECT);
+                break;
+            case R.id.activity:
+                quicklyClosePanel();
+                TaskPostActivity.startActivity(getActivity(), TaskPostActivity.TYPE_ACTIVITY);
+                break;
+        }
+    }
+
+    private void quicklyClosePanel() {
+        mFab.setScaleX(1);
+        mFab.setScaleY(1);
+        closePanelView();
+
+    }
+
     private Handler mHandler=new Handler(){
       @Override
       public void handleMessage(Message msg){
@@ -511,5 +554,29 @@ public class UMainFragment extends Fragment implements View.OnTouchListener,View
                         );
                     }
                 });
+    }
+
+    private void hideFab() {
+        ObjectAnimator animatorX = ObjectAnimator.ofFloat(mFab, "scaleX", 1, 0)
+                .setDuration(100);
+        animatorX.setInterpolator(new AccelerateInterpolator());
+        ObjectAnimator animatorY = ObjectAnimator.ofFloat(mFab, "scaleY", 1, 0)
+                .setDuration(100);
+        animatorY.setInterpolator(new AccelerateInterpolator());
+        AnimatorSet set = new AnimatorSet();
+        set.playTogether(animatorX, animatorY);
+        set.start();
+    }
+
+    private void showFab() {
+        ObjectAnimator animatorX = ObjectAnimator.ofFloat(mFab, "scaleX", 0, 1)
+                .setDuration(100);
+        animatorX.setInterpolator(new AccelerateInterpolator());
+        ObjectAnimator animatorY = ObjectAnimator.ofFloat(mFab, "scaleY", 0, 1)
+                .setDuration(100);
+        animatorY.setInterpolator(new AccelerateInterpolator());
+        AnimatorSet set = new AnimatorSet();
+        set.playTogether(animatorX, animatorY);
+        set.start();
     }
 }

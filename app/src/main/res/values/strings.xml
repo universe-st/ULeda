@@ -24,6 +24,12 @@
         <item>大</item>
     </string-array>
 
+    <string-array name="task_type">
+        <item>任务</item>
+        <item>项目</item>
+        <item>活动</item>
+    </string-array>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -11,15 +11,25 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import ecnu.uleda.R;
 import ecnu.uleda.function_module.UserOperatorController;
+import ecnu.uleda.view_controller.widgets.BottomBarLayout;
 
 
-public class UMainActivity extends AppCompatActivity {
+public class UMainActivity extends AppCompatActivity implements BottomBarLayout.OnLabelSelectedListener {
+
+    @BindView(R.id.bottom_bar)
+    BottomBarLayout mBottomBar;
+
+    private static final String[] BOTTOM_LABELS = new String[]{"地图", "发布", "U圈", "消息", "我"};
+    private static final int[] BOTTOM_ICONS = new int[]{R.drawable.ic_room_white_48dp,
+            R.drawable.ic_create_white_48dp,R.drawable.ic_explore_white_48dp,
+            R.drawable.ic_question_answer_white_48dp,R.drawable.ic_perm_identity_white_48dp};
     private static UMainActivity sHolder;
     public static void finishMainActivity(){
         if(sHolder!=null){
@@ -30,7 +40,6 @@ public class UMainActivity extends AppCompatActivity {
     //MainActivity
     private ViewPager mViewPager;
     private Fragment[] mFragments = null;
-    private Button[] mButtons = null;
     UserOperatorController Controller = UserOperatorController.getInstance();
      boolean mIsLogined=Controller.getIsLogined();
 
@@ -43,6 +52,7 @@ public class UMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         sHolder=this;
         setContentView(R.layout.activity_umain);
+        ButterKnife.bind(this);
         init();
         if (!UserOperatorController.getInstance().getIsLogined()) {
             Intent intent = new Intent(this, LoginActivity.class);
@@ -122,12 +132,7 @@ public class UMainActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-                setButtonsPressed(position);
-                for (int j = 0; j < 5; j++) {
-                    if (j != position) {
-                        setButtonsUnpressed(j);
-                    }
-                }
+                mBottomBar.select(position);
             }
 
             @Override
@@ -136,41 +141,8 @@ public class UMainActivity extends AppCompatActivity {
             }
         });
         mViewPager.setOffscreenPageLimit(5);
-        mButtons = new Button[5];
-        mButtons[0] = (Button) findViewById(R.id.map_button);
-        mButtons[1] = (Button) findViewById(R.id.task_button);
-        mButtons[2] = (Button) findViewById(R.id.u_circle_button);
-        mButtons[3] = (Button) findViewById(R.id.message_button);
-        mButtons[4] = (Button) findViewById(R.id.me_button);
-        mButtons[0].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                changeToView(0);
-            }
-        });
-        mButtons[1].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                changeToView(1);
-            }
-        });
-        mButtons[2].setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View view) {
-                checkIsLogined(2);}
-        });
-        mButtons[3].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                checkIsLogined(3);
-            }
-        });
-        mButtons[4].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                checkIsLogined(4);
-            }
-        });
-        changeToView(0);
+        mBottomBar.init(BOTTOM_LABELS, BOTTOM_ICONS);
+        mBottomBar.setOnLabelSelectedListener(this);
     }
 
 
@@ -191,48 +163,8 @@ public class UMainActivity extends AppCompatActivity {
         mViewPager.setCurrentItem(i);
     }
 
-    //将某按钮视图设置为下压状态
-    private void setButtonsPressed(int i) {
-        switch (i) {
-            case 0:
-                mButtons[0].setBackgroundResource(R.drawable.map_bt_pressed);
-                break;
-            case 1:
-                mButtons[1].setBackgroundResource(R.drawable.task_bt_pressed);
-                break;
-            case 2:
-                mButtons[2].setBackgroundResource(R.drawable.ucircle_bt_pressed);
-                break;
-            case 3:
-                mButtons[3].setBackgroundResource(R.drawable.message_bt_pressed);
-                break;
-            case 4:
-                mButtons[4].setBackgroundResource(R.drawable.me_bt_pressed);
-                break;
-            default:
-                throw new RuntimeException("Error button code.");
-        }
-    }
-
-    private void setButtonsUnpressed(int i) {
-        switch (i) {
-            case 0:
-                mButtons[0].setBackgroundResource(R.drawable.map_bt);
-                break;
-            case 1:
-                mButtons[1].setBackgroundResource(R.drawable.task_bt);
-                break;
-            case 2:
-                mButtons[2].setBackgroundResource(R.drawable.ucircle_bt);
-                break;
-            case 3:
-                mButtons[3].setBackgroundResource(R.drawable.message_bt);
-                break;
-            case 4:
-                mButtons[4].setBackgroundResource(R.drawable.me_bt);
-                break;
-            default:
-                throw new RuntimeException("Error button code.");
-        }
+    @Override
+    public void labelSelected(int pos) {
+        changeToView(pos);
     }
 }

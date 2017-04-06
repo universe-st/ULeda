@@ -30,9 +30,9 @@ import ecnu.uleda.function_module.ServerAccessApi;
 public class TaskPostActivity extends AppCompatActivity {
 
     private static final String EXTRA_POST_TYPE = "extra_post_type";
-    public static final int TYPE_STUDY = 1;
-    public static final int TYPE_ENTERTAIN = 2;
-    public static final int TYPE_LIVING = 3;
+    public static final int TYPE_TASK = 1;
+    public static final int TYPE_PROJECT = 2;
+    public static final int TYPE_ACTIVITY = 3;
 
     private UserOperatorController mUserOperatorController;
 

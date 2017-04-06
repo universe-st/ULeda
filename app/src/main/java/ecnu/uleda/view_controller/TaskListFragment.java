@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import butterknife.BindArray;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -55,8 +56,9 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
 
     private static final String[] SORT_BY = {UTaskManager.TIME_LAST, UTaskManager.PRICE_DES,
             UTaskManager.PRICE_ASC, UTaskManager.DISTANCE};
-    public static final String[] TITLES = {"学习", "生活", "娱乐"};
-    //任务列表
+
+    @BindArray(R.array.task_type)
+    String[] mTitleArray;
 
     private ArrayAdapter<String> mMainAdapter;
     private ArrayAdapter<String> mSortAdapter;
@@ -241,7 +243,7 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
         mSortAdapter.setDropDownViewResource(R.layout.u_spiner_dropdown_item);
         mSortSpinner.setAdapter(mSortAdapter);
         initRecyclerView();
-        mTitles = new ArrayList<>(Arrays.asList(TITLES));
+        mTitles = new ArrayList<>(Arrays.asList(mTitleArray));
     }
 
     private void initRecyclerView() {
@@ -298,28 +300,28 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
         //TODO 三大类的切换
     }
 
-    class PostTaskWindow extends PopupWindow implements PopupWindow.OnDismissListener {
+    class PostTaskWindow extends PopupWindow {
 
-        @BindView(R.id.post_study)
-        CardView mCvStudy;
+        @BindView(R.id.post_task)
+        CardView mCvTask;
 
-        @BindView(R.id.post_living)
-        CardView mCvLiving;
+        @BindView(R.id.post_project)
+        CardView mCvProject;
 
-        @BindView(R.id.post_entertain)
-        CardView mCvEntertain;
+        @BindView(R.id.post_activity)
+        CardView mCvActivity;
 
-        @OnClick(R.id.post_study)
-        void postStudy() {
-            post(1);
+        @OnClick(R.id.post_task)
+        void postTask() {
+            post(TaskPostActivity.TYPE_TASK);
         }
-        @OnClick(R.id.post_entertain)
-        void postEntertain() {
-            post(2);
+        @OnClick(R.id.post_project)
+        void postProject() {
+            post(TaskPostActivity.TYPE_PROJECT);
         }
-        @OnClick(R.id.post_living)
-        void postLiving() {
-            post(3);
+        @OnClick(R.id.post_activity)
+        void postActivity() {
+            post(TaskPostActivity.TYPE_ACTIVITY);
         }
 
         public PostTaskWindow(Context context) {
@@ -334,14 +336,13 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
             setBackgroundDrawable(new BitmapDrawable());
             setOutsideTouchable(true);
             setAnimationStyle(R.style.post_window_anim);
-            setOnDismissListener(this);
         }
 
         public void showAsDropDown(View v) {
             Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.item_pop_up);
-            mCvStudy.startAnimation(animation);
-            mCvLiving.startAnimation(animation);
-            mCvEntertain.startAnimation(animation);
+            mCvTask.startAnimation(animation);
+            mCvProject.startAnimation(animation);
+            mCvActivity.startAnimation(animation);
             super.showAsDropDown(v);
         }
 
@@ -350,13 +351,5 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
             TaskPostActivity.startActivity(getActivity(), type);
         }
 
-        @Override
-        public void onDismiss() {
-            AlphaAnimation animation = new AlphaAnimation(1, 0);
-            animation.setDuration(200);
-            mCvEntertain.startAnimation(animation);
-            mCvLiving.startAnimation(animation);
-            mCvStudy.startAnimation(animation);
-        }
     }
 }

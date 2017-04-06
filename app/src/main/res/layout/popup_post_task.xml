@@ -9,7 +9,7 @@
     android:showDividers="middle">
 
     <android.support.v7.widget.CardView
-        android:id="@+id/post_study"
+        android:id="@+id/post_task"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="8dp"
@@ -28,13 +28,13 @@
             android:paddingLeft="12dp"
             android:paddingRight="12dp"
             android:background="?android:attr/selectableItemBackground"
-            android:text="学习"
+            android:text="任务"
             android:textColor="@color/colorUMain"
-            android:textSize="22sp" />
+            android:textSize="20sp" />
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
-        android:id="@+id/post_living"
+        android:id="@+id/post_project"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="8dp"
@@ -53,13 +53,13 @@
             android:paddingLeft="12dp"
             android:paddingRight="12dp"
             android:background="?android:attr/selectableItemBackground"
-            android:text="生活"
+            android:text="项目"
             android:textColor="@color/colorUMain"
-            android:textSize="22sp" />
+            android:textSize="20sp" />
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
-        android:id="@+id/post_entertain"
+        android:id="@+id/post_activity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="8dp"
@@ -79,9 +79,9 @@
             android:paddingLeft="12dp"
             android:paddingRight="12dp"
             android:background="?android:attr/selectableItemBackground"
-            android:text="娱乐"
+            android:text="活动"
             android:textColor="@color/colorUMain"
-            android:textSize="22sp" />
+            android:textSize="20sp" />
     </android.support.v7.widget.CardView>
 
 </LinearLayout>
