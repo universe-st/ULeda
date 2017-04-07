@@ -3,12 +3,9 @@ package ecnu.uleda.view_controller;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Outline;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.Typeface;
-import android.support.annotation.MainThread;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
@@ -16,7 +13,6 @@ import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.view.ViewOutlineProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,10 +48,10 @@ public class SelectableTitleView extends View {
 
     //touch
     private int mTouchSlop;
-    private OnTitleSelectedListner mListner;
+    private OnTitleSelectedListener mListener;
 
-    public void setOnTitleSelectedListner(OnTitleSelectedListner listner) {
-        this.mListner = listner;
+    public void setOnTitleSelectedListner(OnTitleSelectedListener listener) {
+        this.mListener = listener;
     }
 
     public SelectableTitleView(Context context) {
@@ -216,8 +212,8 @@ public class SelectableTitleView extends View {
                 if (mSelected != i) {
                     mSelected = i;
                     invalidate();
-                    if (mListner != null) {
-                        mListner.onItemSelected(i, mTitles.get(i));
+                    if (mListener != null) {
+                        mListener.onItemSelected(i, mTitles.get(i));
                     }
                 }
                 break;
@@ -250,7 +246,7 @@ public class SelectableTitleView extends View {
                 getResources().getDisplayMetrics());
     }
 
-    public interface OnTitleSelectedListner {
+    public interface OnTitleSelectedListener {
         void onItemSelected(int pos, String title);
     }
 }

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:weightSum="100">
+    android:weightSum="103">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -52,69 +52,69 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="right"
-            android:layout_marginRight="8dp"
             android:layout_weight="1"
             android:background="?android:attr/selectableItemBackground"
             android:gravity="right|center_vertical"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
             android:text="＋"
             android:textColor="@android:color/white"
             android:textSize="22sp" />
     </FrameLayout>
 
-    <FrameLayout
+    <!--<FrameLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="0dp"-->
+    <!--android:layout_weight="90">-->
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="90">
+        android:layout_weight="6"
+        android:background="@color/colorUSwitch">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="6"
-            android:background="@color/colorUSwitch">
+        <Spinner
+            android:id="@+id/spinner0"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:spinnerMode="dropdown"
+            android:textAlignment="center" />
 
-            <Spinner
-                android:id="@+id/spinner0"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:spinnerMode="dropdown"
-                android:textAlignment="center" />
+        <Spinner
+            android:id="@+id/spinner1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:spinnerMode="dropdown"
+            android:textAlignment="center" />
 
-            <Spinner
-                android:id="@+id/spinner1"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:spinnerMode="dropdown" />
+        <!--<Button-->
+        <!--android:id="@+id/filtrate_button"-->
+        <!--style="@style/Base.Widget.AppCompat.Button.Borderless"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_gravity="end"-->
+        <!--android:layout_weight="1"-->
+        <!--android:background="@color/colorUSwitch"-->
+        <!--android:drawablePadding="8dp"-->
+        <!--android:drawableRight="@drawable/ic_sort_white_24dp"-->
+        <!--android:paddingRight="8dp"-->
+        <!--android:text="@string/filtrate_str"-->
+        <!--android:textAlignment="textEnd"-->
+        <!--android:textColor="@android:color/white"-->
+        <!--android:textSize="18sp" />-->
+    </LinearLayout>
 
-            <Button
-                android:id="@+id/filtrate_button"
-                style="@style/Base.Widget.AppCompat.Button.Borderless"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="end"
-                android:layout_weight="1"
-                android:background="@color/colorUSwitch"
-                android:drawablePadding="8dp"
-                android:drawableRight="@drawable/ic_sort_white_24dp"
-                android:paddingRight="8dp"
-                android:text="@string/filtrate_str"
-                android:textAlignment="textEnd"
-                android:textColor="@android:color/white"
-                android:textSize="18sp" />
-        </LinearLayout>
-
-        <!--<ecnu.uleda.view_controller.RefreshListView-->
-        <!--android:id="@+id/task_list_view"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="0dp"-->
-        <!--android:layout_weight="81" />-->
-        <com.jcodecraeer.xrecyclerview.XRecyclerView
-            android:id="@+id/task_list_view"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="81" />
-    </FrameLayout>
+    <!--<ecnu.uleda.view_controller.RefreshListView-->
+    <!--android:id="@+id/task_list_view"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="0dp"-->
+    <!--android:layout_weight="81" />-->
+    <com.jcodecraeer.xrecyclerview.XRecyclerView
+        android:id="@+id/task_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="84" />
+    <!--</FrameLayout>-->
 </LinearLayout>

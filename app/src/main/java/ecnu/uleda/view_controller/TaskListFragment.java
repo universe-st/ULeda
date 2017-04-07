@@ -11,18 +11,13 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -39,7 +34,6 @@ import butterknife.BindArray;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnItemClick;
 import butterknife.OnItemSelected;
 import butterknife.Unbinder;
 import ecnu.uleda.R;
@@ -52,7 +46,7 @@ import ecnu.uleda.function_module.UTaskManager;
  * Created by Shensheng on 2016/11/11.
  */
 
-public class TaskListFragment extends Fragment implements SelectableTitleView.OnTitleSelectedListner {
+public class TaskListFragment extends Fragment implements SelectableTitleView.OnTitleSelectedListener {
 
     private static final String[] SORT_BY = {UTaskManager.TIME_LAST, UTaskManager.PRICE_DES,
             UTaskManager.PRICE_ASC, UTaskManager.DISTANCE};
@@ -192,23 +186,6 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
         return v;
     }
 
-//    @OnItemClick(R.id.task_list_view)
-//    void onListItemClick(ListView v, int pos) {
-//        UTask task = (UTask) v.getItemAtPosition(pos);
-//        Intent intent = new Intent(getActivity().getApplicationContext(), TaskDetailsActivity.class);
-//        intent.putExtra("UTask", task);
-//        startActivity(intent);
-//    }
-
-//    private void setListViewClick() {
-//        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                //Thanks to MicroDog.
-//
-//            }
-//        });
-//    }
 
     @OnItemSelected(R.id.spinner0)
     void onMainItemSelected(int pos) {
