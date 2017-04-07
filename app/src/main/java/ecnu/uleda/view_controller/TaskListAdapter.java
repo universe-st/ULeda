@@ -2,6 +2,8 @@ package ecnu.uleda.view_controller;
 
 import android.content.Context;
 import android.graphics.Point;
+import android.graphics.Typeface;
+import android.support.annotation.Nullable;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
@@ -19,6 +21,9 @@ import butterknife.ButterKnife;
 import ecnu.uleda.R;
 import ecnu.uleda.tool.UPublicTool;
 import ecnu.uleda.model.UTask;
+import me.xiaopan.sketch.SketchImageView;
+import me.xiaopan.sketch.request.DisplayOptions;
+import me.xiaopan.sketch.shaper.CircleImageShaper;
 
 /**
  * Created by Shensheng on 2017/1/15.
@@ -43,52 +48,6 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
         mListener = listener;
     }
 
-    //    @Override
-//    @NonNull
-//    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-////        UTask task = getItem(position);
-////        //Log.d("TaskListAdapter",position+task.getInformation());
-////        if (convertView == null) {
-////            convertView = LayoutInflater.from(getContext().getApplicationContext()).inflate(R.layout.task_list_item, parent, false);
-////        }
-////        if (task == null)
-////            return LayoutInflater.from(getContext().getApplicationContext()).inflate(R.layout.task_list_item, parent, false);
-////        TextView tv = (TextView) convertView.findViewById(R.id.task_type);
-////        tv.setText(task.getTag().substring(0, 2));
-//        tv = (TextView) convertView.findViewById(R.id.publisher_name);
-//        tv.setText(task.getAuthorUserName());
-//        tv = (TextView) convertView.findViewById(R.id.publisher_stars);
-//        tv.setText(task.getStarString());
-//        tv = (TextView) convertView.findViewById(R.id.task_info);
-//        tv.setText(task.getTitle());
-//        tv = (TextView) convertView.findViewById(R.id.task_reward);
-//        tv.setText(String.format(Locale.ENGLISH, "¥%.2f", task.getPrice()));
-//        long time = task.getLeftTime();
-//        String timeDescription = UPublicTool.timeLeft(time);
-//        tv = (TextView) convertView.findViewById(R.id.time_limit);
-//        tv.setText(timeDescription);
-//        String f = task.getFromWhere();
-//        String t = task.getToWhere();
-//        tv = (TextView) convertView.findViewById(R.id.from_and_to);
-//        String oc = "";
-//        if (f.length() == 0 && t.length() == 0) {
-//            tv.setText("");
-//        } else if (f.length() == 0) {
-//            oc = "到 #LO " + t;
-//        } else if (t.length() == 0) {
-//            oc = "从 #LO " + t;
-//        } else {
-//            oc = "从 #LO " + f + "到 #LO " + t;
-//        }
-//        if (mSize == null) {
-//            mSize = UPublicTool.getScreenSize(, 0.03, 0.03);
-//        }
-//        SpannableStringBuilder ssb = UPublicTool.addICONtoString(getContext(), oc, "#LO", R.drawable.location, mSize.x, mSize.y);
-//        tv.setText(ssb);
-//        return convertView;
-//    }
-
-
     @Override
     public TaskListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View convertView = mInflater.inflate(R.layout.task_list_item, parent, false);
@@ -106,14 +65,24 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
     @Override
     public void onBindViewHolder(TaskListAdapter.ViewHolder holder, int position) {
         UTask task = mDatas.get(position);
-        holder.mTvType.setText(task.getTag().substring(0, 2));
+        DisplayOptions options = new DisplayOptions();
+        options.setImageShaper(new CircleImageShaper());
+        holder.mAvatar.setOptions(options);
+        if (task.getAvatar().equals("xiaohong.jpg")) {
+            holder.mAvatar.displayResourceImage(R.drawable.xiaohong);
+        } else {
+            holder.mAvatar.displayImage(task.getAvatar());
+        }
+//        holder.mTvType.setText(task.getTag().substring(0, 2));
         holder.mTvPublisherName.setText(task.getAuthorUserName());
         holder.mTvStars.setText(task.getStarString());
         holder.mTvInfo.setText(task.getTitle());
-        holder.mTvTaskReward.setText(String.format(Locale.ENGLISH, "¥%.2f", task.getPrice()));
-        holder.mTvTimeLimit.setText(UPublicTool.parseTime(task.getLeftTime()));
+        holder.mTvTaskReward.setText(String.format(Locale.ENGLISH, "¥ %.2f", task.getPrice()));
+        holder.mTvTimeLimit.setText("截止至 " + UPublicTool.parseTime(task.getLeftTime()));
         holder.mTvFromAndTo.setText(getFromTo(task));
+        holder.mTvTakesCount.setText(task.getTakersCount() + "人接单");
         holder.itemView.setTag(task);
+
     }
 
     @Override
@@ -136,11 +105,11 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
         if (f.length() == 0 && t.length() == 0) {
             oc = "";
         } else if (f.length() == 0) {
-            oc = "到 #LO " + t;
+            oc = "到" + t;
         } else if (t.length() == 0) {
-            oc = "从 #LO " + t;
+            oc = "从" + t;
         } else {
-            oc = "从 #LO " + f + "到 #LO " + t;
+            oc = "从" + f + "到" + t;
         }
         if (mSize == null) {
             mSize = UPublicTool.getScreenSize(mContext, 0.03, 0.03);
@@ -155,6 +124,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
 
     class ViewHolder extends RecyclerView.ViewHolder {
         View itemView;
+        @Nullable
         @BindView(R.id.task_type)
         TextView mTvType;
         @BindView(R.id.publisher_name)
@@ -169,11 +139,21 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
         TextView mTvTimeLimit;
         @BindView(R.id.from_and_to)
         TextView mTvFromAndTo;
+        @BindView(R.id.avatar)
+        SketchImageView mAvatar;
+        @BindView(R.id.takers_count)
+        TextView mTvTakesCount;
 
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             this.itemView = itemView;
+            Typeface roboto = Typeface.createFromAsset(mContext.getAssets(), "Roboto-Light.ttf");
+            mTvPublisherName.setTypeface(roboto);
+            mTvTimeLimit.setTypeface(roboto);
+            mTvFromAndTo.setTypeface(roboto);
+            mTvTakesCount.setTypeface(roboto);
+            mTvTaskReward.setTypeface(roboto);
         }
     }
 

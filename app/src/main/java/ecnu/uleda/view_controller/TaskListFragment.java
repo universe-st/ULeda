@@ -40,6 +40,7 @@ import ecnu.uleda.R;
 import ecnu.uleda.exception.UServerAccessException;
 import ecnu.uleda.model.UTask;
 import ecnu.uleda.function_module.UTaskManager;
+import ecnu.uleda.view_controller.widgets.HorizontalItemDecoration;
 
 
 /**
@@ -75,7 +76,7 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
     @BindView(R.id.task_post)
     TextView mPostView;
 
-
+    private volatile boolean hasMoreItems = true;
     private Unbinder mUnbinder;
 
     private class RefreshThread extends Thread {
@@ -100,7 +101,7 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
         @Override
         public void run() {
             try {
-                mUTaskManager.loadMoreTaskInList(5);
+                hasMoreItems = mUTaskManager.loadMoreTaskInList(5);
             } catch (UServerAccessException e) {
                 //TODO:根据异常的状态决定向主线程的handle发送哪些信息
                 e.printStackTrace();
@@ -127,15 +128,22 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
             switch (msg.what) {
                 case REFRESH:
                     mTaskListView.refreshComplete();
+                    if (!hasMoreItems) {
+                        hasMoreItems = true;
+                        mTaskListView.setIsnomore(false);
+                    }
                     mTasksInList = mUTaskManager.getTasksInList();
 //                    mUTaskManager.setListView(mListView, TaskListFragment.this.getActivity());
                     mTaskListAdapter.updateDataSource(mTasksInList);
-                    Toast.makeText(TaskListFragment.this.getActivity(), "刷新成功", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(TaskListFragment.this.getActivity(), "刷新成功", Toast.LENGTH_SHORT).show();
                     break;
                 case LOAD_MORE:
                     mTaskListView.loadMoreComplete();
+                    if (!hasMoreItems) {
+                        mTaskListView.setIsnomore(true);
+                    }
                     mTaskListAdapter.updateDataSource(mTasksInList);
-                    Toast.makeText(TaskListFragment.this.getActivity(), "加载成功", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(TaskListFragment.this.getActivity(), "加载成功", Toast.LENGTH_SHORT).show();
                     break;
                 case ERROR:
                     UServerAccessException e = (UServerAccessException) msg.obj;
@@ -231,6 +239,7 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
         mTaskListView.setRefreshProgressStyle(ProgressStyle.Pacman);
         mTaskListView.setLoadingMoreProgressStyle(ProgressStyle.Pacman);
         mTaskListView.setArrowImageView(R.drawable.pull_to_refresh_arrow);
+        mTaskListView.addItemDecoration(new HorizontalItemDecoration(getContext(), 8));
         mTaskListAdapter.setOnItemClickListener(new TaskListAdapter.OnItemClickListener() {
             @Override
             public void onItemClicked(View v, UTask task) {

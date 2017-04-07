@@ -29,7 +29,7 @@ public class UMainActivity extends AppCompatActivity implements BottomBarLayout.
     private static final String[] BOTTOM_LABELS = new String[]{"地图", "发布", "U圈", "消息", "我"};
     private static final int[] BOTTOM_ICONS = new int[]{R.drawable.ic_room_white_48dp,
             R.drawable.ic_create_white_48dp,R.drawable.ic_explore_white_48dp,
-            R.drawable.ic_question_answer_white_48dp,R.drawable.ic_perm_identity_white_48dp};
+            R.drawable.ic_question_answer_white_48dp,R.drawable.ic_account_circle_white_48dp};
     private static UMainActivity sHolder;
     public static void finishMainActivity(){
         if(sHolder!=null){
