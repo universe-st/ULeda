@@ -11,11 +11,11 @@ import android.view.View;
  * Created by jimmyhsu on 2017/4/8.
  */
 
-public class HorizontalItemDecoration extends RecyclerView.ItemDecoration {
+public class TaskListItemDecoration extends RecyclerView.ItemDecoration {
 
     private float mHeight;
 
-    public HorizontalItemDecoration(Context context, int heightDp) {
+    public TaskListItemDecoration(Context context, int heightDp) {
         mHeight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, heightDp,
                 context.getResources().getDisplayMetrics());
     }

@@ -4,17 +4,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
@@ -40,7 +42,10 @@ import ecnu.uleda.R;
 import ecnu.uleda.exception.UServerAccessException;
 import ecnu.uleda.model.UTask;
 import ecnu.uleda.function_module.UTaskManager;
-import ecnu.uleda.view_controller.widgets.HorizontalItemDecoration;
+import ecnu.uleda.view_controller.widgets.DrawableLeftCenterTextView;
+import ecnu.uleda.view_controller.widgets.TaskListFilterWindow;
+import ecnu.uleda.view_controller.widgets.TaskListItemDecoration;
+import ecnu.uleda.view_controller.widgets.SelectableTitleView;
 
 
 /**
@@ -55,17 +60,17 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
     @BindArray(R.array.task_type)
     String[] mTitleArray;
 
-    private ArrayAdapter<String> mMainAdapter;
-    private ArrayAdapter<String> mSortAdapter;
+//    private ArrayAdapter<String> mMainAdapter;
+//    private ArrayAdapter<String> mSortAdapter;
     private List<String> mTitles;
     private List<UTask> mTasksInList = new ArrayList<>();
 
     //Widgets go here.
     @BindView(R.id.spinner0)
-    Spinner mMainSpinner;
+    DrawableLeftCenterTextView mMainSpinner;
 
     @BindView(R.id.spinner1)
-    Spinner mSortSpinner;
+    DrawableLeftCenterTextView mSortSpinner;
 
     @BindView(R.id.titles)
     SelectableTitleView mTitleView;
@@ -75,6 +80,12 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
 
     @BindView(R.id.task_post)
     TextView mPostView;
+
+    @BindView(R.id.shader)
+    View mShaderView;
+
+    private TaskListFilterWindow mMainDropDownWindow;
+    private TaskListFilterWindow mSortDropDownWindow;
 
     private volatile boolean hasMoreItems = true;
     private Unbinder mUnbinder;
@@ -194,39 +205,72 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
         return v;
     }
 
-
-    @OnItemSelected(R.id.spinner0)
-    void onMainItemSelected(int pos) {
-        mUTaskManager.setTag(mMainArray.get(pos));
-        new RefreshThread().start();
-    }
-
-    @OnItemSelected(R.id.spinner1)
-    void onSortItemSelected(int pos) {
-        mUTaskManager.setSortBy(SORT_BY[pos]);
-        new RefreshThread().start();
-    }
-
     @OnClick(R.id.task_post)
     void postTask() {
         PostTaskWindow popUpWindow = new PostTaskWindow(getContext());
         popUpWindow.showAsDropDown(mPostView);
     }
 
-    private void init() {
-        mMainSpinner.getBackground().setColorFilter(0xFFFFFF, PorterDuff.Mode.DST);
-        mSortSpinner.getBackground().setColorFilter(0XFFFFFF, PorterDuff.Mode.DST);
+    @OnClick(R.id.spinner0)
+    void typeSelect() {
+        if (mMainDropDownWindow == null) {
+            mMainDropDownWindow = new TaskListFilterWindow(getContext(), mMainArray);
+            mMainDropDownWindow.setOnItemSelectedListener(new TaskListFilterWindow.OnItemSelectedListener() {
+                @Override
+                public void OnItemSelected(View v, int pos) {
+                    mMainSpinner.setText(mMainArray.get(pos));
+                    mUTaskManager.setTag(mMainArray.get(pos));
+                    mTaskListView.setRefreshing(true);
+                    new RefreshThread().start();
+                }
+            });
+            mMainDropDownWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                @Override
+                public void onDismiss() {
+                    hideShader();
+                }
+            });
+        }
+        showShader();
 
-        mMainAdapter = new ArrayAdapter<>(this.getActivity().getApplicationContext(),
-                R.layout.u_spiner_text_item,
-                mMainArray);
-        mMainAdapter.setDropDownViewResource(R.layout.u_spiner_dropdown_item);
-        mMainSpinner.setAdapter(mMainAdapter);
-        mSortAdapter = new ArrayAdapter<>(this.getActivity().getApplicationContext(),
-                R.layout.u_spiner_text_item,
-                mSortArray);
-        mSortAdapter.setDropDownViewResource(R.layout.u_spiner_dropdown_item);
-        mSortSpinner.setAdapter(mSortAdapter);
+        mMainDropDownWindow.showAsDropDown(mMainSpinner);
+    }
+
+    @OnClick(R.id.spinner1)
+    void sortSelect() {
+        if (mSortDropDownWindow == null) {
+            mSortDropDownWindow = new TaskListFilterWindow(getContext(), mSortArray);
+            mSortDropDownWindow.setOnItemSelectedListener(new TaskListFilterWindow.OnItemSelectedListener() {
+                @Override
+                public void OnItemSelected(View v, int pos) {
+                    mSortSpinner.setText(mSortArray.get(pos));
+                    mUTaskManager.setSortBy(SORT_BY[pos]);
+                    mTaskListView.setRefreshing(true);
+                    new RefreshThread().start();
+                }
+            });
+            mSortDropDownWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                @Override
+                public void onDismiss() {
+                    hideShader();
+                }
+            });
+        }
+        showShader();
+        mSortDropDownWindow.showAsDropDown(mSortSpinner);
+    }
+
+    private void showShader() {
+        mShaderView.setVisibility(View.VISIBLE);
+    }
+
+    private void hideShader() {
+        mShaderView.setVisibility(View.GONE);
+    }
+
+    private void init() {
+        mMainSpinner.setText(mMainArray.get(0));
+        mSortSpinner.setText(mSortArray.get(0));
         initRecyclerView();
         mTitles = new ArrayList<>(Arrays.asList(mTitleArray));
     }
@@ -239,7 +283,7 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
         mTaskListView.setRefreshProgressStyle(ProgressStyle.Pacman);
         mTaskListView.setLoadingMoreProgressStyle(ProgressStyle.Pacman);
         mTaskListView.setArrowImageView(R.drawable.pull_to_refresh_arrow);
-        mTaskListView.addItemDecoration(new HorizontalItemDecoration(getContext(), 8));
+        mTaskListView.addItemDecoration(new TaskListItemDecoration(getContext(), 8));
         mTaskListAdapter.setOnItemClickListener(new TaskListAdapter.OnItemClickListener() {
             @Override
             public void onItemClicked(View v, UTask task) {
@@ -319,7 +363,7 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
             setContentView(contentView);
             setFocusable(true);
             setTouchable(true);
-            setBackgroundDrawable(new BitmapDrawable());
+            setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(context, android.R.color.transparent)));
             setOutsideTouchable(true);
             setAnimationStyle(R.style.post_window_anim);
         }

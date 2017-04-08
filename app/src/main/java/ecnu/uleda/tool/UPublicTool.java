@@ -7,6 +7,7 @@ import android.graphics.Point;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
+import android.util.TypedValue;
 import android.view.WindowManager;
 
 import java.text.SimpleDateFormat;
@@ -150,5 +151,15 @@ public class UPublicTool {
     }
     private UPublicTool(){
 
+    }
+
+    public static float sp2px(Context context, int sp) {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp,
+                context.getResources().getDisplayMetrics());
+    }
+
+    public static float dp2px(Context context, int dp) {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
+                context.getResources().getDisplayMetrics());
     }
 }

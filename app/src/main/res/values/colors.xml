@@ -8,6 +8,7 @@
     <color name="colorUSwitch">#B84A37</color>
     <color name="colorUSwitchDark">#b71c1c</color>
     <color name="colorUMainRipple">#53dd5a44</color>
+    <color name="colorUSwitchDarkPressed">#8f1515</color>
 
     <color name="colorUTaskType">#5CCD8F</color>
 

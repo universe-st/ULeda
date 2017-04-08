@@ -20,15 +20,15 @@
         android:layout_weight="8"
         android:background="@color/colorUMain"
         android:weightSum="10">
-        <Button
+        <TextView
             android:id="@+id/button_task_post_back"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:text="〈 "
-            android:textSize="25sp"
-            android:gravity="left|center"
-            android:background="@android:color/transparent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="返回"
+            android:textSize="24sp"
+            android:gravity="center_vertical"
+            android:drawableLeft="@drawable/ic_chevron_left_white_48dp"
+            android:drawablePadding="-8dp"
             android:textColor="@android:color/white"/>
         <FrameLayout
             android:layout_width="0dp"

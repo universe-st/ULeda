@@ -1,4 +1,4 @@
-package ecnu.uleda.view_controller;
+package ecnu.uleda.view_controller.widgets;
 
 import android.content.Context;
 import android.content.res.TypedArray;
