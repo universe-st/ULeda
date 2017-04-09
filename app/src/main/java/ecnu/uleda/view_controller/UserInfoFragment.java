@@ -234,7 +234,7 @@ implements View.OnClickListener{
                 if (Build.VERSION.SDK_INT < 24) {
                     imgUri = Uri.fromFile(outputImage);
                 } else {
-                    imgUri= FileProvider.getUriForFile(getActivity(), "com.example.cameraalbumtest.fileprovider", outputImage);
+                    imgUri= FileProvider.getUriForFile(getActivity(), "ecnu.uleda.FileProvider", outputImage);
                 }
                 // 启动相机程序
                 Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
