@@ -1,6 +1,7 @@
 package ecnu.uleda.function_module;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
@@ -11,7 +12,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import ecnu.uleda.exception.UServerAccessException;
 import ecnu.uleda.model.UTask;
@@ -70,12 +74,12 @@ public class UTaskManager {
         mTasksInMap = new ArrayList<>();
     }
 
-    public ListAdapter setListView(ListView listView, Context context) {
-        //将一个ListView的内容设置为我们的任务
-        ListAdapter la = new TaskListAdapter(context, mTasksInList);
-        listView.setAdapter(la);
-        return la;
-    }
+//    public ListAdapter setListView(ListView listView, Context context) {
+//        //将一个ListView的内容设置为我们的任务
+//        ListAdapter la = new TaskListAdapter(context, mTasksInList);
+//        listView.setAdapter(la);
+//        return la;
+//    }
 
     public void refreshTaskInList() throws UServerAccessException {
         /*
@@ -93,7 +97,7 @@ public class UTaskManager {
                         "0",
                         "10",
                         mTag,
-                        mLocation);
+                        "31.2296,121.403");// 便于家中测试
                 mTasksInList.clear();
                 int length = array.length();
                 for (int i = 0; i < length; i++) {
@@ -109,6 +113,14 @@ public class UTaskManager {
                             .setAuthorCredit(j.getInt("authorCredit"))
                             .setPostID(j.getString("postID"))
                             .setActiveTime(j.getLong("activetime"));
+                    // TODO 匡神接口做好以后去掉 try catch
+                    try {
+                        task.setAvatar(j.getString("avatar"))
+                                .setTakersCount(j.getInt("takersCount"));
+                    } catch (JSONException e) {
+                        task.setAvatar("xiaohong.jpg")
+                                .setTakersCount(10);
+                    }
                     mTasksInList.add(task);
                 }
             } catch (JSONException e) {
@@ -125,8 +137,13 @@ public class UTaskManager {
         }
     }
 
-    public void loadMoreTaskInList(int n) throws UServerAccessException {
-        //TODO：从目前任务列表的最后一项开始向后从服务器获取n个任务项
+    /**
+     *
+     * @param n 从目前任务列表的最后一项开始向后从服务器获取n个任务项
+     * @return 返回true表示至少有一个新item
+     * @throws UServerAccessException
+     */
+    public boolean loadMoreTaskInList(int n) throws UServerAccessException {
         mUOC = UserOperatorController.getInstance();
         String start = mTasksInList.get(mTasksInList.size() - 1).getPostID();
         if (!mUOC.getIsLogined()) {
@@ -157,11 +174,13 @@ public class UTaskManager {
                             .setActiveTime(j.getLong("activetime"));
                     mTasksInList.add(task);
                 }
+                return length == n;
             } catch (JSONException e) {
                 e.printStackTrace();
                 System.exit(1);
             }
         }
+        return false;
     }
 
     public void init() throws UServerAccessException {
