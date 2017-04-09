@@ -1,6 +1,7 @@
 package ecnu.uleda.function_module;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
@@ -96,7 +97,7 @@ public class UTaskManager {
                         "0",
                         "10",
                         mTag,
-                        mLocation);
+                        "31.2296,121.403");// 便于家中测试
                 mTasksInList.clear();
                 int length = array.length();
                 for (int i = 0; i < length; i++) {

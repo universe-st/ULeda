@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,9 +40,14 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
     private OnItemClickListener mListener;
 
     public TaskListAdapter(Context context, List<UTask> datas) {
-        mDatas = datas;
+        mDatas = new ArrayList<>(datas);
         mContext = context;
         mInflater = LayoutInflater.from(context);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position - 1;
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -92,10 +98,15 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
 
     public void updateDataSource(List<UTask> newDatas) {
         if (newDatas != null) {
-            DiffUtil.DiffResult result = DiffUtil.calculateDiff(new TaskDiffCallback(mDatas, newDatas), true);
-            result.dispatchUpdatesTo(this);
+            if (newDatas.size() == 0) {
+                mDatas.clear();
+                notifyDataSetChanged();
+            } else {
+                DiffUtil.DiffResult result = DiffUtil.calculateDiff(new TaskDiffCallback(mDatas, newDatas), true);
+                result.dispatchUpdatesTo(this);
+                mDatas = new ArrayList<>(newDatas);
+            }
         }
-        mDatas = newDatas;
     }
 
     private SpannableStringBuilder getFromTo(UTask task) {

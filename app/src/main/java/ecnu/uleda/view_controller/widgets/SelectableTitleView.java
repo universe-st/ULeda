@@ -138,7 +138,7 @@ public class SelectableTitleView extends View {
                     mHorizontalPadding + getTextWidth(mTitles.get(0)),
                     mHeight - mStrokeWidth);
             canvas.drawRoundRect(rectF, mRadius, mRadius, mBackgroundPaint);
-            canvas.drawRect(mHorizontalPadding,
+            canvas.drawRect(mRadius,
                     mStrokeWidth,
                     2 * mHorizontalPadding + getTextWidth(mTitles.get(0)) + mStrokeWidth,
                     mHeight - mStrokeWidth, mBackgroundPaint);
@@ -149,7 +149,7 @@ public class SelectableTitleView extends View {
                     mHeight - mStrokeWidth);
             canvas.drawRoundRect(rectF, mRadius, mRadius, mBackgroundPaint);
             canvas.drawRect(mWidth - 2 * mHorizontalPadding - 2 * mStrokeWidth - getTextWidth(mTitles.get(mTitles.size() - 1)),
-                    mStrokeWidth, mWidth - mHorizontalPadding, mHeight-mStrokeWidth, mBackgroundPaint);
+                    mStrokeWidth, mWidth - mRadius, mHeight-mStrokeWidth, mBackgroundPaint);
         } else {
             float l = 0;
             for (int i = 0; i < mSelected; i++) {

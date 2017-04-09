@@ -2,8 +2,6 @@ package ecnu.uleda.view_controller;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,20 +11,17 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ArrayAdapter;
 import android.widget.PopupWindow;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
-import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,7 +31,6 @@ import butterknife.BindArray;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnItemSelected;
 import butterknife.Unbinder;
 import ecnu.uleda.R;
 import ecnu.uleda.exception.UServerAccessException;
@@ -46,6 +40,7 @@ import ecnu.uleda.view_controller.widgets.DrawableLeftCenterTextView;
 import ecnu.uleda.view_controller.widgets.TaskListFilterWindow;
 import ecnu.uleda.view_controller.widgets.TaskListItemDecoration;
 import ecnu.uleda.view_controller.widgets.SelectableTitleView;
+import ecnu.uleda.view_controller.widgets.XRecyclerView;
 
 
 /**
@@ -81,8 +76,11 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
     @BindView(R.id.task_post)
     TextView mPostView;
 
-    @BindView(R.id.shader)
-    View mShaderView;
+    @BindView(R.id.shader_full)
+    View mShaderAll;
+
+    @BindView(R.id.shader_part)
+    View mShaderPart;
 
     private TaskListFilterWindow mMainDropDownWindow;
     private TaskListFilterWindow mSortDropDownWindow;
@@ -144,8 +142,11 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
                         mTaskListView.setIsnomore(false);
                     }
                     mTasksInList = mUTaskManager.getTasksInList();
-//                    mUTaskManager.setListView(mListView, TaskListFragment.this.getActivity());
                     mTaskListAdapter.updateDataSource(mTasksInList);
+                    if (mTasksInList.size() > 0) {
+                        mTaskListView.scrollToPosition(0);
+                    }
+//                    mUTaskManager.setListView(mListView, TaskListFragment.this.getActivity());
 //                    Toast.makeText(TaskListFragment.this.getActivity(), "刷新成功", Toast.LENGTH_SHORT).show();
                     break;
                 case LOAD_MORE:
@@ -168,23 +169,29 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
             }
         }
     };
-    private final static ArrayList<String> mMainArray;
+    private final static ArrayList<String> mMainArrayTask;
+//    private final static ArrayList<String> mMainArrayProject;
+//    private final static ArrayList<String> mMainArrayActivity;
     private final static ArrayList<String> mSortArray;
 
     static {
-        mMainArray = new ArrayList<>();
+        mMainArrayTask = new ArrayList<>();
+//        mMainArrayProject = new ArrayList<>();
+//        mMainArrayActivity = new ArrayList<>();
         mSortArray = new ArrayList<>();
-        mMainArray.add("全部");
-        mMainArray.add("跑腿代步");
-        mMainArray.add("生活服务");
-        mMainArray.add("学习帮助");
-        mMainArray.add("技术难题");
-        mMainArray.add("寻物启示");
-        mMainArray.add("活动相关");
-        mMainArray.add("运动锻炼");
-        mMainArray.add("项目招人");
-        mMainArray.add("招聘实习");
-        mMainArray.add("其他");
+        mMainArrayTask.add("全部");
+        mMainArrayTask.add("跑腿代步");
+        mMainArrayTask.add("生活服务");
+        mMainArrayTask.add("学习帮助");
+        mMainArrayTask.add("技术难题");
+        mMainArrayTask.add("寻物启示");
+//        mMainArrayActivity.add("活动相关");
+//        mMainArray.add("运动锻炼");
+//        mMainArray.add("项目招人");
+//        mMainArray.add("招聘实习");
+
+//        mMainArrayProject.add("全部");
+        mMainArrayTask.add("其他");
         mSortArray.add("最新");
         mSortArray.add("报酬从高到低");
         mSortArray.add("报酬从低到高");
@@ -214,24 +221,24 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
     @OnClick(R.id.spinner0)
     void typeSelect() {
         if (mMainDropDownWindow == null) {
-            mMainDropDownWindow = new TaskListFilterWindow(getContext(), mMainArray);
+            mMainDropDownWindow = new TaskListFilterWindow(getContext(), mMainArrayTask);
             mMainDropDownWindow.setOnItemSelectedListener(new TaskListFilterWindow.OnItemSelectedListener() {
                 @Override
                 public void OnItemSelected(View v, int pos) {
-                    mMainSpinner.setText(mMainArray.get(pos));
-                    mUTaskManager.setTag(mMainArray.get(pos));
-                    mTaskListView.setRefreshing(true);
+                    mMainSpinner.setText(mMainArrayTask.get(pos));
+                    mUTaskManager.setTag(mMainArrayTask.get(pos));
+//                    mTaskListView.setRefreshing(true);
                     new RefreshThread().start();
                 }
             });
             mMainDropDownWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
                 @Override
                 public void onDismiss() {
-                    hideShader();
+                    hideShaderPart();
                 }
             });
         }
-        showShader();
+        showShaderPart();
 
         mMainDropDownWindow.showAsDropDown(mMainSpinner);
     }
@@ -245,31 +252,39 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
                 public void OnItemSelected(View v, int pos) {
                     mSortSpinner.setText(mSortArray.get(pos));
                     mUTaskManager.setSortBy(SORT_BY[pos]);
-                    mTaskListView.setRefreshing(true);
+//                    mTaskListView.setRefreshing(true);
                     new RefreshThread().start();
                 }
             });
             mSortDropDownWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
                 @Override
                 public void onDismiss() {
-                    hideShader();
+                    hideShaderPart();
                 }
             });
         }
-        showShader();
+        showShaderPart();
         mSortDropDownWindow.showAsDropDown(mSortSpinner);
     }
 
-    private void showShader() {
-        mShaderView.setVisibility(View.VISIBLE);
+    private void showShaderPart() {
+        mShaderPart.setVisibility(View.VISIBLE);
     }
 
-    private void hideShader() {
-        mShaderView.setVisibility(View.GONE);
+    private void showShaderAll() {
+        mShaderAll.setVisibility(View.VISIBLE);
+    }
+
+    private void hideShaderAll() {
+        mShaderAll.setVisibility(View.GONE);
+    }
+
+    private void hideShaderPart() {
+        mShaderPart.setVisibility(View.GONE);
     }
 
     private void init() {
-        mMainSpinner.setText(mMainArray.get(0));
+        mMainSpinner.setText(mMainArrayTask.get(0));
         mSortSpinner.setText(mSortArray.get(0));
         initRecyclerView();
         mTitles = new ArrayList<>(Arrays.asList(mTitleArray));
@@ -278,6 +293,7 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
     private void initRecyclerView() {
         mTasksInList = mUTaskManager.getTasksInList();
         mTaskListAdapter = new TaskListAdapter(getActivity(), mTasksInList);
+        mTaskListAdapter.setHasStableIds(true);
         mTaskListView.setAdapter(mTaskListAdapter);
         mTaskListView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         mTaskListView.setRefreshProgressStyle(ProgressStyle.Pacman);
@@ -292,7 +308,7 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
                 startActivity(intent);
             }
         });
-        mTaskListView.setLoadingListener(new XRecyclerView.LoadingListener() {
+        mTaskListView.setLoadingListener(new ecnu.uleda.view_controller.widgets.XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
                 new RefreshThread().start();
@@ -330,7 +346,7 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
         //TODO 三大类的切换
     }
 
-    class PostTaskWindow extends PopupWindow {
+    class PostTaskWindow extends PopupWindow implements PopupWindow.OnDismissListener {
 
         @BindView(R.id.post_task)
         CardView mCvTask;
@@ -366,6 +382,7 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
             setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(context, android.R.color.transparent)));
             setOutsideTouchable(true);
             setAnimationStyle(R.style.post_window_anim);
+            setOnDismissListener(this);
         }
 
         public void showAsDropDown(View v) {
@@ -373,6 +390,7 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
             mCvTask.startAnimation(animation);
             mCvProject.startAnimation(animation);
             mCvActivity.startAnimation(animation);
+            mShaderAll.setVisibility(View.VISIBLE);
             super.showAsDropDown(v);
         }
 
@@ -381,5 +399,9 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
             TaskPostActivity.startActivity(getActivity(), type);
         }
 
+        @Override
+        public void onDismiss() {
+            mShaderAll.setVisibility(View.GONE);
+        }
     }
 }

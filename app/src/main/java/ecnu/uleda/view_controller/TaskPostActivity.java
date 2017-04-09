@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -71,7 +72,7 @@ public class TaskPostActivity extends AppCompatActivity {
     private EditText mEtActiveTime;
     private EditText mEtDescription;
 
-    private Button mButtonBack;
+    private TextView mButtonBack;
     private Button mButtonTaskPost;
     private ArrayAdapter<String> taskPostAdapter;
 
@@ -152,7 +153,7 @@ public class TaskPostActivity extends AppCompatActivity {
         }
     }
     protected void init() {
-        mButtonBack = (Button) findViewById(R.id.button_task_post_back);
+        mButtonBack = (TextView) findViewById(R.id.button_task_post_back);
         mButtonTaskPost = (Button) findViewById(R.id.button_task_post);
         mEtTitle = (EditText) findViewById(R.id.task_post_title);
         mEtPrice = (EditText) findViewById(R.id.task_post_payment);
