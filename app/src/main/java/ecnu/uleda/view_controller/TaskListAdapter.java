@@ -98,14 +98,8 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
 
     public void updateDataSource(List<UTask> newDatas) {
         if (newDatas != null) {
-            if (newDatas.size() == 0) {
-                mDatas.clear();
-                notifyDataSetChanged();
-            } else {
-                DiffUtil.DiffResult result = DiffUtil.calculateDiff(new TaskDiffCallback(mDatas, newDatas), true);
-                result.dispatchUpdatesTo(this);
-                mDatas = new ArrayList<>(newDatas);
-            }
+            mDatas = new ArrayList<>(newDatas);
+            notifyDataSetChanged();
         }
     }
 
