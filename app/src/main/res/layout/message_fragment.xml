@@ -36,15 +36,30 @@
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="8">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="@string/message_str"
-                android:textSize="20sp"
-                android:textColor="@android:color/white"
-                android:gravity="center"
-                android:textAlignment="center"/>
+            android:layout_weight="4">
+            <Button
+                android:id="@+id/button_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:layout_gravity="center|right"
+                android:text="消息"
+                android:textColor="@color/colorUWhite"
+                android:textSize="18sp"/>
+        </FrameLayout>
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4">
+            <Button
+                android:id="@+id/button_contacts"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:layout_gravity="center|left"
+                android:text="联系人"
+                android:textColor="@color/colorUWhite"
+                android:textSize="18sp"/>
         </FrameLayout>
         <Button
             android:id="@+id/add_friends"
@@ -57,9 +72,11 @@
             android:textColor="@android:color/white"/>
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/message_list_view"
+
+    <FrameLayout
+        android:id="@+id/message_fragment_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="81" />
+        android:layout_weight="81">
+    </FrameLayout>
 </LinearLayout>
