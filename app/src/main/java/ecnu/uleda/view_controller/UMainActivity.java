@@ -91,7 +91,7 @@ public class UMainActivity extends AppCompatActivity implements BottomBarLayout.
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
+    super.onActivityResult(requestCode,resultCode,data);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -167,4 +167,5 @@ public class UMainActivity extends AppCompatActivity implements BottomBarLayout.
     public void labelSelected(int pos) {
         changeToView(pos);
     }
+
 }
