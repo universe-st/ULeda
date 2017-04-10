@@ -25,6 +25,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.support.annotation.MainThread;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -223,24 +224,13 @@ public class UserInfoFragment extends Fragment
                 showPopMenu();
                 break;
             case R.id.btn_open_camera: {
-                File outputImage = new File(getActivity().getExternalCacheDir(), "output_image.jpg");
-                try {
-                    if (outputImage.exists()) {
-                        outputImage.delete();
-                    }
-                    outputImage.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if(Build.VERSION.SDK_INT>=24 && ContextCompat.checkSelfPermission(this.getContext(),Manifest.permission.CAMERA)!=PackageManager.PERMISSION_GRANTED){
+                    ActivityCompat.requestPermissions(this.getActivity(),
+                            new String[]{Manifest.permission.CAMERA},
+                            0);
+                }else {
+                    takePhotoToAvatar();
                 }
-                if (Build.VERSION.SDK_INT < 24) {
-                    imgUri = Uri.fromFile(outputImage);
-                } else {
-                    imgUri= FileProvider.getUriForFile(getActivity(), "com.example.cameraalbumtest.fileprovider", outputImage);
-                }
-                // 启动相机程序
-                Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, imgUri);
-                startActivityForResult(intent, 100);
                 break;
             }
             case R.id.btn_choose_img: {
@@ -299,7 +289,26 @@ public class UserInfoFragment extends Fragment
         }
     }
 
-
+    private void takePhotoToAvatar(){
+        File outputImage = new File(getActivity().getExternalCacheDir(), "output_image.jpg");
+        try {
+            if (outputImage.exists()) {
+                outputImage.delete();
+            }
+            outputImage.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (Build.VERSION.SDK_INT < 24) {
+            imgUri = Uri.fromFile(outputImage);
+        } else {
+            imgUri= FileProvider.getUriForFile(getActivity(), "com.example.cameraalbumtest.fileprovider", outputImage);
+        }
+        // 启动相机程序
+        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imgUri);
+        startActivityForResult(intent, 100);
+    }
     private void openAlbum() {
         Intent intent = new Intent("android.intent.action.GET_CONTENT");
         intent.setType("image/*");
