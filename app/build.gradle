@@ -27,6 +27,7 @@ dependencies {
     compile files('libs/TencentMapSDK_Raster_v1.2.4_4af1d6f.jar')
     compile files('libs/TencentLocationSDK_v5.0.1_r251203_170116_1729.jar')
     compile files('libs/TencentSearch1.1.3.jar')
+    compile project(':IMKit')
     compile 'com.android.support:appcompat-v7:25.2.0'
     compile 'com.android.support:support-v4:25.2.0'
     compile 'com.android.support:design:25.2.0'

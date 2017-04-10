@@ -91,7 +91,7 @@ public class UserInfoFragment extends Fragment
             if(msg.what==0){
                 putInformation();
             }else{
-                tryGetUserInfo();
+//                tryGetUserInfo();
             }
         }
     };
@@ -259,7 +259,7 @@ public class UserInfoFragment extends Fragment
             default:
                 break;
             case R.id.add:
-            showaddPopMenu();
+                showaddPopMenu();
                 break;
             case R.id.T1:{
                 int data=1;
