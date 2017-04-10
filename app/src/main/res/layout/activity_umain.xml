@@ -18,54 +18,31 @@
         android:layout_height="0dp"
         android:layout_weight="85"
         android:id="@+id/main_fragment"/> -->
-    <LinearLayout
+    <ecnu.uleda.view_controller.widgets.BottomBarLayout
+        android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="9"
-        android:weightSum="5"
-        android:background="@color/colorUMain">
-        <Button
-            style="?android:buttonBarButtonStyle"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:id="@+id/map_button"
-            android:background="@drawable/map_bt_pressed"/>
-        <Button
-            style="?android:buttonBarButtonStyle"
+        android:layout_weight="9">
+        <ecnu.uleda.view_controller.widgets.BottomBarButton
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:id="@+id/task_button"
-            android:background="@drawable/task_bt"/>
-        <Button
-            style="?android:buttonBarButtonStyle"
+            android:layout_weight="1"/>
+        <ecnu.uleda.view_controller.widgets.BottomBarButton
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:id="@+id/u_circle_button"
-            android:background="@drawable/ucircle_bt"/>
-        <Button
-            style="?android:buttonBarButtonStyle"
+            android:layout_weight="1"/>
+        <ecnu.uleda.view_controller.widgets.BottomBarButton
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:id="@+id/message_button"
-            android:background="@drawable/message_bt"/>
-        <Button
-            style="?android:buttonBarButtonStyle"
+            android:layout_weight="1"/>
+        <ecnu.uleda.view_controller.widgets.BottomBarButton
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:id="@+id/me_button"
-            android:background="@drawable/me_bt"/>
-    </LinearLayout>
-    <!--
-    <LinearLayout
-        android:id="@+id/bottom_layout"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="5"
-        android:orientation="vertical"
-        android:background="@color/colorUMain"/> -->
+            android:layout_weight="1"/>
+        <ecnu.uleda.view_controller.widgets.BottomBarButton
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+    </ecnu.uleda.view_controller.widgets.BottomBarLayout>
+
 </LinearLayout>

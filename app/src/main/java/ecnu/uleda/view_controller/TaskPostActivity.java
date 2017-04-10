@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -28,6 +29,11 @@ import ecnu.uleda.function_module.UserOperatorController;
 import ecnu.uleda.function_module.ServerAccessApi;
 
 public class TaskPostActivity extends AppCompatActivity {
+
+    private static final String EXTRA_POST_TYPE = "extra_post_type";
+    public static final int TYPE_TASK = 1;
+    public static final int TYPE_PROJECT = 2;
+    public static final int TYPE_ACTIVITY = 3;
 
     private UserOperatorController mUserOperatorController;
 
@@ -66,7 +72,7 @@ public class TaskPostActivity extends AppCompatActivity {
     private EditText mEtActiveTime;
     private EditText mEtDescription;
 
-    private Button mButtonBack;
+    private TextView mButtonBack;
     private Button mButtonTaskPost;
     private ArrayAdapter<String> taskPostAdapter;
 
@@ -147,7 +153,7 @@ public class TaskPostActivity extends AppCompatActivity {
         }
     }
     protected void init() {
-        mButtonBack = (Button) findViewById(R.id.button_task_post_back);
+        mButtonBack = (TextView) findViewById(R.id.button_task_post_back);
         mButtonTaskPost = (Button) findViewById(R.id.button_task_post);
         mEtTitle = (EditText) findViewById(R.id.task_post_title);
         mEtPrice = (EditText) findViewById(R.id.task_post_payment);
@@ -303,8 +309,9 @@ public class TaskPostActivity extends AppCompatActivity {
 
     }
 
-    public static void startActivity(Context context) {
+    public static void startActivity(Context context, int type) {
         Intent intent = new Intent(context, TaskPostActivity.class);
+        intent.putExtra(EXTRA_POST_TYPE, type);
         context.startActivity(intent);
     }
 

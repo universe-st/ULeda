@@ -39,6 +39,27 @@ public class UTask implements Serializable{
     private double mLng;
     private String mPostID;
 
+    private int mTakersCount;
+    private String mAvatar;
+
+    public int getTakersCount() {
+        return mTakersCount;
+    }
+
+    public UTask setTakersCount(int takersCount) {
+        this.mTakersCount = takersCount;
+        return this;
+    }
+
+    public String getAvatar() {
+        return mAvatar;
+    }
+
+    public UTask setAvatar(String avatar) {
+        this.mAvatar = avatar;
+        return this;
+    }
+
     public String getPostID() {
         return mPostID;
     }

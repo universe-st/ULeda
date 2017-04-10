@@ -1,20 +1,36 @@
 package ecnu.uleda.view_controller;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.ContentUris;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +45,8 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +57,7 @@ import ecnu.uleda.model.UserInfo;
 import ecnu.uleda.function_module.UserOperatorController;
 import ecnu.uleda.model.AddOptions;
 
+import static android.app.Activity.RESULT_OK;
 import static android.widget.ListPopupWindow.WRAP_CONTENT;
 
 
@@ -64,6 +83,7 @@ implements View.OnClickListener{
     LinearLayout T3;
     LinearLayout T4;
     LinearLayout T5;
+    ImageView p1;
     private Handler mHandler=new Handler(){
         @Override
         public void handleMessage(Message msg){
@@ -102,6 +122,7 @@ implements View.OnClickListener{
         T3=(LinearLayout)v.findViewById(R.id.T3);
         T4=(LinearLayout)v.findViewById(R.id.T4);
         T5=(LinearLayout)v.findViewById(R.id.T5);
+        p1=(ImageView)v.findViewById(R.id.p1);
 
 
 
@@ -201,21 +222,32 @@ implements View.OnClickListener{
                 showPopMenu();
                 break;
             case R.id.btn_open_camera: {
-
-//                String dir = Environment.getExternalStoragePublicDirectory(       //获取系统的公用图像文件路径
-//                        Environment.DIRECTORY_PICTURES).toString();
-//                String fname = "p" + System.currentTimeMillis() + ".jpg";         //利用当前时间组合出一个不会重复的文件名
-//                imgUri = Uri.parse("file://" + dir + "/" + fname);                //按照前面的路径和文件名创建 Uri 对象
-
-                Intent it = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                it.putExtra(MediaStore.EXTRA_OUTPUT, imgUri);                     //将 uri 加到拍照 Intent 的额外数据中
-                startActivityForResult(it, 100);
+                File outputImage = new File(getActivity().getExternalCacheDir(), "output_image.jpg");
+                try {
+                    if (outputImage.exists()) {
+                        outputImage.delete();
+                    }
+                    outputImage.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (Build.VERSION.SDK_INT < 24) {
+                    imgUri = Uri.fromFile(outputImage);
+                } else {
+                    imgUri= FileProvider.getUriForFile(getActivity(), "ecnu.uleda.FileProvider", outputImage);
+                }
+                // 启动相机程序
+                Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, imgUri);
+                startActivityForResult(intent, 100);
                 break;
             }
             case R.id.btn_choose_img: {
-                Intent it = new Intent(Intent.ACTION_GET_CONTENT);
-                it.setType("image/*");
-                startActivityForResult(it, 101);
+                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(getActivity(), new String[]{ Manifest.permission. WRITE_EXTERNAL_STORAGE }, 1);
+                } else {
+                    openAlbum();
+                }
                 break;
             }
             case R.id.btn_cancel:
@@ -265,24 +297,132 @@ implements View.OnClickListener{
     }
 
 
-    public void onActivityResult (int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    private void openAlbum() {
+        Intent intent = new Intent("android.intent.action.GET_CONTENT");
+        intent.setType("image/*");
+        startActivityForResult(intent, 101); // 打开相册
+    }
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    openAlbum();
+                } else {
+                    Toast.makeText(getActivity(), "You denied the permission", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+        }
+    }
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case 100:
+                if (resultCode == RESULT_OK) try {
+                    // 将拍摄的照片显示出来
+                    Bitmap bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(imgUri));
+                    Drawable drawable = new BitmapDrawable(toRoundBitmap(bitmap));
+                    p1.setImageDrawable(drawable);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+            case 101:
+                if (resultCode == RESULT_OK) {
+                    // 判断手机系统版本号
+                    if (Build.VERSION.SDK_INT >= 19) {
+                        // 4.4及以上系统使用这个方法处理图片
+                        handleImageOnKitKat(data);
+                    } else {
+                        // 4.4以下系统使用这个方法处理图片
+                        handleImageBeforeKitKat(data);
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+    }
 
-        if(resultCode == Activity.RESULT_OK) {   //要求的意图成功了
-            switch(requestCode) {
-                case 100: //拍照
-                    Intent it = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, imgUri);//设为系统共享媒体文件
-                    getActivity().sendBroadcast(it);
-                    break;
-                case 101: //选取相片
-                    imgUri = convertUri(data.getData());  //获取选取相片的 Uri 并进行 Uri 格式转换
-                    break;
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private void handleImageOnKitKat(Intent data) {
+        String imagePath = null;
+        Uri uri = data.getData();
+        Log.d("TAG", "handleImageOnKitKat: uri is " + uri);
+        if (DocumentsContract.isDocumentUri(getActivity(), uri)) {
+            // 如果是document类型的Uri，则通过document id处理
+            String docId = DocumentsContract.getDocumentId(uri);
+            if("com.android.providers.media.documents".equals(uri.getAuthority())) {
+                String id = docId.split(":")[1]; // 解析出数字格式的id
+                String selection = MediaStore.Images.Media._ID + "=" + id;
+                imagePath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection);
+            } else if ("com.android.providers.downloads.documents".equals(uri.getAuthority())) {
+                Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(docId));
+                imagePath = getImagePath(contentUri, null);
             }
-            showImg();  //显示 imgUri 所指明的相片
+        } else if ("content".equalsIgnoreCase(uri.getScheme())) {
+            // 如果是content类型的Uri，则使用普通方式处理
+            imagePath = getImagePath(uri, null);
+        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            // 如果是file类型的Uri，直接获取图片路径即可
+            imagePath = uri.getPath();
         }
-        else {
-            Toast.makeText(getActivity(), "没有拍到照片", Toast.LENGTH_LONG).show();
+        displayImage(imagePath); // 根据图片路径显示图片
+    }
+
+    private void handleImageBeforeKitKat(Intent data) {
+        Uri uri = data.getData();
+        String imagePath = getImagePath(uri, null);
+        displayImage(imagePath);
+    }
+
+    private String getImagePath(Uri uri, String selection) {
+        String path = null;
+        // 通过Uri和selection来获取真实的图片路径
+        Cursor cursor =getActivity(). getContentResolver().query(uri, null, selection, null, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+            }
+            cursor.close();
         }
+        return path;
+    }
+
+    private void displayImage(String imagePath) {
+        if (imagePath != null) {
+            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            icon.setImageBitmap(bitmap);
+        } else {
+            Toast.makeText(getActivity(), "failed to get image", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public Bitmap toRoundBitmap(Bitmap bitmap) {
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        int r = 0;
+        // 取最短边做边长
+        if (width < height) {
+            r = width;
+        } else {
+            r = height;
+        }
+        // 构建一个bitmap
+        Bitmap backgroundBm = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        // new一个Canvas，在backgroundBmp上画图
+        Canvas canvas = new Canvas(backgroundBm);
+        Paint p = new Paint();
+        // 设置边缘光滑，去掉锯齿
+        p.setAntiAlias(true);
+        RectF rect = new RectF(0, 0, r, r);
+        // 通过制定的rect画一个圆角矩形，当圆角X轴方向的半径等于Y轴方向的半径时，
+        // 且都等于r/2时，画出来的圆角矩形就是圆形
+        canvas.drawRoundRect(rect, r / 2, r / 2, p);
+        // 设置当两个图形相交时的模式，SRC_IN为取SRC图形相交的部分，多余的将被去掉
+        p.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        // canvas将bitmap画在backgroundBmp上
+        canvas.drawBitmap(bitmap, null, rect, p);
+        return backgroundBm;
     }
 
 
@@ -410,11 +550,6 @@ implements View.OnClickListener{
         AList.add(o1);
         AddOptions o2=new AddOptions("扫一扫",R.drawable.o_scan);
         AList.add(o2);
-        AddOptions o3=new AddOptions("付款",R.drawable.o_pay);
-        AList.add(o3);
-        AddOptions o4=new AddOptions("拍摄",R.drawable.o_camera);
-        AList.add(o4);
-
         return AList;
 
     }

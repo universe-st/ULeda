@@ -97,6 +97,7 @@ public class UserOperatorController {
     }
     public String getPassport(){
         long timeStamp=System.currentTimeMillis()/100000;
+        Log.e("manager", "musername = " + mUserName + ", mToken = " + mToken + ", timestamp: " + timeStamp);
         return MD5Utils.MD5(mUserName + mToken + timeStamp);
     }
 
