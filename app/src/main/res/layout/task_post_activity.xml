@@ -2,17 +2,19 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ededed"
-    android:weightSum="100">
+    android:orientation="vertical"
+    android:weightSum="156">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="3"
-        android:background="@color/colorUMain"/>
+        android:background="@color/colorUMain">
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,6 +22,8 @@
         android:layout_weight="8"
         android:background="@color/colorUMain"
         android:weightSum="10">
+
+
         <TextView
             android:id="@+id/button_task_post_back"
             android:layout_width="wrap_content"
@@ -34,15 +38,17 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="6">
+
             <TextView
-                android:text="发布任务"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:textSize="23sp"
-                android:textColor="@color/colorUWhite" />
+                android:text="发布任务"
+                android:textColor="@color/colorUWhite"
+                android:textSize="23sp"/>
         </FrameLayout>
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -50,10 +56,10 @@
         android:background="@color/colorUMain"/>
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="3">
+        android:layout_weight="3"
+        android:orientation="vertical">
     </LinearLayout>
 
     <LinearLayout
@@ -62,38 +68,44 @@
         android:layout_weight="8"
         android:background="@color/colorUWhite"
         android:weightSum="20">
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"/>
+
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="4">
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:gravity="center_vertical|left"
                 android:text="标题"
-                android:textSize="20sp"
                 android:textColor="#404040"
-                android:gravity="center_vertical|left"/>
+                android:textSize="20sp"/>
         </FrameLayout>
+
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="14">
+
             <EditText
+                android:id="@+id/task_post_title"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:ems="10"
-                android:maxLines="3"
-                android:maxLength="25"
-                android:id="@+id/task_post_title"
                 android:background="@null"
+                android:ems="10"
+                android:gravity="center_vertical|left"
                 android:hint="限5~25字"
-                android:textColorHint="@color/colorUGray"
-                android:gravity="center_vertical|left" />
+                android:maxLength="25"
+                android:maxLines="3"
+                android:textColorHint="@color/colorUGray"/>
         </FrameLayout>
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -101,9 +113,60 @@
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="1dp">
+        android:layout_height="1dp"
+        android:orientation="vertical">
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/h-主办方"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="8"
+        android:background="@color/colorUWhite"
+        android:weightSum="20">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|left"
+                android:text="主办方"
+                android:textColor="#404040"
+                android:textSize="20sp"/>
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="14">
+
+            <EditText
+                android:id="@+id/theone"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:ems="10"
+                android:gravity="center_vertical|left"
+                android:maxLength="25"
+                android:maxLines="3"
+                android:textColorHint="@color/colorUGray"/>
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
     </LinearLayout>
 
     <LinearLayout
@@ -112,35 +175,201 @@
         android:layout_weight="8"
         android:background="@color/colorUWhite"
         android:weightSum="20">
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"/>
+
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="4">
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="分类"
-                android:textSize="20sp"
+                android:gravity="center_vertical|left"
+                android:text="专业"
                 android:textColor="#404040"
-                android:gravity="center_vertical|left"/>
+                android:textSize="20sp"/>
         </FrameLayout>
+
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="14">
-            <Spinner
+
+            <EditText
+                android:id="@+id/task_post_title"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@null"
+                android:ems="10"
+                android:gravity="center_vertical|left"
+                android:maxLength="25"
+                android:maxLines="3"
+                android:textColorHint="@color/colorUGray"/>
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/Time"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="8"
+        android:background="@color/colorUWhite"
+        android:weightSum="20">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|left"
+                android:text="时间"
+                android:textColor="#404040"
+                android:textSize="20sp"/>
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="14"
+            >
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            >
+
+            <ImageView
+                android:id="@+id/imageView12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_chevron_right_black_48dp"/>
+
+        </FrameLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:orientation="vertical">
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/Location"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="8"
+        android:background="@color/colorUWhite"
+        android:weightSum="20">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|left"
+                android:text="地点"
+                android:textColor="#404040"
+                android:textSize="20sp"/>
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="14"
+            >
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            >
+
+            <ImageView
+                android:id="@+id/imageView12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_chevron_right_black_48dp"/>
+        </FrameLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:orientation="vertical">
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="8"
+        android:background="@color/colorUWhite"
+        android:weightSum="20">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|left"
+                android:text="分类"
+                android:textColor="#404040"
+                android:textSize="20sp"/>
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="14">
+
+            <Spinner
                 android:id="@+id/spinner_task_post"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:textAlignment="center"
                 >
 
             </Spinner>
         </FrameLayout>
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -149,9 +378,9 @@
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="1dp">
+        android:layout_height="1dp"
+        android:orientation="vertical">
     </LinearLayout>
 
     <LinearLayout
@@ -160,44 +389,49 @@
         android:layout_weight="12"
         android:background="@color/colorUWhite"
         android:weightSum="20">
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"/>
+
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="4">
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:gravity="center_vertical|left"
                 android:text="报酬"
-                android:textSize="20sp"
                 android:textColor="#404040"
-                android:gravity="center_vertical|left"/>
+                android:textSize="20sp"/>
         </FrameLayout>
+
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="14">
+
             <EditText
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:maxLength="6"
-                android:inputType="numberDecimal"
                 android:id="@+id/task_post_payment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:background="@null"
-                android:hint="￥0.5 "
-                android:textSize="30dp"
+                android:gravity="center_vertical|left"
+                android:hint="￥0.5"
+                android:inputType="numberDecimal"
+                android:maxLength="6"
                 android:textColorHint="@color/colorUMain"
-                android:gravity="center_vertical|left" />
+                android:textSize="30dp"/>
         </FrameLayout>
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="1dp">
+        android:layout_height="1dp"
+        android:orientation="vertical">
     </LinearLayout>
 
     <LinearLayout
@@ -206,45 +440,50 @@
         android:layout_weight="8"
         android:background="@color/colorUWhite"
         android:weightSum="20">
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"/>
+
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="4">
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:gravity="center_vertical|left"
                 android:text="时效"
-                android:textSize="20sp"
                 android:textColor="#404040"
-                android:gravity="center_vertical|left"/>
+                android:textSize="20sp"/>
         </FrameLayout>
+
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="14">
+
             <EditText
+                android:id="@+id/task_post_activeTime"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:maxLength="10"
-                android:inputType="numberDecimal"
-                android:id="@+id/task_post_activeTime"
                 android:background="@null"
+                android:gravity="center_vertical|left"
                 android:hint="最低10min"
-                android:textColorHint="@color/colorUGray"
-                android:gravity="center_vertical|left" />
+                android:inputType="numberDecimal"
+                android:maxLength="10"
+                android:textColorHint="@color/colorUGray"/>
         </FrameLayout>
     </LinearLayout>
 
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="3">
+        android:layout_weight="3"
+        android:orientation="vertical">
     </LinearLayout>
 
     <LinearLayout
@@ -253,57 +492,66 @@
         android:layout_weight="8"
         android:background="@color/colorUWhite"
         android:weightSum="20">
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"/>
+
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="4">
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:gravity="center_vertical|left"
                 android:text="出发地"
-                android:textSize="20sp"
                 android:textColor="#404040"
-                android:gravity="center_vertical|left"/>
+                android:textSize="20sp"/>
         </FrameLayout>
+
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="12">
+
             <Button
                 android:id="@+id/button_task_post_start"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="选择地址"
-                android:textSize="17dp"
-                android:textColor="@color/colorUGray"
-                android:background="@color/colorUWhite"
                 android:layout_centerHorizontal="true"
+                android:background="@color/colorUWhite"
+                android:text="选择地址"
+                android:textColor="@color/colorUGray"
+                android:textSize="17dp"
                 />
         </FrameLayout>
+
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="3">
+
             <Button
                 android:id="@+id/button_delete_start"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="删除"
-                android:textSize="16dp"
-                android:textColor="@color/colorUGray"
-                android:background="@color/colorULightGray"
                 android:layout_centerHorizontal="true"
+                android:background="@color/colorULightGray"
+                android:text="删除"
+                android:textColor="@color/colorUGray"
+                android:textSize="16dp"
                 />
         </FrameLayout>
     </LinearLayout>
+
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="1dp">
+        android:layout_height="1dp"
+        android:orientation="vertical">
+
     </LinearLayout>
 
     <LinearLayout
@@ -312,59 +560,66 @@
         android:layout_weight="8"
         android:background="@color/colorUWhite"
         android:weightSum="20">
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"/>
+
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="4">
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:gravity="center_vertical|left"
                 android:text="目的地"
-                android:textSize="20sp"
                 android:textColor="#404040"
-                android:gravity="center_vertical|left"/>
+                android:textSize="20sp"/>
         </FrameLayout>
+
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="12">
+
             <Button
                 android:id="@+id/button_task_post_destination"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="选择地址"
-                android:textSize="17dp"
-                android:textColor="@color/colorUGray"
-                android:background="@color/colorUWhite"
                 android:layout_centerHorizontal="true"
+                android:background="@color/colorUWhite"
+                android:text="选择地址"
+                android:textColor="@color/colorUGray"
+                android:textSize="17dp"
                 />
         </FrameLayout>
+
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="3">
+
             <Button
                 android:id="@+id/button_delete_destination"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="删除"
-                android:textSize="16dp"
-                android:textColor="@color/colorUGray"
-                android:background="@color/colorULightGray"
                 android:layout_centerHorizontal="true"
+                android:background="@color/colorULightGray"
+                android:text="删除"
+                android:textColor="@color/colorUGray"
+                android:textSize="16dp"
                 />
         </FrameLayout>
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="3">
+        android:layout_height="1dp"
+        android:orientation="vertical">
+
     </LinearLayout>
 
     <LinearLayout
@@ -373,45 +628,93 @@
         android:layout_weight="16"
         android:background="@color/colorUWhite"
         android:weightSum="20">
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"/>
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="4"
             android:gravity="center|left"
             android:text="详情"
-            android:textSize="20dp"
-            android:textColor="#404040"/>
+            android:textColor="#404040"
+            android:textSize="20dp"/>
+
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="14">
+
             <EditText
+                android:id="@+id/task_post_description"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:ems="20"
-                android:maxLines="6"
-                android:id="@+id/task_post_description"
                 android:background="@null"
+                android:ems="20"
+                android:gravity="top|left"
                 android:hint="您对订单的详细要求，没有可不填，限225字节内。"
-                android:textColorHint="@color/colorUGray"
+                android:maxLines="6"
                 android:paddingTop="10dp"
-                android:gravity="top|left" />
+                android:textColorHint="@color/colorUGray"/>
         </FrameLayout>
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"/>
     </LinearLayout>
 
+
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="3">
+        android:layout_weight="3"
+        android:orientation="vertical">
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="20"
+        android:background="@color/colorUWhite"
+        android:orientation="horizontal"
+        android:weightSum="20">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.0"/>
+
+        <TextView
+            android:id="@+id/textView41"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4"
+            android:gravity="left|center"
+            android:text="图片"
+            android:textColor="#404040"
+            android:textSize="20sp"/>
+
+        <ImageView
+            android:id="@+id/imageView11"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_weight="4"
+            android:scaleType="fitXY"
+            app:srcCompat="@drawable/choose1"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:orientation="vertical">
     </LinearLayout>
 
     <LinearLayout
@@ -419,16 +722,17 @@
         android:layout_height="0dp"
         android:layout_weight="10"
         android:weightSum="10">
-            <Button
-                android:id="@+id/button_task_post"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="发布"
-                android:textSize="20dp"
-                android:textColor="@color/colorUWhite"
-                android:background="@color/colorUMain"
-                android:layout_centerHorizontal="true"
-                />
+
+        <Button
+            android:id="@+id/button_task_post"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:background="@color/colorUMain"
+            android:text="发布"
+            android:textColor="@color/colorUWhite"
+            android:textSize="20dp"
+            />
     </LinearLayout>
 
 </LinearLayout>
