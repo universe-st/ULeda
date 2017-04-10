@@ -36,6 +36,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -44,6 +45,8 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.znq.zbarcode.CaptureActivity;
 
 import java.io.File;
 import java.io.IOException;
@@ -69,21 +72,22 @@ public class UserInfoFragment extends Fragment
         implements View.OnClickListener{
     public static final int CHOOSE_PHOTO=2;
 
-    ImageButton setting;
-    LinearLayout mMyInfo;
-    LinearLayout mMyMoneyBag;
-    LinearLayout mMyQRCode;
-    CircleImageView icon;
-    ImageButton add;
-    PopupWindow mPopupWindow;
-    TextView userId;
-    Uri imgUri ;    //用来引用拍照存盘的 Uri 对象
-    ImageView imv;
-    LinearLayout T1;
-    LinearLayout T2;
-    LinearLayout T3;
-    LinearLayout T4;
-    LinearLayout T5;
+    private ImageButton setting;
+    private LinearLayout mMyInfo;
+    private LinearLayout mMyMoneyBag;
+    private LinearLayout mMyQRCode;
+    private CircleImageView icon;
+    private ImageButton add;
+    private PopupWindow mPopupWindow;
+    private TextView userId;
+    private Uri imgUri ;    //用来引用拍照存盘的 Uri 对象
+    private ImageView imv;
+    private LinearLayout T1;
+    private LinearLayout T2;
+    private LinearLayout T3;
+    private LinearLayout T4;
+    private LinearLayout T5;
+    private final int REQUEST_CODE = 1;
     ImageView p1;
     private Handler mHandler=new Handler(){
         @Override
@@ -348,6 +352,11 @@ public class UserInfoFragment extends Fragment
                     }
                 }
                 break;
+            case REQUEST_CODE:
+            {
+                String result = data.getStringExtra(CaptureActivity.EXTRA_STRING);
+                Toast.makeText(UserInfoFragment.this.getActivity(), result + "", Toast.LENGTH_SHORT).show();
+            }
             default:
                 break;
         }
@@ -535,7 +544,13 @@ public class UserInfoFragment extends Fragment
 
         ListView lsvMore = (ListView) popupView.findViewById(R.id.lsvMore);
         lsvMore.setAdapter(adapter);
-
+        lsvMore.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(UserInfoFragment.this.getActivity(),CaptureActivity.class);
+                startActivityForResult(intent,REQUEST_CODE);
+            }
+        });
         // 创建PopupWindow对象，指定宽度和高度
         PopupWindow window = new PopupWindow(popupView,270,WRAP_CONTENT);
         // 设置动画
