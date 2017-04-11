@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
@@ -23,6 +24,7 @@ import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
@@ -56,6 +58,7 @@ import ecnu.uleda.function_module.ServerAccessApi;
 
 public class TaskDetailsActivity extends AppCompatActivity
         implements View.OnClickListener {
+    private ImageView comment_avatar;
     private UTask mTask;
     private UHeadlineLayout mHeadlineLayout;
     private MapView mMapView;
@@ -285,6 +288,7 @@ public class TaskDetailsActivity extends AppCompatActivity
         mMapView = (MapView) findViewById(R.id.task_map_view);
         mTencentMap = mMapView.getMap();
         mMapView.onCreate(savedInstanceState);
+
         if (!uoc.getIsLogined()) return;
         new Thread() {
             @Override
@@ -331,6 +335,7 @@ public class TaskDetailsActivity extends AppCompatActivity
     public void listViewInit() {
         View v = View.inflate(this.getApplicationContext(), R.layout.task_details_list_header_view, null);
         View fv = View.inflate(this.getApplicationContext(), R.layout.task_detail_chat_list_footer_view, null);
+        comment_avatar = (ImageView) findViewById(R.id.comment_avatar);
         mTaskTitle = (TextView) v.findViewById(R.id.task_title);
         mTaskLocation = (TextView) v.findViewById(R.id.task_location);
         mTaskReward = (TextView) v.findViewById(R.id.task_details_reward);
@@ -338,6 +343,7 @@ public class TaskDetailsActivity extends AppCompatActivity
         mTaskDetailInfo.setText(mTask.getDescription());
         mTaskReward.setText(String.format(Locale.ENGLISH, "¥%.2f", mTask.getPrice()));
         mTaskTitle.setText(mTask.getTitle());
+
         CircleImageView civ = (CircleImageView) v.findViewById(R.id.task_detail_circle_image);
         civ.setImageBitmap(BitmapFactory.decodeResource(this.getResources(), R.drawable.user));
         civ.setOnClickListener(new View.OnClickListener() {
@@ -366,6 +372,7 @@ public class TaskDetailsActivity extends AppCompatActivity
         // mListView.addHeaderView(tv);
         mListView.addHeaderView(v);
         mListView.addFooterView(fv);
+        //mListView.addFooterView(cv);
         mListView.setAdapter(new UserChatItemAdapter(this, mUserChatItems, mTask));
         mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
