@@ -84,8 +84,8 @@
         <activity android:name=".view_controller.AddNewFriends"/>
         <activity android:name=".view_controller.TaskEditActivity"/>
         <activity android:name=".view_controller.Chart"/>
-        <activity android:name=".view_controller.ReleasedUcircleActivity">
-        </activity>
+        <activity android:name=".view_controller.ReleasedUcircleActivity"/>
+
 
         <!-- 会话列表 -->
         <activity
@@ -135,17 +135,15 @@
                     android:scheme="rong" />
             </intent-filter>
         </activity>
-
-        <!--
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name=".function_module.PhotoFileProvider"
             android:authorities="com.example.cameraalbumtest.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
-        </provider> -->
+        </provider>
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="ecnu.uleda.FileProvider"
@@ -153,7 +151,7 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"/>
+                android:resource="@xml/rc_file_path"/>
         </provider>
     </application>
 

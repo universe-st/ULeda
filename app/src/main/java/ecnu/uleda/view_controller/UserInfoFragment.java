@@ -25,6 +25,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.support.annotation.MainThread;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -66,7 +67,8 @@ import static android.widget.ListPopupWindow.WRAP_CONTENT;
  */
 
 public class UserInfoFragment extends Fragment
-implements View.OnClickListener{
+        implements View.OnClickListener{
+    public static final int CHOOSE_PHOTO=2;
 
     ImageButton setting;
     LinearLayout mMyInfo;
@@ -90,7 +92,7 @@ implements View.OnClickListener{
             if(msg.what==0){
                 putInformation();
             }else{
-                tryGetUserInfo();
+//                tryGetUserInfo();
             }
         }
     };
@@ -122,7 +124,7 @@ implements View.OnClickListener{
         T3=(LinearLayout)v.findViewById(R.id.T3);
         T4=(LinearLayout)v.findViewById(R.id.T4);
         T5=(LinearLayout)v.findViewById(R.id.T5);
-        p1=(ImageView)v.findViewById(R.id.p1);
+        p1=(ImageView)v.findViewById(R.id.icon);
 
 
 
@@ -222,32 +224,23 @@ implements View.OnClickListener{
                 showPopMenu();
                 break;
             case R.id.btn_open_camera: {
-                File outputImage = new File(getActivity().getExternalCacheDir(), "output_image.jpg");
-                try {
-                    if (outputImage.exists()) {
-                        outputImage.delete();
-                    }
-                    outputImage.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if(Build.VERSION.SDK_INT>=24 && ContextCompat.checkSelfPermission(this.getContext(),Manifest.permission.CAMERA)!=PackageManager.PERMISSION_GRANTED){
+                    ActivityCompat.requestPermissions(this.getActivity(),
+                            new String[]{Manifest.permission.CAMERA},
+                            0);
+                }else {
+                    takePhotoToAvatar();
                 }
-                if (Build.VERSION.SDK_INT < 24) {
-                    imgUri = Uri.fromFile(outputImage);
-                } else {
-                    imgUri= FileProvider.getUriForFile(getActivity(), "ecnu.uleda.FileProvider", outputImage);
-                }
-                // 启动相机程序
-                Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, imgUri);
-                startActivityForResult(intent, 100);
                 break;
             }
             case R.id.btn_choose_img: {
+
                 if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(getActivity(), new String[]{ Manifest.permission. WRITE_EXTERNAL_STORAGE }, 1);
-                } else {
-                    openAlbum();
+                    Log.d("King1","h");
                 }
+                Log.d("4","h");
+                openAlbum();
                 break;
             }
             case R.id.btn_cancel:
@@ -256,7 +249,7 @@ implements View.OnClickListener{
             default:
                 break;
             case R.id.add:
-            showaddPopMenu();
+                showaddPopMenu();
                 break;
             case R.id.T1:{
                 int data=1;
@@ -296,12 +289,34 @@ implements View.OnClickListener{
         }
     }
 
-
+    private void takePhotoToAvatar(){
+        File outputImage = new File(getActivity().getExternalCacheDir(), "output_image.jpg");
+        try {
+            if (outputImage.exists()) {
+                outputImage.delete();
+            }
+            outputImage.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (Build.VERSION.SDK_INT < 24) {
+            imgUri = Uri.fromFile(outputImage);
+        } else {
+            imgUri= FileProvider.getUriForFile(getActivity(), "com.example.cameraalbumtest.fileprovider", outputImage);
+        }
+        // 启动相机程序
+        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imgUri);
+        startActivityForResult(intent, 100);
+    }
     private void openAlbum() {
         Intent intent = new Intent("android.intent.action.GET_CONTENT");
         intent.setType("image/*");
-        startActivityForResult(intent, 101); // 打开相册
+        Log.d("2","h");
+        this.startActivityForResult(intent, CHOOSE_PHOTO); // 打开相册
+        Log.d("3","h");
     }
+    @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case 1:
@@ -314,19 +329,23 @@ implements View.OnClickListener{
             default:
         }
     }
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("King","hhhhhhhh");
+        super.onActivityResult(requestCode,resultCode,data);
+        Log.d("King","hhhhhhhh");
         switch (requestCode) {
             case 100:
                 if (resultCode == RESULT_OK) try {
                     // 将拍摄的照片显示出来
                     Bitmap bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(imgUri));
                     Drawable drawable = new BitmapDrawable(toRoundBitmap(bitmap));
-                    p1.setImageDrawable(drawable);
+                    icon.setImageDrawable(drawable);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 break;
-            case 101:
+            case   CHOOSE_PHOTO:
                 if (resultCode == RESULT_OK) {
                     // 判断手机系统版本号
                     if (Build.VERSION.SDK_INT >= 19) {
