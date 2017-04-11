@@ -267,6 +267,7 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
         mSortDropDownWindow.showAsDropDown(mSortSpinner);
     }
 
+
     private void showShaderPart() {
         mShaderPart.setVisibility(View.VISIBLE);
     }
@@ -359,6 +360,7 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
 
         @OnClick(R.id.post_task)
         void postTask() {
+
             post(TaskPostActivity.TYPE_TASK);
         }
         @OnClick(R.id.post_project)
