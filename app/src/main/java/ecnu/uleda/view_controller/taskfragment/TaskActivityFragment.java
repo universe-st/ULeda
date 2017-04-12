@@ -10,6 +10,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v7.widget.AppCompatImageView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,6 +76,11 @@ public class TaskActivityFragment extends Fragment implements StickyNavLayout.On
         initIndicator();
         initRollPager();
         mContainer.setOnRefreshListener(this);
+        mActivityList = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            mActivityList.add(new UActivity("xiaohong.jpg", "小蓝", System.currentTimeMillis()/1000 - 24*3600,
+                    "校园", getResources().getString(R.string.activity_example)));
+        }
     }
 
     private void initHandler() {
@@ -91,19 +97,15 @@ public class TaskActivityFragment extends Fragment implements StickyNavLayout.On
     @Override
     public void onResume() {
         super.onResume();
-        mActivityList = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            mActivityList.add(new UActivity("xiaohong.jpg", "小蓝", System.currentTimeMillis()/1000 - 24*3600,
-                    "校园", getResources().getString(R.string.activity_example)));
-        }
+
     }
 
     private void initPager() {
         mPager.setNoScroll(true);
-        mPager.setAdapter(new FragmentPagerAdapter(getActivity().getSupportFragmentManager()) {
+        mPager.setAdapter(new FragmentPagerAdapter(getChildFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
-                return new ActivityListFragment();
+                return ActivityListFragment.getInstance();
             }
 
             @Override

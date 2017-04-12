@@ -54,6 +54,18 @@ public class ActivityListFragment extends Fragment {
     private XRecyclerView mActivityRv;
     private List<UActivity> mActivityList;
 
+    private static ActivityListFragment mInstance;
+    public static ActivityListFragment getInstance() {
+        if (mInstance == null) {
+            synchronized (ActivityListFragment.class) {
+                if (mInstance == null) {
+                    mInstance = new ActivityListFragment();
+                }
+            }
+        }
+        return mInstance;
+    }
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void setType(TabLayout.Tab tab) {

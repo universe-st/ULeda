@@ -70,8 +70,9 @@ import static android.widget.ListPopupWindow.WRAP_CONTENT;
  */
 
 public class UserInfoFragment extends Fragment
-        implements View.OnClickListener{
-    public static final int CHOOSE_PHOTO=2;
+        implements View.OnClickListener {
+    public static final int CHOOSE_PHOTO = 2;
+    private static final int REQUEST_CAMERA = 100;
 
     private ImageButton setting;
     private LinearLayout mMyInfo;
@@ -81,7 +82,7 @@ public class UserInfoFragment extends Fragment
     private ImageButton add;
     private PopupWindow mPopupWindow;
     private TextView userId;
-    private Uri imgUri ;    //用来引用拍照存盘的 Uri 对象
+    private Uri imgUri;    //用来引用拍照存盘的 Uri 对象
     private ImageView imv;
     private LinearLayout T1;
     private LinearLayout T2;
@@ -90,18 +91,18 @@ public class UserInfoFragment extends Fragment
     private LinearLayout T5;
     private final int REQUEST_CODE = 1;
     ImageView p1;
-    private Handler mHandler=new Handler(){
+    private Handler mHandler = new Handler() {
         @Override
-        public void handleMessage(Message msg){
-            if(msg.what==0){
+        public void handleMessage(Message msg) {
+            if (msg.what == 0) {
                 putInformation();
-            }else{
+            } else {
 //                tryGetUserInfo();
             }
         }
     };
     public String[] options = {"选项1", "选项2", "选项3", "选项4", "选项5"};
-    private List<AddOptions> OptionList ;
+    private List<AddOptions> OptionList;
     private OptionListAdapter adapter;
     private ListView OptionListview;
 
@@ -114,22 +115,21 @@ public class UserInfoFragment extends Fragment
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle b){
-        View v=inflater.inflate(R.layout.user_info_fragment,parent,false);
-        setting =(ImageButton)v.findViewById(R.id.setting);
-        mMyInfo=(LinearLayout)v.findViewById(R.id.my_info);
-        mMyMoneyBag=(LinearLayout)v.findViewById(R.id.my_money_bag);
-        mMyQRCode=(LinearLayout)v.findViewById(R.id.my_qr_code);
-        icon=(CircleImageView)v.findViewById(R.id.icon);
-        add=(ImageButton)v.findViewById(R.id.add);
-        userId=(TextView)v.findViewById(R.id.id) ;
-        T1=(LinearLayout)v.findViewById(R.id.T1);
-        T2=(LinearLayout)v.findViewById(R.id.T2);
-        T3=(LinearLayout)v.findViewById(R.id.T3);
-        T4=(LinearLayout)v.findViewById(R.id.T4);
-        T5=(LinearLayout)v.findViewById(R.id.T5);
-        p1=(ImageView)v.findViewById(R.id.icon);
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle b) {
+        View v = inflater.inflate(R.layout.user_info_fragment, parent, false);
+        setting = (ImageButton) v.findViewById(R.id.setting);
+        mMyInfo = (LinearLayout) v.findViewById(R.id.my_info);
+        mMyMoneyBag = (LinearLayout) v.findViewById(R.id.my_money_bag);
+        mMyQRCode = (LinearLayout) v.findViewById(R.id.my_qr_code);
+        icon = (CircleImageView) v.findViewById(R.id.icon);
+        add = (ImageButton) v.findViewById(R.id.add);
+        userId = (TextView) v.findViewById(R.id.id);
+        T1 = (LinearLayout) v.findViewById(R.id.T1);
+        T2 = (LinearLayout) v.findViewById(R.id.T2);
+        T3 = (LinearLayout) v.findViewById(R.id.T3);
+        T4 = (LinearLayout) v.findViewById(R.id.T4);
+        T5 = (LinearLayout) v.findViewById(R.id.T5);
+        p1 = (ImageView) v.findViewById(R.id.icon);
 
 
         setting.setOnClickListener(this);
@@ -144,12 +144,12 @@ public class UserInfoFragment extends Fragment
         T4.setOnClickListener(this);
         T5.setOnClickListener(this);
 
-        mUserOperatorController=UserOperatorController.getInstance();
+        mUserOperatorController = UserOperatorController.getInstance();
         new Thread() {
             @Override
             public void run() {
                 try {
-                    if(mUserOperatorController.getIsLogined()) {
+                    if (mUserOperatorController.getIsLogined()) {
                         mUserInfo = UserOperatorController.getInstance().getMyInfo();
                         Message message = new Message();
                         message.what = 0;
@@ -188,38 +188,39 @@ public class UserInfoFragment extends Fragment
                     mHandler.sendMessage(message);
                 }
             }
-        }.start();}
+        }.start();
+    }
 
-    private void putInformation(){
+    private void putInformation() {
         //TODO:将用户信息显示在屏幕上
         userId.setText(mUserInfo.getRealName());
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.setting:{
+        switch (v.getId()) {
+            case R.id.setting: {
                 Intent it = new Intent(getActivity().getBaseContext(), SettingActivity.class);
                 startActivity(it);
                 break;
             }
-            case R.id.my_info:{
-                UserOperatorController uoc=UserOperatorController.getInstance();
+            case R.id.my_info: {
+                UserOperatorController uoc = UserOperatorController.getInstance();
 //                if(!uoc.getIsLogined()){
 //                    Toast.makeText(this.getActivity(),"请先登陆！",Toast.LENGTH_SHORT).show();
 //                    break;
 //                }
-                Intent it = new Intent(getActivity().getBaseContext(),SingleUserInfoActivity.class);
-                it.putExtra("userid",UserOperatorController.getInstance().getId());
+                Intent it = new Intent(getActivity().getBaseContext(), SingleUserInfoActivity.class);
+                it.putExtra("userid", UserOperatorController.getInstance().getId());
                 startActivity(it);
                 break;
             }
-            case R.id.my_money_bag:{
+            case R.id.my_money_bag: {
                 Intent it = new Intent(getActivity().getBaseContext(), MyWalletActivity.class);
                 startActivity(it);
                 break;
             }
-            case R.id.my_qr_code:{
+            case R.id.my_qr_code: {
                 Intent it = new Intent(getActivity().getBaseContext(), MyQrActivity.class);
                 startActivity(it);
                 break;
@@ -228,11 +229,11 @@ public class UserInfoFragment extends Fragment
                 showPopMenu();
                 break;
             case R.id.btn_open_camera: {
-                if(Build.VERSION.SDK_INT>=24 && ContextCompat.checkSelfPermission(this.getContext(),Manifest.permission.CAMERA)!=PackageManager.PERMISSION_GRANTED){
+                if (Build.VERSION.SDK_INT >= 24 && ContextCompat.checkSelfPermission(this.getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(this.getActivity(),
                             new String[]{Manifest.permission.CAMERA},
                             0);
-                }else {
+                } else {
                     takePhotoToAvatar();
                 }
                 break;
@@ -240,10 +241,10 @@ public class UserInfoFragment extends Fragment
             case R.id.btn_choose_img: {
 
                 if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(getActivity(), new String[]{ Manifest.permission. WRITE_EXTERNAL_STORAGE }, 1);
-                    Log.d("King1","h");
+                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                    Log.d("King1", "h");
                 }
-                Log.d("4","h");
+                Log.d("4", "h");
                 openAlbum();
                 break;
             }
@@ -255,45 +256,45 @@ public class UserInfoFragment extends Fragment
             case R.id.add:
                 showaddPopMenu();
                 break;
-            case R.id.T1:{
-                int data=1;
-                Intent i = new Intent(getActivity().getBaseContext(),MyTaskInFo.class);
-                i.putExtra("data",String.valueOf(data));
+            case R.id.T1: {
+                int data = 1;
+                Intent i = new Intent(getActivity().getBaseContext(), MyTaskInFo.class);
+                i.putExtra("data", String.valueOf(data));
                 startActivity(i);
                 break;
             }
-            case R.id.T2:{
-                int data=2;
-                Intent i = new Intent(getActivity().getBaseContext(),MyTaskInFo.class);
-                i.putExtra("data",String.valueOf(data));
+            case R.id.T2: {
+                int data = 2;
+                Intent i = new Intent(getActivity().getBaseContext(), MyTaskInFo.class);
+                i.putExtra("data", String.valueOf(data));
                 startActivity(i);
                 break;
             }
-            case R.id.T3:{
-                int data=3;
-                Intent i = new Intent(getActivity().getBaseContext(),MyTaskInFo.class);
-                i.putExtra("data",String.valueOf(data));
+            case R.id.T3: {
+                int data = 3;
+                Intent i = new Intent(getActivity().getBaseContext(), MyTaskInFo.class);
+                i.putExtra("data", String.valueOf(data));
                 startActivity(i);
                 break;
             }
-            case R.id.T4:{
-                int data=4;
-                Intent i = new Intent(getActivity().getBaseContext(),MyTaskInFo.class);
-                i.putExtra("data",String.valueOf(data));
+            case R.id.T4: {
+                int data = 4;
+                Intent i = new Intent(getActivity().getBaseContext(), MyTaskInFo.class);
+                i.putExtra("data", String.valueOf(data));
                 startActivity(i);
                 break;
             }
-            case R.id.T5:{
-                int data=5;
-                Intent i = new Intent(getActivity().getBaseContext(),MyTaskInFo.class);
-                i.putExtra("data",String.valueOf(data));
+            case R.id.T5: {
+                int data = 5;
+                Intent i = new Intent(getActivity().getBaseContext(), MyTaskInFo.class);
+                i.putExtra("data", String.valueOf(data));
                 startActivity(i);
                 break;
             }
         }
     }
 
-    private void takePhotoToAvatar(){
+    private void takePhotoToAvatar() {
         File outputImage = new File(getActivity().getExternalCacheDir(), "output_image.jpg");
         try {
             if (outputImage.exists()) {
@@ -306,20 +307,22 @@ public class UserInfoFragment extends Fragment
         if (Build.VERSION.SDK_INT < 24) {
             imgUri = Uri.fromFile(outputImage);
         } else {
-            imgUri= FileProvider.getUriForFile(getActivity(), "com.example.cameraalbumtest.fileprovider", outputImage);
+            imgUri = FileProvider.getUriForFile(getActivity(), "com.example.cameraalbumtest.fileprovider", outputImage);
         }
         // 启动相机程序
         Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
         intent.putExtra(MediaStore.EXTRA_OUTPUT, imgUri);
-        startActivityForResult(intent, 100);
+        startActivityForResult(intent, REQUEST_CAMERA);
     }
+
     private void openAlbum() {
         Intent intent = new Intent("android.intent.action.GET_CONTENT");
         intent.setType("image/*");
-        Log.d("2","h");
+        Log.d("2", "h");
         this.startActivityForResult(intent, CHOOSE_PHOTO); // 打开相册
-        Log.d("3","h");
+        Log.d("3", "h");
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
@@ -333,24 +336,25 @@ public class UserInfoFragment extends Fragment
             default:
         }
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("King","hhhhhhhh");
-        super.onActivityResult(requestCode,resultCode,data);
-        Log.d("King","hhhhhhhh");
-        switch (requestCode) {
-            case 100:
-                if (resultCode == RESULT_OK) try {
-                    // 将拍摄的照片显示出来
-                    Bitmap bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(imgUri));
-                    Drawable drawable = new BitmapDrawable(toRoundBitmap(bitmap));
-                    icon.setImageDrawable(drawable);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                break;
-            case   CHOOSE_PHOTO:
-                if (resultCode == RESULT_OK) {
+        Log.d("King", "hhhhhhhh");
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("King", "hhhhhhhh");
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case REQUEST_CAMERA:
+                    try {
+                        // 将拍摄的照片显示出来
+                        Bitmap bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(imgUri));
+                        Drawable drawable = new BitmapDrawable(toRoundBitmap(bitmap));
+                        icon.setImageDrawable(drawable);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case CHOOSE_PHOTO:
                     // 判断手机系统版本号
                     if (Build.VERSION.SDK_INT >= 19) {
                         // 4.4及以上系统使用这个方法处理图片
@@ -359,15 +363,13 @@ public class UserInfoFragment extends Fragment
                         // 4.4以下系统使用这个方法处理图片
                         handleImageBeforeKitKat(data);
                     }
-                }
-                break;
-            case REQUEST_CODE:
-            {
-                String result = data.getStringExtra(CaptureActivity.EXTRA_STRING);
-                Toast.makeText(UserInfoFragment.this.getActivity(), result + "", Toast.LENGTH_SHORT).show();
+                    break;
+                case REQUEST_CODE:
+                    String result = data.getStringExtra(CaptureActivity.EXTRA_STRING);
+                    Toast.makeText(UserInfoFragment.this.getActivity(), result + "", Toast.LENGTH_SHORT).show();
+                default:
+                    break;
             }
-            default:
-                break;
         }
     }
 
@@ -379,7 +381,7 @@ public class UserInfoFragment extends Fragment
         if (DocumentsContract.isDocumentUri(getActivity(), uri)) {
             // 如果是document类型的Uri，则通过document id处理
             String docId = DocumentsContract.getDocumentId(uri);
-            if("com.android.providers.media.documents".equals(uri.getAuthority())) {
+            if ("com.android.providers.media.documents".equals(uri.getAuthority())) {
                 String id = docId.split(":")[1]; // 解析出数字格式的id
                 String selection = MediaStore.Images.Media._ID + "=" + id;
                 imagePath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection);
@@ -406,7 +408,7 @@ public class UserInfoFragment extends Fragment
     private String getImagePath(Uri uri, String selection) {
         String path = null;
         // 通过Uri和selection来获取真实的图片路径
-        Cursor cursor =getActivity(). getContentResolver().query(uri, null, selection, null, null);
+        Cursor cursor = getActivity().getContentResolver().query(uri, null, selection, null, null);
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
@@ -455,9 +457,9 @@ public class UserInfoFragment extends Fragment
 
 
     Uri convertUri(Uri uri) {
-        if(uri.toString().substring(0, 7).equals("content")) {  //如果是以 "content" 开头
-            String[] colName = { MediaStore.MediaColumns.DATA };    //声明要查询的字段
-            Cursor cursor =getActivity(). getContentResolver().query(uri, colName,  //以 imgUri 进行查询
+        if (uri.toString().substring(0, 7).equals("content")) {  //如果是以 "content" 开头
+            String[] colName = {MediaStore.MediaColumns.DATA};    //声明要查询的字段
+            Cursor cursor = getActivity().getContentResolver().query(uri, colName,  //以 imgUri 进行查询
                     null, null, null);
             cursor.moveToFirst();      //移到查询结果的第一个记录
             uri = Uri.parse("file://" + cursor.getString(0)); //将路径转为 Uri
@@ -479,30 +481,26 @@ public class UserInfoFragment extends Fragment
         vh = imv.getHeight();   //获取 ImageView 的高度
 
         int scaleFactor;
-        if(iw<ih) {    //如果图片的宽度小于高度
+        if (iw < ih) {    //如果图片的宽度小于高度
             needRotate = false;                 //不需要旋转
-            scaleFactor = Math.min(iw/vw, ih/vh);   // 计算缩小比率
-        }
-        else {
+            scaleFactor = Math.min(iw / vw, ih / vh);   // 计算缩小比率
+        } else {
             needRotate = true;                  //需要旋转
-            scaleFactor = Math.min(iw/vh, ih/vw);   // 将 ImageView 的宽、高互换来计算缩小比率
+            scaleFactor = Math.min(iw / vh, ih / vw);   // 将 ImageView 的宽、高互换来计算缩小比率
         }
 
         option.inJustDecodeBounds = false;  //关闭只加载图像文件信息的选项
         option.inSampleSize = scaleFactor;  //设置缩小比例, 例如 2 则长宽都将缩小为原来的 1/2
         Bitmap bmp = BitmapFactory.decodeFile(imgUri.getPath(), option); //载入图像
 
-        if(needRotate) { //如果需要旋转
+        if (needRotate) { //如果需要旋转
             Matrix matrix = new Matrix();  //创建 Matrix 对象
             matrix.postRotate(90);         //设置旋转角度
-            bmp = Bitmap.createBitmap(bmp , //用原来的 Bitmap 产生一个新的 Bitmap
+            bmp = Bitmap.createBitmap(bmp, //用原来的 Bitmap 产生一个新的 Bitmap
                     0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
         }
         icon.setImageBitmap(bmp);
     }
-
-
-
 
 
     private void showPopMenu() {
@@ -528,7 +526,7 @@ public class UserInfoFragment extends Fragment
         LinearLayout ll_popup = (LinearLayout) view.findViewById(R.id.ll_popup);
         ll_popup.startAnimation(AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.push_bottom_in));
 
-        if(mPopupWindow==null){
+        if (mPopupWindow == null) {
             mPopupWindow = new PopupWindow(getActivity());
             mPopupWindow.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
             mPopupWindow.setHeight(ViewGroup.LayoutParams.MATCH_PARENT);
@@ -547,21 +545,21 @@ public class UserInfoFragment extends Fragment
     private void showaddPopMenu() {
         View popupView = View.inflate(getActivity().getApplicationContext(), R.layout.activity_popupwindow, null);
 
-        OptionList=createOptions();//初始化消息列表
-        adapter=new OptionListAdapter(this.getActivity().getApplicationContext()
-                ,R.layout.options_list_item,OptionList);
+        OptionList = createOptions();//初始化消息列表
+        adapter = new OptionListAdapter(this.getActivity().getApplicationContext()
+                , R.layout.options_list_item, OptionList);
 
         ListView lsvMore = (ListView) popupView.findViewById(R.id.lsvMore);
         lsvMore.setAdapter(adapter);
         lsvMore.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(UserInfoFragment.this.getActivity(),CaptureActivity.class);
-                startActivityForResult(intent,REQUEST_CODE);
+                Intent intent = new Intent(UserInfoFragment.this.getActivity(), CaptureActivity.class);
+                startActivityForResult(intent, REQUEST_CODE);
             }
         });
         // 创建PopupWindow对象，指定宽度和高度
-        PopupWindow window = new PopupWindow(popupView,270,WRAP_CONTENT);
+        PopupWindow window = new PopupWindow(popupView, 270, WRAP_CONTENT);
         // 设置动画
         window.setAnimationStyle(R.style.popup_window_anim);
         // 设置背景颜色
@@ -577,12 +575,12 @@ public class UserInfoFragment extends Fragment
     }
 
 
-    private List<AddOptions>createOptions(){
+    private List<AddOptions> createOptions() {
         List<AddOptions> AList = new ArrayList<>();
 
-        AddOptions o1=new AddOptions("加好友",R.drawable.o_addf);
+        AddOptions o1 = new AddOptions("加好友", R.drawable.o_addf);
         AList.add(o1);
-        AddOptions o2=new AddOptions("扫一扫",R.drawable.o_scan);
+        AddOptions o2 = new AddOptions("扫一扫", R.drawable.o_scan);
         AList.add(o2);
         return AList;
 
