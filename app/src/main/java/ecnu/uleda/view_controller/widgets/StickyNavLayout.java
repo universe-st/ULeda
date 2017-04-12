@@ -97,10 +97,10 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
         boolean showTop = dy < 0 && !ViewCompat.canScrollVertically(target, -1);
 
         if (hiddenTop || showTop) {
-            if (isAutoPlay && mTop instanceof RecyclerViewBanner) {
-                RecyclerViewBanner top = (RecyclerViewBanner) mTop;
-                isAutoPlay = false;
-            }
+//            if (isAutoPlay && mTop instanceof RecyclerViewBanner) {
+//                RecyclerViewBanner top = (RecyclerViewBanner) mTop;
+//                isAutoPlay = false;
+//            }
             if (dy < 0 && getScrollY() <= mRefreshViewHeight) {
                 dy *= 0.3;
             } else if (dy < 0 && getScrollY() <= 0) {
@@ -395,6 +395,5 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
 
     public interface OnRefreshListener {
         void onRefresh();
-        void onLoadMore();
     }
 }

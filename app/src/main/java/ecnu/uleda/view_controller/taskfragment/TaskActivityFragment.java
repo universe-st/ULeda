@@ -36,6 +36,7 @@ import ecnu.uleda.view_controller.widgets.StickyNavLayout;
 public class TaskActivityFragment extends Fragment implements StickyNavLayout.OnRefreshListener {
 
     private static final String[] TYPES = {"全部", "运动", "社团", "公益"};
+    private static final int MESSAGE_REFRESH_COMPLETE = 0x110;
     private Unbinder mUnbinder;
     private Handler mHandler;
 
@@ -88,15 +89,13 @@ public class TaskActivityFragment extends Fragment implements StickyNavLayout.On
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
-                mContainer.refreshComplete();
+                switch (msg.what) {
+                    case MESSAGE_REFRESH_COMPLETE:
+                        mContainer.refreshComplete();
+                        break;
+                }
             }
         };
-
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
 
     }
 
@@ -143,10 +142,8 @@ public class TaskActivityFragment extends Fragment implements StickyNavLayout.On
 
     private void initRollPager() {
         List<String> datas = new ArrayList<>();
-        List<String> titles = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             datas.add(i + "");
-            titles.add("标题" + i);
         }
         mBanner.setRvBannerData(datas);
         mBanner.setOnSwitchRvBannerListener(new RecyclerViewBanner.OnSwitchRvBannerListener() {
@@ -172,16 +169,11 @@ public class TaskActivityFragment extends Fragment implements StickyNavLayout.On
             public void run() {
                 try {
                     Thread.sleep(2000);
-                    mHandler.sendEmptyMessage(0x110);
+                    mHandler.sendEmptyMessage(MESSAGE_REFRESH_COMPLETE);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         }).start();
-    }
-
-    @Override
-    public void onLoadMore() {
-
     }
 }

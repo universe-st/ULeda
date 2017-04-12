@@ -42,6 +42,8 @@ import me.xiaopan.sketch.shaper.CircleImageShaper;
 
 public class ActivityListFragment extends Fragment {
 
+    private static final int MESSAGE_LOAD_COMPLETE = 0x111;
+
     public static final int TYPE_ALL = 0;
     public static final int TYPE_SPORTS = 1;
     public static final int TYPE_CLUB = 2;
@@ -49,7 +51,7 @@ public class ActivityListFragment extends Fragment {
 
     private int mType;
 
-    private Handler mRefreshHandler;
+    private Handler mLoadHandler;
 
     private XRecyclerView mActivityRv;
     private List<UActivity> mActivityList;
@@ -91,17 +93,23 @@ public class ActivityListFragment extends Fragment {
                     public void run() {
                         try {
                             Thread.sleep(1000);
+                            mLoadHandler.sendEmptyMessage(MESSAGE_LOAD_COMPLETE);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
+
                     }
                 }).start();
             }
         });
-        mRefreshHandler = new Handler(Looper.getMainLooper()) {
+        mLoadHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
-                mActivityRv.loadMoreComplete();
+                switch (msg.what) {
+                    case MESSAGE_LOAD_COMPLETE:
+                        mActivityRv.loadMoreComplete();
+                        break;
+                }
             }
         };
         return mActivityRv;
