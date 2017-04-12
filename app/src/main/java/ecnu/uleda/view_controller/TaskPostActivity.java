@@ -10,12 +10,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +29,9 @@ import ecnu.uleda.tool.UPublicTool;
 import ecnu.uleda.exception.UServerAccessException;
 import ecnu.uleda.function_module.UserOperatorController;
 import ecnu.uleda.function_module.ServerAccessApi;
+import io.rong.imageloader.utils.L;
+
+import static android.R.attr.type;
 
 public class TaskPostActivity extends AppCompatActivity {
 
@@ -66,15 +71,37 @@ public class TaskPostActivity extends AppCompatActivity {
         taskPostArray.add("其他");
     }
 
+    private TextView mButtonBack;
+    private Button mButtonTaskPost;
+    private ArrayAdapter<String> taskPostAdapter;
     private EditText mEtTitle;
     private Spinner mSpinTag;
     private EditText mEtPrice;
     private EditText mEtActiveTime;
     private EditText mEtDescription;
+    private TextView mTvMainTitle;
+    private TextView mTvMajorName;
+    private EditText mEtProDescription;
+    private TextView mTvLocationName;
+    private TextView mTvDetailName;
+    private EditText mEtDetail;
+    private TextView mTvTitleName;
 
-    private TextView mButtonBack;
-    private Button mButtonTaskPost;
-    private ArrayAdapter<String> taskPostAdapter;
+    private LinearLayout mLlSponsor;
+    private LinearLayout mLlTitle;
+    private LinearLayout mLlMajor;
+    private LinearLayout mLlActivityTime;
+    private LinearLayout mLlLocation;
+    private LinearLayout mLlCategory;
+    private LinearLayout mLlFee;
+    private LinearLayout mLlActiveTime;
+    private LinearLayout mLlStart;
+    private LinearLayout mLlDestination;
+    private LinearLayout mLlDetails;
+    private LinearLayout mLlAddPhoto;
+    private LinearLayout mLlProDescription;
+
+
 
     private String mId;
     private String mPpassport;
@@ -103,6 +130,47 @@ public class TaskPostActivity extends AppCompatActivity {
         SpinnerInit();
         SpinnerEvent();
 
+        Intent intent=getIntent();
+        int data=intent.getIntExtra(EXTRA_POST_TYPE,1);
+        switch (data){
+            case TaskPostActivity.TYPE_TASK:{
+                mLlProDescription.setVisibility(View.GONE);
+                mLlSponsor.setVisibility(View.GONE);
+                mLlMajor.setVisibility(View.GONE);
+                mLlActivityTime.setVisibility(View.GONE);
+                mLlLocation.setVisibility(View.GONE);
+                mLlCategory.setVisibility(View.GONE);
+                break;
+            }
+            case TaskPostActivity.TYPE_PROJECT:{
+                mTvTitleName.setText("主题");
+                mTvMainTitle.setText("项目招人");
+                mTvLocationName.setText("实验室地点");
+                mTvDetailName.setText("招人要求");
+                mEtDetail.setHint("您对招募同学能力、人数等方面的要求，限225字节内。");
+                mLlSponsor.setVisibility(View.GONE);
+                mLlFee.setVisibility(View.GONE);
+                mLlStart.setVisibility(View.GONE);
+                mLlDestination.setVisibility(View.GONE);
+                mLlActivityTime.setVisibility(View.GONE);
+                mLlActiveTime.setVisibility(View.GONE);
+                mLlCategory.setVisibility(View.GONE);
+                break;
+            }
+            case TaskPostActivity.TYPE_ACTIVITY:{
+                mLlProDescription.setVisibility(View.GONE);
+                mTvTitleName.setText("活动名称");
+                mTvMainTitle.setText("活动宣传");
+                mLlMajor.setVisibility(View.GONE);
+                mLlFee.setVisibility(View.GONE);
+                mLlActiveTime.setVisibility(View.GONE);
+                mLlStart.setVisibility(View.GONE);
+                mLlDestination.setVisibility(View.GONE);
+                mEtDetail.setHint("简述活动具体内容，限225字节内。");
+                break;
+
+            }
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
@@ -159,6 +227,33 @@ public class TaskPostActivity extends AppCompatActivity {
         mEtPrice = (EditText) findViewById(R.id.task_post_payment);
         mEtActiveTime = (EditText) findViewById(R.id.task_post_activeTime);
         mEtDescription = (EditText) findViewById(R.id.task_post_description);
+        mTvMainTitle=(TextView) findViewById(R.id.task_post_main_title);
+        mTvMajorName=(TextView)findViewById(R.id.task_post_major_name);
+        mEtProDescription=(EditText) findViewById(R.id.task_post_project_description);
+        mTvLocationName=(TextView)findViewById(R.id.task_post_activity_location_name);
+        mTvDetailName=(TextView)findViewById(R.id.task_post_details_name);
+        mEtDetail=(EditText)findViewById(R.id.task_post_description);
+        mTvTitleName=(TextView)findViewById(R.id.task_post_title_name);
+
+
+        mLlSponsor=(LinearLayout)findViewById(R.id.task_post_activity_sponsor_option);
+        mLlTitle=(LinearLayout)findViewById(R.id.task_post_title_option);
+        mLlMajor=(LinearLayout)findViewById(R.id.task_post_major_option);
+        mLlActivityTime=(LinearLayout)findViewById(R.id.task_post_activity_time_option);
+        mLlLocation=(LinearLayout)findViewById(R.id.task_post_activity_location_option);
+        mLlCategory=(LinearLayout)findViewById(R.id.task_post_category_option);
+        mLlFee=(LinearLayout)findViewById(R.id.task_post_fee_option);
+        mLlActiveTime=(LinearLayout)findViewById(R.id.task_post_active_time_option);
+        mLlStart=(LinearLayout)findViewById(R.id.task_post_start_option);
+        mLlDestination=(LinearLayout)findViewById(R.id.task_post_destination_option);
+        mLlDetails=(LinearLayout)findViewById(R.id.task_post_details_option);
+        mLlAddPhoto=(LinearLayout)findViewById(R.id.task_post_add_photo_option);
+        mLlProDescription=(LinearLayout)findViewById( R.id.task_post_project_details_option);
+
+
+
+
+
 
 
         buttonStart = (Button) findViewById(R.id.button_task_post_start);
@@ -188,6 +283,7 @@ public class TaskPostActivity extends AppCompatActivity {
                 buttonDestination.setText("选择地址");
             }
         });
+
     }
 
 
