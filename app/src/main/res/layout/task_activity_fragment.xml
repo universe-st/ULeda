@@ -48,9 +48,8 @@
 
     </android.support.constraint.ConstraintLayout>
 
-
-    <com.youth.banner.Banner
-        android:id="@id/id_stickynavlayout_topview"
+    <com.loonggg.rvbanner.lib.RecyclerViewBanner
+        android:id="@+id/id_stickynavlayout_topview"
         android:layout_width="match_parent"
         android:layout_height="180dp" />
 

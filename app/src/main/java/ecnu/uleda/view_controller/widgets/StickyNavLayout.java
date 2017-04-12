@@ -25,8 +25,8 @@ import android.widget.LinearLayout;
 import android.widget.OverScroller;
 import android.widget.TextView;
 
+import com.loonggg.rvbanner.lib.RecyclerViewBanner;
 import com.wang.avi.AVLoadingIndicatorView;
-import com.youth.banner.Banner;
 
 import ecnu.uleda.R;
 import ecnu.uleda.tool.UPublicTool;
@@ -99,9 +99,8 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
         boolean showTop = dy < 0 && !ViewCompat.canScrollVertically(target, -1);
 
         if (hiddenTop || showTop) {
-            if (isAutoPlay && mTop instanceof Banner) {
-                Banner top = (Banner) mTop;
-                top.stopAutoPlay();
+            if (isAutoPlay && mTop instanceof RecyclerViewBanner) {
+                RecyclerViewBanner top = (RecyclerViewBanner) mTop;
                 isAutoPlay = false;
             }
             if (dy < 0 && getScrollY() <= mRefreshViewHeight) {
@@ -301,22 +300,22 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
 //            y = 0;
 //        }
         if (y < mRefreshViewHeight) {
-            if (isAutoPlay && mTop instanceof Banner) {
-                Banner top = (Banner) mTop;
+            if (isAutoPlay && mTop instanceof RecyclerViewBanner) {
+                RecyclerViewBanner top = (RecyclerViewBanner) mTop;
                 isAutoPlay = false;
-                top.stopAutoPlay();
+                top.setRvAutoPlaying(false);
             }
         } else if (y >= mRefreshViewHeight && y < mRefreshViewHeight + mTopViewHeight){
-            if (!isAutoPlay && mTop instanceof Banner) {
-                Banner top = (Banner) mTop;
+            if (!isAutoPlay && mTop instanceof RecyclerViewBanner) {
+                RecyclerViewBanner top = (RecyclerViewBanner) mTop;
                 isAutoPlay = true;
-                top.startAutoPlay();
+                top.setRvAutoPlaying(true);
             }
         } else {
-            if (isAutoPlay && mTop instanceof Banner) {
-                Banner top = (Banner) mTop;
+            if (isAutoPlay && mTop instanceof RecyclerViewBanner) {
+                RecyclerViewBanner top = (RecyclerViewBanner) mTop;
                 isAutoPlay = false;
-                top.stopAutoPlay();
+                top.setRvAutoPlaying(false);
             }
         }
         if (y > mTopViewHeight + mRefreshViewHeight) {
