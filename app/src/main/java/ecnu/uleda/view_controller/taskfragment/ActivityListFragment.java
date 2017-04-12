@@ -2,6 +2,9 @@ package ecnu.uleda.view_controller.taskfragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -12,6 +15,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.jcodecraeer.xrecyclerview.ProgressStyle;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -43,7 +49,9 @@ public class ActivityListFragment extends Fragment {
 
     private int mType;
 
-    private RecyclerView mActivityRv;
+    private Handler mRefreshHandler;
+
+    private XRecyclerView mActivityRv;
     private List<UActivity> mActivityList;
 
 
@@ -55,7 +63,35 @@ public class ActivityListFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mActivityRv = (RecyclerView) inflater.inflate(R.layout.task_activity_innerview, container, false);
+        mActivityRv = (XRecyclerView) inflater.inflate(R.layout.task_activity_innerview, container, false);
+        mActivityRv.setPullRefreshEnabled(false);
+        mActivityRv.setLoadingMoreProgressStyle(ProgressStyle.Pacman);
+        mActivityRv.setLoadingListener(new XRecyclerView.LoadingListener() {
+            @Override
+            public void onRefresh() {
+
+            }
+
+            @Override
+            public void onLoadMore() {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
+            }
+        });
+        mRefreshHandler = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                mActivityRv.loadMoreComplete();
+            }
+        };
         return mActivityRv;
     }
 
@@ -63,8 +99,6 @@ public class ActivityListFragment extends Fragment {
     public void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
-        // Stub
-
     }
 
     @Override
@@ -72,7 +106,7 @@ public class ActivityListFragment extends Fragment {
         super.onResume();
         mActivityList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            mActivityList.add(new UActivity("xiaohong.jpg", "小蓝", System.currentTimeMillis()/1000 - 24*3600,
+            mActivityList.add(new UActivity("xiaohong.jpg", "小蓝", System.currentTimeMillis() / 1000 - 24 * 3600,
                     "校园", getResources().getString(R.string.activity_example)));
         }
     }
@@ -94,6 +128,7 @@ public class ActivityListFragment extends Fragment {
     private class ActivityListAdapter extends RecyclerView.Adapter<ViewHolder> {
 
         private LayoutInflater mInflater;
+
         public ActivityListAdapter(Context context) {
             mInflater = LayoutInflater.from(context);
         }
@@ -104,7 +139,7 @@ public class ActivityListFragment extends Fragment {
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    onItemClick(v, (int)v.getTag());
+                    onItemClick(v, (int) v.getTag());
                 }
             });
             return new ViewHolder(view);
@@ -151,6 +186,7 @@ public class ActivityListFragment extends Fragment {
         TextView desc;
         @BindView(R.id.activity_time)
         TextView time;
+
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);

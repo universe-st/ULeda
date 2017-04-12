@@ -48,7 +48,7 @@
 
     </android.support.constraint.ConstraintLayout>
 
-    <com.loonggg.rvbanner.lib.RecyclerViewBanner
+    <ecnu.uleda.view_controller.widgets.RecyclerViewBanner
         android:id="@+id/id_stickynavlayout_topview"
         android:layout_width="match_parent"
         android:layout_height="180dp" />

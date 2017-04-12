@@ -13,12 +13,6 @@ import android.support.v7.widget.AppCompatImageView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-
-import com.loonggg.rvbanner.lib.RecyclerViewBanner;
-import com.youth.banner.BannerConfig;
-import com.youth.banner.Transformer;
-import com.youth.banner.loader.ImageLoader;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -31,8 +25,8 @@ import butterknife.Unbinder;
 import ecnu.uleda.R;
 import ecnu.uleda.model.UActivity;
 import ecnu.uleda.view_controller.widgets.NoScrollViewPager;
+import ecnu.uleda.view_controller.widgets.RecyclerViewBanner;
 import ecnu.uleda.view_controller.widgets.StickyNavLayout;
-import me.xiaopan.sketch.SketchImageView;
 
 /**
  * Created by jimmyhsu on 2017/4/11.
@@ -143,7 +137,6 @@ public class TaskActivityFragment extends Fragment implements StickyNavLayout.On
     @Override
     public void onStart() {
         super.onStart();
-//        mBanner.startAutoPlay();
     }
 
     private void initRollPager() {
@@ -153,7 +146,6 @@ public class TaskActivityFragment extends Fragment implements StickyNavLayout.On
             datas.add(i + "");
             titles.add("标题" + i);
         }
-//        mBanner.setOffscreenPageLimit(datas.size() + 1);
         mBanner.setRvBannerData(datas);
         mBanner.setOnSwitchRvBannerListener(new RecyclerViewBanner.OnSwitchRvBannerListener() {
             private final int[] res = {R.drawable.img1, R.drawable.img2, R.drawable.img3,
@@ -163,40 +155,12 @@ public class TaskActivityFragment extends Fragment implements StickyNavLayout.On
                 appCompatImageView.setImageResource(res[i]);
             }
         });
-//        mBanner.setImageLoader(new ImageLoader() {
-//            private final int[] images = {R.drawable.img1, R.drawable.img2, R.drawable.img3,
-//                R.drawable.img1};
-//            @Override
-//            public void displayImage(Context context, Object path, ImageView imageView) {
-//                SketchImageView iv = (SketchImageView) imageView;
-//                // Stub
-//                int pos = Integer.parseInt((String)path);
-//                iv.displayResourceImage(images[pos]);
-//            }
-//
-//            @Override
-//            public ImageView createImageView(Context context) {
-//                SketchImageView imageView = new SketchImageView(context);
-////                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-////                imageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-////                        ViewGroup.LayoutParams.MATCH_PARENT));
-//                return imageView;
-//            }
-//        });
-//        mBanner.setImages(datas);
-//        mBanner.setBannerStyle(BannerConfig.CIRCLE_INDICATOR_TITLE);
-//        mBanner.setDelayTime(3000);
-//        mBanner.setBannerTitles(titles);
-//        mBanner.setBannerAnimation(Transformer.Default);
-//        mBanner.setIndicatorGravity(BannerConfig.CENTER);
-//        mBanner.start();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         mUnbinder.unbind();
-//        mBanner.stopAutoPlay();
     }
 
     @Override
