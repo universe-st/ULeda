@@ -12,19 +12,25 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.WindowManager;
-import android.widget.Button;
+import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import ecnu.uleda.R;
 import ecnu.uleda.function_module.UserOperatorController;
+import ecnu.uleda.view_controller.taskfragment.TaskListFragment;
 import ecnu.uleda.view_controller.widgets.BottomBarLayout;
+import ecnu.uleda.view_controller.widgets.NoScrollViewPager;
+import io.rong.eventbus.EventBus;
 
 
 public class UMainActivity extends AppCompatActivity implements BottomBarLayout.OnLabelSelectedListener {
 
     @BindView(R.id.bottom_bar)
     BottomBarLayout mBottomBar;
+
+    @BindView(R.id.main_view_pager)
+    NoScrollViewPager mViewPager;
 
     private static final String[] BOTTOM_LABELS = new String[]{"地图", "发布", "U圈", "消息", "我"};
     private static final int[] BOTTOM_ICONS = new int[]{R.drawable.ic_room_white_48dp,
@@ -38,7 +44,7 @@ public class UMainActivity extends AppCompatActivity implements BottomBarLayout.
         }
     }
     //MainActivity
-    private ViewPager mViewPager;
+
     private Fragment[] mFragments = null;
     UserOperatorController Controller = UserOperatorController.getInstance();
     boolean mIsLogined=Controller.getIsLogined();
@@ -96,8 +102,6 @@ public class UMainActivity extends AppCompatActivity implements BottomBarLayout.
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void init() {
-
-
         mFragments = new Fragment[5];
         mFragments[0] = new UMainFragment();
         mFragments[1] = new TaskListFragment();
@@ -110,8 +114,7 @@ public class UMainActivity extends AppCompatActivity implements BottomBarLayout.
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             //getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         }
-        mViewPager = (ViewPager) findViewById(R.id.main_view_pager);
-
+        mViewPager.setNoScroll(true);
         mViewPager.setAdapter(new FragmentPagerAdapter(fm) {
             @Override
             public Fragment getItem(int position) {
