@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AbsListView;
@@ -42,6 +43,8 @@ public class LocationListActivity extends AppCompatActivity {
     private String mKeyWord="华东师范大学";
     private Button mButton;
     private Button mButtonBack;
+    private static final String TAG = "LocationListActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,6 +118,7 @@ public class LocationListActivity extends AppCompatActivity {
         SearchParam object = new SearchParam().keyword(mKeyWord).boundary(mNearBy);
         object.page_size(20);
         object.page_index(mPageIndex);
+        Log.d(TAG, "searchPOIAndPut: init");
         mTencentSearch.search(object,new HttpResponseListener() {
             @Override
             public void onSuccess(int i, BaseObject baseObject) {
@@ -123,6 +127,7 @@ public class LocationListActivity extends AppCompatActivity {
                 if (oj.data != null) {
                     for (SearchResultObject.SearchResultData data : oj.data) {
                         list.add(data);
+                        Log.d(TAG, "searchPOIAndPut,onSuccess: ");
                     }
                 }
                 setListViewAdapter();
@@ -139,9 +144,11 @@ public class LocationListActivity extends AppCompatActivity {
     {
         mLocationManager = TencentLocationManager.getInstance(this.getApplication());
 
-        mLocationManager.requestLocationUpdates(TencentLocationRequest.create()
+        mLocationManager.requestLocationUpdates(
+                TencentLocationRequest.create()
                 .setInterval(5000)
-                .setRequestLevel(TencentLocationRequest.REQUEST_LEVEL_ADMIN_AREA), new TencentLocationListener() {
+                .setRequestLevel(TencentLocationRequest.REQUEST_LEVEL_ADMIN_AREA),
+                new TencentLocationListener() {
             @Override
             public void onLocationChanged(TencentLocation tencentLocation, int i, String s) {
                 mLocationManager.removeUpdates(this);
@@ -152,11 +159,13 @@ public class LocationListActivity extends AppCompatActivity {
                 latitude = (float) tencentLocation.getLatitude();
                 longitude = (float) tencentLocation.getLongitude();
 
+                Log.d(TAG, "onLocationChanged: getLocation");
                 getNearBy();
             }
 
             @Override
             public void onStatusUpdate(String s, int i, String s1) {
+                int a=i;
             }
         });
     }
@@ -165,6 +174,7 @@ public class LocationListActivity extends AppCompatActivity {
         mTencentSearch = new TencentSearch(getApplicationContext());
         mLocation = new Location().lat(latitude).lng(longitude);
         searchPOIAndPut();
+        Log.d(TAG, "getNearBy: ");
     }
 
 
