@@ -159,7 +159,7 @@ public class LocationListActivity extends AppCompatActivity {
                 latitude = (float) tencentLocation.getLatitude();
                 longitude = (float) tencentLocation.getLongitude();
 
-                Log.d(TAG, "onLocationChanged: getLocation");
+                Log.d(TAG, "onLocationChanged:getLocation");
 
                 getNearBy();
             }
