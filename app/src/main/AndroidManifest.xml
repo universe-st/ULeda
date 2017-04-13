@@ -76,6 +76,7 @@
         <activity android:name=".view_controller.Chart"/>
         <activity android:name=".view_controller.ReleasedUcircleActivity">
         </activity>
+        <activity android:name=".view_controller.MipcaActivityCapture"/>
         <provider
             android:name=".function_module.PhotoFileProvider"
             android:authorities="com.example.cameraalbumtest.fileprovider"

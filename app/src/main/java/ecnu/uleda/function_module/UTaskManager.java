@@ -1,10 +1,5 @@
 package ecnu.uleda.function_module;
 
-import android.content.Context;
-import android.util.Log;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-
 import com.tencent.mapsdk.raster.model.LatLng;
 
 import org.json.JSONArray;
@@ -12,14 +7,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 import ecnu.uleda.exception.UServerAccessException;
 import ecnu.uleda.model.UTask;
-import ecnu.uleda.view_controller.TaskListAdapter;
 
 /**
  * Created by Shensheng on 2017/1/19.

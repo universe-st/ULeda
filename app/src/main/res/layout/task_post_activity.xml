@@ -1,12 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+
+<ScrollView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 <LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <LinearLayout
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ededed"
-    android:orientation="vertical"
-    android:weightSum="156">
+    android:weightSum="120"
+    android:orientation="vertical"/>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,6 +31,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/task_post_main_title_option"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="8"
@@ -26,26 +41,27 @@
 
         <TextView
             android:id="@+id/button_task_post_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="返回"
-            android:textSize="24sp"
-            android:gravity="center_vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2.5"
             android:drawableLeft="@drawable/ic_chevron_left_white_48dp"
-            android:drawablePadding="-8dp"
-            android:textColor="@android:color/white"/>
+            android:gravity="center_vertical"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"/>
+
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="6">
+            android:layout_weight="5">
 
             <TextView
+                android:id="@+id/task_post_main_title"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:text="发布任务"
                 android:textColor="@color/colorUWhite"
-                android:textSize="23sp"/>
+                android:textSize="20sp"/>
         </FrameLayout>
     </LinearLayout>
 
@@ -63,6 +79,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/task_post_title_option"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="8"
@@ -80,12 +97,13 @@
             android:layout_weight="4">
 
             <TextView
+                android:id="@+id/task_post_title_name"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical|left"
                 android:text="标题"
                 android:textColor="#404040"
-                android:textSize="20sp"/>
+                android:textSize="18sp"/>
         </FrameLayout>
 
         <FrameLayout
@@ -120,7 +138,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/task_post_activity_sponsor"
+        android:id="@+id/task_post_activity_sponsor_option"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="8"
@@ -138,12 +156,13 @@
             android:layout_weight="4">
 
             <TextView
+                android:id="@+id/textView44"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical|left"
                 android:text="主办方"
                 android:textColor="#404040"
-                android:textSize="20sp"/>
+                android:textSize="18sp"/>
         </FrameLayout>
 
         <FrameLayout
@@ -152,7 +171,7 @@
             android:layout_weight="14">
 
             <EditText
-                android:id="@+id/theone"
+                android:id="@+id/task_post_sponsor"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@null"
@@ -170,6 +189,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/task_post_major_option"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="8"
@@ -187,12 +207,13 @@
             android:layout_weight="4">
 
             <TextView
+                android:id="@+id/task_post_major_name"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="center_vertical|left"
-                android:text="专业"
+                android:gravity="left|center_vertical"
+                android:text="负责人专业"
                 android:textColor="#404040"
-                android:textSize="20sp"/>
+                android:textSize="18sp"/>
         </FrameLayout>
 
         <FrameLayout
@@ -200,15 +221,59 @@
             android:layout_height="match_parent"
             android:layout_weight="14">
 
+            <Spinner
+                android:id="@+id/major_spinner_task_post"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textAlignment="center"
+                >
+            </Spinner>
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/task_post_project_details_option"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="16"
+        android:background="@color/colorUWhite"
+        android:weightSum="20">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4"
+            android:gravity="left"
+            android:paddingTop="10dp"
+            android:text="项目详情"
+            android:textColor="#404040"
+            android:textSize="18sp"/>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="14">
+
             <EditText
-                android:id="@+id/task_post_title"
+                android:id="@+id/task_post_project_description"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@null"
-                android:ems="10"
-                android:gravity="center_vertical|left"
-                android:maxLength="25"
-                android:maxLines="3"
+                android:ems="20"
+                android:gravity="top|left"
+                android:hint="对项目或比赛的简述，限225字节内。"
+                android:maxLines="6"
+                android:paddingTop="10dp"
                 android:textColorHint="@color/colorUGray"/>
         </FrameLayout>
 
@@ -219,7 +284,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/Time"
+        android:id="@+id/task_post_activity_time_option"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="8"
@@ -242,7 +307,7 @@
                 android:gravity="center_vertical|left"
                 android:text="时间"
                 android:textColor="#404040"
-                android:textSize="20sp"/>
+                android:textSize="18sp"/>
         </FrameLayout>
 
         <FrameLayout
@@ -275,7 +340,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/Location"
+        android:id="@+id/task_post_activity_location_option"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="8"
@@ -293,12 +358,13 @@
             android:layout_weight="4">
 
             <TextView
+                android:id="@+id/task_post_activity_location_name"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical|left"
                 android:text="地点"
                 android:textColor="#404040"
-                android:textSize="20sp"/>
+                android:textSize="18sp"/>
         </FrameLayout>
 
         <FrameLayout
@@ -330,6 +396,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/task_post_category_option"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="8"
@@ -352,7 +419,7 @@
                 android:gravity="center_vertical|left"
                 android:text="分类"
                 android:textColor="#404040"
-                android:textSize="20sp"/>
+                android:textSize="18sp"/>
         </FrameLayout>
 
         <FrameLayout
@@ -384,6 +451,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/task_post_fee_option"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="12"
@@ -406,7 +474,7 @@
                 android:gravity="center_vertical|left"
                 android:text="报酬"
                 android:textColor="#404040"
-                android:textSize="20sp"/>
+                android:textSize="18sp"/>
         </FrameLayout>
 
         <FrameLayout
@@ -424,7 +492,7 @@
                 android:inputType="numberDecimal"
                 android:maxLength="6"
                 android:textColorHint="@color/colorUMain"
-                android:textSize="30dp"/>
+                android:textSize="18sp"/>
         </FrameLayout>
     </LinearLayout>
 
@@ -435,6 +503,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/task_post_active_time_option"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="8"
@@ -457,7 +526,7 @@
                 android:gravity="center_vertical|left"
                 android:text="时效"
                 android:textColor="#404040"
-                android:textSize="20sp"/>
+                android:textSize="18sp"/>
         </FrameLayout>
 
         <FrameLayout
@@ -487,6 +556,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/task_post_start_option"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="8"
@@ -509,7 +579,7 @@
                 android:gravity="center_vertical|left"
                 android:text="出发地"
                 android:textColor="#404040"
-                android:textSize="20sp"/>
+                android:textSize="18sp"/>
         </FrameLayout>
 
         <FrameLayout
@@ -555,6 +625,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/task_post_destination_option"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="8"
@@ -577,7 +648,7 @@
                 android:gravity="center_vertical|left"
                 android:text="目的地"
                 android:textColor="#404040"
-                android:textSize="20sp"/>
+                android:textSize="18sp"/>
         </FrameLayout>
 
         <FrameLayout
@@ -617,12 +688,13 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="5dp"
         android:orientation="vertical">
 
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/task_post_details_option"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="16"
@@ -635,13 +707,15 @@
             android:layout_weight="1"/>
 
         <TextView
+            android:id="@+id/task_post_details_name"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="4"
-            android:gravity="center|left"
+            android:gravity="left"
+            android:paddingTop="10dp"
             android:text="详情"
             android:textColor="#404040"
-            android:textSize="20dp"/>
+            android:textSize="18sp"/>
 
         <FrameLayout
             android:layout_width="0dp"
@@ -676,9 +750,10 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/task_post_add_photo_option"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="20"
+        android:layout_weight="16"
         android:background="@color/colorUWhite"
         android:orientation="horizontal"
         android:weightSum="20">
@@ -696,17 +771,15 @@
             android:gravity="left|center"
             android:text="图片"
             android:textColor="#404040"
-            android:textSize="20sp"/>
+            android:textSize="18sp"/>
 
         <ImageView
             android:id="@+id/imageView11"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="5dp"
+            android:layout_margin="10dp"
             android:layout_weight="4"
-            android:scaleType="fitXY"
+            android:scaleType="centerInside"
             app:srcCompat="@drawable/choose1"/>
     </LinearLayout>
 
@@ -718,9 +791,11 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/task_post_post_button"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="10"
+        android:gravity="center|bottom"
         android:weightSum="10">
 
         <Button
@@ -731,8 +806,10 @@
             android:background="@color/colorUMain"
             android:text="发布"
             android:textColor="@color/colorUWhite"
-            android:textSize="20dp"
-            />
-    </LinearLayout>
+            android:textSize="18sp"
 
+            />
+
+    </LinearLayout>
 </LinearLayout>
+</ScrollView>
