@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -99,6 +100,18 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
         if (newDatas != null) {
             mDatas = new ArrayList<>(newDatas);
             notifyDataSetChanged();
+        }
+    }
+
+    public void addDataSource(List<UTask> newDatas) {
+        if (newDatas != null) {
+            int oldSize = mDatas.size();
+            for (int i = oldSize; i < newDatas.size(); i++) {
+                Log.e("haha", "avatar: " + newDatas.get(i).getAvatar());
+            }
+            int itemInserted = newDatas.size() - oldSize;
+            mDatas = new ArrayList<>(newDatas);
+            notifyItemRangeInserted(oldSize, itemInserted);
         }
     }
 

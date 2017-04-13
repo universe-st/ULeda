@@ -97,7 +97,7 @@ public class TaskMissionFragment extends Fragment {
                     if (!hasMoreItems) {
                         mTaskListView.setIsnomore(true);
                     }
-                    mTaskListAdapter.updateDataSource(mTasksInList);
+                    mTaskListAdapter.addDataSource(mTasksInList);
                     break;
                 case ERROR:
                     UServerAccessException e = (UServerAccessException) msg.obj;

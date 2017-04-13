@@ -163,6 +163,14 @@ public class UTaskManager {
                             .setAuthorCredit(j.getInt("authorCredit"))
                             .setPostID(j.getString("postID"))
                             .setActiveTime(j.getLong("activetime"));
+                    // TODO 匡神接口做好以后去掉 try catch
+                    try {
+                        task.setAvatar(j.getString("avatar"))
+                                .setTakersCount(j.getInt("takersCount"));
+                    } catch (JSONException e) {
+                        task.setAvatar("xiaohong.jpg")
+                                .setTakersCount(10);
+                    }
                     mTasksInList.add(task);
                 }
                 return length == n;
