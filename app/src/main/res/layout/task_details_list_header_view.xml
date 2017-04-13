@@ -109,4 +109,20 @@
             android:paddingRight="5dp"
             android:layout_below="@id/task_detail_publisher_name"/>
     </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:layout_height="70dp"
+        android:fillViewport="false">
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/comment_avatar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/user"/>
+        </HorizontalScrollView>
+    </LinearLayout>
 </LinearLayout>

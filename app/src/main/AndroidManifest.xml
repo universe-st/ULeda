@@ -135,6 +135,7 @@
                     android:scheme="rong" />
             </intent-filter>
         </activity>
+        <activity android:name=".view_controller.MipcaActivityCapture"/>
         <provider
             android:name=".function_module.PhotoFileProvider"
             android:authorities="com.example.cameraalbumtest.fileprovider"
