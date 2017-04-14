@@ -1,13 +1,23 @@
 package ecnu.uleda.function_module;
 
+import android.content.Context;
+import android.util.Log;
+
 import com.tencent.mapsdk.raster.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
 
 import ecnu.uleda.exception.UServerAccessException;
 import ecnu.uleda.model.UTask;
@@ -24,6 +34,7 @@ public class UTaskManager {
     * 持有两个列表，一个表示任务列表中显示的任务
     * 一个表示地图上显示的任务
     * */
+    private static final String TASK_IN_LIST_FILE = "taskInList.json";
     private static UTaskManager sInstance = null;
     private long mLastRefreshTime = 0;
     private UserOperatorController mUOC;
@@ -33,9 +44,10 @@ public class UTaskManager {
     public static final String PRICE_DES = "priceDes";
     public static final String PRICE_ASC = "priceAsc";
     public static final String DISTANCE = "distance";
-    private String mSortBy = PRICE_DES;
+    private String mSortBy = TIME_LAST;
     private String mTag = "全部";
     private String mLocation = "31.2296,121.403";
+    private Semaphore mSemaphoreReadTaskList = new Semaphore(1);
 
     public static UTaskManager getInstance() {
         if (sInstance == null) {
@@ -72,7 +84,7 @@ public class UTaskManager {
 //        return la;
 //    }
 
-    public void refreshTaskInList() throws UServerAccessException {
+    public void refreshTaskInList(Context context) throws UServerAccessException {
         /*
         * TODO:访问服务器，更新任务列表。
         * */
@@ -81,6 +93,7 @@ public class UTaskManager {
             throw new UServerAccessException(UServerAccessException.UN_LOGIN);
         } else {
             try {
+                mSemaphoreReadTaskList.acquire();
                 JSONArray array = ServerAccessApi.getTaskList(
                         mUOC.getId(),
                         mUOC.getPassport(),
@@ -90,6 +103,7 @@ public class UTaskManager {
                         mTag,
                         "31.2296,121.403");// 便于家中测试
                 mTasksInList.clear();
+                Log.e("haha", "requesting..." + mUOC.getId() + ", " + mUOC.getPassport() + ", " + mSortBy + ", " + mTag);
                 int length = array.length();
                 for (int i = 0; i < length; i++) {
                     JSONObject j = array.getJSONObject(i);
@@ -114,6 +128,7 @@ public class UTaskManager {
                     }
                     mTasksInList.add(task);
                 }
+                writeTaskInListToFile(context, array.toString());
             } catch (JSONException e) {
                 e.printStackTrace();
                 System.exit(1);
@@ -124,12 +139,86 @@ public class UTaskManager {
                 } else {
                     throw e;
                 }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } finally {
+                mSemaphoreReadTaskList.release();
             }
         }
     }
 
+    public void writeTaskInListToFile(Context context, String jsonArray) {
+        if (mTasksInList == null || mTasksInList.size() == 0) return;
+        BufferedWriter w = null;
+        try {
+            FileOutputStream output = context.openFileOutput(TASK_IN_LIST_FILE, Context.MODE_PRIVATE);
+            w = new BufferedWriter(new OutputStreamWriter(output));
+            w.write(jsonArray);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (w != null) {
+                try {
+                    w.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
+
+    public void refreshTaskInListFromFile(Context context) {
+        if (mTasksInList != null && mTasksInList.size() > 0) return;
+        BufferedReader reader = null;
+        try {
+            mSemaphoreReadTaskList.acquire();
+            if (mTasksInList != null && mTasksInList.size() > 0)
+                throw new IllegalStateException("taskInList already loaded from server");
+            FileInputStream fis = context.openFileInput(TASK_IN_LIST_FILE);
+            reader = new BufferedReader(new InputStreamReader(fis));
+            String content = reader.readLine();
+            JSONArray array = new JSONArray(content);
+            mTasksInList.clear();
+            int length = array.length();
+            for (int i = 0; i < length; i++) {
+                JSONObject j = array.getJSONObject(i);
+                UTask task = new UTask()
+                        .setPath(j.getString("path"))
+                        .setTitle(j.getString("title"))
+                        .setTag(j.getString("tag"))
+                        .setPostDate(j.getLong("postdate"))
+                        .setPrice(new BigDecimal(j.getString("price")))
+                        .setAuthorID(j.getInt("author"))
+                        .setAuthorUserName(j.getString("authorUsername"))
+                        .setAuthorCredit(j.getInt("authorCredit"))
+                        .setPostID(j.getString("postID"))
+                        .setActiveTime(j.getLong("activetime"));
+                // TODO 匡神接口做好以后去掉 try catch
+                try {
+                    task.setAvatar(j.getString("avatar"))
+                            .setTakersCount(j.getInt("takersCount"));
+                } catch (JSONException e) {
+                    task.setAvatar("xiaohong.jpg")
+                            .setTakersCount(10);
+                }
+                mTasksInList.add(task);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            mSemaphoreReadTaskList.release();
+        }
+    }
+
     /**
-     *
      * @param n 从目前任务列表的最后一项开始向后从服务器获取n个任务项
      * @return 返回true表示至少有一个新item
      * @throws UServerAccessException
@@ -182,12 +271,15 @@ public class UTaskManager {
         return false;
     }
 
-    public void init() throws UServerAccessException {
-        refreshTaskInList();
-    }
+//    public void init() throws UServerAccessException {
+//        refreshTaskInList();
+//    }
 
     public void refreshTasksInMap() throws UServerAccessException {
         mTasksInMap = new ArrayList<>();
+        if (mUOC == null) {
+            mUOC = UserOperatorController.getInstance();
+        }
         JSONArray array = ServerAccessApi.getTaskList(
                 mUOC.getId(),
                 mUOC.getPassport(),

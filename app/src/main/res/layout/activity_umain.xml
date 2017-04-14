@@ -8,7 +8,7 @@
     android:clipToPadding="true"
     android:weightSum="100"
     tools:context=".view_controller.UMainActivity">
-    <ecnu.uleda.view_controller.widgets.NoScrollViewPager
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="91"

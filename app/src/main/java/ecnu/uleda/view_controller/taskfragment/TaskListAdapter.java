@@ -85,6 +85,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
         holder.mTvInfo.setText(task.getTitle());
         holder.mTvTaskReward.setText(String.format(Locale.ENGLISH, "¥ %.2f", task.getPrice()));
         holder.mTvTimeLimit.setText("截止至 " + UPublicTool.parseTime(task.getLeftTime()));
+        holder.mTvType.setText(task.getTag().substring(0, 2));
         holder.mTvFromAndTo.setText(getFromTo(task));
         holder.mTvTakesCount.setText(task.getTakersCount() + "人接单");
         holder.itemView.setTag(task);
@@ -124,9 +125,9 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
         } else if (f.length() == 0) {
             oc = "到" + t;
         } else if (t.length() == 0) {
-            oc = "从" + t;
+            oc = "从 #LO " + t;
         } else {
-            oc = "从" + f + "到" + t;
+            oc = "从 #LO " + f + "到 #LO " + t;
         }
         if (mSize == null) {
             mSize = UPublicTool.getScreenSize(mContext, 0.03, 0.03);
@@ -141,7 +142,6 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
 
     class ViewHolder extends RecyclerView.ViewHolder {
         View itemView;
-        @Nullable
         @BindView(R.id.task_type)
         TextView mTvType;
         @BindView(R.id.publisher_name)
@@ -171,6 +171,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
             mTvFromAndTo.setTypeface(roboto);
             mTvTakesCount.setTypeface(roboto);
             mTvTaskReward.setTypeface(roboto);
+            mTvType.setTypeface(roboto);
         }
     }
 

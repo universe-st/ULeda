@@ -1,31 +1,19 @@
 package ecnu.uleda.view_controller.taskfragment;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.FrameLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.jcodecraeer.xrecyclerview.ProgressStyle;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,16 +25,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import ecnu.uleda.R;
-import ecnu.uleda.exception.UServerAccessException;
-import ecnu.uleda.model.UTask;
-import ecnu.uleda.function_module.UTaskManager;
-import ecnu.uleda.view_controller.TaskDetailsActivity;
 import ecnu.uleda.view_controller.TaskPostActivity;
-import ecnu.uleda.view_controller.widgets.DrawableLeftCenterTextView;
-import ecnu.uleda.view_controller.widgets.TaskListFilterWindow;
-import ecnu.uleda.view_controller.widgets.TaskListItemDecoration;
 import ecnu.uleda.view_controller.widgets.SelectableTitleView;
-import ecnu.uleda.view_controller.widgets.XRecyclerView;
 
 
 /**
@@ -60,8 +40,6 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
     @BindArray(R.array.task_type)
     String[] mTitleArray;
 
-//    private ArrayAdapter<String> mMainAdapter;
-//    private ArrayAdapter<String> mSortAdapter;
     private List<String> mTitles;
 
     @BindView(R.id.titles)
@@ -87,7 +65,6 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
         super.onCreate(b);
     }
 
-    //初始化Spinner
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.task_fragment, parent, false);
@@ -107,7 +84,7 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
         super.onViewCreated(view, savedInstanceState);
         mTitleView.setTitles(mTitles);
         mTitleView.setOnTitleSelectedListner(this);
-        getFragmentManager().beginTransaction()
+        getChildFragmentManager().beginTransaction()
                 .add(R.id.post_container, TaskMissionFragment.getInstance())
                 .commit();
     }
@@ -126,7 +103,7 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
         if (mPos == pos) return;
         switch (pos) {
             case 0:
-                getFragmentManager().beginTransaction()
+                getChildFragmentManager().beginTransaction()
                         .replace(R.id.post_container, TaskMissionFragment.getInstance())
                         .commit();
                 mPos = 0;
@@ -135,7 +112,7 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
                 mPos = 1;
                 break;
             case 2:
-                getFragmentManager().beginTransaction()
+                getChildFragmentManager().beginTransaction()
                         .replace(R.id.post_container, TaskActivityFragment.getInstance())
                         .commit();
                 mPos = 2;

@@ -75,7 +75,7 @@
         app:layout_constraintTop_toBottomOf="@+id/spinner_wrapper" />
 
 
-    <ecnu.uleda.view_controller.widgets.XRecyclerView
+    <com.jcodecraeer.xrecyclerview.XRecyclerView
         android:id="@+id/task_list_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
