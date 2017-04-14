@@ -8,8 +8,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -276,13 +278,16 @@ public class UMainFragment extends Fragment implements View.OnTouchListener,View
         init(v);
         initView(v);
         initAnimation();
+        return v;
+    }
 
-
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         mLocationManager=TencentLocationManager.getInstance(this.getContext());
         //每15秒定位一次
         mLocationManager.requestLocationUpdates(TencentLocationRequest.create()
-                        .setInterval(15000)
-                        .setRequestLevel(TencentLocationRequest.REQUEST_LEVEL_ADMIN_AREA),new ULocationListener());
+                .setInterval(15000)
+                .setRequestLevel(TencentLocationRequest.REQUEST_LEVEL_ADMIN_AREA),new ULocationListener());
         mMapView.onCreate(savedInstanceState);
         //测试代码
         mTencentMap.setCenter(mCenter);
@@ -290,7 +295,6 @@ public class UMainFragment extends Fragment implements View.OnTouchListener,View
         mTencentMap.setZoom(18);
         mNavigation=Navigation.getInstance(getContext(),mTencentMap);
         new RefreshMapMarkerThread().start();
-        return v;
     }
 
     @Override
