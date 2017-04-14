@@ -107,9 +107,6 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
     public void addDataSource(List<UTask> newDatas) {
         if (newDatas != null) {
             int oldSize = mDatas.size();
-            for (int i = oldSize; i < newDatas.size(); i++) {
-                Log.e("haha", "avatar: " + newDatas.get(i).getAvatar());
-            }
             int itemInserted = newDatas.size() - oldSize;
             mDatas = new ArrayList<>(newDatas);
             notifyItemRangeInserted(oldSize, itemInserted);

@@ -228,6 +228,8 @@ public class TaskMissionFragment extends Fragment {
                             } else {
                                 mTaskListView.setNoMore(false);
                             }
+                        } else {
+                            mTaskListView.setNoMore(true);
                         }
                         mTasksInList = mUTaskManager.getTasksInList();
                         mTaskListAdapter.updateDataSource(mTasksInList);
@@ -259,7 +261,6 @@ public class TaskMissionFragment extends Fragment {
     private void initRecyclerView() {
         mThreadPool.submit(new RefreshFromFileThread());
         mTasksInList = new ArrayList<>();
-        mTaskListView.setNoMore(true);
         mTaskListAdapter = new TaskListAdapter(getActivity(), mTasksInList);
         mTaskListAdapter.setHasStableIds(true);
         mTaskListView.setAdapter(mTaskListAdapter);

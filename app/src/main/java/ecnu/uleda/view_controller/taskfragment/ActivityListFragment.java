@@ -8,11 +8,17 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.BaseAdapter;
+import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +37,7 @@ import butterknife.ButterKnife;
 import ecnu.uleda.R;
 import ecnu.uleda.model.UActivity;
 import ecnu.uleda.tool.UPublicTool;
+import ecnu.uleda.view_controller.widgets.BrochureItemDecoration;
 import ecnu.uleda.view_controller.widgets.TaskListItemDecoration;
 import me.xiaopan.sketch.SketchImageView;
 import me.xiaopan.sketch.request.DisplayOptions;
@@ -181,6 +188,10 @@ public class ActivityListFragment extends Fragment {
             holder.tag.setText("#" + uActivity.getTag());
             holder.desc.setText(uActivity.getContent());
             holder.itemView.setTag(position);
+            holder.brochure.setAdapter(new BrochureAdapter());
+            holder.brochure.setLayoutManager(new LinearLayoutManager(getContext(),
+                    LinearLayoutManager.HORIZONTAL, false));
+            holder.brochure.addItemDecoration(new BrochureItemDecoration(getContext(), 3));
         }
 
         @Override
@@ -206,6 +217,8 @@ public class ActivityListFragment extends Fragment {
         TextView desc;
         @BindView(R.id.activity_time)
         TextView time;
+        @BindView(R.id.activity_brochure)
+        RecyclerView brochure;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -213,4 +226,36 @@ public class ActivityListFragment extends Fragment {
             this.itemView = itemView;
         }
     }
+
+    class BrochureHolder extends RecyclerView.ViewHolder {
+        SketchImageView imageView;
+        public BrochureHolder(View itemView) {
+            super(itemView);
+            imageView = (SketchImageView) itemView;
+        }
+    }
+   class BrochureAdapter extends RecyclerView.Adapter<BrochureHolder> {
+       private int mImageWidth;
+       public BrochureAdapter() {
+           mImageWidth = mActivityRv.getMeasuredWidth() / 3;
+       }
+
+       @Override
+       public BrochureHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+           SketchImageView sketchImageView = new SketchImageView(getContext());
+           sketchImageView.setLayoutParams(new RecyclerView.LayoutParams(mImageWidth, mImageWidth));
+           sketchImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+           return new BrochureHolder(sketchImageView);
+       }
+
+       @Override
+       public void onBindViewHolder(BrochureHolder holder, int position) {
+            holder.imageView.setImageResource(R.drawable.img1);
+       }
+
+       @Override
+       public int getItemCount() {
+           return 4;
+       }
+   }
 }

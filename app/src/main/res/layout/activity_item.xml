@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:cardCornerRadius="1dp"
@@ -9,8 +10,7 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/selectable_item_main"
-        android:paddingBottom="8dp">
+        android:background="@drawable/selectable_item_main">
 
         <me.xiaopan.sketch.SketchImageView
             android:id="@+id/activity_avatar"
@@ -35,8 +35,9 @@
             android:textColor="#20A2F3"
             android:textSize="18sp"
             app:layout_constraintBottom_toTopOf="@+id/activity_time"
-            app:layout_constraintLeft_toRightOf="@id/activity_avatar"
-            app:layout_constraintTop_toTopOf="@id/activity_avatar" />
+            app:layout_constraintLeft_toRightOf="@+id/activity_avatar"
+            app:layout_constraintTop_toTopOf="@+id/activity_avatar"
+            android:layout_marginStart="8dp" />
 
         <TextView
             android:id="@+id/activity_time"
@@ -47,9 +48,9 @@
             android:text="release time"
             android:textColor="#868686"
             android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="@id/activity_avatar"
-            app:layout_constraintLeft_toLeftOf="@id/activity_username"
-            app:layout_constraintTop_toBottomOf="@id/activity_username" />
+            app:layout_constraintBottom_toBottomOf="@+id/activity_avatar"
+            app:layout_constraintLeft_toLeftOf="@+id/activity_username"
+            app:layout_constraintTop_toBottomOf="@+id/activity_username" />
 
         <TextView
             android:id="@+id/activity_tag"
@@ -73,13 +74,25 @@
             android:layout_marginRight="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
+            android:paddingBottom="6dp"
             android:ellipsize="end"
             android:maxLines="10"
             android:text="@string/activity_example"
             android:textColor="#5D5D5D"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/activity_avatar" />
+            app:layout_constraintTop_toBottomOf="@+id/activity_avatar"
+            app:layout_constraintBottom_toTopOf="@+id/activity_brochure"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/activity_brochure"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingBottom="3dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/activity_description"/>
 
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>
