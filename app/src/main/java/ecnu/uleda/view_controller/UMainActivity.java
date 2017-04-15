@@ -117,7 +117,6 @@ public class UMainActivity extends AppCompatActivity implements BottomBarLayout.
         mFragments[2] = new UCircleFragment();
         mFragments[3] = new MessageFragment();
         mFragments[4] = new UserInfoFragment();
-        FragmentManager fm = getSupportFragmentManager();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -172,21 +171,15 @@ public class UMainActivity extends AppCompatActivity implements BottomBarLayout.
 
 
     //主Activity翻页
-    public void changeToView(int i) {
+    public void changeToView(int pos) {
 //        mViewPager.setCurrentItem(i);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        if (mLastPos == 0) {
-            ft.hide(mFragments[mLastPos]);
+        if (!mFragments[pos].isAdded()) {
+            ft.hide(mFragments[mLastPos]).add(R.id.main_view_pager, mFragments[pos]).commit();
         } else {
-            ft.remove(mFragments[mLastPos]);
-            isAdded[mLastPos] = false;
+            ft.hide(mFragments[mLastPos]).show(mFragments[pos]).commit();
         }
-        mLastPos = i;
-        if (!isAdded[i]) {
-            ft.add(R.id.main_view_pager, mFragments[i]);
-        }
-        ft.show(mFragments[i]);
-        ft.commit();
+        mLastPos = pos;
     }
 
     @Override
