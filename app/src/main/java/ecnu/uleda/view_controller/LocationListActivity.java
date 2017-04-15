@@ -144,8 +144,8 @@ public class LocationListActivity extends AppCompatActivity {
     {
         mLocationManager = TencentLocationManager.getInstance(this.getApplication());
 
-        mLocationManager.requestLocationUpdates(
-                TencentLocationRequest.create()
+
+        int errorCode = mLocationManager.requestLocationUpdates(TencentLocationRequest.create()
                 .setInterval(5000)
                 .setRequestLevel(TencentLocationRequest.REQUEST_LEVEL_ADMIN_AREA),
                 new TencentLocationListener() {
@@ -169,6 +169,9 @@ public class LocationListActivity extends AppCompatActivity {
                 int a=i;
             }
         });
+        if (errorCode > 0) {
+            Log.e("LocationListActivity", "errorCode: " + errorCode);
+        }
     }
 
     private void getNearBy() {
