@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AbsListView;
@@ -139,7 +140,7 @@ public class LocationListActivity extends AppCompatActivity {
     {
         mLocationManager = TencentLocationManager.getInstance(this.getApplication());
 
-        mLocationManager.requestLocationUpdates(TencentLocationRequest.create()
+        int errorCode = mLocationManager.requestLocationUpdates(TencentLocationRequest.create()
                 .setInterval(5000)
                 .setRequestLevel(TencentLocationRequest.REQUEST_LEVEL_ADMIN_AREA), new TencentLocationListener() {
             @Override
@@ -159,6 +160,9 @@ public class LocationListActivity extends AppCompatActivity {
             public void onStatusUpdate(String s, int i, String s1) {
             }
         });
+        if (errorCode > 0) {
+            Log.e("LocationListActivity", "errorCode: " + errorCode);
+        }
     }
 
     private void getNearBy() {
