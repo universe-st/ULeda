@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ecnu.uleda.view_controller.widgets.StickyNavLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/stickynavlayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@id/id_stickynavlayout_refreshheader"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_gravity="center_horizontal"
+        android:paddingBottom="15dp">
+
+        <com.wang.avi.AVLoadingIndicatorView
+            android:id="@+id/id_avloading"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:indicator="Pacman"
+            app:indicator_color="@color/colorUMain"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/id_refresh_arrow"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/pull_to_refresh_arrow"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/id_refresh_text"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/id_refresh_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/listview_header_hint_release"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/id_refresh_arrow"
+            app:layout_constraintLeft_toRightOf="@id/id_refresh_arrow"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/id_refresh_arrow" />
+
+
+    </android.support.constraint.ConstraintLayout>
+
+    <ecnu.uleda.view_controller.widgets.RecyclerViewBanner
+        android:id="@+id/id_stickynavlayout_topview"
+        android:layout_width="match_parent"
+        android:layout_height="180dp" />
+
+    <android.support.design.widget.TabLayout
+        android:id="@id/id_stickynavlayout_indicator"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        app:tabBackground="@android:color/white"
+        app:tabGravity="fill"
+        app:tabIndicatorHeight="0dp"
+        app:tabMode="fixed"
+        app:tabSelectedTextColor="@color/colorUMain"
+        app:tabTextColor="#939393" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#939393"/>
+
+    <ecnu.uleda.view_controller.widgets.NoScrollViewPager
+        android:id="@id/id_stickynavlayout_viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</ecnu.uleda.view_controller.widgets.StickyNavLayout>

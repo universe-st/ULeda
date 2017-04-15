@@ -26,7 +26,6 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/UMainTheme">
         <meta-data
@@ -76,6 +75,7 @@
         <activity android:name=".view_controller.Chart"/>
         <activity android:name=".view_controller.ReleasedUcircleActivity">
         </activity>
+        <activity android:name=".view_controller.MipcaActivityCapture"/>
         <provider
             android:name=".function_module.PhotoFileProvider"
             android:authorities="com.example.cameraalbumtest.fileprovider"
