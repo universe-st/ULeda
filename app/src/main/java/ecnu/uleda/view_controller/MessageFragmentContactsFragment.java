@@ -38,7 +38,7 @@ public class MessageFragmentContactsFragment extends Fragment implements RongIM.
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        view = inflater.inflate(R.layout.message_fragment_contacts_fragment,container,false);
+        view = inflater.inflate(R.layout.message_fragment_friend_fragment,container,false);
         /**
          * 设置用户信息的提供者，供 RongIM 调用获取用户名称和头像信息。
          *
@@ -50,12 +50,12 @@ public class MessageFragmentContactsFragment extends Fragment implements RongIM.
          * @see UserInfoProvider
          */
 
-        vpContent = (ViewPager)view.findViewById(R.id.vp_contacts);
+//        vpContent = (ViewPager)view.findViewById(R.id);
 
 //        mConversationList = initConversationList();//融云会话列表的对象
 //        mFragments.add(mConversationList);//添加会话fragment
 //        mFragments.add(HomeFragment.getInstance());
-        mFragments.add(FriendFragment.getInstance());
+//        mFragments.add(FriendFragment.getInstance());
         adapter = new FragmentPagerAdapter(getActivity().getSupportFragmentManager()) {
             @Override
             public Fragment getItem(int position) {

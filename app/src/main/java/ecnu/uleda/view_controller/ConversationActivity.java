@@ -1,8 +1,10 @@
 package ecnu.uleda.view_controller;
 
+import android.os.Build;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import ecnu.uleda.R;
@@ -16,6 +18,11 @@ public class ConversationActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.message_fragment_conversation);
+
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
+
         tvTitle = (TextView) findViewById(R.id.tv_title);
         //单聊是targetId就是userId
         String targetId = getIntent().getData().getQueryParameter("targetId");
