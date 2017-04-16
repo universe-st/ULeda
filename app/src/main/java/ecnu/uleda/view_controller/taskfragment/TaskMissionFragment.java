@@ -250,7 +250,7 @@ public class TaskMissionFragment extends Fragment {
                         mTaskListView.refreshComplete();
                         mTaskListView.loadMoreComplete();
                         if (e.getStatus() != UServerAccessException.DATABASE_ERROR)
-                            Toast.makeText(getActivity(), "网络异常：" + error, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "网络异常：" + error, Toast.LENGTH_SHORT).show();
                     default:
                         break;
                 }
