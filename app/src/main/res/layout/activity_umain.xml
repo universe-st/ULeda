@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipToPadding="true"
-    android:weightSum="100"
+    android:weightSum="91"
     tools:context=".view_controller.UMainActivity">
     <RelativeLayout
         android:layout_width="match_parent"
@@ -21,8 +21,7 @@
     <ecnu.uleda.view_controller.widgets.BottomBarLayout
         android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="9">
+        android:layout_height="60dp">
         <ecnu.uleda.view_controller.widgets.BottomBarButton
             android:layout_width="0dp"
             android:layout_height="match_parent"

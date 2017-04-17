@@ -1,128 +1,167 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:background="@android:color/transparent"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
-    <LinearLayout
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    android:orientation="vertical">
+
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:background="@android:color/transparent"/>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         android:background="@android:color/white"
-        android:orientation="horizontal">
-        <LinearLayout
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp">
+
+        <View
+            android:id="@+id/red_line"
             android:layout_width="8dp"
-            android:layout_height="match_parent"
-            android:background="@color/colorUMain"
-            android:layout_marginTop="5dp"
+            android:layout_height="0dp"
             android:layout_marginBottom="5dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="1dp"/>
-        <LinearLayout
-            android:layout_width="230dp"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:weightSum="2">
-            <TextView
-                android:id="@+id/task_title"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:textColor="@android:color/black"
-                android:text=""
-                android:textSize="18sp"
-                android:paddingLeft="10dp"
-                android:gravity="center_vertical|start"/>
-            <TextView
-                android:id="@+id/task_location"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:textColor="@android:color/black"
-                android:text=""
-                android:gravity="center_vertical|start"
-                android:paddingLeft="10dp"/>
-        </LinearLayout>
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/colorUMain"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/task_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginRight="8dp"
+            android:gravity="center_vertical|start"
+            android:text="title"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toTopOf="@+id/task_location"
+            app:layout_constraintLeft_toRightOf="@+id/red_line"
+            app:layout_constraintRight_toLeftOf="@+id/task_details_reward"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/task_location"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical|start"
+            android:layout_marginRight="8dp"
+            android:text="location"
+            android:textColor="@android:color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="@+id/task_title"
+            app:layout_constraintRight_toLeftOf="@+id/task_details_reward"
+            app:layout_constraintTop_toBottomOf="@+id/task_title"
+            app:layout_constraintHorizontal_bias="0.0" />
+
         <TextView
             android:id="@+id/task_details_reward"
             android:layout_width="120dp"
-            android:layout_height="match_parent"
-            android:text=""
-            android:gravity="center"
-            android:paddingRight="20dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:gravity="right|center_vertical"
+            android:text="￥5.00"
+            android:textColor="@color/colorUMain"
             android:textSize="30sp"
-            android:textColor="@color/colorUMain"/>
-    </LinearLayout>
-    <LinearLayout
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/white">
+
+        <ImageView
+            android:id="@+id/quote"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="4dp"
+            android:src="@drawable/ic_quote_grey600_48dp"
+            android:tint="@color/colorUMain"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/colorULightGray"
-            android:layout_margin="20dp"
-            android:id="@+id/task_detail_info"
-            android:textColor="@android:color/darker_gray"
-            android:text=""/>
-    </LinearLayout>
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:background="@android:color/white"
-        android:layout_height="50dp">
-        <TextView
-            android:id="@+id/task_detail_state"
-            android:text="剩余时间：18分钟"
-            android:paddingLeft="10dp"
-            android:layout_alignParentLeft="true"
-            android:textColor="@android:color/darker_gray"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-        <TextView
+            android:id="@+id/task_detail_publisher_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="helloWorld"
+            android:layout_marginRight="16dp"
+            android:text="name"
             android:textColor="@android:color/black"
-            android:paddingRight="10dp"
-            android:paddingLeft="10dp"
             android:textSize="15sp"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:id="@+id/task_detail_publisher_name"/>
-        <de.hdodenhof.circleimageview.CircleImageView
+            app:layout_constraintBottom_toTopOf="@+id/task_detail_info"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <me.xiaopan.sketch.SketchImageView
+            android:id="@+id/task_detail_circle_image"
             android:layout_width="20dp"
             android:layout_height="20dp"
+            android:layout_marginRight="8dp"
             android:src="@drawable/user"
-            android:layout_toLeftOf="@id/task_detail_publisher_name"
-            android:id="@+id/task_detail_circle_image"/>
+            app:layout_constraintBottom_toTopOf="@id/task_detail_info"
+            app:layout_constraintRight_toLeftOf="@id/task_detail_publisher_name"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
+            android:id="@+id/task_detail_info"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@color/colorULightGray"
+            android:padding="4dp"
+            android:text="description"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/quote" />
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp">
+
+        <TextView
+            android:id="@+id/task_detail_state"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="XXXXX"
-            android:textSize="15sp"
-            android:textColor="@color/colorUBlue"
+            android:layout_marginLeft="16dp"
+            android:text="剩余时间：18分钟"
+            android:textColor="@android:color/darker_gray"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
             android:id="@+id/task_detail_stars"
-            android:layout_alignParentRight="true"
-            android:paddingRight="5dp"
-            android:layout_below="@id/task_detail_publisher_name"/>
-    </RelativeLayout>
-    <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:text="XXXXX"
+            android:textColor="#5FCB88"
+            android:textSize="15sp"
+            app:layout_constraintBaseline_toBaselineOf="@id/task_detail_state"
+            app:layout_constraintRight_toRightOf="parent" />
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/task_takers_list"
         android:layout_width="match_parent"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
         android:layout_height="70dp"
-        android:fillViewport="false">
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <ImageView
-                android:id="@+id/comment_avatar"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/user"/>
-        </HorizontalScrollView>
-    </LinearLayout>
+        android:background="@android:color/white"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:scrollbars="none" />
 </LinearLayout>

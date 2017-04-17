@@ -55,4 +55,5 @@ dependencies {
     compile 'com.github.loonggg:RecyclerViewBanner:v1.2.1'
     compile 'org.greenrobot:eventbus:3.0.0'
     compile project(':zbarcode')
+    compile 'com.google.code.gson:gson:2.8.0'
 }
