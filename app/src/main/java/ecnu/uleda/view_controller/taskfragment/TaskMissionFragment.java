@@ -1,28 +1,30 @@
 package ecnu.uleda.view_controller.taskfragment;
 
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,7 +38,6 @@ import ecnu.uleda.view_controller.TaskDetailsActivity;
 import ecnu.uleda.view_controller.widgets.DrawableLeftCenterTextView;
 import ecnu.uleda.view_controller.widgets.TaskListFilterWindow;
 import ecnu.uleda.view_controller.widgets.TaskListItemDecoration;
-import ecnu.uleda.view_controller.widgets.XRecyclerView;
 
 /**
  * Created by jimmyhsu on 2017/4/10.
@@ -50,6 +51,7 @@ public class TaskMissionFragment extends Fragment {
     private List<UTask> mTasksInList = new ArrayList<>();
 
     private Unbinder mUnbinder;
+    private ExecutorService mThreadPool;
 
     //Widgets go here.
     @BindView(R.id.spinner0)
@@ -61,8 +63,6 @@ public class TaskMissionFragment extends Fragment {
     @BindView(R.id.task_list_view)
     XRecyclerView mTaskListView;
 
-
-
     @BindView(R.id.shader_part)
     View mShaderPart;
 
@@ -70,47 +70,14 @@ public class TaskMissionFragment extends Fragment {
     private TaskListFilterWindow mSortDropDownWindow;
 
     private volatile boolean hasMoreItems = true;
+    private volatile boolean isLoadedFromServer = false;
 
     private UTaskManager mUTaskManager = UTaskManager.getInstance();
     private TaskListAdapter mTaskListAdapter;
     private static final int LOAD_MORE = 0;
     private static final int REFRESH = 1;
     private static final int ERROR = 2;
-    private Handler mRefreshHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case REFRESH:
-                    mTaskListView.refreshComplete();
-                    if (!hasMoreItems) {
-                        hasMoreItems = true;
-                        mTaskListView.setIsnomore(false);
-                    }
-                    mTasksInList = mUTaskManager.getTasksInList();
-                    mTaskListAdapter.updateDataSource(mTasksInList);
-                    if (mTasksInList.size() > 0) {
-                        mTaskListView.scrollToPosition(0);
-                    }
-                    break;
-                case LOAD_MORE:
-                    mTaskListView.loadMoreComplete();
-                    if (!hasMoreItems) {
-                        mTaskListView.setIsnomore(true);
-                    }
-                    mTaskListAdapter.updateDataSource(mTasksInList);
-                    break;
-                case ERROR:
-                    UServerAccessException e = (UServerAccessException) msg.obj;
-                    String error = e.getMessage();
-                    mTaskListView.refreshComplete();
-                    mTaskListView.loadMoreComplete();
-                    if (e.getStatus() != UServerAccessException.DATABASE_ERROR)
-                        Toast.makeText(getActivity(), "网络异常：" + error, Toast.LENGTH_SHORT).show();
-                default:
-                    break;
-            }
-        }
-    };
+    private Handler mRefreshHandler;
     private final static ArrayList<String> mMainArrayTask;
     //    private final static ArrayList<String> mMainArrayProject;
 //    private final static ArrayList<String> mMainArrayActivity;
@@ -141,6 +108,7 @@ public class TaskMissionFragment extends Fragment {
     }
 
     private static TaskMissionFragment mInstance;
+
     public static TaskMissionFragment getInstance() {
         if (mInstance == null) {
             synchronized (TaskMissionFragment.class) {
@@ -161,8 +129,8 @@ public class TaskMissionFragment extends Fragment {
                 public void OnItemSelected(View v, int pos) {
                     mMainSpinner.setText(mMainArrayTask.get(pos));
                     mUTaskManager.setTag(mMainArrayTask.get(pos));
-//                    mTaskListView.setRefreshing(true);
-                    new RefreshThread().start();
+                    mTaskListView.refresh();
+                    mThreadPool.submit(new RefreshThread());
                 }
             });
             mMainDropDownWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
@@ -186,8 +154,8 @@ public class TaskMissionFragment extends Fragment {
                 public void OnItemSelected(View v, int pos) {
                     mSortSpinner.setText(mSortArray.get(pos));
                     mUTaskManager.setSortBy(SORT_BY[pos]);
-//                    mTaskListView.setRefreshing(true);
-                    new RefreshThread().start();
+                    mTaskListView.refresh();
+                    mThreadPool.submit(new RefreshThread());
                 }
             });
             mSortDropDownWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
@@ -210,6 +178,11 @@ public class TaskMissionFragment extends Fragment {
         mShaderPart.setVisibility(View.GONE);
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -220,18 +193,74 @@ public class TaskMissionFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        mThreadPool.submit(new RefreshThread());
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mUnbinder.unbind();
+        EventBus.getDefault().unregister(this);
+        mThreadPool.shutdownNow();
     }
 
     private void init() {
         mMainSpinner.setText(mMainArrayTask.get(0));
         mSortSpinner.setText(mSortArray.get(0));
+        mThreadPool = Executors.newCachedThreadPool();
+        initHandler();
         initRecyclerView();
     }
+
+
+    private void initHandler() {
+        mRefreshHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case REFRESH:
+                        mTaskListView.refreshComplete();
+                        if (isLoadedFromServer) {
+                            if (!hasMoreItems) {
+                                hasMoreItems = true;
+                                mTaskListView.setNoMore(true);
+                            } else {
+                                mTaskListView.setNoMore(false);
+                            }
+                        } else {
+                            mTaskListView.setNoMore(true);
+                        }
+                        mTasksInList = mUTaskManager.getTasksInList();
+                        mTaskListAdapter.updateDataSource(mTasksInList);
+                        if (mTasksInList.size() > 0) {
+                            mTaskListView.scrollToPosition(0);
+                        }
+                        break;
+                    case LOAD_MORE:
+                        mTaskListView.loadMoreComplete();
+                        if (!hasMoreItems) {
+                            mTaskListView.setNoMore(true);
+                        }
+                        mTaskListAdapter.addDataSource(mTasksInList);
+                        break;
+                    case ERROR:
+                        UServerAccessException e = (UServerAccessException) msg.obj;
+                        String error = e.getMessage();
+                        mTaskListView.refreshComplete();
+                        mTaskListView.loadMoreComplete();
+                        if (e.getStatus() != UServerAccessException.DATABASE_ERROR)
+                            Toast.makeText(getContext(), "网络异常：" + error, Toast.LENGTH_SHORT).show();
+                    default:
+                        break;
+                }
+            }
+        };
+    }
+
     private void initRecyclerView() {
-        mTasksInList = mUTaskManager.getTasksInList();
+        mThreadPool.submit(new RefreshFromFileThread());
+        mTasksInList = new ArrayList<>();
         mTaskListAdapter = new TaskListAdapter(getActivity(), mTasksInList);
         mTaskListAdapter.setHasStableIds(true);
         mTaskListView.setAdapter(mTaskListAdapter);
@@ -248,15 +277,15 @@ public class TaskMissionFragment extends Fragment {
                 startActivity(intent);
             }
         });
-        mTaskListView.setLoadingListener(new ecnu.uleda.view_controller.widgets.XRecyclerView.LoadingListener() {
+        mTaskListView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
-                new RefreshThread().start();
+                mThreadPool.submit(new RefreshThread());
             }
 
             @Override
             public void onLoadMore() {
-                new LoadMoreThread().start();
+                mThreadPool.submit(new LoadMoreThread());
             }
         });
     }
@@ -265,9 +294,10 @@ public class TaskMissionFragment extends Fragment {
         @Override
         public void run() {
             try {
-                mUTaskManager.refreshTaskInList();
+                mUTaskManager.refreshTaskInList(getContext());
                 Message message = new Message();
                 message.what = REFRESH;
+                isLoadedFromServer = true;
                 mRefreshHandler.sendMessage(message);
             } catch (UServerAccessException e) {
                 e.printStackTrace();
@@ -276,6 +306,16 @@ public class TaskMissionFragment extends Fragment {
                 message.obj = e;
                 mRefreshHandler.sendMessage(message);
             }
+        }
+    }
+
+    private class RefreshFromFileThread extends Thread {
+        @Override
+        public void run() {
+            mUTaskManager.refreshTaskInListFromFile(getContext());
+            Message message = new Message();
+            message.what = REFRESH;
+            mRefreshHandler.sendMessage(message);
         }
     }
 
@@ -297,6 +337,5 @@ public class TaskMissionFragment extends Fragment {
             mRefreshHandler.sendMessage(message);
         }
     }
-
 
 }

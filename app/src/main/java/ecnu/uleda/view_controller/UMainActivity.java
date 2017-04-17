@@ -8,10 +8,12 @@ import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.WindowManager;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import butterknife.BindView;
@@ -22,6 +24,7 @@ import ecnu.uleda.view_controller.taskfragment.TaskListFragment;
 import ecnu.uleda.view_controller.widgets.BottomBarLayout;
 import ecnu.uleda.view_controller.widgets.NoScrollViewPager;
 import io.rong.eventbus.EventBus;
+import io.rong.imageloader.utils.L;
 
 
 public class UMainActivity extends AppCompatActivity implements BottomBarLayout.OnLabelSelectedListener {
@@ -30,13 +33,17 @@ public class UMainActivity extends AppCompatActivity implements BottomBarLayout.
     BottomBarLayout mBottomBar;
 
     @BindView(R.id.main_view_pager)
-    NoScrollViewPager mViewPager;
+    RelativeLayout mViewPager;
 
     private static final String[] BOTTOM_LABELS = new String[]{"地图", "发布", "U圈", "消息", "我"};
     private static final int[] BOTTOM_ICONS = new int[]{R.drawable.ic_room_white_48dp,
             R.drawable.ic_create_white_48dp,R.drawable.ic_explore_white_48dp,
             R.drawable.ic_question_answer_white_48dp,R.drawable.ic_account_circle_white_48dp};
     private static UMainActivity sHolder;
+
+    private boolean[] isAdded = {true, false, false, false, false};
+    private int mLastPos = 0;
+
     public static void finishMainActivity(){
         if(sHolder!=null){
             sHolder.finish();
@@ -64,7 +71,9 @@ public class UMainActivity extends AppCompatActivity implements BottomBarLayout.
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
         }
-
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.main_view_pager, mFragments[0])
+                .commit();
         checkMapPermission();
     }
 
@@ -108,42 +117,41 @@ public class UMainActivity extends AppCompatActivity implements BottomBarLayout.
         mFragments[2] = new UCircleFragment();
         mFragments[3] = new MessageFragment();
         mFragments[4] = new UserInfoFragment();
-        FragmentManager fm = getSupportFragmentManager();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             //getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         }
-        mViewPager.setNoScroll(true);
-        mViewPager.setAdapter(new FragmentPagerAdapter(fm) {
-            @Override
-            public Fragment getItem(int position) {
-                return mFragments[position];
-            }
-
-            @Override
-            public int getCount() {
-                return mFragments.length;
-            }
-
-        });
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                mBottomBar.select(position);
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
-        mViewPager.setOffscreenPageLimit(5);
+//        mViewPager.setNoScroll(true);
+//        mViewPager.setAdapter(new FragmentPagerAdapter(fm) {
+//            @Override
+//            public Fragment getItem(int position) {
+//                return mFragments[position];
+//            }
+//
+//            @Override
+//            public int getCount() {
+//                return mFragments.length;
+//            }
+//
+//        });
+//        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+//            @Override
+//            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+//
+//            }
+//
+//            @Override
+//            public void onPageSelected(int position) {
+//                mBottomBar.select(position);
+//            }
+//
+//            @Override
+//            public void onPageScrollStateChanged(int state) {
+//
+//            }
+//        });
+//        mViewPager.setOffscreenPageLimit(5);
         mBottomBar.init(BOTTOM_LABELS, BOTTOM_ICONS);
         mBottomBar.setOnLabelSelectedListener(this);
     }
@@ -161,9 +169,17 @@ public class UMainActivity extends AppCompatActivity implements BottomBarLayout.
         }
     }
 
+
     //主Activity翻页
-    public void changeToView(int i) {
-        mViewPager.setCurrentItem(i);
+    public void changeToView(int pos) {
+//        mViewPager.setCurrentItem(i);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        if (!mFragments[pos].isAdded()) {
+            ft.hide(mFragments[mLastPos]).add(R.id.main_view_pager, mFragments[pos]).commit();
+        } else {
+            ft.hide(mFragments[mLastPos]).show(mFragments[pos]).commit();
+        }
+        mLastPos = pos;
     }
 
     @Override

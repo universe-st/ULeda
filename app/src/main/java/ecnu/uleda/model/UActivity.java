@@ -22,6 +22,16 @@ public class UActivity {
         this.content = content;
     }
 
+    public UActivity(String avatarUrl, String username, long releaseTime, String tag, String content,
+                     List<String> contentUrls) {
+        this.avatarUrl = avatarUrl;
+        this.username = username;
+        this.releaseTime = releaseTime;
+        this.tag = tag;
+        this.content = content;
+        this.contentUrls = contentUrls;
+    }
+
     public String getAvatarUrl() {
         return avatarUrl;
     }
