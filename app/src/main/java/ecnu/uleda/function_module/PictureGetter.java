@@ -25,9 +25,8 @@ public class PictureGetter{
     private Context mContext;
     private UserOperatorController mUoc=UserOperatorController.getInstance();
     private static WeakHashMap<Integer,Bitmap> sCache = new WeakHashMap<>();
-    public PictureGetter setContext(Context context){
+    public PictureGetter(Context context){
         mContext = context.getApplicationContext();
-        return this;
     }
     public Bitmap getPicture(int pictureId){
         Bitmap bitmap = getPictureFromRAM(pictureId);
