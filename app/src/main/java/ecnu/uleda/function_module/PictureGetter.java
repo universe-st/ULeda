@@ -7,10 +7,12 @@ import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.WeakHashMap;
 
 import ecnu.uleda.exception.UServerAccessException;
+import ecnu.uleda.tool.PictureTool;
 
 /**
  * Created by Shensheng on 2017/4/16.
@@ -18,16 +20,16 @@ import ecnu.uleda.exception.UServerAccessException;
  */
 
 public class PictureGetter{
-    private static final int SET_TIME_OUT = 9999;
     private static final String PREFIX="pic";
     private static final String POSTFIX=".png";
     private Context mContext;
+    private UserOperatorController mUoc=UserOperatorController.getInstance();
     private static WeakHashMap<Integer,Bitmap> sCache = new WeakHashMap<>();
     public PictureGetter setContext(Context context){
         mContext = context.getApplicationContext();
         return this;
     }
-    public Bitmap getPicture(int pictureId) throws UServerAccessException {
+    public Bitmap getPicture(int pictureId){
         Bitmap bitmap = getPictureFromRAM(pictureId);
         if(bitmap == null){
             bitmap = getPictureFromLocalFile(pictureId);
@@ -37,9 +39,33 @@ public class PictureGetter{
         }
         return bitmap;
     }
-    private Bitmap getPictureFromServer(int pictureId)throws UServerAccessException {
+    private boolean putPictureToLocal(int pictureId,Bitmap bitmap){
+        FileOutputStream fos=null;
+        try {
+            fos = mContext.openFileOutput(PREFIX + pictureId + POSTFIX, Context.MODE_PRIVATE);
+            bitmap.compress(Bitmap.CompressFormat.PNG,100,fos);
+            fos.close();
+            return true;
+        }catch (IOException e){
+            e.printStackTrace();
+            closeOutputStream(fos);
+            return false;
+        }
+    }
 
-        return null;
+    private Bitmap getPictureFromServer(int pictureId){
+        Bitmap bitmap = null;
+        try {
+            String str = ServerAccessApi.getPicture(mUoc.getId(), mUoc.getPassport(), pictureId);
+            bitmap = PictureTool.decodePic(str.trim());
+        }catch (UServerAccessException e){
+            e.printStackTrace();
+        }
+        if(bitmap != null){
+            putPictureToLocal(pictureId,bitmap);
+            sCache.put(pictureId,bitmap);
+        }
+        return bitmap;
     }
     private Bitmap getPictureFromRAM(int pictureId){
         return sCache.get(pictureId);
@@ -51,6 +77,7 @@ public class PictureGetter{
             fis = mContext.openFileInput(PREFIX+pictureId+POSTFIX);
             bitmap = BitmapFactory.decodeStream(fis);
             fis.close();
+            sCache.put(pictureId,bitmap);
         }catch (IOException e){
             e.printStackTrace();
             closeInputStream(fis);
@@ -87,6 +114,15 @@ public class PictureGetter{
         try{
             if(fis!=null) {
                 fis.close();
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+    private static void closeOutputStream(FileOutputStream fos){
+        try{
+            if(fos!=null) {
+                fos.close();
             }
         }catch (IOException e){
             e.printStackTrace();
