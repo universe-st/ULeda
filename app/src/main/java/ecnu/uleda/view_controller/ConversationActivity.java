@@ -31,9 +31,9 @@ public class ConversationActivity extends FragmentActivity {
         tvTitle.setText(title);
         String userId = SPUtil.getUserId("userId");
         if(targetId.equals("10086")){
-            tvTitle.setText("孙悟天");
+            tvTitle.setText("中国移动。");
         }else{
-            tvTitle.setText("特兰克斯");
+            tvTitle.setText("中国电信。");
         }
     }
 }

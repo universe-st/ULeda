@@ -39,8 +39,8 @@ public class MessageFragment extends Fragment {
     private List<Friend> userIdList;
 
 
-    private static final String token1 = "uFHTGcZMzSCSugxRmRA7lRf1AH3ArXbvLbNoacl+xLf5jFwBPsU0d+uBXWEKpLMlrv/cTWb4cdSdzE0shl1/oA==";
-    private static final String token2 = "0L3LhZvmEhmeY/O6z+jqkDdw425PLr6tFkyLhkSfXOmlDCw9tNfLfUcyTHdC9vWaTz2z6Hb0nwEYYnzkBXdBuw==";
+    private static final String token1 = "en8uP9E3+foeCzwKhzm4ctY5U+MiA2747EUqq9dOV5QN6r2825gocqPudjCjiYuoZR4U3zOOedoGNPs8Qy75MQ==";
+    private static final String token2 = "+kFtILEgPuQWdchTskz59CwGk6JFyJAXd9m6rCyu7HhOITfx+9XpsFJVo7dzv/jGw5oKenlEuJOqx9gxiMzaqA==";
 
 
     @Override
@@ -54,7 +54,7 @@ public class MessageFragment extends Fragment {
 //            /**
 //             * IMKit SDK调用第一步 初始化
 //             */
-            RongIM.init(this.getContext());
+//            RongIM.init(this.getContext());
 //
 //            }
 //        initUserInfo();

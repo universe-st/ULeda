@@ -40,9 +40,9 @@ public class FriendFragment extends Fragment {
         mLinearLayout=(LinearLayout)view.findViewById(R.id.line_friend);
         String userId = SPUtil.getUserId("userId");
         if("10086".equals(userId)){
-            mTextView.setText("特兰克斯");
+            mTextView.setText("中国电信");
         }else{
-            mTextView.setText("孙悟天");
+            mTextView.setText("中国移动");
         }
 
 //        mButtonBack.setOnClickListener(new View.OnClickListener(){

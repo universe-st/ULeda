@@ -44,8 +44,8 @@ public class MessageFragmentMessageFragment extends Fragment implements RongIM.U
     private Fragment mConversationFragment = null;
     private Fragment mConversationList;
     private String mUserid;
-    private static final String token1 = "4rnspHMw6ruF/ha//z5/YbDS8NWRd4boTj2Vy4QL3GdXZhpbxVBu95Rcuww/pJdcKLu+G5cq0LCM1uI9uTLY0A==";
-    private static final String token2 = "bugmIZWR5JGzPHNoNp47EEGFC6hW/OOiwJwgWU0oTvPK1cxi0MjsRwRj4jyW+UFZDt0alvCqoDsBSVHlDVJA1g==";
+    private static final String token1 = "en8uP9E3+foeCzwKhzm4ctY5U+MiA2747EUqq9dOV5QN6r2825gocqPudjCjiYuoZR4U3zOOedoGNPs8Qy75MQ==";
+    private static final String token2 = "+kFtILEgPuQWdchTskz59CwGk6JFyJAXd9m6rCyu7HhOITfx+9XpsFJVo7dzv/jGw5oKenlEuJOqx9gxiMzaqA==";
 
     private Button mButtonMessage;
     private Button mButtonContacts;
@@ -54,8 +54,8 @@ public class MessageFragmentMessageFragment extends Fragment implements RongIM.U
     private List<Friend> userIdList;
 
     //用户头像地址
-    private static final String imageUrl1 = "http://imgsrc.baidu.com/forum/w%3D580/sign=3d2c2974d0160924dc25a213e406359b/381d9b504fc2d5620ee49ecfe71190ef77c66ccd.jpg";
-    private static final String imageUrl2 = "http://hiphotos.baidu.com/%D2%B9_%BC%C5%BE%B2/pic/item/194f3e37d95d1b070b55a9f2.jpg";
+    private static final String imageUrl1 = "http://img0.imgtn.bdimg.com/it/u=1985715566,640089742&fm=23&gp=0.jpg";
+    private static final String imageUrl2 = "http://b.hiphotos.baidu.com/baike/w%3D268%3Bg%3D0/sign=9e1b2d588d82b9013dadc4354bb6ce4a/e4dde71190ef76c6f608fd549a16fdfaae5167f2.jpg";
 
     @Override
     public void onCreate(Bundle b){
@@ -65,8 +65,8 @@ public class MessageFragmentMessageFragment extends Fragment implements RongIM.U
         initViewAndData();
 
         this.userIdList = new ArrayList();
-        this.userIdList.add(new Friend("10010", "联通", "http://img4.imgtn.bdimg.com/it/u=2047908622,1571760504&fm=21&gp=0.jpg"));
-        this.userIdList.add(new Friend("10086", "移动", "http://img02.tooopen.com/Download/2010/5/22/20100522103223994012.jpg"));
+        this.userIdList.add(new Friend("10010", "中国电信", imageUrl1));
+        this.userIdList.add(new Friend("10086", "中国移动", imageUrl2));
         RongIM.setUserInfoProvider(this,true);
 
         connectServer(token1);
@@ -139,8 +139,8 @@ public class MessageFragmentMessageFragment extends Fragment implements RongIM.U
 
    public void initViewAndData(){
         userList = new ArrayList<>();
-        userList.add(new Friend("10086","特兰克斯",imageUrl1));
-        userList.add(new Friend("10010","孙悟天",imageUrl2));
+        userList.add(new Friend("10086","中国移动",imageUrl1));
+        userList.add(new Friend("10010","中国电信",imageUrl2));
 }
 
 
