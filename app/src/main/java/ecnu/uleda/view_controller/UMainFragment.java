@@ -330,6 +330,18 @@ public class UMainFragment extends Fragment implements View.OnTouchListener,View
         }
         super.onDestroy();
     }
+
+    public void pauseLocationUpdates() {
+        if (mLocationManager != null) {
+            mLocationManager.pauseLocationUpdates();
+        }
+    }
+
+    public void resumeLocationUpdates() {
+        if (mLocationManager != null) {
+            mLocationManager.resumeLocationUpdates();
+        }
+    }
     public MapView getMapView(){
         return mMapView;
     }

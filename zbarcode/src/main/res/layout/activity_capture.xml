@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <SurfaceView
         android:id="@+id/capture_preview"
@@ -13,7 +13,7 @@
     <RelativeLayout
         android:id="@+id/capture_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent">
 
         <ImageView
             android:id="@+id/capture_mask_top"
@@ -26,9 +26,9 @@
             android:id="@+id/capture_crop_view"
             android:layout_width="200dp"
             android:layout_height="200dp"
-            android:layout_centerHorizontal="true"
             android:layout_below="@id/capture_mask_top"
-            android:background="@drawable/qr_code_bg" >
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/qr_code_bg">
 
             <ImageView
                 android:id="@+id/capture_scan_line"
@@ -37,8 +37,8 @@
                 android:layout_alignParentTop="true"
                 android:layout_marginBottom="5dp"
                 android:layout_marginTop="5dp"
-                android:visibility="visible"
-                android:src="@drawable/scan_line" />
+                android:src="@drawable/scan_line"
+                android:visibility="visible" />
         </RelativeLayout>
 
         <ImageView
@@ -70,37 +70,19 @@
             android:background="@drawable/shadow" />
     </RelativeLayout>
 
-    <RelativeLayout
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:background="#DD5A44"
-
-        >
-
-        <ImageButton
-            android:id="@+id/scan_back"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginTop="29dp"
-            android:background="#00000000"
-            android:src="@drawable/back"
-            />
-
+        android:layout_height="?android:attr/actionBarSize"
+        app:navigationIcon="@drawable/ic_chevron_left_white_36dp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="29dp"
+            android:layout_gravity="center"
             android:text="扫描二维码"
-            android:textSize="20dp"
             android:textColor="#FDFDFD"
-           />
+            android:textSize="20dp" />
 
-    </RelativeLayout>
-
-
+    </android.support.v7.widget.Toolbar>
 
 </RelativeLayout>

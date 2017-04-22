@@ -53,6 +53,11 @@ dependencies {
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.github.loonggg:RecyclerViewBanner:v1.2.1'
     compile 'org.greenrobot:eventbus:3.0.0'
+
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+
+    compile project(':zbarcode')
+    compile 'com.google.code.gson:gson:2.8.0'
+
 }

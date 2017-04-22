@@ -15,6 +15,7 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:background="@drawable/background"
+        android:paddingTop="25dp"
         android:scaleType="matrix">
 
         <ImageButton
@@ -37,6 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/icon"
             android:layout_centerHorizontal="true"
+            android:layout_marginTop="14dp"
             android:textColor="#FFF"
             android:textSize="17sp" />
 
@@ -233,10 +235,8 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/r1"
-        android:orientation="vertical"
         android:layout_marginTop="87dp"
-        android:divider="@drawable/horizontal_divider_inset_left"
-        android:showDividers="middle">
+        android:orientation="vertical">
 
 
         <TextView
@@ -247,23 +247,22 @@
             android:drawableLeft="@drawable/ic_person_grey600_48dp"
             android:drawablePadding="16dp"
             android:gravity="center_vertical"
-            android:paddingBottom="8dp"
+            android:paddingBottom="12dp"
             android:paddingLeft="8dp"
-            android:paddingTop="8dp"
+            android:paddingTop="12dp"
             android:text="我的信息" />
-
 
         <TextView
             android:id="@+id/my_money_bag"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/selectable_item_main"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
             android:drawableLeft="@drawable/ic_credit_grey600_48dp"
             android:drawablePadding="16dp"
             android:gravity="center_vertical"
+            android:paddingBottom="12dp"
             android:paddingLeft="8dp"
+            android:paddingTop="12dp"
             android:text="我的积分" />
 
 
@@ -272,12 +271,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/selectable_item_main"
-            android:paddingLeft="8dp"
-            android:paddingBottom="8dp"
-            android:paddingTop="8dp"
             android:drawableLeft="@drawable/ic_camera_grey600_48dp"
-            android:gravity="center_vertical"
             android:drawablePadding="16dp"
+            android:gravity="center_vertical"
+            android:paddingBottom="12dp"
+            android:paddingLeft="8dp"
+            android:paddingTop="12dp"
             android:text="我的二维码" />
 
 
@@ -286,13 +285,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/selectable_item_main"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
             android:drawableLeft="@drawable/ic_mood_grey600_48dp"
-            android:gravity="center_vertical"
             android:drawablePadding="16dp"
+            android:gravity="center_vertical"
+            android:paddingBottom="12dp"
             android:paddingLeft="8dp"
+            android:paddingTop="12dp"
             android:text="咨询客服" />
     </LinearLayout>
+
 
 </RelativeLayout>

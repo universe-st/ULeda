@@ -79,12 +79,11 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
         } else {
             holder.mAvatar.displayImage(task.getAvatar());
         }
-//        holder.mTvType.setText(task.getTag().substring(0, 2));
         holder.mTvPublisherName.setText(task.getAuthorUserName());
         holder.mTvStars.setText(task.getStarString());
         holder.mTvInfo.setText(task.getTitle());
         holder.mTvTaskReward.setText(String.format(Locale.ENGLISH, "¥ %.2f", task.getPrice()));
-        holder.mTvTimeLimit.setText("截止至 " + UPublicTool.parseTime(task.getLeftTime()));
+        holder.mTvTimeLimit.setText(UPublicTool.parseTime(task.getLeftTime()));
         holder.mTvType.setText(task.getTag().substring(0, 2));
         holder.mTvFromAndTo.setText(getFromTo(task));
         holder.mTvTakesCount.setText(task.getTakersCount() + "人接单");
@@ -162,13 +161,13 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
             super(itemView);
             ButterKnife.bind(this, itemView);
             this.itemView = itemView;
-            Typeface roboto = Typeface.createFromAsset(mContext.getAssets(), "Roboto-Light.ttf");
-            mTvPublisherName.setTypeface(roboto);
-            mTvTimeLimit.setTypeface(roboto);
-            mTvFromAndTo.setTypeface(roboto);
-            mTvTakesCount.setTypeface(roboto);
-            mTvTaskReward.setTypeface(roboto);
-            mTvType.setTypeface(roboto);
+//            Typeface roboto = Typeface.createFromAsset(mContext.getAssets(), "Roboto-Light.ttf");
+//            mTvPublisherName.setTypeface(roboto);
+//            mTvTimeLimit.setTypeface(roboto);
+////            mTvFromAndTo.setTypeface(roboto);
+//            mTvTakesCount.setTypeface(roboto);
+//            mTvTaskReward.setTypeface(roboto);
+//            mTvType.setTypeface(roboto);
         }
     }
 

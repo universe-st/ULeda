@@ -193,16 +193,11 @@ public class TaskMissionFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        mThreadPool.submit(new RefreshThread());
-    }
-
-    @Override
     public void onDestroyView() {
         super.onDestroyView();
         EventBus.getDefault().unregister(this);
         mThreadPool.shutdownNow();
+        mUnbinder.unbind();
     }
 
     private void init() {
@@ -258,8 +253,12 @@ public class TaskMissionFragment extends Fragment {
         };
     }
 
+
     private void initRecyclerView() {
-        mThreadPool.submit(new RefreshFromFileThread());
+        if (mUTaskManager.getTasksInList() == null || mUTaskManager.getTasksInList().size() == 0) {
+            mThreadPool.submit(new RefreshFromFileThread());
+        }
+        mThreadPool.submit(new RefreshThread());
         mTasksInList = new ArrayList<>();
         mTaskListAdapter = new TaskListAdapter(getActivity(), mTasksInList);
         mTaskListAdapter.setHasStableIds(true);
