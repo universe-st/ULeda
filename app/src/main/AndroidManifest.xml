@@ -51,7 +51,8 @@
         </activity>
         <activity
             android:name=".view_controller.TaskDetailsActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/UMainTheme"/>
         <activity android:name=".view_controller.SettingActivity"/>
         <activity android:name=".view_controller.SingleUserInfoActivity"/>
         <activity android:name=".view_controller.SettingUserActivity"/>
@@ -75,7 +76,6 @@
         <activity android:name=".view_controller.Chart"/>
         <activity android:name=".view_controller.ReleasedUcircleActivity">
         </activity>
-        <activity android:name=".view_controller.MipcaActivityCapture"/>
         <provider
             android:name=".function_module.PhotoFileProvider"
             android:authorities="com.example.cameraalbumtest.fileprovider"

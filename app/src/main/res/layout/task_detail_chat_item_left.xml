@@ -1,49 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-                android:background="@android:color/white"
-              android:layout_width="match_parent"
-                android:paddingTop="20dp"
-                android:paddingBottom="20dp"
-              android:layout_height="70dp">
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/task_detail_chat_item_circle"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="start"
-            android:src="@drawable/user"
-            android:layout_alignParentLeft="true"/>
-        <TextView
-            android:id="@+id/name_of_chatter"
-            android:textColor="@android:color/darker_gray"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="name"
-            android:layout_alignParentLeft="true"
-            android:paddingLeft="8dp"
-            android:gravity="center"
-            android:layout_below="@id/task_detail_chat_item_circle"/>
-        <TextView
-            android:id="@+id/say_what"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/black"
-            android:text="Hello world!"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="10dp"
-            android:paddingTop="10dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:paddingBottom="10dp"
-            android:background="@color/colorULightGray"
-            android:gravity="start|center_vertical"
-            android:layout_toRightOf="@id/task_detail_chat_item_circle"/>
-        <TextView
-            android:id="@+id/time_before"
-            android:layout_width="wrap_content"
-            android:textColor="@android:color/darker_gray"
-            android:layout_height="wrap_content"
-            android:text="1小时前"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"/>
-</RelativeLayout>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white">
+
+    <me.xiaopan.sketch.SketchImageView
+        android:id="@+id/task_detail_chat_item_circle"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="12dp"
+        android:src="@drawable/user"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/name_of_chatter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="12dp"
+        android:gravity="center"
+        android:text="name"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toRightOf="@id/task_detail_chat_item_circle"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/say_what"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:layout_marginTop="6dp"
+        android:gravity="right|center_vertical"
+        android:text="Hello world!"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@id/name_of_chatter"
+        app:layout_constraintTop_toBottomOf="@id/name_of_chatter" />
+
+    <TextView
+        android:id="@+id/time_before"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="16dp"
+        android:text="1小时前"
+        android:textColor="@android:color/darker_gray"
+        app:layout_constraintBaseline_toBaselineOf="@+id/name_of_chatter"
+        app:layout_constraintRight_toRightOf="parent" />
+</android.support.constraint.ConstraintLayout>
