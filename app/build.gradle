@@ -37,6 +37,10 @@ dependencies {
     compile files('libs/TencentSearch1.1.3.jar')
     compile project(':IMKit')
     compile project(':zbarcode')
+
+
+    compile project(':zbarcode')
+
     compile 'com.android.support:appcompat-v7:25.2.0'
     compile 'com.android.support:support-v4:25.2.0'
     compile 'com.android.support:design:25.2.0'
@@ -53,11 +57,7 @@ dependencies {
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.github.loonggg:RecyclerViewBanner:v1.2.1'
     compile 'org.greenrobot:eventbus:3.0.0'
-
+    compile 'com.google.code.gson:gson:2.8.0'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
-
-    compile project(':zbarcode')
-    compile 'com.google.code.gson:gson:2.8.0'
-
 }
