@@ -12,6 +12,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -134,6 +135,7 @@ public class TaskPostActivity extends AppCompatActivity {
         int data=intent.getIntExtra(EXTRA_POST_TYPE,1);
         switch (data){
             case TaskPostActivity.TYPE_TASK:{
+                mTvMainTitle.setText("发布任务");
                 mLlProDescription.setVisibility(View.GONE);
                 mLlSponsor.setVisibility(View.GONE);
                 mLlMajor.setVisibility(View.GONE);
@@ -248,9 +250,9 @@ public class TaskPostActivity extends AppCompatActivity {
         mLlProDescription=(LinearLayout)findViewById( R.id.task_post_project_details_option);
 
 
-
-
-
+        LinearLayout a=(LinearLayout) findViewById(R.id.task_post_padding);
+        ViewGroup.LayoutParams lp = a.getLayoutParams();
+        lp.height = UPublicTool.getStatusBarHeight(this);
 
 
         buttonStart = (Button) findViewById(R.id.button_task_post_start);

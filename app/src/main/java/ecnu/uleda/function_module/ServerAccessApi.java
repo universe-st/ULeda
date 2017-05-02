@@ -477,6 +477,37 @@ public class ServerAccessApi {
             throw new UServerAccessException(response.getRet());
         }
     }
+    public static String getPicture(@NonNull String id,@NonNull String passport,int picId)throws UServerAccessException{
+        PhalApiClient client = createClient();
+        PhalApiClientResponse response = client
+                .withService("Picture.GetPicture")
+                .withParams("picId",String.valueOf(picId))
+                .withParams("id",id)
+                .withParams("passport",passport)
+                .withTimeout(SET_TIME_OUT)
+                .request();
+        if(response.getRet() == 200){
+            return response.getData();
+        }else{
+            throw new UServerAccessException(response.getRet());
+        }
+    }
+    public static String uploadAvatar(@NonNull String id,@NonNull String passport,@NonNull String picture)throws UServerAccessException{
+        id=UrlEncode(id);
+        passport = UrlEncode(passport);
+        picture = UrlEncode(picture);
+        PhalApiClient client = createClient();
+        PhalApiClientResponse response= client.withService("Picture.UploadAvatar")
+                .withParams("id",id)
+                .withParams("passport",passport)
+                .withParams("pic",picture)
+                .request();
+        if(response.getRet() == 200){
+            return response.getData();
+        }else{
+            throw new UServerAccessException(response.getRet());
+        }
+    }
     public static String unfollowUser(@NonNull String id,@NonNull String passport,@NonNull String unfollowByID)throws UServerAccessException{
         id=UrlEncode(id);
         passport=UrlEncode(passport);
