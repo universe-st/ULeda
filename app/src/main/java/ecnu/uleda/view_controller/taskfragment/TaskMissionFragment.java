@@ -242,8 +242,11 @@ public class TaskMissionFragment extends Fragment {
                     case ERROR:
                         UServerAccessException e = (UServerAccessException) msg.obj;
                         String error = e.getMessage();
-                        mTaskListView.refreshComplete();
-                        mTaskListView.loadMoreComplete();
+                        // 一个只出现过一次后来没法复现的诡异空指针bug,在此加个判断
+                        if (mTaskListView != null) {
+                            mTaskListView.refreshComplete();
+                            mTaskListView.loadMoreComplete();
+                        }
                         if (e.getStatus() != UServerAccessException.DATABASE_ERROR)
                             Toast.makeText(getContext(), "网络异常：" + error, Toast.LENGTH_SHORT).show();
                     default:

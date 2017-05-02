@@ -116,14 +116,13 @@ public class UTaskManager {
                             .setAuthorUserName(j.getString("authorUsername"))
                             .setAuthorCredit(j.getInt("authorCredit"))
                             .setPostID(j.getString("postID"))
-                            .setActiveTime(j.getLong("activetime"));
+                            .setActiveTime(j.getLong("activetime"))
+                            .setTakersCount(j.getInt("taker_count"));
                     // TODO 匡神接口做好以后去掉 try catch
                     try {
-                        task.setAvatar(j.getString("avatar"))
-                                .setTakersCount(j.getInt("takersCount"));
+                        task.setAvatar(j.getString("avatar"));
                     } catch (JSONException e) {
-                        task.setAvatar("xiaohong.jpg")
-                                .setTakersCount(10);
+                        task.setAvatar("xiaohong.jpg");
                     }
                     mTasksInList.add(task);
                 }
@@ -309,6 +308,21 @@ public class UTaskManager {
             System.exit(1);
         }
     }
+
+    public boolean getTakersInfo(int postId) throws UServerAccessException {
+        mUOC = UserOperatorController.getInstance();
+        if (!mUOC.getIsLogined()) {
+            throw new UServerAccessException(UServerAccessException.UN_LOGIN);
+        } else {
+            String result = ServerAccessApi.getTakers(
+                    mUOC.getId(),
+                    mUOC.getPassport(),
+                    String.valueOf(postId));
+
+        }
+        return false;
+    }
+
 
     public void waitRefreshTasksInMap() throws UServerAccessException {
         long time = System.currentTimeMillis();

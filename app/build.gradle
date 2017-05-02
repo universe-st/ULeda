@@ -56,4 +56,5 @@ dependencies {
     compile 'org.greenrobot:eventbus:3.0.0'
     compile project(':zbarcode')
     compile 'com.google.code.gson:gson:2.8.0'
+    compile 'com.android.support:palette-v7:25.3.1'
 }
