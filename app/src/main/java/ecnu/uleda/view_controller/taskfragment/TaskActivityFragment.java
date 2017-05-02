@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 
 import org.greenrobot.eventbus.EventBus;
@@ -39,6 +40,7 @@ import me.xiaopan.sketch.SketchImageView;
 
 public class TaskActivityFragment extends Fragment implements StickyNavLayout.OnRefreshListener {
 
+    private static final long BANNER_INTERVAL = 3000;
     private static final String[] TYPES = {"全部", "运动", "社团", "公益"};
     private static final int MESSAGE_REFRESH_COMPLETE = 0x110;
     private Unbinder mUnbinder;
@@ -101,6 +103,7 @@ public class TaskActivityFragment extends Fragment implements StickyNavLayout.On
                 switch (msg.what) {
                     case MESSAGE_REFRESH_COMPLETE:
                         mContainer.refreshComplete();
+                        mBanner.startScrolling(BANNER_INTERVAL);
                         break;
                 }
             }
@@ -155,18 +158,6 @@ public class TaskActivityFragment extends Fragment implements StickyNavLayout.On
         titles.add("title 1");
         titles.add("title 2");
         titles.add("title 3");
-//        for (int i = 0; i < 4; i++) {
-//            datas.add(i + "");
-//        }
-//        mBanner.setRvBannerData(datas);
-//        mBanner.setOnSwitchRvBannerListener(new RecyclerViewBanner.OnSwitchRvBannerListener() {
-//            private final int[] res = {R.drawable.img1, R.drawable.img2, R.drawable.img3,
-//            R.drawable.img2};
-//            @Override
-//            public void switchBanner(int i, AppCompatImageView appCompatImageView) {
-//                appCompatImageView.setImageResource(res[i]);
-//            }
-//        });
         mBanner.setHolder(new BannerView.Holder<Integer>(datas) {
             @Override
             public View getView(final int pos, Integer item) {
@@ -180,8 +171,8 @@ public class TaskActivityFragment extends Fragment implements StickyNavLayout.On
                 if (swatch == null) {
                     swatch = palette.getDarkMutedSwatch();
                 }
-                mTitleBgColors[pos] = swatch == null ? 0xaa777777 : swatch.getRgb();
-                mTitleTextColors[pos] = swatch == null ? 0xffffffff : swatch.getTitleTextColor();
+                mTitleBgColors[pos] = swatch == null ? BannerView.DEFAULT_TITLE_BG : swatch.getRgb();
+                mTitleTextColors[pos] = swatch == null ? BannerView.DEFAULT_TITLE_TEXT_COLOR : swatch.getTitleTextColor();
                 imageView.setImageBitmap(bm);
                 return imageView;
             }
@@ -205,6 +196,11 @@ public class TaskActivityFragment extends Fragment implements StickyNavLayout.On
             public int getTitleTextColor(int pos) {
                 return mTitleTextColors[pos];
             }
+
+            @Override
+            public void onItemClicked(int pos, View v) {
+                Toast.makeText(getContext(), "点击了banner " + pos, Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
@@ -215,7 +211,20 @@ public class TaskActivityFragment extends Fragment implements StickyNavLayout.On
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        mBanner.startScrolling(BANNER_INTERVAL);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mBanner.stopScrolling();
+    }
+
+    @Override
     public void onRefresh() {
+        mBanner.stopScrolling();
         new Thread(new Runnable() {
             @Override
             public void run() {

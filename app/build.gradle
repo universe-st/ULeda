@@ -5,7 +5,7 @@ android {
     buildToolsVersion '25.0.0'
     defaultConfig {
         applicationId "ecnu.uleda"
-        minSdkVersion 15
+        minSdkVersion 21
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"
@@ -56,5 +56,5 @@ dependencies {
     compile 'org.greenrobot:eventbus:3.0.0'
     compile project(':zbarcode')
     compile 'com.google.code.gson:gson:2.8.0'
-    compile 'com.android.support:palette-v7:25.3.1'
+    compile 'com.android.support:palette-v7:25.2.0'
 }

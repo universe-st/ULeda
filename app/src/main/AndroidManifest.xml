@@ -75,7 +75,9 @@
         <activity android:name=".view_controller.SettingUserPhoneActivity"/>
         <activity android:name=".view_controller.Mywallet_RechargeActivity"/>
         <activity android:name=".view_controller.PopupwindowActivity"/>
-        <activity android:name=".view_controller.TaskPostActivity"/>
+        <activity android:name=".view_controller.TaskPostActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/UMainTheme"/>
         <activity android:name=".view_controller.LocationListActivity"/>
         <activity android:name=".view_controller.Community"/>
         <activity android:name=".view_controller.GetBackByNumber"/>

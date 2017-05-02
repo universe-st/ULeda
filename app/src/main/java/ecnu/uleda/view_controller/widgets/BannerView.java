@@ -4,6 +4,9 @@ import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
@@ -11,15 +14,17 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import ecnu.uleda.tool.UPublicTool;
 
@@ -29,6 +34,9 @@ import ecnu.uleda.tool.UPublicTool;
  */
 
 public class BannerView extends FrameLayout {
+
+    public static final int DEFAULT_TITLE_BG = 0xaa777777;
+    public static final int DEFAULT_TITLE_TEXT_COLOR = 0xffffffff;
 
     private Holder mHolder;
     private BannerAdapter mAdapter;
@@ -42,11 +50,14 @@ public class BannerView extends FrameLayout {
     private int mCurrentBg;
     private int mCurrentTextColor;
 
+//    private OnItemClickedListener mListener;
+
     private boolean isInited = false;
-    private boolean isDragging = false;
-    private float mLastX;
-    private float mLastY;
-    private int mTouchSlop;
+
+    private Timer mTimer;
+    private TimerTask mTask;
+    private Handler mHandler;
+    private long mInterval;
 
     public BannerView(Context context) {
         this(context, null);
@@ -54,7 +65,6 @@ public class BannerView extends FrameLayout {
 
     public BannerView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         mPager = new ViewPager(getContext());
         addView(mPager, 0, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
@@ -63,13 +73,18 @@ public class BannerView extends FrameLayout {
     public void setHolder(Holder holder) {
         if (holder != null && holder.mDatas != null && holder.mDatas.size() > 0) {
             mHolder = holder;
-            mPager.setAdapter(mAdapter = new BannerAdapter(mHolder, mTitleView, mPager));
+            mPager.setAdapter(mAdapter = new BannerAdapter(mHolder));
             mPager.setOffscreenPageLimit(mHolder.mDatas.size() + 2);
             init();
 
             if (mHolder.showTitles()) {
                 mTitleView = new TextView(getContext());
-
+                mTitleView.setOnTouchListener(new OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        return false;
+                    }
+                });
                 mTitleView.setText(mHolder.getTitle(1));
                 mTitleView.setTextSize(16);
                 mTitleView.setMaxLines(1);
@@ -81,15 +96,18 @@ public class BannerView extends FrameLayout {
                         ViewGroup.LayoutParams.WRAP_CONTENT);
                 lp.gravity = Gravity.BOTTOM;
                 addView(mTitleView, 1, lp);
-//                mCurrentBg = mHolder.getTitleBackgroundColor(0);
                 if (mCurrentBg > 0) {
                     mTitleView.setBackgroundColor(mCurrentBg);
                 } else {
-                    mTitleView.setBackgroundColor(0xaa777777);
+                    mTitleView.setBackgroundColor(DEFAULT_TITLE_BG);
                 }
             }
         }
     }
+
+//    public void setOnItemClickedListener(OnItemClickedListener listener) {
+//        mListener = listener;
+//    }
 
     private void init() {
         mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -101,14 +119,13 @@ public class BannerView extends FrameLayout {
             @TargetApi(Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onPageSelected(final int position) {
-
                 if (mTitleView != null) {
                     int realPos = mAdapter.getRealPosition(position);
                     mTitleView.setText(mHolder.getTitle(realPos));
                     int newTitleBg = mHolder.getTitleBgColor(mAdapter.getRealPosition(position)) == 0 ?
-                            0xaa777777 : mHolder.getTitleBgColor(mAdapter.getRealPosition(position));
+                            DEFAULT_TITLE_BG : mHolder.getTitleBgColor(mAdapter.getRealPosition(position));
                     int newTitleTextColor = mHolder.getTitleTextColor(mAdapter.getRealPosition(position)) == 0 ?
-                            0xffffffff : mHolder.getTitleTextColor(mAdapter.getRealPosition(position));
+                            DEFAULT_TITLE_TEXT_COLOR : mHolder.getTitleTextColor(mAdapter.getRealPosition(position));
                     if (mBgAnimator != null && mBgAnimator.isRunning()) {
                         mBgAnimator.cancel();
                     }
@@ -164,21 +181,68 @@ public class BannerView extends FrameLayout {
                 return true;
             }
         });
+        mHandler = new AutoScrollHandler(mPager);
+    }
+
+    private void startTimer() {
+        mTimer = new Timer();
+        mTask = new TimerTask() {
+            @Override
+            public void run() {
+                mHandler.sendEmptyMessage(0x110);
+            }
+        };
+        mTimer.schedule(mTask, mInterval, mInterval);
+    }
+
+    private void stopTimer() {
+        if (mTimer != null) {
+            mTimer.cancel();
+            mTimer = null;
+            mTask = null;
+        }
+    }
+
+    public void startScrolling(long interval) {
+        mInterval = interval;
+        startTimer();
+    }
+
+    public void stopScrolling() {
+        stopTimer();
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        int action = event.getAction();
+        if (action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_UP) {
+            startTimer();
+        } else {
+            stopTimer();
+        }
+        return super.dispatchTouchEvent(event);
     }
 
     private static class BannerAdapter extends PagerAdapter {
 
         private WeakReference<Holder> mReferenceHolder;
 
-        public BannerAdapter(Holder holder, TextView tv, ViewPager pager) {
+        public BannerAdapter(Holder holder) {
             mReferenceHolder = new WeakReference<>(holder);
         }
 
         @Override
         public Object instantiateItem(ViewGroup container, final int position) {
-            View contentView = mReferenceHolder.get().getView(getRealPosition(position),
+            final View contentView = mReferenceHolder.get().getView(getRealPosition(position),
                     mReferenceHolder.get().mDatas.get(getRealPosition(position)));
             container.addView(contentView);
+            contentView.setTag(position);
+            contentView.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mReferenceHolder.get().onItemClicked((Integer) contentView.getTag(), v);
+                }
+            });
             return contentView;
         }
 
@@ -208,35 +272,6 @@ public class BannerView extends FrameLayout {
         }
     }
 
-    @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
-        int action = ev.getAction();
-        float x = ev.getX();
-        float y = ev.getY();
-        switch (action) {
-            case MotionEvent.ACTION_DOWN:
-                mLastX = x;
-                mLastY = y;
-                break;
-            case MotionEvent.ACTION_MOVE:
-                float dx = x - mLastX;
-                float dy = y - mLastY;
-                if (isDragging) break;
-                if (Math.abs(dx * dx + dy * dy) > mTouchSlop) {
-                    isDragging = true;
-                    if (Math.abs(dx) * 2 > Math.abs(dy)) {
-                        return true;
-                    }
-                }
-                break;
-            case MotionEvent.ACTION_CANCEL:
-            case MotionEvent.ACTION_UP:
-                isDragging = false;
-                break;
-        }
-        return super.onInterceptTouchEvent(ev);
-    }
-
     public static abstract class Holder<T> {
         private List<T> mDatas;
 
@@ -253,5 +288,27 @@ public class BannerView extends FrameLayout {
         public abstract int getTitleBgColor(int pos);
 
         public abstract int getTitleTextColor(int pos);
+
+        public abstract void onItemClicked(int pos, View v);
     }
+
+    private static class AutoScrollHandler extends Handler {
+
+        private WeakReference<ViewPager> mReferencePager;
+
+        public AutoScrollHandler(ViewPager pager) {
+            super(Looper.getMainLooper());
+            mReferencePager = new WeakReference<>(pager);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            mReferencePager.get().setCurrentItem(mReferencePager.get().getCurrentItem() + 1);
+        }
+    }
+
+//    interface OnItemClickedListener {
+//        void OnItemClicked(int pos, View v);
+//    }
 }

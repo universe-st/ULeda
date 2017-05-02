@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:weightSum="103">
+    android:weightSum="93">
 
     <!--<LinearLayout-->
         <!--android:layout_width="match_parent"-->
@@ -16,8 +16,7 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/title_wrapper"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="10"
+        android:layout_height="?android:attr/actionBarSize"
         android:background="@color/colorUMain">
 
 
@@ -51,19 +50,13 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
-        <TextView
+        <ImageButton
             android:id="@+id/task_post"
             android:layout_width="wrap_content"
-            android:layout_height="39dp"
-            android:layout_gravity="right"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:gravity="right|center_vertical"
-            android:paddingLeft="12dp"
-            android:text="＋"
-            android:layout_marginRight="8dp"
-            android:textColor="@android:color/white"
-            android:textSize="22sp"
+            android:layout_marginRight="12dp"
+            android:src="@drawable/ic_add_white_48dp"
             app:layout_constraintHorizontal_weight="1"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
