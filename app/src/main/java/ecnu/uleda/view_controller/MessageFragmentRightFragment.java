@@ -45,8 +45,8 @@ public class MessageFragmentRightFragment extends Fragment{
             @Override
             public void onItemClick(AdapterView<?> parent,View view,int position,long id){
                 Contacts contacts=contastsList.get(position);
-                Toast.makeText(view.getContext(),"别急呀～",Toast.LENGTH_SHORT).show();
-                replaceFragment(mfragment);
+                Toast.makeText(view.getContext(),"别急呀～转啥界面？",Toast.LENGTH_SHORT).show();
+//                replaceFragment(mfragment);
             }
         });
         return view;
@@ -67,11 +67,11 @@ public class MessageFragmentRightFragment extends Fragment{
         }
     }
 
-    private void replaceFragment(Fragment fragment) {
-        FragmentManager fragmentManager = getFragmentManager();//getSupportFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.message_fragment_layout,fragment);
-        transaction.commit();
-    }
+//    private void replaceFragment(Fragment fragment) {
+//        FragmentManager fragmentManager = getFragmentManager();//getSupportFragmentManager();
+//        FragmentTransaction transaction = fragmentManager.beginTransaction();
+//        transaction.replace(R.id.message_fragment_layout,fragment);
+//        transaction.commit();
+//    }
 
 }

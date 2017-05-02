@@ -103,8 +103,8 @@ public class MessageFragmentLeftFragment extends Fragment{
         FragmentManager fragmentManager = getFragmentManager();//getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.message_fragment_layout,fragment);
+        transaction.addToBackStack(null);
         transaction.commit();
     }
-
 
 }
