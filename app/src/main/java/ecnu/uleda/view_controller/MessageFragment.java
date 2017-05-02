@@ -3,6 +3,7 @@ package ecnu.uleda.view_controller;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -37,10 +38,13 @@ public class MessageFragment extends Fragment {
     private Fragment mFragmentContacts;
     private Context mContext;
     private List<Friend> userIdList;
+    private Button mButtonLeft;
+    private Button mButtonRight;
+    private Fragment mFragmentLeft;
+    private Fragment mFragmentRight;
 
-
-    private static final String token1 = "en8uP9E3+foeCzwKhzm4ctY5U+MiA2747EUqq9dOV5QN6r2825gocqPudjCjiYuoZR4U3zOOedoGNPs8Qy75MQ==";
-    private static final String token2 = "+kFtILEgPuQWdchTskz59CwGk6JFyJAXd9m6rCyu7HhOITfx+9XpsFJVo7dzv/jGw5oKenlEuJOqx9gxiMzaqA==";
+//    private static final String token1 = "en8uP9E3+foeCzwKhzm4ctY5U+MiA2747EUqq9dOV5QN6r2825gocqPudjCjiYuoZR4U3zOOedoGNPs8Qy75MQ==";
+//    private static final String token2 = "+kFtILEgPuQWdchTskz59CwGk6JFyJAXd9m6rCyu7HhOITfx+9XpsFJVo7dzv/jGw5oKenlEuJOqx9gxiMzaqA==";
 
 
     @Override
@@ -72,22 +76,29 @@ public class MessageFragment extends Fragment {
         mActivity = getActivity();
         View view = inflater.inflate(R.layout.message_fragment,container,false);
 
-        mButtonMessage= (Button) view.findViewById(R.id.button_message);
-        mButtonContacts= (Button) view.findViewById(R.id.button_contacts);
-        mFragmentMessage=new MessageFragmentMessageFragment();
-        mFragmentContacts=new FriendFragment();
+//        mButtonMessage= (Button) view.findViewById(R.id.button_message);
+//        mButtonContacts= (Button) view.findViewById(R.id.button_contacts);
 
+        mButtonLeft= (Button) view.findViewById(R.id.button_message);
+        mButtonRight= (Button) view.findViewById(R.id.button_contacts);
 
-        mButtonMessage.setOnClickListener(new View.OnClickListener(){
+//        mFragmentMessage=new MessageFragmentMessageFragment();
+//        mFragmentContacts=new FriendFragment();
+
+        mFragmentLeft=new MessageFragmentLeftFragment();
+        mFragmentRight=new MessageFragmentRightFragment();
+
+        mButtonLeft.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                replaceFragment1(mFragmentMessage);
+                replaceFragment1(mFragmentLeft);
+//                backgroundChanged(mButtonLeft);
             }
         });
-        mButtonContacts.setOnClickListener(new View.OnClickListener(){
+        mButtonRight.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                replaceFragment2(mFragmentContacts);
+                replaceFragment2(mFragmentRight);
             }
         });
 
@@ -97,33 +108,36 @@ public class MessageFragment extends Fragment {
     private void replaceFragment1(Fragment fragment) {
         FragmentManager fragmentManager = getFragmentManager();//getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.message_fragment_layout,mFragmentMessage);
+        transaction.replace(R.id.message_fragment_layout,fragment);
         transaction.commit();
     }
     private void replaceFragment2(Fragment fragment) {
         FragmentManager fragmentManager = getFragmentManager();//getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.message_fragment_layout,mFragmentContacts);
+        transaction.replace(R.id.message_fragment_layout,fragment);
         transaction.commit();
-
     }
+//    private void backgroundChanged(Button mButton){
+//        mButton.setBackgroundColor(Color.parseColor("#8f1515"));
+//
+//    }
 
-    public static String getCurProcessName(Context context) {
-
-        int pid = android.os.Process.myPid();
-
-        ActivityManager activityManager = (ActivityManager) context
-                .getSystemService(Context.ACTIVITY_SERVICE);
-
-        for (ActivityManager.RunningAppProcessInfo appProcess : activityManager
-                .getRunningAppProcesses()) {
-
-            if (appProcess.pid == pid) {
-                return appProcess.processName;
-            }
-        }
-        return null;
-    }
+//    public static String getCurProcessName(Context context) {
+//
+//        int pid = android.os.Process.myPid();
+//
+//        ActivityManager activityManager = (ActivityManager) context
+//                .getSystemService(Context.ACTIVITY_SERVICE);
+//
+//        for (ActivityManager.RunningAppProcessInfo appProcess : activityManager
+//                .getRunningAppProcesses()) {
+//
+//            if (appProcess.pid == pid) {
+//                return appProcess.processName;
+//            }
+//        }
+//        return null;
+//    }
 //
 //    private void connectRongServer(String token) {
 //
