@@ -18,6 +18,7 @@ import ecnu.uleda.model.Msg;
 
 /**
  * Created by zhaoning on 2017/5/2.
+ * 聊天界面的adapter
  */
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder> {
@@ -35,13 +36,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
         public ViewHolder(View view) {
             super(view);
-            leftLayout = (LinearLayout) view.findViewById(R.id.left_layout);
-            rightLayout = (LinearLayout) view.findViewById(R.id.right_layout);
-            leftMsg = (TextView) view.findViewById(R.id.left_msg);
-            rightMsg = (TextView) view.findViewById(R.id.right_msg);
+            leftLayout = (LinearLayout) view.findViewById(R.id.left_message_layout);
+            rightLayout = (LinearLayout) view.findViewById(R.id.right_message_layout);
+            leftMsg = (TextView) view.findViewById(R.id.left_message);
+            rightMsg = (TextView) view.findViewById(R.id.right_message);
 
-            head1 = (ImageView)view.findViewById(R.id.head_left);
-            head2 = (ImageView)view.findViewById(R.id.head_right);
+//            head1 = (ImageView)view.findViewById(R.id.head_left);
+//            head2 = (ImageView)view.findViewById(R.id.head_right);
 
         }
     }
@@ -52,7 +53,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewTYpe) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_message_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_msg_item, parent, false);
         return new ViewHolder(view);
     }
 
@@ -61,15 +62,15 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         Msg msg = mMsgList.get(position);
         if (msg.getType() == Msg.TYPE_RECEIVED) {
             holder.leftLayout.setVisibility(View.VISIBLE);
-            holder.head1.setVisibility(View.VISIBLE);
+//            holder.head1.setVisibility(View.VISIBLE);
             holder.rightLayout.setVisibility(View.GONE);
-            holder.head2.setVisibility(View.GONE);
+//            holder.head2.setVisibility(View.GONE);
             holder.leftMsg.setText(msg.getContent());
         } else if (msg.getType() == Msg.TYPE_SEND) {
             holder.rightLayout.setVisibility(View.VISIBLE);
             holder.leftLayout.setVisibility(View.GONE);
-            holder.head1.setVisibility(View.GONE);
-            holder.head2.setVisibility(View.VISIBLE);
+//            holder.head1.setVisibility(View.GONE);
+//            holder.head2.setVisibility(View.VISIBLE);
             holder.rightMsg.setText(msg.getContent());
         }
     }

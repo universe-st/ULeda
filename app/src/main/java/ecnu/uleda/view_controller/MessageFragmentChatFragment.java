@@ -35,13 +35,26 @@ public class MessageFragmentChatFragment extends Fragment{
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.message_fragment_chat_fragment, container, false);
-        inputText = (EditText)view.findViewById(R.id.input_text);
+        inputText = (EditText)view.findViewById(R.id.message_edit_text);
         send=(Button)view.findViewById(R.id.button_send_message);
         msgRecyclerView=(RecyclerView)view.findViewById(R.id.chat_recycle_view);
         LinearLayoutManager layoutManager=new LinearLayoutManager(this.getContext());
         msgRecyclerView.setLayoutManager(layoutManager);
         adapter= new MessageAdapter (msgList);
         msgRecyclerView.setAdapter(adapter);
+        send.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                String content = inputText.getText().toString();
+                if(!"".equals(content)){
+                    Msg msg=new Msg(content,Msg.TYPE_SEND);
+                    msgList.add(msg);
+                    adapter.notifyItemChanged(msgList.size()-1);//有新消息，刷新RecyclerView显示
+                    msgRecyclerView.scrollToPosition(msgList.size()-1);//将RecyclerView定位到最后一行
+                    inputText.setText("");//清空输入内容
+                }
+            }
+        });
         return view;
     }
 

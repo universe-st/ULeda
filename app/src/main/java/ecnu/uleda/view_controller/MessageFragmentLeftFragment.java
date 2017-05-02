@@ -2,7 +2,9 @@ package ecnu.uleda.view_controller;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 
 import java.util.ArrayList;
@@ -33,12 +36,50 @@ public class MessageFragmentLeftFragment extends Fragment{
         initMessages();
     }
 
+//    public static TaskMissionFragment getInstance() {
+//        if (mInstance == null) {
+//            synchronized (TaskMissionFragment.class) {
+//                if (mInstance == null) {
+//                    mInstance = new TaskMissionFragment();
+//                }
+//            }
+//        }
+//        return mInstance;
+//    }
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.message_fragment_left_fragment, container, false);
         RecyclerView recyclerView=(RecyclerView)view.findViewById(R.id.chat_message_recycle_view);
         LinearLayoutManager layoutManager=new LinearLayoutManager(this.getContext());
+        final Fragment fragment=new MessageFragmentChatFragment();
         recyclerView.setLayoutManager(layoutManager);
         ChatMessageAdapter adapter= new ChatMessageAdapter(mChatMessageList);
+
+        adapter.setOnItemClickListener(new ChatMessageAdapter.OnItemClickListener(){
+            @Override
+            public void onItemClicked(View v, ChatMessage chatMessage) {
+
+                replaceFragment(fragment);
+
+//                Intent intent = new Intent(getActivity().getApplicationContext(), TaskDetailsActivity.class);
+//                intent.putExtra("UTask", task);
+//                startActivity(intent);
+            }
+        });
+//        adapter = new ChatMessageAdapter(mChatMessageList,new ChatMessageAdapter.OnItemClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+//                replaceFragment(fragment);
+//            }
+//        },new ChatMessageAdapter.OnItemLongClickListener() {
+//
+//            @Override
+//            public void onLongClick(View v) {
+//                Toast.makeText(getContext(), "长按", Toast.LENGTH_LONG).show();
+//
+//            }
+//        });
         recyclerView.setAdapter(adapter);
         return view;
     }
@@ -56,6 +97,13 @@ public class MessageFragmentLeftFragment extends Fragment{
             ChatMessage srj = new ChatMessage("沙瑞金",R.drawable.user5);
             mChatMessageList.add(srj);
         }
+    }
+
+    private void replaceFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getFragmentManager();//getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.message_fragment_layout,fragment);
+        transaction.commit();
     }
 
 

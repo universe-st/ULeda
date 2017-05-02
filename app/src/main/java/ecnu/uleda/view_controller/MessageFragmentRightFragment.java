@@ -39,14 +39,14 @@ public class MessageFragmentRightFragment extends Fragment{
                 MessageFragmentRightFragment.this.getContext(),R.layout.contacts_item,contastsList);
         mListView=(ListView)view.findViewById(R.id.contacts_list_view);
         mListView.setAdapter(adapter);
-        final Fragment fragment= new MessageFragmentChatFragment();
+        final Fragment mfragment= new MessageFragmentChatFragment();
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> parent,View view,int position,long id){
                 Contacts contacts=contastsList.get(position);
                 Toast.makeText(view.getContext(),"别急呀～",Toast.LENGTH_SHORT).show();
-//                replaceFragment(fragment);
+                replaceFragment(mfragment);
             }
         });
         return view;

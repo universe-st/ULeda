@@ -21,9 +21,11 @@ import ecnu.uleda.model.ChatMessage;
 
 /**
  * Created by zhaoning on 2017/5/2.
+ * 消息界面adapter（MessageFragment的LeftFragment）
  */
 public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.ViewHolder>{
     private List<ChatMessage> mChatMessageList;
+    private OnItemClickListener mListener;
 
     static class ViewHolder extends RecyclerView.ViewHolder{
         View messageView;
@@ -54,26 +56,46 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                 ChatMessage chatMessage=mChatMessageList.get(position);
                 //TODO
                 Toast.makeText(v.getContext(),"嘿嘿嘿你选中我了～",Toast.LENGTH_SHORT).show();
+                if (mListener != null) {
+                    mListener.onItemClicked(v, (ChatMessage) v.getTag());
+                }
 //                replaceFragment(mFragment);
             }
         });
-        holder.mImageView.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                int position = holder.getAdapterPosition();
-                ChatMessage chatMessage=mChatMessageList.get(position);
-                //TODO
-            }
-        });
+//        holder.mImageView.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View v){
+//                int position = holder.getAdapterPosition();
+//                ChatMessage chatMessage=mChatMessageList.get(position);
+//                //TODO
+//                if (onClickListener != null) {
+//                    onClickListener.onClick(v,(ChatMessage) v.getTag());
+//                }
+//            }
+//        });
 //        ViewHolder holder=new ViewHolder(view);
         return holder;
     }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        mListener = listener;
+    }
+
+
+    public interface OnItemClickListener {
+        void onItemClicked(View v, ChatMessage chatMessage);
+    }
+
+
+//    private OnItemClickListener onClickListener;
+//    private OnItemLongClickListener onLongClickListener;
 
     @Override
     public void onBindViewHolder(ViewHolder holder,int position){
         ChatMessage chatMessage=mChatMessageList.get(position);
         holder.mImageView.setImageResource(chatMessage.getImageId());
         holder.mTextView.setText(chatMessage.getName());
+//        holder.itemView.setTag(chatMessage);//???
     }
 
     @Override
