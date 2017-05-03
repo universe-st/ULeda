@@ -1,82 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:weightSum="100">
-    <LinearLayout
+    android:orientation="vertical">
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="3"
-        android:background="@color/colorUMain"/>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="10"
+        android:layout_height="?android:attr/actionBarSize"
         android:background="@color/colorUMain"
         android:weightSum="10">
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:weightSum="1">
 
-            <ImageButton
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                app:srcCompat="@drawable/group"
-                android:id="@+id/imageButton7"
-                android:layout_weight="1"
-                android:scaleType="centerCrop"
-                android:layout_margin="1dp"
-                android:background="@color/colorUMain"
-                />
-        </LinearLayout>
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="4">
-            <Button
-                android:id="@+id/button_message"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@null"
-                android:layout_gravity="center|right"
-                android:text="消息"
-                android:textColor="@color/colorUWhite"
-                android:textSize="18sp"/>
-        </FrameLayout>
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="4">
-            <Button
-                android:id="@+id/button_contacts"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@null"
-                android:layout_gravity="center|left"
-                android:text="联系人"
-                android:textColor="@color/colorUWhite"
-                android:textSize="18sp"/>
-        </FrameLayout>
-        <Button
+
+        <ImageButton
+            android:id="@+id/my_friends"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="12dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            app:srcCompat="@drawable/ic_group_white_48dp" />
+
+        <ecnu.uleda.view_controller.widgets.SelectableTitleView
+            android:id="@+id/titles"
+            android:layout_width="wrap_content"
+            android:layout_height="39dp"
+            android:layout_gravity="center"
+            app:horizontalPadding="16dp"
+            app:radius="12dp"
+            app:strokeWidth="3px"
+            app:textSize="18sp" />
+
+        <ImageButton
             android:id="@+id/add_friends"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="＋"
-            android:textSize="22sp"
-            android:background="@android:color/transparent"
-            android:textColor="@android:color/white"/>
-    </LinearLayout>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|right"
+            android:layout_marginRight="12dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_add_white_48dp"
+            android:textColor="@android:color/white" />
+    </FrameLayout>
 
 
     <FrameLayout
         android:id="@+id/message_fragment_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="87">
-    </FrameLayout>
+        android:layout_weight="1"></FrameLayout>
 </LinearLayout>

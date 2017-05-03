@@ -48,10 +48,10 @@
 
     </android.support.constraint.ConstraintLayout>
 
-    <ecnu.uleda.view_controller.widgets.RecyclerViewBanner
+    <ecnu.uleda.view_controller.widgets.BannerView
         android:id="@+id/id_stickynavlayout_topview"
         android:layout_width="match_parent"
-        android:layout_height="180dp" />
+        android:layout_height="180dp"/>
 
     <android.support.design.widget.TabLayout
         android:id="@id/id_stickynavlayout_indicator"

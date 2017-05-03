@@ -20,6 +20,8 @@ import java.util.Date;
 
 public class UPublicTool {
 
+    public static final String SERVICE_PHONE_NUMBER = "10086";
+
     public static String parseTime(long second) {
         int mi = 60;
         int hh = mi * 60;
@@ -27,22 +29,24 @@ public class UPublicTool {
         long day = second / dd;
         long hour = (second - day * dd) / hh;
         long minute = (second - day * dd - hour * hh) / mi;
+        StringBuilder sb = new StringBuilder();
         if (day > 0) {
             if (day <= 7) {
-                return day + "天" + hour + "小时";
+                return sb.append("剩余").append(day).append("天").append(hour).append("小时").toString();
             } else {
                 Calendar calendar = Calendar.getInstance();
                 calendar.add(Calendar.SECOND, (int) second);
-                return (calendar.get(Calendar.MONTH) + 1) + "月" + calendar.get(Calendar.DAY_OF_MONTH) + "日";
+                return sb.append("截止").append(calendar.get(Calendar.MONTH) + 1).append("月").append(calendar.get(Calendar.DAY_OF_MONTH)).append("日").toString();
             }
         }
+        sb.append("剩余");
         if (hour > 0) {
-            return hour + "小时" + minute + "分钟";
+            return sb.append(hour).append("小时").append(minute).append("分钟").toString();
         }
         if (minute >= 0) {
-            return minute + "分钟前";
+            return sb.append(minute).append("分钟").toString();
         }
-        return second + "秒";
+        return sb.append(second).append("秒").toString();
     }
 
     public static String timeLeft(Date date){
@@ -58,6 +62,10 @@ public class UPublicTool {
             return timeLeft/3600+"小时"+timeLeft%3600/60+"分钟"+timeLeft%60+"秒";
         }
         return timeLeft/(3600*24)+"天";
+    }
+
+    public static String timeBefore(long timeInSecond) {
+        return dateToTimeBefore(new Date(timeInSecond * 1000));
     }
     /*
     * 将某日期转化为距离现在的时间，用于在各种场合显示
@@ -162,4 +170,15 @@ public class UPublicTool {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
                 context.getResources().getDisplayMetrics());
     }
+    public static int getStatusBarHeight(Context context)
+    {
+        int result = 0;
+        int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0)
+        {
+            result = context.getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
+    }
+
 }

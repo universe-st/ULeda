@@ -27,8 +27,8 @@ import ecnu.uleda.model.ChatMessage;
  * Created by zhaoning on 2017/5/1.
  */
 
-public class MessageFragmentLeftFragment extends Fragment{
-    private List<ChatMessage> mChatMessageList=new ArrayList<>();
+public class MessageFragmentLeftFragment extends Fragment {
+    private List<ChatMessage> mChatMessageList = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle b) {
@@ -49,13 +49,13 @@ public class MessageFragmentLeftFragment extends Fragment{
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.message_fragment_left_fragment, container, false);
-        RecyclerView recyclerView=(RecyclerView)view.findViewById(R.id.chat_message_recycle_view);
-        LinearLayoutManager layoutManager=new LinearLayoutManager(this.getContext());
-        final Fragment fragment=new MessageFragmentChatFragment();
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.chat_message_recycle_view);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
+        final Fragment fragment = new MessageFragmentChatFragment();
         recyclerView.setLayoutManager(layoutManager);
-        ChatMessageAdapter adapter= new ChatMessageAdapter(mChatMessageList);
+        ChatMessageAdapter adapter = new ChatMessageAdapter(mChatMessageList);
 
-        adapter.setOnItemClickListener(new ChatMessageAdapter.OnItemClickListener(){
+        adapter.setOnItemClickListener(new ChatMessageAdapter.OnItemClickListener() {
             @Override
             public void onItemClicked(View v, ChatMessage chatMessage) {
 
@@ -84,17 +84,17 @@ public class MessageFragmentLeftFragment extends Fragment{
         return view;
     }
 
-    private void initMessages(){
-        for(int i=0;i<3;i++) {
-            ChatMessage dyz = new ChatMessage("丁义珍",R.drawable.username);
+    private void initMessages() {
+        for (int i = 0; i < 3; i++) {
+            ChatMessage dyz = new ChatMessage("丁义珍", R.drawable.username);
             mChatMessageList.add(dyz);
-            ChatMessage hlp = new ChatMessage("侯亮平",R.drawable.user2);
+            ChatMessage hlp = new ChatMessage("侯亮平", R.drawable.user2);
             mChatMessageList.add(hlp);
-            ChatMessage ldk = new ChatMessage("李达康",R.drawable.username);
+            ChatMessage ldk = new ChatMessage("李达康", R.drawable.username);
             mChatMessageList.add(ldk);
-            ChatMessage qtw = new ChatMessage("祁同伟",R.drawable.user4);
+            ChatMessage qtw = new ChatMessage("祁同伟", R.drawable.user4);
             mChatMessageList.add(qtw);
-            ChatMessage srj = new ChatMessage("沙瑞金",R.drawable.user5);
+            ChatMessage srj = new ChatMessage("沙瑞金", R.drawable.user5);
             mChatMessageList.add(srj);
         }
     }
@@ -102,7 +102,7 @@ public class MessageFragmentLeftFragment extends Fragment{
     private void replaceFragment(Fragment fragment) {
         FragmentManager fragmentManager = getFragmentManager();//getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.message_fragment_layout,fragment);
+        transaction.replace(R.id.message_fragment_layout, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }

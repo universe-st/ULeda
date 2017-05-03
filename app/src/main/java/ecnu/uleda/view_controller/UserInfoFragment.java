@@ -48,6 +48,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.znq.zbarcode.CaptureActivity;
+import com.znq.zbarcode.utils.Config;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,6 +61,7 @@ import ecnu.uleda.exception.UServerAccessException;
 import ecnu.uleda.model.UserInfo;
 import ecnu.uleda.function_module.UserOperatorController;
 import ecnu.uleda.model.AddOptions;
+import ecnu.uleda.tool.UPublicTool;
 
 import static android.app.Activity.RESULT_OK;
 import static android.widget.ListPopupWindow.WRAP_CONTENT;
@@ -75,9 +77,10 @@ public class UserInfoFragment extends Fragment
     private static final int REQUEST_CAMERA = 100;
 
     private ImageButton setting;
-    private LinearLayout mMyInfo;
-    private LinearLayout mMyMoneyBag;
-    private LinearLayout mMyQRCode;
+    private TextView mMyInfo;
+    private TextView mMyMoneyBag;
+    private TextView mMyQRCode;
+    private TextView mMyAskServer;
     private CircleImageView icon;
     private ImageButton add;
     private PopupWindow mPopupWindow;
@@ -118,10 +121,12 @@ public class UserInfoFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle b) {
         View v = inflater.inflate(R.layout.user_info_fragment, parent, false);
         setting = (ImageButton) v.findViewById(R.id.setting);
-        mMyInfo = (LinearLayout) v.findViewById(R.id.my_info);
-        mMyMoneyBag = (LinearLayout) v.findViewById(R.id.my_money_bag);
-        mMyQRCode = (LinearLayout) v.findViewById(R.id.my_qr_code);
+        mMyInfo = (TextView) v.findViewById(R.id.my_info);
+        mMyMoneyBag = (TextView) v.findViewById(R.id.my_money_bag);
+        mMyQRCode = (TextView) v.findViewById(R.id.my_qr_code);
+        mMyAskServer = (TextView) v.findViewById(R.id.ask_server);
         icon = (CircleImageView) v.findViewById(R.id.icon);
+
         add = (ImageButton) v.findViewById(R.id.add);
         userId = (TextView) v.findViewById(R.id.id);
         T1 = (LinearLayout) v.findViewById(R.id.T1);
@@ -136,6 +141,7 @@ public class UserInfoFragment extends Fragment
         mMyInfo.setOnClickListener(this);
         mMyMoneyBag.setOnClickListener(this);
         mMyQRCode.setOnClickListener(this);
+        mMyAskServer.setOnClickListener(this);
         icon.setOnClickListener(this);
         add.setOnClickListener(this);
         T1.setOnClickListener(this);
@@ -198,37 +204,33 @@ public class UserInfoFragment extends Fragment
 
     @Override
     public void onClick(View v) {
+        int data;
+        Intent intent;
         switch (v.getId()) {
-            case R.id.setting: {
+            case R.id.setting:
                 Intent it = new Intent(getActivity().getBaseContext(), SettingActivity.class);
                 startActivity(it);
                 break;
-            }
-            case R.id.my_info: {
+            case R.id.my_info:
                 UserOperatorController uoc = UserOperatorController.getInstance();
 //                if(!uoc.getIsLogined()){
 //                    Toast.makeText(this.getActivity(),"请先登陆！",Toast.LENGTH_SHORT).show();
 //                    break;
 //                }
-                Intent it = new Intent(getActivity().getBaseContext(), SingleUserInfoActivity.class);
-                it.putExtra("userid", UserOperatorController.getInstance().getId());
-                startActivity(it);
+                intent = new Intent(getActivity().getBaseContext(), SingleUserInfoActivity.class);
+                intent.putExtra("userid", UserOperatorController.getInstance().getId());
+                startActivity(intent);
                 break;
-            }
-            case R.id.my_money_bag: {
-                Intent it = new Intent(getActivity().getBaseContext(), MyWalletActivity.class);
-                startActivity(it);
+            case R.id.my_money_bag:
+                startActivity(new Intent(getActivity().getBaseContext(), MyWalletActivity.class));
                 break;
-            }
-            case R.id.my_qr_code: {
-                Intent it = new Intent(getActivity().getBaseContext(), MyQrActivity.class);
-                startActivity(it);
+            case R.id.my_qr_code:
+                startActivity(new Intent(getActivity().getBaseContext(), MyQrActivity.class));
                 break;
-            }
             case R.id.icon:
                 showPopMenu();
                 break;
-            case R.id.btn_open_camera: {
+            case R.id.btn_open_camera:
                 if (Build.VERSION.SDK_INT >= 24 && ContextCompat.checkSelfPermission(this.getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(this.getActivity(),
                             new String[]{Manifest.permission.CAMERA},
@@ -237,9 +239,7 @@ public class UserInfoFragment extends Fragment
                     takePhotoToAvatar();
                 }
                 break;
-            }
-            case R.id.btn_choose_img: {
-
+            case R.id.btn_choose_img:
                 if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
                     Log.d("King1", "h");
@@ -247,50 +247,49 @@ public class UserInfoFragment extends Fragment
                 Log.d("4", "h");
                 openAlbum();
                 break;
-            }
             case R.id.btn_cancel:
                 mPopupWindow.dismiss();
-                break;
-            default:
                 break;
             case R.id.add:
                 showaddPopMenu();
                 break;
-            case R.id.T1: {
-                int data = 1;
+            case R.id.T1:
+                data = 1;
                 Intent i = new Intent(getActivity().getBaseContext(), MyTaskInFo.class);
                 i.putExtra("data", String.valueOf(data));
                 startActivity(i);
                 break;
-            }
-            case R.id.T2: {
-                int data = 2;
-                Intent i = new Intent(getActivity().getBaseContext(), MyTaskInFo.class);
-                i.putExtra("data", String.valueOf(data));
-                startActivity(i);
+            case R.id.T2:
+                data = 2;
+                intent= new Intent(getActivity().getBaseContext(), MyTaskInFo.class);
+                intent.putExtra("data", String.valueOf(data));
+                startActivity(intent);
                 break;
-            }
-            case R.id.T3: {
-                int data = 3;
-                Intent i = new Intent(getActivity().getBaseContext(), MyTaskInFo.class);
-                i.putExtra("data", String.valueOf(data));
-                startActivity(i);
+            case R.id.T3:
+                data = 3;
+                intent = new Intent(getActivity().getBaseContext(), MyTaskInFo.class);
+                intent.putExtra("data", String.valueOf(data));
+                startActivity(intent);
                 break;
-            }
-            case R.id.T4: {
-                int data = 4;
-                Intent i = new Intent(getActivity().getBaseContext(), MyTaskInFo.class);
-                i.putExtra("data", String.valueOf(data));
-                startActivity(i);
+            case R.id.T4:
+                data = 4;
+                intent = new Intent(getActivity().getBaseContext(), MyTaskInFo.class);
+                intent.putExtra("data", String.valueOf(data));
+                startActivity(intent);
                 break;
-            }
-            case R.id.T5: {
-                int data = 5;
-                Intent i = new Intent(getActivity().getBaseContext(), MyTaskInFo.class);
-                i.putExtra("data", String.valueOf(data));
-                startActivity(i);
+            case R.id.T5:
+                data = 5;
+                intent = new Intent(getActivity().getBaseContext(), MyTaskInFo.class);
+                intent.putExtra("data", String.valueOf(data));
+                startActivity(intent);
                 break;
-            }
+            case R.id.ask_server:
+                intent = new Intent(Intent.ACTION_DIAL,Uri.parse("tel:" + UPublicTool.SERVICE_PHONE_NUMBER));
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                break;
+            default:
+                break;
         }
     }
 
@@ -339,9 +338,7 @@ public class UserInfoFragment extends Fragment
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("King", "hhhhhhhh");
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("King", "hhhhhhhh");
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case REQUEST_CAMERA:

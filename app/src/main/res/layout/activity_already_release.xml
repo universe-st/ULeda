@@ -1,114 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:weightSum="100"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="100">
 
-    <RelativeLayout
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="11"
         android:background="@color/colorUMain"
-        android:orientation="horizontal"
-        >
-
-
-        <ImageButton
-            android:id="@+id/Release_back"
-            android:layout_width="25dp"
-            android:layout_height="27dp"
-            android:layout_marginTop="29dp"
-            android:background="#00000000"
-            android:src="@drawable/back"
-            android:onClick="onClick"
-            />
+        android:layout_height="?android:attr/actionBarSize"
+        app:navigationIcon="@drawable/ic_chevron_left_white_36dp">
 
         <TextView
-            android:id="@+id/textView40"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="23dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
             android:gravity="center"
             android:text="我的相关"
-            android:textColor="@color/colorUWhite"
-            android:textSize="27dp"
-            />
-    </RelativeLayout>
+            android:textColor="#ffffff"
+            android:textSize="20sp" />
+    </android.support.v7.widget.Toolbar>
+    <!--<RelativeLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="0dp"-->
+    <!--android:layout_weight="11"-->
+    <!--android:background="@color/colorUMain"-->
+    <!--android:orientation="horizontal"-->
+    <!--&gt;-->
+
+
+    <!--<ImageButton-->
+    <!--android:id="@+id/Release_back"-->
+    <!--android:layout_width="25dp"-->
+    <!--android:layout_height="27dp"-->
+    <!--android:layout_marginTop="29dp"-->
+    <!--android:background="#00000000"-->
+    <!--android:src="@drawable/back"-->
+    <!--android:onClick="onClick"-->
+    <!--/>-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/textView40"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginTop="23dp"-->
+    <!--android:gravity="center"-->
+    <!--android:text="我的相关"-->
+    <!--android:textColor="@color/colorUWhite"-->
+    <!--android:textSize="27dp"-->
+    <!--/>-->
+    <!--</RelativeLayout>-->
 
 
     <RadioGroup
         android:id="@+id/radio_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
+        android:orientation="horizontal">
+
         <RadioButton
-            android:textColor="@drawable/checkrbtn"
-            android:background="@drawable/bottomline"
-            android:button="@null"
             android:id="@+id/released"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight="20"
-            android:onClick="onClick"
-            android:text="已发布"
-            android:gravity="center"
-            />
-
-        <RadioButton
-            android:textColor="@drawable/checkrbtn"
             android:background="@drawable/bottomline"
             android:button="@null"
+            android:gravity="center"
+            android:onClick="onClick"
+            android:text="已发布"
+            android:textColor="@drawable/checkrbtn" />
+
+        <RadioButton
             android:id="@+id/doing"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight="20"
+            android:background="@drawable/bottomline"
+            android:button="@null"
+            android:gravity="center"
             android:onClick="onClick"
             android:text="进行中"
-            android:gravity="center"
-            />
+            android:textColor="@drawable/checkrbtn" />
 
         <RadioButton
-            android:background="@drawable/bottomline"
-            android:textColor="@drawable/checkrbtn"
-            android:button="@null"
             android:id="@+id/evaluate"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight="20"
+            android:background="@drawable/bottomline"
+            android:button="@null"
+            android:gravity="center"
             android:onClick="onClick"
 
             android:text="待评价"
-            android:gravity="center"
-            />
+            android:textColor="@drawable/checkrbtn" />
 
         <RadioButton
-            android:textColor="@drawable/checkrbtn"
-            android:background="@drawable/bottomline"
-            android:button="@null"
             android:id="@+id/done"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight="20"
-            android:onClick="onClick"
-            android:text="已完成"
-            android:gravity="center"
-            />
-
-        <RadioButton
-            android:textColor="@drawable/checkrbtn"
             android:background="@drawable/bottomline"
             android:button="@null"
+            android:gravity="center"
+            android:onClick="onClick"
+            android:text="已完成"
+            android:textColor="@drawable/checkrbtn" />
+
+        <RadioButton
             android:id="@+id/evaluation"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight="20"
+            android:background="@drawable/bottomline"
+            android:button="@null"
+            android:gravity="center"
             android:onClick="onClick"
             android:text="我的订单"
-            android:gravity="center"
-            />
+            android:textColor="@drawable/checkrbtn" />
     </RadioGroup>
 
 

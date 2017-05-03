@@ -143,22 +143,22 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
 
     private OverScroller mScroller;
     private VelocityTracker mVelocityTracker;
-    private int mTouchSlop;
-    private int mMaximumVelocity, mMinimumVelocity;
-
-    private float mLastY;
-    private boolean mDragging;
+//    private int mTouchSlop;
+//    private int mMaximumVelocity, mMinimumVelocity;
+//
+//    private float mLastY;
+//    private boolean mDragging;
 
     public StickyNavLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         setOrientation(LinearLayout.VERTICAL);
 
         mScroller = new OverScroller(context);
-        mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
-        mMaximumVelocity = ViewConfiguration.get(context)
-                .getScaledMaximumFlingVelocity();
-        mMinimumVelocity = ViewConfiguration.get(context)
-                .getScaledMinimumFlingVelocity();
+//        mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
+//        mMaximumVelocity = ViewConfiguration.get(context)
+//                .getScaledMaximumFlingVelocity();
+//        mMinimumVelocity = ViewConfiguration.get(context)
+//                .getScaledMinimumFlingVelocity();
         mArrowAnimatorToRefresh = ValueAnimator.ofInt(0, 180).setDuration(300);
         mArrowAnimatorToRefresh.setInterpolator(new LinearInterpolator());
         mArrowAnimatorToRefresh.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -251,7 +251,7 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
         mPacman = (AVLoadingIndicatorView) findViewById(R.id.id_avloading);
         if (!(view instanceof ViewPager)) {
             throw new RuntimeException(
-                    "id_stickynavlayout_viewpager should be used by ViewPager !");
+                    "id_stickynavlayout_viewpager should be used with ViewPager !");
         }
         mViewPager = (ViewPager) view;
     }

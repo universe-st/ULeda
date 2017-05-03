@@ -16,7 +16,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.PermissionChecker;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -43,7 +46,7 @@ import java.lang.reflect.Method;
  * 4:释放资源
  * Update by znq on 2016/11/9.
  */
-public class CaptureActivity extends Activity implements SurfaceHolder.Callback{
+public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.Callback{
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 26;
     public static final String EXTRA_STRING = "extra_string";
     public static final int TYPE_BOOK_COVER = 0x101;
@@ -55,12 +58,12 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback{
     private CameraManager mCameraManager;
     private BeepManager beepManager;
 
+    private Toolbar mToolbar;
     private SurfaceView scanPreview;
     private RelativeLayout scanContainer;
     private RelativeLayout scanCropView;
     private ImageView scanLine;
     private Rect mCropRect = null;
-    private ImageButton mScanBack;
     private boolean isHasSurface = false;
     private boolean isOpenCamera = false;
 
@@ -71,13 +74,15 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback{
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//
+//        }
         setContentView(R.layout.activity_capture);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         initView();
+        setSupportActionBar(mToolbar);
+        setTitle("");
         checkPermissionCamera();
     }
     private void initView() {
@@ -85,14 +90,7 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback{
         scanContainer = (RelativeLayout) findViewById(R.id.capture_container);
         scanCropView = (RelativeLayout) findViewById(R.id.capture_crop_view);
         scanLine = (ImageView) findViewById(R.id.capture_scan_line);
-        mScanBack = (ImageButton) findViewById(R.id.scan_back);
-        mScanBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
 
         isHasSurface = false;
         beepManager = new BeepManager(this);
@@ -378,7 +376,16 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback{
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         isHasSurface = false;
-
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     //endregion
 }

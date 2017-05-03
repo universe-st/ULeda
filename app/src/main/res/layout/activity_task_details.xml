@@ -1,79 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_task_details"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@android:color/white"
     tools:context="ecnu.uleda.view_controller.TaskDetailsActivity">
-    <ecnu.uleda.view_controller.UHeadlineLayout
-    android:layout_width="match_parent"
-    android:layout_height="75dp"
-    android:id="@+id/head_line_layout"/>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <com.tencent.tencentmap.mapsdk.map.MapView
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:id="@+id/task_map_view"/>
+    <!--<ecnu.uleda.view_controller.UHeadlineLayout-->
+    <!--android:id="@+id/head_line_layout"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="81dp" />-->
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:background="@color/colorUMain"
+        android:fitsSystemWindows="true"
+        app:elevation="0dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <ListView
-            android:dividerHeight="0dp"
-            android:divider="@android:color/white"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/head_line_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/task_detail_list_view"/>
+            app:navigationIcon="@drawable/ic_chevron_left_white_36dp">
+
+            <TextView
+                android:id="@+id/task_tool_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:ellipsize="end"
+                android:maxEms="5"
+                android:maxLines="1"
+                android:text="标题测试测试测试"
+                android:textColor="#ffffff"
+                android:textSize="18sp" />
+        </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
+
+    <!--<RelativeLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent">-->
+    <ScrollView
+        android:id="@+id/details_scroll"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/foot_line_button_bar"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appbar">
+
         <LinearLayout
+            android:id="@+id/task_detail_list_view"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:orientation="vertical"
-            android:layout_alignParentBottom="true">
-            <LinearLayout
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.tencent.tencentmap.mapsdk.map.MapView
+                android:id="@+id/task_map_view"
                 android:layout_width="match_parent"
-                android:layout_height="20dp"
-                android:background="@drawable/half_transparent"
-                />
-            <LinearLayout
-                android:id="@+id/foot_line_button_bar"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:weightSum="2"
-                android:orientation="horizontal"
-                android:background="@android:color/white"
-                >
-                <Button
-                    style="@style/Base.Widget.AppCompat.Button.Borderless"
-                    android:background="@drawable/bt_task_detail_green"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginTop="10dp"
-                    android:text="评论"
-                    android:textColor="@android:color/white"
-                    android:textSize="17sp"
-                    android:layout_marginBottom="10dp"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:id="@+id/comment_bt"
-                    />
-                <Button
-                    android:layout_marginRight="30dp"
-                    android:layout_marginLeft="10dp"
-                    android:text="抢单"
-                    android:textSize="17sp"
-                    android:textColor="@android:color/white"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:background="@drawable/bt_task_detail"
-                    style="@style/Base.Widget.AppCompat.Button.Borderless"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:id="@+id/right_button"
-                    android:layout_height="match_parent"/>
-            </LinearLayout>
+                android:layout_height="200dp" />
+
+            <include layout="@layout/task_details_list_header_view" />
+
+            <!--<include layout="@layout/task_detail_chat_list_footer_view" />-->
         </LinearLayout>
-    </RelativeLayout>
-</LinearLayout>
+    </ScrollView>
+
+
+    <!--<ListView-->
+    <!--android:id="@+id/task_detail_list_view"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="0dp"-->
+    <!--android:divider="@android:color/white"-->
+    <!--android:dividerHeight="0dp"-->
+    <!--app:layout_constraintBottom_toTopOf="@+id/foot_line_button_bar"-->
+    <!--app:layout_constraintLeft_toLeftOf="parent"-->
+    <!--app:layout_constraintRight_toRightOf="parent"-->
+    <!--app:layout_constraintTop_toBottomOf="@+id/task_map_view" />-->
+
+
+    <LinearLayout
+        android:id="@+id/foot_line_button_bar"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:background="@drawable/white_gradient_bg"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/details_scroll">
+
+        <Button
+            android:id="@+id/comment_bt"
+            style="@style/Base.Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/bt_task_detail_green"
+            android:text="评论"
+            android:textColor="@android:color/white"
+            android:textSize="17sp" />
+
+        <Button
+            android:id="@+id/right_button"
+            style="@style/Base.Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/bt_task_detail"
+            android:text="抢单"
+            android:textColor="@android:color/white"
+            android:textSize="17sp" />
+    </LinearLayout>
+    <!--</RelativeLayout>-->
+</android.support.constraint.ConstraintLayout>

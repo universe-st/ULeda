@@ -118,10 +118,10 @@ public class UMainActivity extends AppCompatActivity implements BottomBarLayout.
         mFragments[3] = new MessageFragment();
         mFragments[4] = new UserInfoFragment();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            //getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//            //getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+//        }
 //        mViewPager.setNoScroll(true);
 //        mViewPager.setAdapter(new FragmentPagerAdapter(fm) {
 //            @Override
@@ -173,6 +173,20 @@ public class UMainActivity extends AppCompatActivity implements BottomBarLayout.
     //主Activity翻页
     public void changeToView(int pos) {
 //        mViewPager.setCurrentItem(i);
+        if (pos == 4) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            }
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            }
+        }
+        if (pos != 0) {
+            ((UMainFragment)mFragments[0]).pauseLocationUpdates();
+        } else {
+            ((UMainFragment)mFragments[0]).resumeLocationUpdates();
+        }
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         if (!mFragments[pos].isAdded()) {
             ft.hide(mFragments[mLastPos]).add(R.id.main_view_pager, mFragments[pos]).commit();

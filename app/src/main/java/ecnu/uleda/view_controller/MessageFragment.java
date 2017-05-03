@@ -5,21 +5,29 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.Unbinder;
 import ecnu.uleda.R;
 import ecnu.uleda.model.Friend;
 import ecnu.uleda.tool.SPUtil;
+import ecnu.uleda.view_controller.widgets.SelectableTitleView;
 import io.rong.imkit.RongIM;
 import io.rong.imlib.RongIMClient;
 import io.rong.imlib.model.UserInfo;
@@ -28,9 +36,10 @@ import io.rong.imlib.model.UserInfo;
  * Created by Shensheng on 2016/11/11.
  */
 
-public class MessageFragment extends Fragment {
+public class MessageFragment extends Fragment implements SelectableTitleView.OnTitleSelectedListener {
 
 
+    private static List<String> titles;
     private Activity mActivity;
     private Button mButtonMessage;
     private Button mButtonContacts;
@@ -38,17 +47,25 @@ public class MessageFragment extends Fragment {
     private Fragment mFragmentContacts;
     private Context mContext;
     private List<Friend> userIdList;
-    private Button mButtonLeft;
-    private Button mButtonRight;
-    private Fragment mFragmentLeft;
-    private Fragment mFragmentRight;
+    private Unbinder mUnbinder;
+    private MessageFragmentLeftFragment mFragmentLeft;
+    private MessageFragmentRightFragment mFragmentRight;
+
+
+    @BindView(R.id.titles)
+    SelectableTitleView mTitleView;
 
 //    private static final String token1 = "en8uP9E3+foeCzwKhzm4ctY5U+MiA2747EUqq9dOV5QN6r2825gocqPudjCjiYuoZR4U3zOOedoGNPs8Qy75MQ==";
 //    private static final String token2 = "+kFtILEgPuQWdchTskz59CwGk6JFyJAXd9m6rCyu7HhOITfx+9XpsFJVo7dzv/jGw5oKenlEuJOqx9gxiMzaqA==";
 
+    static {
+        titles = new ArrayList<>();
+        titles.add("消息");
+        titles.add("好友");
+    }
 
     @Override
-    public void onCreate(Bundle b){
+    public void onCreate(Bundle b) {
         super.onCreate(b);
         SPUtil.init(this.getContext());
 //        RongIM.init(this.getContext());
@@ -74,50 +91,79 @@ public class MessageFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         mActivity = getActivity();
-        View view = inflater.inflate(R.layout.message_fragment,container,false);
+        View view = inflater.inflate(R.layout.message_fragment, container, false);
+        mUnbinder = ButterKnife.bind(this, view);
 
 //        mButtonMessage= (Button) view.findViewById(R.id.button_message);
 //        mButtonContacts= (Button) view.findViewById(R.id.button_contacts);
 
-        mButtonLeft= (Button) view.findViewById(R.id.button_message);
-        mButtonRight= (Button) view.findViewById(R.id.button_contacts);
-
 //        mFragmentMessage=new MessageFragmentMessageFragment();
 //        mFragmentContacts=new FriendFragment();
-
-        mFragmentLeft=new MessageFragmentLeftFragment();
-        mFragmentRight=new MessageFragmentRightFragment();
-
-        mButtonLeft.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                replaceFragment1(mFragmentLeft);
-//                backgroundChanged(mButtonLeft);
-            }
-        });
-        mButtonRight.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                replaceFragment2(mFragmentRight);
-            }
-        });
 
         return view;
     }
 
-    private void replaceFragment1(Fragment fragment) {
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        mTitleView.setTitles(titles);
+        mTitleView.setOnTitleSelectedListner(this);
+        switchToLeftFragment();
+    }
+
+    private void switchToLeftFragment() {
         FragmentManager fragmentManager = getFragmentManager();//getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.message_fragment_layout,fragment);
+        if (mFragmentLeft == null) {
+            mFragmentLeft = new MessageFragmentLeftFragment();
+            transaction.add(R.id.message_fragment_layout, mFragmentLeft);
+        }
+        transaction.show(mFragmentLeft);
+        if (mFragmentRight != null && mFragmentRight.isAdded()) {
+            transaction.hide(mFragmentRight);
+        }
         transaction.commit();
     }
-    private void replaceFragment2(Fragment fragment) {
+
+    private void switchToRightFragment() {
         FragmentManager fragmentManager = getFragmentManager();//getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.message_fragment_layout,fragment);
+        if (mFragmentRight == null) {
+            mFragmentRight = new MessageFragmentRightFragment();
+            transaction.add(R.id.message_fragment_layout, mFragmentRight);
+        }
+        transaction.show(mFragmentRight);
+        if (mFragmentLeft != null && mFragmentLeft.isAdded()) {
+            transaction.hide(mFragmentLeft);
+        }
         transaction.commit();
     }
-//    private void backgroundChanged(Button mButton){
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
+    }
+
+    @OnClick(R.id.add_friends)
+    void addFriends() {
+        // 添加好友按钮点击事件
+    }
+
+    @OnClick(R.id.my_friends)
+    void myFriends() {
+        // 左边按钮的点击事件（ps：这个按钮干啥的）
+    }
+
+    @Override
+    public void onItemSelected(int pos, String title) {
+        if (pos == 0) {
+            switchToLeftFragment();
+        } else if (pos == 1) {
+            switchToRightFragment();
+        }
+    }
+
+    //    private void backgroundChanged(Button mButton){
 //        mButton.setBackgroundColor(Color.parseColor("#8f1515"));
 //
 //    }
@@ -183,7 +229,6 @@ public class MessageFragment extends Fragment {
 //        userIdList.add(new Friend("KEFU144542424649464","在线客服","http://img02.tooopen.com/Download/2010/5/22/20100522103223994012.jpg"));
 //        RongIM.setUserInfoProvider(this, true);
 //    }
-
 
 
 /**
