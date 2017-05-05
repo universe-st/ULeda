@@ -22,7 +22,18 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
+    <provider
+        android:name="android.support.v4.content.FileProvider"
+        android:authorities="ecnu.uleda.FileProvider"
+        android:exported="false"
+        android:grantUriPermissions="true">
+        <meta-data
+            android:name="android.support.FILE_PROVIDER_PATHS"
+            android:resource="@xml/rc_file_path"/>
+    </provider>
+
     <application
+        android:name="ecnu.uleda.function_module.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -64,7 +75,9 @@
         <activity android:name=".view_controller.SettingUserPhoneActivity"/>
         <activity android:name=".view_controller.Mywallet_RechargeActivity"/>
         <activity android:name=".view_controller.PopupwindowActivity"/>
-        <activity android:name=".view_controller.TaskPostActivity"/>
+        <activity android:name=".view_controller.TaskPostActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/UMainTheme"/>
         <activity android:name=".view_controller.LocationListActivity"/>
         <activity android:name=".view_controller.Community"/>
         <activity android:name=".view_controller.GetBackByNumber"/>
@@ -74,7 +87,56 @@
         <activity android:name=".view_controller.AddNewFriends"/>
         <activity android:name=".view_controller.TaskEditActivity"/>
         <activity android:name=".view_controller.Chart"/>
-        <activity android:name=".view_controller.ReleasedUcircleActivity">
+        <activity android:name=".view_controller.ReleasedUcircleActivity"/>
+
+
+        <!-- 会话列表 -->
+        <activity
+            android:name=".view_controller.ConversationListActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+
+                <data
+                    android:host="ecnu.uleda"
+                    android:pathPrefix="/conversationlist"
+                    android:scheme="rong"/>
+            </intent-filter>
+        </activity>
+        <!-- 聚合会话列表 -->
+        <activity
+            android:name=".view_controller.SubConversationListActivtiy"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+
+                <data
+                    android:host="ecnu.uleda"
+                    android:pathPrefix="/subconversationlist"
+                    android:scheme="rong"/>
+            </intent-filter>
+        </activity>
+        <!--会话界面-->
+        <activity android:name=".view_controller.ConversationActivity"
+                  android:screenOrientation="portrait"
+                  android:windowSoftInputMode="stateHidden|adjustResize">
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data
+                    android:host="ecnu.uleda"
+                    android:pathPrefix="/conversation/"
+                    android:scheme="rong" />
+            </intent-filter>
         </activity>
 
         <provider
