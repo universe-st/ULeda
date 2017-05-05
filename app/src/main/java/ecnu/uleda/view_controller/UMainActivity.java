@@ -6,25 +6,18 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import ecnu.uleda.R;
 import ecnu.uleda.function_module.UserOperatorController;
-import ecnu.uleda.view_controller.taskfragment.TaskListFragment;
+import ecnu.uleda.view_controller.task.fragment.TaskListFragment;
 import ecnu.uleda.view_controller.widgets.BottomBarLayout;
-import ecnu.uleda.view_controller.widgets.NoScrollViewPager;
-import io.rong.eventbus.EventBus;
-import io.rong.imageloader.utils.L;
 
 
 public class UMainActivity extends AppCompatActivity implements BottomBarLayout.OnLabelSelectedListener {
