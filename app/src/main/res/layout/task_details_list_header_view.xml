@@ -118,11 +118,14 @@
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/comment_avatar"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/user"/>
+                android:layout_centerInParent="true"
+                android:src="@drawable/user"
+                android:layout_width="30dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="7dp" />
         </HorizontalScrollView>
     </LinearLayout>
 </LinearLayout>
