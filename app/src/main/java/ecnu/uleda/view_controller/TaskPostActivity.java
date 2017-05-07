@@ -270,9 +270,9 @@ public class TaskPostActivity extends AppCompatActivity {
         mLlProDescription=(LinearLayout)findViewById( R.id.task_post_project_details_option);
 
 
-//        LinearLayout a=(LinearLayout) findViewById(R.id.task_post_padding);
-//        ViewGroup.LayoutParams lp = a.getLayoutParams();
-//        lp.height = UPublicTool.getStatusBarHeight(this);
+        LinearLayout a=(LinearLayout) findViewById(R.id.task_post_padding);
+        ViewGroup.LayoutParams lp = a.getLayoutParams();
+        lp.height = UPublicTool.getStatusBarHeight(this);
 
 
         buttonStart = (Button) findViewById(R.id.button_task_post_start);
