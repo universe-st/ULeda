@@ -8,13 +8,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import ecnu.uleda.R;
 import ecnu.uleda.model.UCircle;
+import ecnu.uleda.view_controller.widgets.UcircleDetailActivity;
 
 /**
  * Created by Shensheng on 2016/11/11.
@@ -25,7 +29,7 @@ public class UCircleFragment extends Fragment implements View.OnClickListener{
     private ListView mlistView;
     private ArrayList<UCircle> mCircleList;
     private Button mAddButton;
-
+    private UCircleListAdapter mUCircleListAdapter;
     @Override
     public void onCreate(Bundle b){
         super.onCreate(b);
@@ -83,8 +87,26 @@ public class UCircleFragment extends Fragment implements View.OnClickListener{
                 .setmGet("9")
                 .setmDynamic_Photo(0)
         );
+        mUCircleListAdapter = new UCircleListAdapter(this.getActivity(),mCircleList);
+        mlistView.setAdapter(mUCircleListAdapter);
 
-        mlistView.setAdapter(new UCircleListAdapter(this.getActivity(),mCircleList));
+        mlistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            UCircle Item = (UCircle) mUCircleListAdapter.getItem(position);
+            Intent intent = new Intent(UCircleFragment.this.getActivity(), UcircleDetailActivity.class);
+                String photo = String.valueOf(Item.getmPhotoId());
+                intent.putExtra("photo",photo);
+                intent.putExtra("publisher_name",Item.getmName());
+                intent.putExtra("Title",Item.getmTitle());
+                intent.putExtra("article",Item.getmArticle());
+                String dynamic_photo = String.valueOf(Item.getmDynamic_Photo());
+                intent.putExtra("dynamic_photo",dynamic_photo);
+                intent.putExtra("publish_time",Item.getmTime());
+                intent.putExtra("Get_zan",Item.getmGet());
+                startActivity(intent);
+            }
+        });
         return v;
     }
     public void onClick(View view)

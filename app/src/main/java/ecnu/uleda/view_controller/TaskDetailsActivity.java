@@ -5,12 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Icon;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
@@ -24,6 +26,7 @@ import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.ScrollView;
@@ -41,6 +44,7 @@ import com.tencent.tencentmap.mapsdk.map.MapView;
 import com.tencent.tencentmap.mapsdk.map.TencentMap;
 
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -56,6 +60,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import ecnu.uleda.R;
+import ecnu.uleda.model.UserInfo;
 import ecnu.uleda.tool.UPublicTool;
 import ecnu.uleda.exception.UServerAccessException;
 import ecnu.uleda.model.UTask;
@@ -71,9 +76,10 @@ public class TaskDetailsActivity extends AppCompatActivity {
     private static final int MSG_REFRESH_SUCCESS = 0;
     private static final int MSG_REFRESH_FAIL = 1;
     private static final int MSG_COMMENT_GET = 2;
-    private static final int MSG_TAKE_SUCCESS= 3;
+    private static final int MSG_TAKE_SUCCESS = 3;
     private static final int MSG_COMMENT_SUCCESS = 4;
     private static final int MSG_COMMENT_FAILED = 5;
+    private static final int MSG_TAKERS_GET = 6;
     private UTask mTask;
     private TencentMap mTencentMap;
 
@@ -109,6 +115,8 @@ public class TaskDetailsActivity extends AppCompatActivity {
     LinearLayout mDetailContainer;
     @BindView(R.id.details_scroll)
     ScrollView mScrollView;
+    @BindView(R.id.task_takers_none)
+    TextView mTakersNone;
 
     private PopupWindow mPopupWindow;
     private ProgressDialog mProgress;
@@ -116,6 +124,8 @@ public class TaskDetailsActivity extends AppCompatActivity {
 
     private ExecutorService mThreadPool;
     private LayoutInflater mInflater;
+    private List<UserInfo> mTakers = new ArrayList<>();
+    private TakersAdapter mTakersAdapter;
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -171,6 +181,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
                         }
                     });
                 }
+                initTakers(uoc);
             } else if (msg.what == MSG_TAKE_SUCCESS) {
                 Toast.makeText(TaskDetailsActivity.this, "成功接受任务", Toast.LENGTH_SHORT).show();
                 mButtonRight.setEnabled(false);
@@ -181,7 +192,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
                 for (UserChatItem item : mUserChatItems) {
                     mDetailContainer.addView(getChatView(item), 2);
                 }
-            }  else if (msg.what == MSG_COMMENT_SUCCESS) {
+            } else if (msg.what == MSG_COMMENT_SUCCESS) {
                 UserOperatorController uoc = UserOperatorController.getInstance();
                 UserChatItem uci = new UserChatItem(Integer.parseInt(uoc.getId()),
                         (String) msg.obj,
@@ -197,6 +208,8 @@ public class TaskDetailsActivity extends AppCompatActivity {
             } else if (msg.what == MSG_COMMENT_FAILED) {
                 mProgress.dismiss();
                 Toast.makeText(TaskDetailsActivity.this, "评论失败", Toast.LENGTH_SHORT).show();
+            } else if (msg.what == MSG_TAKERS_GET) {
+                initTakersView();
             } else {
                 Toast.makeText(TaskDetailsActivity.this, "错误：" + msg.obj, Toast.LENGTH_SHORT).show();
             }
@@ -286,7 +299,6 @@ public class TaskDetailsActivity extends AppCompatActivity {
     }
 
 
-
     public View getChatView(UserChatItem userChatItem) {
         View v;
         if (mTask.getAuthorUserName().equals(userChatItem.name)) {
@@ -360,6 +372,51 @@ public class TaskDetailsActivity extends AppCompatActivity {
         initDetails(uoc);
         initComments(uoc);
         listViewInit();
+    }
+
+    private void initTakers(final UserOperatorController uoc) {
+        mThreadPool.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String response = ServerAccessApi.getTakers(uoc.getId(),
+                            uoc.getPassport(), mTask.getPostID());
+                        mTakers.clear();
+                        JSONArray data = new JSONArray(response);
+                        int length = data.length();
+                        for (int i = 0; i < length; i++) {
+                            JSONObject person = data.getJSONObject(i);
+                            JSONObject personDetail = person.getJSONObject("taker_details");
+                            UserInfo info = new UserInfo();
+                            info.setAvatar("fake")
+                                    .setId(person.getString("taker_id"))
+                                    .setUserName(personDetail.getString("username"))
+                                    .setSex(personDetail.getInt("sex"))
+                                    .setBirthday(personDetail.getString("birthday"))
+                                    .setStudentId(personDetail.getString("studentid"))
+                                    .setRealName(personDetail.getString("realname"))
+                                    .setPhone(personDetail.getString("phone"))
+                                    .setSignature(personDetail.getString("signature"));
+                            mTakers.add(info);
+                        }
+                        mHandler.sendEmptyMessage(MSG_TAKERS_GET);
+                } catch (UServerAccessException | JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        });
+    }
+
+    private void initTakersView() {
+        if (mTakers.size() > 0) {
+            mTakersAdapter.setDatas(mTakers);
+        } else {
+            mTaskTakersList.setVisibility(View.GONE);
+            mTakersNone.setVisibility(View.VISIBLE);
+        }
+//        mTaskTakersList.smoothScrollToPosition(0);
+//        mTaskTakersList.requestFocus();
     }
 
     private void initComments(final UserOperatorController uoc) {
@@ -465,7 +522,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
             Date date = new Date((mTask.getPostDate() + mTask.getActiveTime()) * 1000);
             mTaskTimeLimit.setText("剩余时间" + UPublicTool.timeLeft(date));
         }
-        mTaskTakersList.setVisibility(View.GONE);
+//        mTaskTakersList.setVisibility(View.GONE);
     }
 
 
@@ -493,6 +550,10 @@ public class TaskDetailsActivity extends AppCompatActivity {
         mProgress.setMessage("发布中...");
         mProgress.setIndeterminate(true);
         mProgress.setCanceledOnTouchOutside(false);
+        mTakersAdapter = new TakersAdapter(this, mTakers);
+        mTaskTakersList.setAdapter(mTakersAdapter);
+        mTaskTakersList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,
+                false));
     }
 
     public void mapInit() {
@@ -537,6 +598,66 @@ public class TaskDetailsActivity extends AppCompatActivity {
             this.authorAvatar = authorAvatar;
             this.commentID = commentID;
             this.postDate = postDate;
+        }
+    }
+
+    private static class TakerViewHolder extends RecyclerView.ViewHolder {
+
+        SketchImageView avatar;
+
+        public TakerViewHolder(View itemView) {
+            super(itemView);
+            this.avatar = (SketchImageView) ((LinearLayout)itemView).getChildAt(0);
+        }
+    }
+
+    private static class TakersAdapter extends RecyclerView.Adapter<TakerViewHolder> {
+
+        private Context mContext;
+        private List<UserInfo> mDatas;
+
+        public TakersAdapter(Context context, List<UserInfo> datas) {
+            mContext = context;
+            mDatas = datas;
+        }
+
+        @Override
+        public TakerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            LinearLayout container = new LinearLayout(mContext);
+            int width = (int) UPublicTool.dp2px(mContext, 70);
+            container.setLayoutParams(new RecyclerView.LayoutParams(width, width));
+            final SketchImageView imageView = new SketchImageView(mContext);
+            imageView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT));
+            DisplayOptions options = new DisplayOptions();
+            options.setImageShaper(new CircleImageShaper());
+            imageView.setOptions(options);
+            container.addView(imageView, 0);
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int pos = (int) imageView.getTag();
+                    // TODO
+                }
+            });
+            return new TakerViewHolder(container);
+        }
+
+        @Override
+        public void onBindViewHolder(TakerViewHolder holder, int position) {
+            holder.avatar.setTag(position);
+            holder.avatar.displayResourceImage(R.drawable.xiaohong);
+        }
+
+        @Override
+        public int getItemCount() {
+            return mDatas.size();
+        }
+
+        public void setDatas(List<UserInfo> datas) {
+            mDatas = datas;
+            Log.e("haha", "setdatas");
+            notifyDataSetChanged();
         }
     }
 }

@@ -237,6 +237,31 @@ public class ServerAccessApi {
         }
     }
 
+    public static String getTakers(@NonNull String id,@NonNull String passport,
+                                   @NonNull String postID) throws UServerAccessException{
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        id=UrlEncode(id);
+        passport=UrlEncode(passport);
+        postID=UrlEncode(postID);
+        PhalApiClientResponse response=createClient()
+                .withService("Task.GetTakers")
+                .withParams("id",id)
+                .withParams("passport",passport)
+                .withParams("task_id",postID)
+                .withTimeout(SET_TIME_OUT)
+                .request();
+        Log.e("haha", "response: " + response.getData());
+        if(response.getRet()==200) {
+            return response.getData();
+        }else{
+            throw new UServerAccessException(response.getRet());
+        }
+    }
+
 
 
     public static JSONArray getTaskList(@NonNull String id,@NonNull String passport,

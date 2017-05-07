@@ -1,11 +1,15 @@
 package ecnu.uleda.view_controller;
 
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -173,9 +177,6 @@ public class TaskPostActivity extends AppCompatActivity {
 
             }
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
 
         mButtonBack.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -191,25 +192,41 @@ public class TaskPostActivity extends AppCompatActivity {
                 if (!judgeEditText()) {
                     return;
                 }
-                new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-                            ServerAccessApi.postTask(mId, mPpassport, mTitle, mTag, mDescription, mPrice, mPath, mActiveTime, mPosition);
-                            Message message = new Message();
-                            message.what = 0;
-                            mClickHandler.sendMessage(message);
-                        } catch (UServerAccessException e) {
-                            e.printStackTrace();
-                            Message message = new Message();
-                            message.what = 1;
-                            message.obj = e;
-                            mClickHandler.sendMessage(message);
-                        }
-                    }
-                }.start();
+                showAlertDialog();
             }
         });
+    }
+    public void showAlertDialog()
+    {
+        new AlertDialog.Builder(TaskPostActivity.this)
+                .setIcon(R.drawable.main_icon)
+                .setTitle("确认发布")
+                .setMessage("本次发布任务将花费"+mEtPrice.getText().toString()+"元")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        new Thread() {
+                            @Override
+                            public void run() {
+                                try {
+                                    ServerAccessApi.postTask(mId, mPpassport, mTitle, mTag, mDescription, mPrice, mPath, mActiveTime, mPosition);
+                                    Message message = new Message();
+                                    message.what = 0;
+                                    mClickHandler.sendMessage(message);
+                                } catch (UServerAccessException e) {
+                                    e.printStackTrace();
+                                    Message message = new Message();
+                                    message.what = 1;
+                                    message.obj = e;
+                                    mClickHandler.sendMessage(message);
+                                }
+                            }
+                        }.start();
+                    }
+                })
+                .setNegativeButton("取消",null)
+                .create()
+                .show();
     }
     @Override
     public void onActivityResult(int request,int result,Intent data){
