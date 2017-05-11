@@ -246,7 +246,7 @@ public class BannerView extends FrameLayout {
             final View contentView = mReferenceHolder.get().getView(getRealPosition(position),
                     mReferenceHolder.get().mDatas.get(getRealPosition(position)));
             container.addView(contentView);
-            contentView.setTag(position);
+            contentView.setTag(getRealPosition(position));
             contentView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {

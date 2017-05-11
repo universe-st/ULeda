@@ -2,6 +2,7 @@ package ecnu.uleda.view_controller.task.activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -11,12 +12,17 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.graphics.Palette;
+import android.support.v7.widget.ButtonBarLayout;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.Window;
@@ -24,6 +30,7 @@ import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -47,6 +54,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import ecnu.uleda.R;
 import ecnu.uleda.tool.UPublicTool;
+import ecnu.uleda.view_controller.CommonBigImageActivity;
 import ecnu.uleda.view_controller.widgets.BannerView;
 import me.xiaopan.sketch.Sketch;
 import me.xiaopan.sketch.SketchImageView;
@@ -67,20 +75,21 @@ public class ActivityDetailsActivity extends AppCompatActivity {
     private static final String EXTRA_URLS = "extra_urls";
 
     private static final int MSG_LOAD_COMPLETE = 1;
+
     private static final String BUNDLE_DESC = "bundle_desc";
     private static final String BUNDLE_USERNAME = "bundle_username";
     private static final String BUNDLE_PARTICIPATE_COUNT = "bundle_participate_count";
     private static final String BUNDLE_LATITUDE = "bundle_latitude";
     private static final String BUNDLE_LONGITUDE = "bundle_longitude";
 
-    private DetailsHandler mHandler;
-
-    private boolean isMapOpen = false;
-
+    @BindView(R.id.appbar)
+    AppBarLayout mAppBar;
     @BindView(R.id.head_line_layout)
     CollapsingToolbarLayout mCollapsingToolbar;
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
+    @BindView(R.id.toolbar_title_text)
+    TextView mTitleText;
     @BindView(R.id.activity_detail_publisher_name)
     TextView mUsernameView;
     @BindView(R.id.activity_detail_circle_image)
@@ -100,29 +109,46 @@ public class ActivityDetailsActivity extends AppCompatActivity {
     @BindView(R.id.activity_detail_map)
     MapView mMapView;
 
-    private TencentMap mTMap;
     private List<String> mUrls;
 
+    private boolean isMapOpen = false;
+    private TencentMap mTMap;
+
+    private DetailsHandler mHandler;
     private ExecutorService mThreadPool;
+
+    private int mOffSet = 0;
+    private ObjectAnimator mShowTitleAnimator;
+    private ObjectAnimator mHideTitleAnimator;
+    private boolean isTitleShown = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        translucentStatusBar();
         setContentView(R.layout.activity_details);
         ButterKnife.bind(this);
-
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mCollapsingToolbar.setExpandedTitleColor(0xffffffff);
+        setTitle("");
         mHandler = new DetailsHandler(this);
         initDataFromIntent();
         loadDataFromServer();
         initBanner(savedInstanceState);
+        initCollapsingToolbar();
+    }
+
+    private void translucentStatusBar() {
+        Window window = getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(Color.TRANSPARENT);
     }
 
     private void initDataFromIntent() {
         Intent data = getIntent();
-//        mTitleView.setText(data.getStringExtra(EXTRA_TITLE));
         mTagView.setText(data.getStringExtra(EXTRA_TAG));
         mTimeView.setText(data.getStringExtra(EXTRA_TIME));
         mLocationText.setText(data.getStringExtra(EXTRA_LOCATION));
@@ -231,10 +257,53 @@ public class ActivityDetailsActivity extends AppCompatActivity {
 
             @Override
             public void onItemClicked(int pos, View v) {
-
+                if (mOffSet == 0) {
+                    gotoCommonBigImage(String.valueOf(RESOURCES[pos]), v);
+                } else {
+                    mAppBar.setExpanded(true, true);
+                }
             }
+
+
         });
     }
+
+    private void gotoCommonBigImage(String url, View v) {
+        ActivityOptionsCompat options = ActivityOptionsCompat.
+                makeSceneTransitionAnimation(ActivityDetailsActivity.this, v, getString(R.string.transition_big_image));
+        CommonBigImageActivity.startActivity(ActivityDetailsActivity.this, url, options);
+    }
+
+    private void initCollapsingToolbar() {
+        mCollapsingToolbar.setTitleEnabled(false);
+        mAppBar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                mOffSet = verticalOffset;
+                if (-verticalOffset >= appBarLayout.getTotalScrollRange() && !isTitleShown) {
+                    isTitleShown = true;
+                    stopAllAnimation();
+                    mShowTitleAnimator.start();
+                } else if (isTitleShown) {
+                    isTitleShown = false;
+                    stopAllAnimation();
+                    mHideTitleAnimator.start();
+                }
+            }
+        });
+        mShowTitleAnimator = ObjectAnimator.ofFloat(mTitleText, "alpha", 0, 1)
+                .setDuration(300);
+        mShowTitleAnimator.setInterpolator(new LinearInterpolator());
+        mHideTitleAnimator = ObjectAnimator.ofFloat(mTitleText, "alpha", 1, 0)
+                .setDuration(300);
+        mHideTitleAnimator.setInterpolator(new LinearInterpolator());
+    }
+
+    private void stopAllAnimation() {
+        if (mShowTitleAnimator.isRunning()) mShowTitleAnimator.cancel();
+        if (mHideTitleAnimator.isRunning()) mHideTitleAnimator.cancel();
+    }
+
 
     @OnClick(R.id.activity_map_toggle)
     void toggleMap() {
@@ -266,7 +335,7 @@ public class ActivityDetailsActivity extends AppCompatActivity {
         return ViewAnimationUtils.createCircularReveal(mMapView,
                 (int) (mBanner.getWidth() - UPublicTool.dp2px(this, 44)),
                 mBanner.getHeight(), 0, (float) Math.sqrt(mBanner.getWidth() * mBanner.getWidth() +
-                mBanner.getHeight() * mBanner.getHeight()));
+                        mBanner.getHeight() * mBanner.getHeight()));
     }
 
     private Animator getCircularClose() {
