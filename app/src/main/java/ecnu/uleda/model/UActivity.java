@@ -10,26 +10,33 @@ public class UActivity {
     private String avatarUrl;
     private String username;
     private long releaseTime;
+    private long actTime;
+    private String location;
     private String tag;
-    private String content;
+    private String title;
     private List<String> contentUrls;
 
-    public UActivity(String avatarUrl, String username, long releaseTime, String tag, String content) {
+    public UActivity(String avatarUrl, String username, long releaseTime, String tag, String title,
+                     long actTime, String location) {
         this.avatarUrl = avatarUrl;
         this.username = username;
         this.releaseTime = releaseTime;
         this.tag = tag;
-        this.content = content;
+        this.title = title;
+        this.actTime = actTime;
+        this.location = location;
     }
 
-    public UActivity(String avatarUrl, String username, long releaseTime, String tag, String content,
-                     List<String> contentUrls) {
+    public UActivity(String avatarUrl, String username, long releaseTime, String tag, String title,
+                     long actTime, String location, List<String> contentUrls) {
         this.avatarUrl = avatarUrl;
         this.username = username;
         this.releaseTime = releaseTime;
         this.tag = tag;
-        this.content = content;
+        this.title = title;
         this.contentUrls = contentUrls;
+        this.actTime = actTime;
+        this.location = location;
     }
 
     public String getAvatarUrl() {
@@ -64,12 +71,12 @@ public class UActivity {
         this.tag = tag;
     }
 
-    public String getContent() {
-        return content;
+    public String getTitle() {
+        return title;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public List<String> getContentUrls() {
@@ -78,5 +85,21 @@ public class UActivity {
 
     public void setContentUrls(List<String> contentUrls) {
         this.contentUrls = contentUrls;
+    }
+
+    public long getActTime() {
+        return actTime;
+    }
+
+    public void setActTime(long actTime) {
+        this.actTime = actTime;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 }

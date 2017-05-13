@@ -1,15 +1,12 @@
-package ecnu.uleda.view_controller.taskfragment;
+package ecnu.uleda.view_controller.task.fragment;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +31,8 @@ import ecnu.uleda.R;
 import ecnu.uleda.exception.UServerAccessException;
 import ecnu.uleda.function_module.UTaskManager;
 import ecnu.uleda.model.UTask;
-import ecnu.uleda.view_controller.TaskDetailsActivity;
+import ecnu.uleda.view_controller.task.activity.TaskDetailsActivity;
+import ecnu.uleda.view_controller.task.adapter.TaskListAdapter;
 import ecnu.uleda.view_controller.widgets.DrawableLeftCenterTextView;
 import ecnu.uleda.view_controller.widgets.TaskListFilterWindow;
 import ecnu.uleda.view_controller.widgets.TaskListItemDecoration;
@@ -247,7 +245,7 @@ public class TaskMissionFragment extends Fragment {
                             mTaskListView.refreshComplete();
                             mTaskListView.loadMoreComplete();
                         }
-                        if (e.getStatus() != UServerAccessException.DATABASE_ERROR)
+                        if (e.getStatus() != UServerAccessException.DATABASE_ERROR && getContext() != null)
                             Toast.makeText(getContext(), "网络异常：" + error, Toast.LENGTH_SHORT).show();
                     default:
                         break;

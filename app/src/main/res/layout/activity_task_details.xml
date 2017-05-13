@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@android:color/white"
-    tools:context="ecnu.uleda.view_controller.TaskDetailsActivity">
+    tools:context="ecnu.uleda.view_controller.task.activity.TaskDetailsActivity">
 
     <!--<ecnu.uleda.view_controller.UHeadlineLayout-->
     <!--android:id="@+id/head_line_layout"-->

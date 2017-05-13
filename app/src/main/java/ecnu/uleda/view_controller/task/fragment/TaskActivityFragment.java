@@ -1,6 +1,5 @@
-package ecnu.uleda.view_controller.taskfragment;
+package ecnu.uleda.view_controller.task.fragment;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -91,7 +90,7 @@ public class TaskActivityFragment extends Fragment implements StickyNavLayout.On
         mActivityList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             mActivityList.add(new UActivity("xiaohong.jpg", "小蓝", System.currentTimeMillis() / 1000 - 24 * 3600,
-                    "校园", getResources().getString(R.string.activity_example)));
+                    "校园", getResources().getString(R.string.activity_example), 1498874400, "幽灵地点"));
         }
     }
 
