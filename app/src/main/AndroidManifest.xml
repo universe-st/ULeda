@@ -74,6 +74,7 @@
         <activity android:name=".view_controller.MyQrActivity" />
         <activity android:name=".view_controller.SettingUserPhoneActivity" />
         <activity android:name=".view_controller.Mywallet_RechargeActivity" />
+        <activity android:name=".view_controller.widgets.UcircleDetailActivity"/>
         <activity android:name=".view_controller.PopupwindowActivity" />
         <activity
             android:name=".view_controller.TaskPostActivity"
@@ -152,7 +153,7 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
+                android:resource="@xml/file_paths"/>
         </provider>
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -163,6 +164,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/rc_file_path" />
         </provider>
+
 
     </application>
 
