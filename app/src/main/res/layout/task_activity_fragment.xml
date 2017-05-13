@@ -16,7 +16,7 @@
         <com.wang.avi.AVLoadingIndicatorView
             android:id="@+id/id_avloading"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             app:indicator="Pacman"
             app:indicator_color="@color/colorUMain"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -40,10 +40,10 @@
             android:layout_height="wrap_content"
             android:text="@string/listview_header_hint_release"
             android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="@id/id_refresh_arrow"
-            app:layout_constraintLeft_toRightOf="@id/id_refresh_arrow"
+            app:layout_constraintBottom_toBottomOf="@+id/id_refresh_arrow"
+            app:layout_constraintLeft_toRightOf="@+id/id_refresh_arrow"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="@id/id_refresh_arrow" />
+            app:layout_constraintTop_toTopOf="@+id/id_refresh_arrow" />
 
 
     </android.support.constraint.ConstraintLayout>

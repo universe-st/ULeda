@@ -50,6 +50,8 @@ public class BannerView extends FrameLayout {
     private int mCurrentBg;
     private int mCurrentTextColor;
 
+    private boolean isAutoPlay = true;
+
 //    private OnItemClickedListener mListener;
 
     private boolean isInited = false;
@@ -185,7 +187,9 @@ public class BannerView extends FrameLayout {
     }
 
     private void startTimer() {
-        mTimer = new Timer();
+        if (!isAutoPlay) return;
+        if (mHolder != null)
+            mTimer = new Timer();
         mTask = new TimerTask() {
             @Override
             public void run() {
@@ -204,11 +208,13 @@ public class BannerView extends FrameLayout {
     }
 
     public void startScrolling(long interval) {
+        isAutoPlay = true;
         mInterval = interval;
         startTimer();
     }
 
     public void stopScrolling() {
+        isAutoPlay = false;
         stopTimer();
     }
 
@@ -221,6 +227,10 @@ public class BannerView extends FrameLayout {
             stopTimer();
         }
         return super.dispatchTouchEvent(event);
+    }
+
+    public void setAutoPlay(boolean flag) {
+        isAutoPlay = flag;
     }
 
     private static class BannerAdapter extends PagerAdapter {
@@ -236,7 +246,7 @@ public class BannerView extends FrameLayout {
             final View contentView = mReferenceHolder.get().getView(getRealPosition(position),
                     mReferenceHolder.get().mDatas.get(getRealPosition(position)));
             container.addView(contentView);
-            contentView.setTag(position);
+            contentView.setTag(getRealPosition(position));
             contentView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {

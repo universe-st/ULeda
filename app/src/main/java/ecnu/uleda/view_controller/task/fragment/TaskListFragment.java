@@ -1,4 +1,4 @@
-package ecnu.uleda.view_controller.taskfragment;
+package ecnu.uleda.view_controller.task.fragment;
 
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
@@ -14,7 +14,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.PopupWindow;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -56,4 +56,7 @@
         <item name="elevation">0dp</item>
         <item name="android:background">?attr/colorPrimary</item>
     </style>
+    <style name="toolbar_theme" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="colorControlNormal">#ffffffff</item>
+    </style>
 </resources>
