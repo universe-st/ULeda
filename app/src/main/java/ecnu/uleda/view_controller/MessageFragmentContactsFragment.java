@@ -25,7 +25,6 @@ import io.rong.imlib.model.UserInfo;
 public class MessageFragmentContactsFragment extends Fragment implements RongIM.UserInfoProvider {
 
     private List<Friend> userList;
-
     private ViewPager vpContent;
     private List<Fragment> mFragments = new ArrayList<>();
     private FragmentPagerAdapter adapter;

@@ -49,7 +49,8 @@ public class MessageFragment extends Fragment implements SelectableTitleView.OnT
     private List<Friend> userIdList;
     private Unbinder mUnbinder;
     private MessageFragmentLeftFragment mFragmentLeft;
-    private MessageFragmentRightFragment mFragmentRight;
+    private FriendFragment mFragmentRight;
+//    private MessageFragmentRightFragment mFragmentRight;
 
 
     @BindView(R.id.titles)
@@ -128,7 +129,7 @@ public class MessageFragment extends Fragment implements SelectableTitleView.OnT
         FragmentManager fragmentManager = getFragmentManager();//getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         if (mFragmentRight == null) {
-            mFragmentRight = new MessageFragmentRightFragment();
+            mFragmentRight = new FriendFragment();//MessageFragmentRightFragment();
             transaction.add(R.id.message_fragment_layout, mFragmentRight);
         }
         transaction.show(mFragmentRight);
@@ -152,6 +153,7 @@ public class MessageFragment extends Fragment implements SelectableTitleView.OnT
     @OnClick(R.id.my_friends)
     void myFriends() {
         // 左边按钮的点击事件（ps：这个按钮干啥的）
+        //我怎么知道
     }
 
     @Override
