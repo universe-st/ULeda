@@ -278,6 +278,9 @@ public class UMainFragment extends Fragment implements View.OnTouchListener,View
         init(v);
         initView(v);
         initAnimation();
+
+
+
         return v;
     }
 
@@ -431,6 +434,30 @@ public class UMainFragment extends Fragment implements View.OnTouchListener,View
             @Override
             public void onInfoWindowDettached(Marker marker, View view) {
                 //无需回收view
+            }
+        });
+        mTencentMap.setOnMarkerClickListener(new TencentMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker argo) {
+                argo.showInfoWindow();
+                for(Marker i:mMarkers)
+                {
+                    if(!i.equals(argo))
+                    {
+                       i.hideInfoWindow();
+                    }
+                }
+
+                return false;
+            }
+        });
+        mTencentMap.setOnMapClickListener(new TencentMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                for(Marker i:mMarkers)
+                {
+                   i.hideInfoWindow();
+                }
             }
         });
     }
