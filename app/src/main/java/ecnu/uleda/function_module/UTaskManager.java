@@ -103,7 +103,6 @@ public class UTaskManager {
                         mTag,
                         "31.2296,121.403");// 便于家中测试
                 mTasksInList.clear();
-                Log.e("haha", "requesting..." + mUOC.getId() + ", " + mUOC.getPassport() + ", " + mSortBy + ", " + mTag);
                 int length = array.length();
                 for (int i = 0; i < length; i++) {
                     JSONObject j = array.getJSONObject(i);
@@ -117,14 +116,13 @@ public class UTaskManager {
                             .setAuthorUserName(j.getString("authorUsername"))
                             .setAuthorCredit(j.getInt("authorCredit"))
                             .setPostID(j.getString("postID"))
-                            .setActiveTime(j.getLong("activetime"));
+                            .setActiveTime(j.getLong("activetime"))
+                            .setTakersCount(j.getInt("taker_count"));
                     // TODO 匡神接口做好以后去掉 try catch
                     try {
-                        task.setAvatar(j.getString("avatar"))
-                                .setTakersCount(j.getInt("takersCount"));
+                        task.setAvatar(j.getString("avatar"));
                     } catch (JSONException e) {
-                        task.setAvatar("xiaohong.jpg")
-                                .setTakersCount(10);
+                        task.setAvatar("xiaohong.jpg");
                     }
                     mTasksInList.add(task);
                 }
@@ -193,14 +191,13 @@ public class UTaskManager {
                         .setAuthorUserName(j.getString("authorUsername"))
                         .setAuthorCredit(j.getInt("authorCredit"))
                         .setPostID(j.getString("postID"))
-                        .setActiveTime(j.getLong("activetime"));
+                        .setActiveTime(j.getLong("activetime"))
+                        .setTakersCount(j.getInt("taker_count"));
                 // TODO 匡神接口做好以后去掉 try catch
                 try {
-                    task.setAvatar(j.getString("avatar"))
-                            .setTakersCount(j.getInt("takersCount"));
+                    task.setAvatar(j.getString("avatar"));
                 } catch (JSONException e) {
-                    task.setAvatar("xiaohong.jpg")
-                            .setTakersCount(10);
+                    task.setAvatar("xiaohong.jpg");
                 }
                 mTasksInList.add(task);
             }
@@ -251,14 +248,13 @@ public class UTaskManager {
                             .setAuthorUserName(j.getString("authorUsername"))
                             .setAuthorCredit(j.getInt("authorCredit"))
                             .setPostID(j.getString("postID"))
-                            .setActiveTime(j.getLong("activetime"));
+                            .setActiveTime(j.getLong("activetime"))
+                            .setTakersCount(j.getInt("taker_count"));
                     // TODO 匡神接口做好以后去掉 try catch
                     try {
-                        task.setAvatar(j.getString("avatar"))
-                                .setTakersCount(j.getInt("takersCount"));
+                        task.setAvatar(j.getString("avatar"));
                     } catch (JSONException e) {
-                        task.setAvatar("xiaohong.jpg")
-                                .setTakersCount(10);
+                        task.setAvatar("xiaohong.jpg");
                     }
                     mTasksInList.add(task);
                 }
@@ -312,6 +308,21 @@ public class UTaskManager {
             System.exit(1);
         }
     }
+
+    public boolean getTakersInfo(int postId) throws UServerAccessException {
+        mUOC = UserOperatorController.getInstance();
+        if (!mUOC.getIsLogined()) {
+            throw new UServerAccessException(UServerAccessException.UN_LOGIN);
+        } else {
+            String result = ServerAccessApi.getTakers(
+                    mUOC.getId(),
+                    mUOC.getPassport(),
+                    String.valueOf(postId));
+
+        }
+        return false;
+    }
+
 
     public void waitRefreshTasksInMap() throws UServerAccessException {
         long time = System.currentTimeMillis();

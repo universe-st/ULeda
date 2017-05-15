@@ -1,15 +1,12 @@
-package ecnu.uleda.view_controller.taskfragment;
+package ecnu.uleda.view_controller.task.fragment;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +31,8 @@ import ecnu.uleda.R;
 import ecnu.uleda.exception.UServerAccessException;
 import ecnu.uleda.function_module.UTaskManager;
 import ecnu.uleda.model.UTask;
-import ecnu.uleda.view_controller.TaskDetailsActivity;
+import ecnu.uleda.view_controller.task.activity.TaskDetailsActivity;
+import ecnu.uleda.view_controller.task.adapter.TaskListAdapter;
 import ecnu.uleda.view_controller.widgets.DrawableLeftCenterTextView;
 import ecnu.uleda.view_controller.widgets.TaskListFilterWindow;
 import ecnu.uleda.view_controller.widgets.TaskListItemDecoration;
@@ -193,16 +191,11 @@ public class TaskMissionFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        mThreadPool.submit(new RefreshThread());
-    }
-
-    @Override
     public void onDestroyView() {
         super.onDestroyView();
         EventBus.getDefault().unregister(this);
         mThreadPool.shutdownNow();
+        mUnbinder.unbind();
     }
 
     private void init() {
@@ -247,10 +240,13 @@ public class TaskMissionFragment extends Fragment {
                     case ERROR:
                         UServerAccessException e = (UServerAccessException) msg.obj;
                         String error = e.getMessage();
-                        mTaskListView.refreshComplete();
-                        mTaskListView.loadMoreComplete();
-                        if (e.getStatus() != UServerAccessException.DATABASE_ERROR)
-                            Toast.makeText(getActivity(), "网络异常：" + error, Toast.LENGTH_SHORT).show();
+                        // 一个只出现过一次后来没法复现的诡异空指针bug,在此加个判断
+                        if (mTaskListView != null) {
+                            mTaskListView.refreshComplete();
+                            mTaskListView.loadMoreComplete();
+                        }
+                        if (e.getStatus() != UServerAccessException.DATABASE_ERROR && getContext() != null)
+                            Toast.makeText(getContext(), "网络异常：" + error, Toast.LENGTH_SHORT).show();
                     default:
                         break;
                 }
@@ -258,8 +254,12 @@ public class TaskMissionFragment extends Fragment {
         };
     }
 
+
     private void initRecyclerView() {
-        mThreadPool.submit(new RefreshFromFileThread());
+        if (mUTaskManager.getTasksInList() == null || mUTaskManager.getTasksInList().size() == 0) {
+            mThreadPool.submit(new RefreshFromFileThread());
+        }
+        mThreadPool.submit(new RefreshThread());
         mTasksInList = new ArrayList<>();
         mTaskListAdapter = new TaskListAdapter(getActivity(), mTasksInList);
         mTaskListAdapter.setHasStableIds(true);

@@ -1,4 +1,4 @@
-package ecnu.uleda.view_controller.taskfragment;
+package ecnu.uleda.view_controller.task.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -8,16 +8,11 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,7 +24,10 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -37,6 +35,7 @@ import butterknife.ButterKnife;
 import ecnu.uleda.R;
 import ecnu.uleda.model.UActivity;
 import ecnu.uleda.tool.UPublicTool;
+import ecnu.uleda.view_controller.task.activity.ActivityDetailsActivity;
 import ecnu.uleda.view_controller.widgets.BrochureItemDecoration;
 import ecnu.uleda.view_controller.widgets.TaskListItemDecoration;
 import me.xiaopan.sketch.SketchImageView;
@@ -62,6 +61,7 @@ public class ActivityListFragment extends Fragment {
 
     private XRecyclerView mActivityRv;
     private List<UActivity> mActivityList;
+    private List<String> mBrochureUrls;
 
     private static ActivityListFragment mInstance;
     public static ActivityListFragment getInstance() {
@@ -131,11 +131,7 @@ public class ActivityListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        mActivityList = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            mActivityList.add(new UActivity("xiaohong.jpg", "小蓝", System.currentTimeMillis() / 1000 - 24 * 3600,
-                    "校园", getResources().getString(R.string.activity_example)));
-        }
+
     }
 
     @Override
@@ -150,11 +146,19 @@ public class ActivityListFragment extends Fragment {
         mActivityRv.setAdapter(new ActivityListAdapter(getContext()));
         mActivityRv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         mActivityRv.addItemDecoration(new TaskListItemDecoration(getContext(), 8, false));
+        mActivityList = new ArrayList<>();
+        mBrochureUrls = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            mActivityList.add(new UActivity("xiaohong.jpg", "小蓝", System.currentTimeMillis() / 1000 - 24 * 3600,
+                    "校园", getResources().getString(R.string.activity_example), 1498874400, "幽灵地点"));
+            mBrochureUrls.add(R.drawable.img1 + "," + R.drawable.img2 + "," + R.drawable.img3);
+        }
     }
 
     private class ActivityListAdapter extends RecyclerView.Adapter<ViewHolder> {
 
         private LayoutInflater mInflater;
+        private SimpleDateFormat df = new SimpleDateFormat("M月d日 HH:mm");
 
         public ActivityListAdapter(Context context) {
             mInflater = LayoutInflater.from(context);
@@ -186,9 +190,11 @@ public class ActivityListFragment extends Fragment {
             holder.time.setText(UPublicTool.parseTime(uActivity.getReleaseTime()));
             holder.username.setText(uActivity.getUsername());
             holder.tag.setText("#" + uActivity.getTag());
-            holder.desc.setText(uActivity.getContent());
+            holder.title.setText(uActivity.getTitle());
+            holder.actTime.setText(df.format(new Date(uActivity.getActTime() * 1000)));
+            holder.location.setText(uActivity.getLocation());
             holder.itemView.setTag(position);
-            holder.brochure.setAdapter(new BrochureAdapter());
+            holder.brochure.setAdapter(new BrochureAdapter(new ArrayList<>(Arrays.asList(mBrochureUrls.get(position).split(",")))));
             holder.brochure.setLayoutManager(new LinearLayoutManager(getContext(),
                     LinearLayoutManager.HORIZONTAL, false));
             holder.brochure.addItemDecoration(new BrochureItemDecoration(getContext(), 3));
@@ -202,7 +208,15 @@ public class ActivityListFragment extends Fragment {
 
     private void onItemClick(View v, int pos) {
         // TODO 点击事件
-        Toast.makeText(getContext(), "点击了 item" + pos, Toast.LENGTH_SHORT).show();
+        SimpleDateFormat df = new SimpleDateFormat("M月d日 HH:mm");
+        UActivity act = mActivityList.get(pos);
+        ActivityDetailsActivity.startActivity(getActivity(),
+                act.getAvatarUrl(),
+                act.getTitle(),
+                act.getTag(),
+                df.format(new Date(act.getActTime() * 1000)),
+                act.getLocation(),
+                new ArrayList<>(Arrays.asList(mBrochureUrls.get(pos).split(","))));
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -214,11 +228,15 @@ public class ActivityListFragment extends Fragment {
         @BindView(R.id.activity_tag)
         TextView tag;
         @BindView(R.id.activity_description)
-        TextView desc;
+        TextView title;
         @BindView(R.id.activity_time)
         TextView time;
         @BindView(R.id.activity_brochure)
         RecyclerView brochure;
+        @BindView(R.id.activity_location)
+        TextView location;
+        @BindView(R.id.activity_act_time)
+        TextView actTime;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -236,8 +254,10 @@ public class ActivityListFragment extends Fragment {
     }
    class BrochureAdapter extends RecyclerView.Adapter<BrochureHolder> {
        private int mImageWidth;
-       public BrochureAdapter() {
+       private List<String> mUrls;
+       public BrochureAdapter(List<String> urls) {
            mImageWidth = mActivityRv.getMeasuredWidth() / 3;
+           mUrls = urls;
        }
 
        @Override
@@ -250,7 +270,7 @@ public class ActivityListFragment extends Fragment {
 
        @Override
        public void onBindViewHolder(BrochureHolder holder, int position) {
-            holder.imageView.setImageResource(R.drawable.img1);
+            holder.imageView.setImageResource(Integer.parseInt(mUrls.get(position)));
        }
 
        @Override
