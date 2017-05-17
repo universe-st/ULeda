@@ -7,6 +7,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -256,10 +257,6 @@ public class TaskMissionFragment extends Fragment {
 
 
     private void initRecyclerView() {
-        if (mUTaskManager.getTasksInList() == null || mUTaskManager.getTasksInList().size() == 0) {
-            mThreadPool.submit(new RefreshFromFileThread());
-        }
-        mThreadPool.submit(new RefreshThread());
         mTasksInList = new ArrayList<>();
         mTaskListAdapter = new TaskListAdapter(getActivity(), mTasksInList);
         mTaskListAdapter.setHasStableIds(true);
@@ -288,6 +285,15 @@ public class TaskMissionFragment extends Fragment {
                 mThreadPool.submit(new LoadMoreThread());
             }
         });
+        if (mUTaskManager.getTasksInList() == null || mUTaskManager.getTasksInList().size() == 0) {
+//            mThreadPool.submit(new RefreshFromFileThread());
+            refreshFromFile();
+            mThreadPool.submit(new RefreshThread());
+        } else {
+            mTaskListAdapter.updateDataSource(mTasksInList = mUTaskManager.getTasksInList());
+            isLoadedFromServer = true;
+            mTaskListView.setLoadingMoreEnabled(true);
+        }
     }
 
     private class RefreshThread extends Thread {
@@ -306,6 +312,16 @@ public class TaskMissionFragment extends Fragment {
                 message.obj = e;
                 mRefreshHandler.sendMessage(message);
             }
+        }
+    }
+
+    private void refreshFromFile() {
+        mUTaskManager.refreshTaskInListFromFile(getContext());
+        List<UTask> taskList = mUTaskManager.getTasksInList();
+        if (taskList != null && taskList.size() > 0) {
+            mTasksInList = taskList;
+            mTaskListAdapter.updateDataSource(mTasksInList);
+            mTaskListView.scrollToPosition(0);
         }
     }
 

@@ -624,7 +624,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
         @Override
         public TakerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LinearLayout container = new LinearLayout(mContext);
-            int width = (int) UPublicTool.dp2px(mContext, 70);
+            int width = (int) UPublicTool.dp2px(mContext, 50);
             container.setLayoutParams(new RecyclerView.LayoutParams(width, width));
             final SketchImageView imageView = new SketchImageView(mContext);
             imageView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -656,7 +656,6 @@ public class TaskDetailsActivity extends AppCompatActivity {
 
         public void setDatas(List<UserInfo> datas) {
             mDatas = datas;
-            Log.e("haha", "setdatas");
             notifyDataSetChanged();
         }
     }
