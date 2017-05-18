@@ -22,6 +22,22 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!--<uses-permission android:name="android.permission.CAMERA" />-->
+    <!--录音 -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!--防止设备休眠 -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!--<uses-permission android:name="android.permission.WRITE_SETTINGS" />-->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <!--<uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />-->
+    <!--获取联系人信息，demo中演示发送通讯录消息-->
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <!--<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />-->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <provider
         android:name="android.support.v4.content.FileProvider"
         android:authorities="ecnu.uleda.FileProvider"
@@ -42,6 +58,68 @@
         <meta-data
             android:name="TencentMapSDK"
             android:value="DYXBZ-ALP33-ZZV3L-3LKO5-PLDRF-AKFEO" />
+
+
+        <meta-data
+            android:name="RONG_CLOUD_APP_KEY"
+            android:value=" mgb7ka1nmv4wg" />
+        <service
+            android:name="io.rong.imlib.ipc.RongService"
+            android:process=":ipc" >
+        </service>
+        <service android:name="io.rong.imlib.ReConnectService" />
+
+        <receiver android:name="io.rong.imlib.ConnectChangeReceiver" />
+        <receiver android:name="io.rong.imlib.ipc.PushMessageReceiver" >
+            <intent-filter>
+                <action android:name="io.rong.push.message" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="io.rong.imlib.HeartbeatReceiver"
+            android:process=":ipc" />
+
+        <service
+            android:name="io.rong.push.PushService"
+            android:process="io.rong.push" > <!--the name of the push process can't be changed!!-->
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="io.rong.push" />
+            </intent-filter>
+        </service>
+        <service
+            android:name="io.rong.push.CommandService"
+            android:process="io.rong.push" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="io.rong.command" />
+            </intent-filter>
+        </service>
+
+
+        <receiver
+            android:name="io.rong.push.PushReceiver"
+            android:process="io.rong.push" >
+            <intent-filter>
+                <action android:name="io.rong.imlib.action.push.heartbeat" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+
+
+
+
+
+
+
+
+
 
         <activity
             android:name=".view_controller.UMainActivity"
