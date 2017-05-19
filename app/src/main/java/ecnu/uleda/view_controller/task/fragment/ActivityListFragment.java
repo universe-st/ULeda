@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
@@ -34,7 +33,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import ecnu.uleda.R;
 import ecnu.uleda.model.UActivity;
-import ecnu.uleda.tool.UPublicTool;
 import ecnu.uleda.view_controller.task.activity.ActivityDetailsActivity;
 import ecnu.uleda.view_controller.widgets.BrochureItemDecoration;
 import ecnu.uleda.view_controller.widgets.TaskListItemDecoration;
@@ -149,8 +147,20 @@ public class ActivityListFragment extends Fragment {
         mActivityList = new ArrayList<>();
         mBrochureUrls = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            mActivityList.add(new UActivity("xiaohong.jpg", "小蓝", System.currentTimeMillis() / 1000 - 24 * 3600,
-                    "校园", getResources().getString(R.string.activity_example), 1498874400, "幽灵地点"));
+            mActivityList.add(new UActivity(getResources().getString(R.string.activity_example),
+                    31.2284700000,
+                    121.4064000000,
+                    "幽灵地点",
+                    "校园",
+                    1,
+                    "小明",
+                    "xiaohong.jpg",
+                    null,
+                    System.currentTimeMillis() / 1000 + 24 * 3600,
+                    20,
+                    new ArrayList<>(Arrays.asList(new String[]{String.valueOf(R.drawable.img1),
+                            String.valueOf(R.drawable.img2),
+                            String.valueOf(R.drawable.img3)}))));
             mBrochureUrls.add(R.drawable.img1 + "," + R.drawable.img2 + "," + R.drawable.img3);
         }
     }
@@ -182,16 +192,16 @@ public class ActivityListFragment extends Fragment {
             DisplayOptions options = new DisplayOptions();
             options.setImageShaper(new CircleImageShaper());
             holder.avatar.setOptions(options);
-            if (uActivity.getAvatarUrl().equals("xiaohong.jpg")) {
+            if (uActivity.getAvatar().equals("xiaohong.jpg")) {
                 holder.avatar.displayResourceImage(R.drawable.xiaohong);
             } else {
-                holder.avatar.displayImage(uActivity.getAvatarUrl());
+                holder.avatar.displayImage(uActivity.getAvatar());
             }
-            holder.time.setText(UPublicTool.parseTime(uActivity.getReleaseTime()));
-            holder.username.setText(uActivity.getUsername());
+            holder.time.setText(df.format(new Date(uActivity.getHoldTime())));
+            holder.username.setText(uActivity.getAuthorUsername());
             holder.tag.setText("#" + uActivity.getTag());
             holder.title.setText(uActivity.getTitle());
-            holder.actTime.setText(df.format(new Date(uActivity.getActTime() * 1000)));
+            holder.actTime.setText(df.format(new Date(uActivity.getHoldTime() * 1000)));
             holder.location.setText(uActivity.getLocation());
             holder.itemView.setTag(position);
             holder.brochure.setAdapter(new BrochureAdapter(new ArrayList<>(Arrays.asList(mBrochureUrls.get(position).split(",")))));
@@ -207,16 +217,7 @@ public class ActivityListFragment extends Fragment {
     }
 
     private void onItemClick(View v, int pos) {
-        // TODO 点击事件
-        SimpleDateFormat df = new SimpleDateFormat("M月d日 HH:mm");
-        UActivity act = mActivityList.get(pos);
-        ActivityDetailsActivity.startActivity(getActivity(),
-                act.getAvatarUrl(),
-                act.getTitle(),
-                act.getTag(),
-                df.format(new Date(act.getActTime() * 1000)),
-                act.getLocation(),
-                new ArrayList<>(Arrays.asList(mBrochureUrls.get(pos).split(","))));
+        ActivityDetailsActivity.startActivity(getActivity(), mActivityList.get(pos));
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

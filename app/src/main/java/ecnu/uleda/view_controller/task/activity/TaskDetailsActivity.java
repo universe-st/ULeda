@@ -1,5 +1,6 @@
 package ecnu.uleda.view_controller.task.activity;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +9,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -42,6 +44,8 @@ import com.tencent.tencentmap.mapsdk.map.MapView;
 import com.tencent.tencentmap.mapsdk.map.TencentMap;
 
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -66,11 +70,13 @@ import ecnu.uleda.function_module.UserOperatorController;
 import ecnu.uleda.function_module.ServerAccessApi;
 import ecnu.uleda.view_controller.SingleUserInfoActivity;
 import ecnu.uleda.view_controller.TaskEditActivity;
+import ecnu.uleda.view_controller.task.adapter.TakersAdapter;
 import me.xiaopan.sketch.SketchImageView;
 import me.xiaopan.sketch.request.DisplayOptions;
 import me.xiaopan.sketch.shaper.CircleImageShaper;
 
-public class TaskDetailsActivity extends AppCompatActivity {
+@SuppressLint("WrongConstant")
+public class TaskDetailsActivity extends BaseDetailsActivity {
 
     public static final String EXTRA_UTASK = "UTask";
     private static final int MSG_REFRESH_SUCCESS = 0;
@@ -118,9 +124,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
     @BindView(R.id.task_takers_none)
     TextView mTakersNone;
 
-    private PopupWindow mPopupWindow;
     private ProgressDialog mProgress;
-    private EditText mPostCommentEdit;
 
     private ExecutorService mThreadPool;
     private LayoutInflater mInflater;
@@ -189,22 +193,9 @@ public class TaskDetailsActivity extends AppCompatActivity {
                 mButtonRight.setText("已被领取");
                 mButtonRight.setBackgroundColor(ContextCompat.getColor(TaskDetailsActivity.this, android.R.color.darker_gray));
             } else if (msg.what == MSG_COMMENT_GET) {
-                for (UserChatItem item : mUserChatItems) {
-                    mDetailContainer.addView(getChatView(item), 2);
-                }
+                addCommentView(mDetailContainer, 2);
             } else if (msg.what == MSG_COMMENT_SUCCESS) {
-                UserOperatorController uoc = UserOperatorController.getInstance();
-                UserChatItem uci = new UserChatItem(Integer.parseInt(uoc.getId()),
-                        (String) msg.obj,
-                        uoc.getUserName(),
-                        "test",
-                        -1,
-                        System.currentTimeMillis() / 1000);
-                mUserChatItems.add(uci);
-                View commentItem = getChatView(uci);
-                mDetailContainer.addView(commentItem, 2);
-                mScrollView.smoothScrollTo(0, (int) commentItem.getY());
-                mPopupWindow.dismiss();
+                addCommentView((String) msg.obj, mDetailContainer, 2);
             } else if (msg.what == MSG_COMMENT_FAILED) {
                 mProgress.dismiss();
                 Toast.makeText(TaskDetailsActivity.this, "评论失败", Toast.LENGTH_SHORT).show();
@@ -232,74 +223,12 @@ public class TaskDetailsActivity extends AppCompatActivity {
     @OnClick(R.id.comment_bt)
     void comment() {
         showCommentPopup();
-        mPostCommentEdit.requestFocus();
         InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(0, InputMethodManager.SHOW_FORCED);
     }
 
-
-    private void showCommentPopup() {
-        View view = View.inflate(this, R.layout.activity_addcomment, null);
-        Button send = (Button) view.findViewById(R.id.send);
-        send.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final String text = mPostCommentEdit.getText().toString();
-                if (text.length() == 0) {
-                    Toast.makeText(TaskDetailsActivity.this, "评论内容不可以为空哦！", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                mProgress.show();
-                mThreadPool.submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        UserOperatorController uoc = UserOperatorController.getInstance();
-                        try {
-                            String result = ServerAccessApi.postComment(uoc.getId(), uoc.getPassport(),
-                                    mTask.getPostID(), text);
-                            if (result.equals("success")) {
-                                Message msg = Message.obtain();
-                                msg.obj = text;
-                                msg.what = MSG_COMMENT_SUCCESS;
-                                mHandler.sendMessage(msg);
-                            } else {
-                                mHandler.sendEmptyMessage(MSG_COMMENT_FAILED);
-                            }
-                        } catch (UServerAccessException e) {
-                            e.printStackTrace();
-                            mHandler.sendEmptyMessage(MSG_COMMENT_FAILED);
-                        }
-                    }
-                });
-            }
-        });
-        mPostCommentEdit = (EditText) view.findViewById(R.id.comment_edit);
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPopupWindow.dismiss();
-            }
-        });
-        view.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in));
-        LinearLayout comment = (LinearLayout) view.findViewById(R.id.comment);
-        comment.startAnimation(AnimationUtils.loadAnimation(this, R.anim.push_bottom_in));
-        if (mPopupWindow == null) {
-            mPopupWindow = new PopupWindow(this);
-            mPopupWindow.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
-            mPopupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
-            mPopupWindow.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.WHITE));
-            mPopupWindow.setFocusable(true);
-            mPopupWindow.setOutsideTouchable(true);
-        }
-        mPopupWindow.setContentView(view);
-        mPopupWindow.showAtLocation(comment, Gravity.BOTTOM, 0, 0);
-        if (Build.VERSION.SDK_INT != 24) {
-            mPopupWindow.update();
-        }
-    }
-
-
-    public View getChatView(UserChatItem userChatItem) {
+    @Override
+    public View getChatView(@NonNull UserChatItem userChatItem) {
         View v;
         if (mTask.getAuthorUserName().equals(userChatItem.name)) {
             v = mInflater.inflate(R.layout.task_detail_chat_item_right, mDetailContainer, false);
@@ -324,9 +253,6 @@ public class TaskDetailsActivity extends AppCompatActivity {
         return v;
     }
 
-
-    private ArrayList<UserChatItem> mUserChatItems = new ArrayList<>();
-
     @Override
     public void onResume() {
         mMapView.onResume();
@@ -350,28 +276,6 @@ public class TaskDetailsActivity extends AppCompatActivity {
     public void onDestroy() {
         mMapView.onDestroy();
         super.onDestroy();
-    }
-
-    //测试代码
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_task_details);
-        ButterKnife.bind(this);
-        setSupportActionBar(mToolbar);
-        setTitle("");
-        Intent intent = getIntent();
-        mTask = (UTask) intent.getSerializableExtra(EXTRA_UTASK);
-        init();
-        final UserOperatorController uoc = UserOperatorController.getInstance();
-        mTencentMap = mMapView.getMap();
-        mMapView.onCreate(savedInstanceState);
-
-        if (!uoc.getIsLogined()) return;
-        mThreadPool = Executors.newCachedThreadPool();
-        initDetails(uoc);
-        initComments(uoc);
-        listViewInit();
     }
 
     private void initTakers(final UserOperatorController uoc) {
@@ -427,11 +331,11 @@ public class TaskDetailsActivity extends AppCompatActivity {
                     String response = ServerAccessApi.getComment(uoc.getId(),
                             uoc.getPassport(), mTask.getPostID(), String.valueOf(0));
                     if (!response.equals("null")) {
-                        mUserChatItems = new Gson().fromJson(response,
+                        setChatItems((List<UserChatItem>) new Gson().fromJson(response,
                                 new TypeToken<List<UserChatItem>>() {
-                                }.getType());
+                                }.getType()));
                     } else {
-                        mUserChatItems.clear();
+                        getMUserChatItems().clear();
                     }
                     mHandler.sendEmptyMessage(MSG_COMMENT_GET);
                 } catch (UServerAccessException e) {
@@ -550,7 +454,13 @@ public class TaskDetailsActivity extends AppCompatActivity {
         mProgress.setMessage("发布中...");
         mProgress.setIndeterminate(true);
         mProgress.setCanceledOnTouchOutside(false);
-        mTakersAdapter = new TakersAdapter(this, mTakers);
+        mTakersAdapter = new TakersAdapter(this, mTakers) {
+
+            @Override
+            protected void onItemClick(View v, int pos) {
+                // TODO 选择接单人
+            }
+        };
         mTaskTakersList.setAdapter(mTakersAdapter);
         mTaskTakersList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,
                 false));
@@ -573,6 +483,55 @@ public class TaskDetailsActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void initActivity(@Nullable Bundle savedInstanceState) {
+        setSupportActionBar(mToolbar);
+        setTitle("");
+        Intent intent = getIntent();
+        mTask = (UTask) intent.getSerializableExtra(EXTRA_UTASK);
+        init();
+        final UserOperatorController uoc = UserOperatorController.getInstance();
+        mTencentMap = mMapView.getMap();
+        mMapView.onCreate(savedInstanceState);
+
+        if (!uoc.getIsLogined()) return;
+        mThreadPool = Executors.newCachedThreadPool();
+        initDetails(uoc);
+        initComments(uoc);
+        listViewInit();
+    }
+
+    @Override
+    public void initContentView() {
+        setContentView(R.layout.activity_task_details);
+    }
+
+    @Override
+    public void onSubmitComment(@NotNull final String comment) {
+        mProgress.show();
+        mThreadPool.submit(new Runnable() {
+            @Override
+            public void run() {
+                UserOperatorController uoc = UserOperatorController.getInstance();
+                try {
+                    String result = ServerAccessApi.postComment(uoc.getId(), uoc.getPassport(),
+                            mTask.getPostID(), comment);
+                    if (result.equals("success")) {
+                        Message msg = Message.obtain();
+                        msg.obj = comment;
+                        msg.what = MSG_COMMENT_SUCCESS;
+                        mHandler.sendMessage(msg);
+                    } else {
+                        mHandler.sendEmptyMessage(MSG_COMMENT_FAILED);
+                    }
+                } catch (UServerAccessException e) {
+                    e.printStackTrace();
+                    mHandler.sendEmptyMessage(MSG_COMMENT_FAILED);
+                }
+            }
+        });
     }
 
     //测试代码
@@ -601,62 +560,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
         }
     }
 
-    private static class TakerViewHolder extends RecyclerView.ViewHolder {
 
-        SketchImageView avatar;
 
-        public TakerViewHolder(View itemView) {
-            super(itemView);
-            this.avatar = (SketchImageView) ((LinearLayout)itemView).getChildAt(0);
-        }
-    }
 
-    private static class TakersAdapter extends RecyclerView.Adapter<TakerViewHolder> {
-
-        private Context mContext;
-        private List<UserInfo> mDatas;
-
-        public TakersAdapter(Context context, List<UserInfo> datas) {
-            mContext = context;
-            mDatas = datas;
-        }
-
-        @Override
-        public TakerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            LinearLayout container = new LinearLayout(mContext);
-            int width = (int) UPublicTool.dp2px(mContext, 50);
-            container.setLayoutParams(new RecyclerView.LayoutParams(width, width));
-            final SketchImageView imageView = new SketchImageView(mContext);
-            imageView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT));
-            DisplayOptions options = new DisplayOptions();
-            options.setImageShaper(new CircleImageShaper());
-            imageView.setOptions(options);
-            container.addView(imageView, 0);
-            imageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int pos = (int) imageView.getTag();
-                    // TODO
-                }
-            });
-            return new TakerViewHolder(container);
-        }
-
-        @Override
-        public void onBindViewHolder(TakerViewHolder holder, int position) {
-            holder.avatar.setTag(position);
-            holder.avatar.displayResourceImage(R.drawable.xiaohong);
-        }
-
-        @Override
-        public int getItemCount() {
-            return mDatas.size();
-        }
-
-        public void setDatas(List<UserInfo> datas) {
-            mDatas = datas;
-            notifyDataSetChanged();
-        }
-    }
 }

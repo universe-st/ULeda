@@ -3,35 +3,36 @@ package ecnu.uleda.view_controller.task.activity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.graphics.Palette;
-import android.support.v7.widget.ButtonBarLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.MotionEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
-import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.tencent.mapsdk.raster.model.BitmapDescriptorFactory;
@@ -42,6 +43,9 @@ import com.tencent.tencentmap.mapsdk.map.MapView;
 import com.tencent.tencentmap.mapsdk.map.TencentMap;
 import com.tencent.tencentmap.mapsdk.map.UiSettings;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -50,11 +54,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import ecnu.uleda.R;
+import ecnu.uleda.function_module.UserOperatorController;
+import ecnu.uleda.model.UActivity;
+import ecnu.uleda.model.UserInfo;
 import ecnu.uleda.tool.UPublicTool;
 import ecnu.uleda.view_controller.CommonBigImageActivity;
+import ecnu.uleda.view_controller.task.adapter.TakersAdapter;
 import ecnu.uleda.view_controller.widgets.BannerView;
 import me.xiaopan.sketch.Sketch;
 import me.xiaopan.sketch.SketchImageView;
@@ -65,14 +72,10 @@ import me.xiaopan.sketch.request.LoadListener;
 import me.xiaopan.sketch.request.LoadResult;
 import me.xiaopan.sketch.shaper.CircleImageShaper;
 
-public class ActivityDetailsActivity extends AppCompatActivity {
+@SuppressLint("WrongConstant")
+public class ActivityDetailsActivity extends BaseDetailsActivity {
 
-    private static final String EXTRA_TITLE = "extra_title";
-    private static final String EXTRA_TAG = "extra_tag";
-    private static final String EXTRA_AVATAR_URL = "extra_avatar_url";
-    private static final String EXTRA_TIME = "extra_time";
-    private static final String EXTRA_LOCATION = "extra_location";
-    private static final String EXTRA_URLS = "extra_urls";
+    private static final String EXTRA_ACTIVITY = "extra_activity";
 
     private static final int MSG_LOAD_COMPLETE = 1;
 
@@ -108,8 +111,19 @@ public class ActivityDetailsActivity extends AppCompatActivity {
     BannerView mBanner;
     @BindView(R.id.activity_detail_map)
     MapView mMapView;
+    @BindView(R.id.right_button)
+    Button actionView;
+    @BindView(R.id.task_detail_list_view)
+    LinearLayout mDetailContainer;
+    @BindView(R.id.activity_takers_list)
+    RecyclerView mTakersList;
+    @BindView(R.id.activity_takers_title)
+    TextView mTakersTitleView;
+    private ProgressDialog mProgress;
 
     private List<String> mUrls;
+    private List<UserInfo> mTakerInfos;
+    private UActivity mActivity;
 
     private boolean isMapOpen = false;
     private TencentMap mTMap;
@@ -122,22 +136,6 @@ public class ActivityDetailsActivity extends AppCompatActivity {
     private ObjectAnimator mHideTitleAnimator;
     private boolean isTitleShown = false;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        translucentStatusBar();
-        setContentView(R.layout.activity_details);
-        ButterKnife.bind(this);
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        setTitle("");
-        mHandler = new DetailsHandler(this);
-        initDataFromIntent();
-        loadDataFromServer();
-        initBanner(savedInstanceState);
-        initCollapsingToolbar();
-    }
-
     private void translucentStatusBar() {
         Window window = getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -148,12 +146,14 @@ public class ActivityDetailsActivity extends AppCompatActivity {
     }
 
     private void initDataFromIntent() {
+        SimpleDateFormat df = new SimpleDateFormat("yy年M月d日 HH:mm");
         Intent data = getIntent();
-        mTagView.setText(data.getStringExtra(EXTRA_TAG));
-        mTimeView.setText(data.getStringExtra(EXTRA_TIME));
-        mLocationText.setText(data.getStringExtra(EXTRA_LOCATION));
-        mUrls = data.getStringArrayListExtra(EXTRA_URLS);
-        String avatarUrl = data.getStringExtra(EXTRA_AVATAR_URL);
+        mActivity = (UActivity) data.getSerializableExtra(EXTRA_ACTIVITY);
+        mTagView.setText(mActivity.getTag());
+        mTimeView.setText(df.format(mActivity.getHoldTime()));
+        mLocationText.setText(mActivity.getLocation());
+        mUrls = mActivity.getImgUrls();
+        String avatarUrl = mActivity.getAvatar();
         DisplayOptions opt = new DisplayOptions();
         opt.setImageShaper(new CircleImageShaper());
         mAvatarView.setOptions(opt);
@@ -299,6 +299,25 @@ public class ActivityDetailsActivity extends AppCompatActivity {
         mHideTitleAnimator.setInterpolator(new LinearInterpolator());
     }
 
+
+    private void initTakersList() {
+        UserOperatorController uoc = UserOperatorController.getInstance();
+        mTakerInfos = new ArrayList<>();
+        if (mActivity.getAuthorUsername().equals(uoc.getUserName())) {
+            mTakersList.setVisibility(View.VISIBLE);
+            mTakersTitleView.setVisibility(View.VISIBLE);
+            mTakersList.setAdapter(new TakersAdapter(this, mTakerInfos) {
+
+                @Override
+                protected void onItemClick(View v, int pos) {
+                }
+            });
+            mTakersList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,
+                    false));
+        }
+    }
+
+
     private void stopAllAnimation() {
         if (mShowTitleAnimator.isRunning()) mShowTitleAnimator.cancel();
         if (mHideTitleAnimator.isRunning()) mHideTitleAnimator.cancel();
@@ -384,6 +403,72 @@ public class ActivityDetailsActivity extends AppCompatActivity {
         mThreadPool.submit(new LoadActivityService());
     }
 
+    @OnClick(R.id.comment_bt)
+    void comment() {
+        showCommentPopup();
+    }
+
+    @Override
+    public void initActivity(@Nullable Bundle savedInstanceState) {
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setTitle("");
+        mHandler = new DetailsHandler(this);
+        initProgressBar();
+        initDataFromIntent();
+        loadDataFromServer();
+        initBanner(savedInstanceState);
+        initCollapsingToolbar();
+        initTakersList();
+    }
+
+    private void initProgressBar() {
+        mProgress = new ProgressDialog(this);
+        mProgress.setIndeterminate(true);
+        mProgress.setMessage("发布中...");
+        mProgress.setCancelable(false);
+    }
+
+    @Override
+    public void initContentView() {
+        translucentStatusBar();
+        setContentView(R.layout.activity_details);
+    }
+
+    @Override
+    public void onSubmitComment(@NotNull String comment) {
+        mProgress.show();
+        mThreadPool.submit(new PostCommentService(comment));
+    }
+
+    @NotNull
+    @Override
+    public View getChatView(@NotNull TaskDetailsActivity.UserChatItem userChatItem) {
+        View v;
+        LayoutInflater inflater = LayoutInflater.from(this);
+        if (mActivity.getAuthorUsername().equals(userChatItem.name)) {
+            v = inflater.inflate(R.layout.task_detail_chat_item_right, mDetailContainer, false);
+        } else {
+            v = inflater.inflate(R.layout.task_detail_chat_item_left, mDetailContainer, false);
+        }
+        SketchImageView avatar = (SketchImageView) v.findViewById(R.id.task_detail_chat_item_circle);
+        DisplayOptions options = new DisplayOptions().setImageShaper(new CircleImageShaper());
+        avatar.setOptions(options);
+        // for testing
+        if (userChatItem.authorAvatar.equals("test")) {
+            avatar.displayResourceImage(R.drawable.model1);
+        } else {
+            avatar.displayImage(userChatItem.authorAvatar);
+        }
+        TextView tv = (TextView) v.findViewById(R.id.say_what);
+        tv.setText(userChatItem.sayWhat);
+        tv = (TextView) v.findViewById(R.id.time_before);
+        tv.setText(UPublicTool.timeBefore(userChatItem.postDate));
+        tv = (TextView) v.findViewById(R.id.name_of_chatter);
+        tv.setText(userChatItem.name);
+        return v;
+    }
+
     private class LoadActivityService implements Runnable {
         @Override
         public void run() {
@@ -402,6 +487,38 @@ public class ActivityDetailsActivity extends AppCompatActivity {
                 mHandler.sendMessage(msg);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+            }
+        }
+    }
+
+    private class PostCommentService implements Runnable {
+
+        private String mComment;
+
+        public PostCommentService(String comment) {
+            mComment = comment;
+        }
+
+        @Override
+        public void run() {
+            // 模拟提交
+            try {
+                Thread.sleep(1000);
+                toast(ActivityDetailsActivity.this, "发布成功");
+            } catch (InterruptedException e) {
+                toast(ActivityDetailsActivity.this, "发布失败");
+                e.printStackTrace();
+            } finally {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.toggleSoftInput(0, InputMethodManager.SHOW_FORCED);
+                        addCommentView(mComment, mDetailContainer, 1);
+                        getMPopupWindow().dismiss();
+                        mProgress.dismiss();
+                    }
+                });
             }
         }
     }
@@ -438,16 +555,9 @@ public class ActivityDetailsActivity extends AppCompatActivity {
         }
     }
 
-    public static void startActivity(Context context, String avatarUrl, String title,
-                                     String tag, String time, String location,
-                                     ArrayList<String> urls) {
+    public static void startActivity(Context context, UActivity activity) {
         Intent intent = new Intent(context, ActivityDetailsActivity.class)
-                .putExtra(EXTRA_TITLE, title)
-                .putExtra(EXTRA_AVATAR_URL, avatarUrl)
-                .putExtra(EXTRA_TAG, tag)
-                .putExtra(EXTRA_LOCATION, location)
-                .putExtra(EXTRA_URLS, urls)
-                .putExtra(EXTRA_TIME, time);
+                .putExtra(EXTRA_ACTIVITY, activity);
         context.startActivity(intent);
     }
 
