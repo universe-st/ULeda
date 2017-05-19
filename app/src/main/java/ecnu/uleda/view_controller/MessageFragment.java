@@ -28,9 +28,7 @@ import ecnu.uleda.R;
 import ecnu.uleda.model.Friend;
 import ecnu.uleda.tool.SPUtil;
 import ecnu.uleda.view_controller.widgets.SelectableTitleView;
-import io.rong.imkit.RongIM;
-import io.rong.imlib.RongIMClient;
-import io.rong.imlib.model.UserInfo;
+
 
 /**
  * Created by Shensheng on 2016/11/11.

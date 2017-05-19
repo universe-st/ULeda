@@ -1,1 +1,1 @@
-include ':app', ':IMLib', ':IMKit', ':zbarcode'
+include ':app', ':zbarcode'

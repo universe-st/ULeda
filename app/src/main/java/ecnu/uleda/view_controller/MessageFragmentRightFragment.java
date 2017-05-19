@@ -1,25 +1,18 @@
 package ecnu.uleda.view_controller;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.List;
 import ecnu.uleda.R;
 import ecnu.uleda.model.Contacts;
 import ecnu.uleda.model.Friend;
-import io.rong.imkit.RongIM;
 import io.rong.imlib.model.UserInfo;
 
 
@@ -27,7 +20,7 @@ import io.rong.imlib.model.UserInfo;
  * Created by zhaoning on 2017/5/1.
  */
 
-public class MessageFragmentRightFragment extends Fragment implements RongIM.UserInfoProvider{
+public class MessageFragmentRightFragment extends Fragment {
 
     private ListView mListView;
     private List<Contacts> contastsList = new ArrayList<>();
@@ -69,16 +62,7 @@ public class MessageFragmentRightFragment extends Fragment implements RongIM.Use
 //        }
 //    }
 
-    @Override
-    public UserInfo getUserInfo(String s) {
-        for (Friend i:userList){
-            if(i.userid.equals(s)){
-                //从缓存或者自己服务端获取到数据后返回给融云SDK
-                return new UserInfo(i.userid,i.name, Uri.parse(i.imageUrl));
-            }
-        }
-        return null;
-    }
+
 
 
 }

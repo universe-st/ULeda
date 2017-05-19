@@ -29,8 +29,6 @@ import ecnu.uleda.R;
 import ecnu.uleda.model.ChatMessage;
 import ecnu.uleda.model.Friend;
 import ecnu.uleda.tool.SPUtil;
-import io.rong.imkit.RongIM;
-import io.rong.imkit.fragment.ConversationListFragment;
 import io.rong.imlib.RongIMClient;
 import io.rong.imlib.model.Conversation;
 import io.rong.imlib.model.UserInfo;

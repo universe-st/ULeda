@@ -7,12 +7,6 @@ package ecnu.uleda.function_module;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
-import android.nfc.Tag;
-import android.util.Log;
-
-import io.rong.imkit.RongIM;
-
-import static java.security.AccessController.getContext;
 
 public class App extends Application {
     private static final String TAG = "App";
@@ -21,16 +15,6 @@ public class App extends Application {
 
     public void onCreate() {
         super.onCreate();
-        if (this.getApplicationInfo().packageName.equals(getCurProcessName(getApplicationContext())) ||
-                "io.rong.push".equals(getCurProcessName(getApplicationContext()))) {
-
-            /**
-             * IMKit SDK调用第一步 初始化
-             */
-
-            RongIM.init(this);
-            Log.d(TAG, "onCreate: App");
-            }
     }
 
     public static String getCurProcessName(Context context) {
