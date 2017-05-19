@@ -50,56 +50,8 @@ public class MessageFragmentRightFragment extends Fragment implements RongIM.Use
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        view = inflater.inflate(R.layout.message_fragment_friend_fragment,container,false);
-        /**
-         * 设置用户信息的提供者，供 RongIM 调用获取用户名称和头像信息。
-         *
-         * @param userInfoProvider 用户信息提供者。
-         * @param isCacheUserInfo  设置是否由 IMKit 来缓存用户信息。<br>
-         *                         如果 App 提供的 UserInfoProvider
-         *                         每次都需要通过网络请求用户数据，而不是将用户数据缓存到本地内存，会影响用户信息的加载速度；<br>
-         *                         此时最好将本参数设置为 true，由 IMKit 将用户信息缓存到本地内存中。
-         * @see UserInfoProvider
-         */
-
-//        vpContent = (ViewPager)view.findViewById(R.id);
-
-//        mConversationList = initConversationList();//融云会话列表的对象
-//        mFragments.add(mConversationList);//添加会话fragment
-//        mFragments.add(HomeFragment.getInstance());
-//        mFragments.add(FriendFragment.getInstance());
-        adapter = new FragmentPagerAdapter(getActivity().getSupportFragmentManager()) {
-            @Override
-            public Fragment getItem(int position) {
-                return mFragments.get(position);
-            }
-
-            @Override
-            public int getCount() {
-                return mFragments.size();
-            }
-        };
-        vpContent.setAdapter(adapter);
-
+        view = inflater.inflate(R.layout.message_fragment_right_fragment,container,false);
         return view;
-
-//        View view = inflater.inflate(R.layout.message_fragment_right_fragment, container, false);
-//        initContacts();
-//        ContactsAdapter adapter = new ContactsAdapter(
-//                MessageFragmentRightFragment.this.getContext(),R.layout.contacts_item,contastsList);
-//        mListView=(ListView)view.findViewById(R.id.contacts_list_view);
-//        mListView.setAdapter(adapter);
-//        final Fragment mfragment= new MessageFragmentChatFragment();
-//
-//        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-//            @Override
-//            public void onItemClick(AdapterView<?> parent,View view,int position,long id){
-//                Contacts contacts=contastsList.get(position);
-//                Toast.makeText(view.getContext(),"别急呀～转啥界面？",Toast.LENGTH_SHORT).show();
-////                replaceFragment(mfragment);
-//            }
-//        });
-//        return view;
     }
 
 //    private void initContacts(){
@@ -128,11 +80,5 @@ public class MessageFragmentRightFragment extends Fragment implements RongIM.Use
         return null;
     }
 
-//    private void replaceFragment(Fragment fragment) {
-//        FragmentManager fragmentManager = getFragmentManager();//getSupportFragmentManager();
-//        FragmentTransaction transaction = fragmentManager.beginTransaction();
-//        transaction.replace(R.id.message_fragment_layout,fragment);
-//        transaction.commit();
-//    }
 
 }

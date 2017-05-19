@@ -49,7 +49,6 @@
     </provider>
 
     <application
-        android:name=".function_module.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -58,68 +57,6 @@
         <meta-data
             android:name="TencentMapSDK"
             android:value="DYXBZ-ALP33-ZZV3L-3LKO5-PLDRF-AKFEO" />
-
-
-        <meta-data
-            android:name="RONG_CLOUD_APP_KEY"
-            android:value=" mgb7ka1nmv4wg" />
-        <service
-            android:name="io.rong.imlib.ipc.RongService"
-            android:process=":ipc" >
-        </service>
-        <service android:name="io.rong.imlib.ReConnectService" />
-
-        <receiver android:name="io.rong.imlib.ConnectChangeReceiver" />
-        <receiver android:name="io.rong.imlib.ipc.PushMessageReceiver" >
-            <intent-filter>
-                <action android:name="io.rong.push.message" />
-            </intent-filter>
-        </receiver>
-        <receiver
-            android:name="io.rong.imlib.HeartbeatReceiver"
-            android:process=":ipc" />
-
-        <service
-            android:name="io.rong.push.PushService"
-            android:process="io.rong.push" > <!--the name of the push process can't be changed!!-->
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-                <action android:name="io.rong.push" />
-            </intent-filter>
-        </service>
-        <service
-            android:name="io.rong.push.CommandService"
-            android:process="io.rong.push" >
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-                <action android:name="io.rong.command" />
-            </intent-filter>
-        </service>
-
-
-        <receiver
-            android:name="io.rong.push.PushReceiver"
-            android:process="io.rong.push" >
-            <intent-filter>
-                <action android:name="io.rong.imlib.action.push.heartbeat" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
-
-
-
-
-
-
-
-
-
-
 
         <activity
             android:name=".view_controller.UMainActivity"
@@ -176,53 +113,8 @@
 
 
         <!-- 会话列表 -->
-        <activity
-            android:name=".view_controller.ConversationListActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data
-                    android:host="ecnu.uleda"
-                    android:pathPrefix="/conversationlist"
-                    android:scheme="rong" />
-            </intent-filter>
-        </activity>
         <!-- 聚合会话列表 -->
-        <activity
-            android:name=".view_controller.SubConversationListActivtiy"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data
-                    android:host="ecnu.uleda"
-                    android:pathPrefix="/subconversationlist"
-                    android:scheme="rong" />
-            </intent-filter>
-        </activity>
         <!-- 会话界面 -->
-        <activity
-            android:name=".view_controller.ConversationActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data
-                    android:host="ecnu.uleda"
-                    android:pathPrefix="/conversation/"
-                    android:scheme="rong" />
-            </intent-filter>
-        </activity>
 
         <provider
             android:name=".function_module.PhotoFileProvider"

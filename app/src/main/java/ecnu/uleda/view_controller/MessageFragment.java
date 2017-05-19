@@ -49,8 +49,7 @@ public class MessageFragment extends Fragment implements SelectableTitleView.OnT
     private List<Friend> userIdList;
     private Unbinder mUnbinder;
     private MessageFragmentLeftFragment mFragmentLeft;
-    private FriendFragment mFragmentRight;
-//    private MessageFragmentRightFragment mFragmentRight;
+    private MessageFragmentRightFragment mFragmentRight;
 
 
     @BindView(R.id.titles)
@@ -95,11 +94,6 @@ public class MessageFragment extends Fragment implements SelectableTitleView.OnT
         View view = inflater.inflate(R.layout.message_fragment, container, false);
         mUnbinder = ButterKnife.bind(this, view);
 
-//        mButtonMessage= (Button) view.findViewById(R.id.button_message);
-//        mButtonContacts= (Button) view.findViewById(R.id.button_contacts);
-
-//        mFragmentMessage=new MessageFragmentMessageFragment();
-//        mFragmentContacts=new FriendFragment();
 
         return view;
     }
@@ -129,7 +123,7 @@ public class MessageFragment extends Fragment implements SelectableTitleView.OnT
         FragmentManager fragmentManager = getFragmentManager();//getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         if (mFragmentRight == null) {
-            mFragmentRight = new FriendFragment();//MessageFragmentRightFragment();
+            mFragmentRight = new MessageFragmentRightFragment();
             transaction.add(R.id.message_fragment_layout, mFragmentRight);
         }
         transaction.show(mFragmentRight);
