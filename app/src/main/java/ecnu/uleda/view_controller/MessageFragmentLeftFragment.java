@@ -174,10 +174,9 @@ public class MessageFragmentLeftFragment extends Fragment implements RongIM.User
                     .appendQueryParameter(Conversation.ConversationType.SYSTEM.getName(), "false")//设置系统会话非聚合显示
                     .build();
             conversationListFragment.setUri(uri);
-            return conversationListFragment;
-        }else{
-            return mConversationFragment;
+            mConversationFragment=conversationListFragment;
         }
+        return mConversationFragment;
     }
 
     public static String getCurProcessName(Context context) {
