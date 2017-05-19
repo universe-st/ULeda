@@ -28,9 +28,7 @@ import ecnu.uleda.R;
 import ecnu.uleda.model.Friend;
 import ecnu.uleda.tool.SPUtil;
 import ecnu.uleda.view_controller.widgets.SelectableTitleView;
-import io.rong.imkit.RongIM;
-import io.rong.imlib.RongIMClient;
-import io.rong.imlib.model.UserInfo;
+
 
 /**
  * Created by Shensheng on 2016/11/11.
@@ -94,11 +92,6 @@ public class MessageFragment extends Fragment implements SelectableTitleView.OnT
         View view = inflater.inflate(R.layout.message_fragment, container, false);
         mUnbinder = ButterKnife.bind(this, view);
 
-//        mButtonMessage= (Button) view.findViewById(R.id.button_message);
-//        mButtonContacts= (Button) view.findViewById(R.id.button_contacts);
-
-//        mFragmentMessage=new MessageFragmentMessageFragment();
-//        mFragmentContacts=new FriendFragment();
 
         return view;
     }
@@ -152,6 +145,7 @@ public class MessageFragment extends Fragment implements SelectableTitleView.OnT
     @OnClick(R.id.my_friends)
     void myFriends() {
         // 左边按钮的点击事件（ps：这个按钮干啥的）
+        //我怎么知道
     }
 
     @Override
