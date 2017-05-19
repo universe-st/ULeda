@@ -6,25 +6,18 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import ecnu.uleda.R;
 import ecnu.uleda.function_module.UserOperatorController;
-import ecnu.uleda.view_controller.taskfragment.TaskListFragment;
+import ecnu.uleda.view_controller.task.fragment.TaskListFragment;
 import ecnu.uleda.view_controller.widgets.BottomBarLayout;
-import ecnu.uleda.view_controller.widgets.NoScrollViewPager;
-import io.rong.eventbus.EventBus;
-import io.rong.imageloader.utils.L;
 
 
 public class UMainActivity extends AppCompatActivity implements BottomBarLayout.OnLabelSelectedListener {
@@ -117,12 +110,11 @@ public class UMainActivity extends AppCompatActivity implements BottomBarLayout.
         mFragments[2] = new UCircleFragment();
         mFragments[3] = new MessageFragment();
         mFragments[4] = new UserInfoFragment();
-        FragmentManager fm = getSupportFragmentManager();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            //getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//            //getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+//        }
 //        mViewPager.setNoScroll(true);
 //        mViewPager.setAdapter(new FragmentPagerAdapter(fm) {
 //            @Override
@@ -172,21 +164,29 @@ public class UMainActivity extends AppCompatActivity implements BottomBarLayout.
 
 
     //主Activity翻页
-    public void changeToView(int i) {
+    public void changeToView(int pos) {
 //        mViewPager.setCurrentItem(i);
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        if (mLastPos == 0) {
-            ft.hide(mFragments[mLastPos]);
+        if (pos == 4) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            }
         } else {
-            ft.remove(mFragments[mLastPos]);
-            isAdded[mLastPos] = false;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            }
         }
-        mLastPos = i;
-        if (!isAdded[i]) {
-            ft.add(R.id.main_view_pager, mFragments[i]);
+        if (pos != 0) {
+            ((UMainFragment)mFragments[0]).pauseLocationUpdates();
+        } else {
+            ((UMainFragment)mFragments[0]).resumeLocationUpdates();
         }
-        ft.show(mFragments[i]);
-        ft.commit();
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        if (!mFragments[pos].isAdded()) {
+            ft.hide(mFragments[mLastPos]).add(R.id.main_view_pager, mFragments[pos]).commit();
+        } else {
+            ft.hide(mFragments[mLastPos]).show(mFragments[pos]).commit();
+        }
+        mLastPos = pos;
     }
 
     @Override

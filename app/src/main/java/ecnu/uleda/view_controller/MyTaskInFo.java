@@ -7,6 +7,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
@@ -22,8 +24,7 @@ import ecnu.uleda.view_controller.MyTask_ToEvaluateFragment;
 import ecnu.uleda.view_controller.MyinfoFragmentAdapter;
 
 public class MyTaskInFo extends AppCompatActivity implements
- ViewPager.OnPageChangeListener,RadioGroup.OnCheckedChangeListener,OnClickListener {
-    private ImageButton mback;
+        ViewPager.OnPageChangeListener, RadioGroup.OnCheckedChangeListener, OnClickListener {
     private RadioGroup group;
     private RadioButton released;
     private RadioButton doing;
@@ -37,30 +38,33 @@ public class MyTaskInFo extends AppCompatActivity implements
     public static final int PAGE_FIVE = 4;
     private MyinfoFragmentAdapter mAdapter;
     private ViewPager mViewPager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_already_release);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        setTitle("");
         mAdapter = new MyinfoFragmentAdapter(getSupportFragmentManager());
-       initial();
-         init();
+        initial();
+        init();
     }
+
     @Override
-    public void onClick(View v)
-    {
-       mSwitch(v.getId());
+    public void onClick(View v) {
+        mSwitch(v.getId());
     }
-    public void initial()
-    {
-        group = (RadioGroup)findViewById(R.id.radio_group);
-        released=(RadioButton)findViewById(R.id.released) ;
-        doing=(RadioButton)findViewById(R.id.doing) ;
-        evaluate=(RadioButton)findViewById(R.id.evaluate) ;
-        done=(RadioButton)findViewById(R.id.done) ;
-        evaluation=(RadioButton)findViewById(R.id.evaluation) ;
-        mback = (ImageButton) findViewById(R.id.Release_back);
+
+    public void initial() {
+        group = (RadioGroup) findViewById(R.id.radio_group);
+        released = (RadioButton) findViewById(R.id.released);
+        doing = (RadioButton) findViewById(R.id.doing);
+        evaluate = (RadioButton) findViewById(R.id.evaluate);
+        done = (RadioButton) findViewById(R.id.done);
+        evaluation = (RadioButton) findViewById(R.id.evaluation);
         group.setOnCheckedChangeListener(this);
-        mViewPager = (ViewPager)findViewById(R.id.task_layout);
+        mViewPager = (ViewPager) findViewById(R.id.task_layout);
         mViewPager.setAdapter(mAdapter);
         mViewPager.addOnPageChangeListener(this);
 
@@ -70,15 +74,14 @@ public class MyTaskInFo extends AppCompatActivity implements
         evaluation.setOnClickListener(this);
         done.setOnClickListener(this);
     }
+
     @Override
-    public void onCheckedChanged(RadioGroup group, int checkedId)
-    {
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
         mSwitch(checkedId);
     }
-    public void mSwitch(int Id)
-    {
-        switch (Id)
-        {
+
+    public void mSwitch(int Id) {
+        switch (Id) {
             case R.id.released:
                 mViewPager.setCurrentItem(0);
                 break;
@@ -94,70 +97,63 @@ public class MyTaskInFo extends AppCompatActivity implements
             case R.id.evaluation:
                 mViewPager.setCurrentItem(4);
                 break;
-            case R.id.Release_back:
-                finish();
-                break;
         }
     }
-    public void init()
-    {
+
+    public void init() {
         Intent i = getIntent();
-        String i0=i.getStringExtra("data");
-        int i1=Integer.valueOf(i0);
-        switch (i1)
-        {
-            case 1:
-            {
+        String i0 = i.getStringExtra("data");
+        int i1 = Integer.valueOf(i0);
+        switch (i1) {
+            case 1: {
                 released.setChecked(true);
                 replaceFragement(new MyTask_ReleasedFragment());
                 break;
             }
-            case 2:
-            {
+            case 2: {
                 doing.setChecked(true);
                 replaceFragement(new MyTask_DoingFragment());
                 break;
             }
-            case 3:
-            {
+            case 3: {
                 evaluate.setChecked(true);
                 replaceFragement(new MyTask_ToEvaluateFragment());
                 break;
             }
-            case 4:
-            {
+            case 4: {
                 done.setChecked(true);
                 replaceFragement(new MyTask_DoneFragment());
                 break;
             }
-            case 5:
-            {
+            case 5: {
                 evaluation.setChecked(true);
                 replaceFragement(new MyTask_MyEvaluationFragment());
                 break;
             }
         }
     }
-    private void replaceFragement(Fragment fragment){
-        FragmentManager fragmentManager=getSupportFragmentManager();
-        FragmentTransaction transaction=fragmentManager.beginTransaction();
-        transaction.replace(R.id.task_layout,fragment);
+
+    private void replaceFragement(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.task_layout, fragment);
         transaction.commit();
     }
+
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
     }
+
     @Override
     public void onPageSelected(int position) {
     }
+
     public void onPageScrollStateChanged(int state) {
-        if(state == 2)
-        {
-            switch (mViewPager.getCurrentItem())
-            {
+        if (state == 2) {
+            switch (mViewPager.getCurrentItem()) {
                 case PAGE_ONE:
-                released.setChecked(true);
-                break;
+                    released.setChecked(true);
+                    break;
                 case PAGE_TWO:
                     doing.setChecked(true);
                     break;
@@ -172,5 +168,14 @@ public class MyTaskInFo extends AppCompatActivity implements
                     break;
             }
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

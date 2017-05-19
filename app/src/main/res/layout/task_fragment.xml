@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:weightSum="103">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="3"
-        android:background="@color/colorUMain" />
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:layout_weight="3"-->
+        <!--android:background="@color/colorUMain" />-->
 
-    <FrameLayout
+    <android.support.constraint.ConstraintLayout
         android:id="@+id/title_wrapper"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="10"
-        android:background="@color/colorUMain"
-        android:weightSum="10">
+        android:background="@color/colorUMain">
 
 
         <!--<FrameLayout-->
@@ -39,29 +39,36 @@
         <ecnu.uleda.view_controller.widgets.SelectableTitleView
             android:id="@+id/titles"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="39dp"
             android:layout_gravity="center"
-            android:layout_marginBottom="7dp"
-            android:layout_marginTop="7dp"
             app:horizontalPadding="10dp"
             app:radius="12dp"
             app:strokeWidth="3px"
-            app:textSize="18sp" />
+            app:textSize="18sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintHorizontal_weight="9"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <TextView
             android:id="@+id/task_post"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="39dp"
             android:layout_gravity="right"
             android:layout_weight="1"
             android:background="?android:attr/selectableItemBackground"
             android:gravity="right|center_vertical"
             android:paddingLeft="12dp"
-            android:paddingRight="12dp"
             android:text="＋"
+            android:layout_marginRight="8dp"
             android:textColor="@android:color/white"
-            android:textSize="22sp" />
-    </FrameLayout>
+            android:textSize="22sp"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+    </android.support.constraint.ConstraintLayout>
 
     <!--<FrameLayout-->
     <!--android:layout_width="match_parent"-->
@@ -71,7 +78,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_gravity="bottom"
-        android:layout_weight="90">
+        android:layout_weight="93">
 
         <RelativeLayout
             android:id="@+id/post_container"

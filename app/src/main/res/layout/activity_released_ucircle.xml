@@ -3,58 +3,91 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:weightSum="10"
+              android:weightSum="100"
     >
-    <RelativeLayout
+    <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="5"
+    android:background="@color/colorUMain"
+    />
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1.3"
+        android:layout_weight="10"
         android:background="@color/colorUMain"
+        android:orientation="horizontal"
+        android:weightSum="10"
         >
+
         <TextView
             android:id="@+id/back"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:layout_gravity="center"
             android:text="取消"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:textSize="20dp"
+            android:gravity="center"
             android:textColor="@color/colorUWhite"
-            />
-        <ImageView
-            android:id="@+id/imageView9"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_centerHorizontal="true"
-            android:scaleType="fitCenter"
-            android:src="@drawable/main_icon"
-            />
+            android:textSize="20dp"/>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="6">
+
+            <ImageView
+                android:id="@+id/imageView9"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:src="@drawable/main_icon"
+                />
+        </FrameLayout>
+
+
         <TextView
-            android:id="@+id/released"
-            android:layout_width="wrap_content"
+            android:id="@+id/ucircle_release"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:layout_gravity="center"
+            android:gravity="center"
             android:text="发表"
-            android:layout_alignParentRight="true"
-            android:textSize="20dp"
-            android:layout_centerVertical="true"
             android:textColor="@color/colorUWhite"
+            android:textSize="20dp"
             />
 
-    </RelativeLayout>
+    </LinearLayout>
 
-    <EditText
-        android:id="@+id/information"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="4"
-        android:background="@null"
-        />
+        android:layout_weight="85"
+        android:orientation="vertical"
+        android:weightSum="10"
+        >
 
-    <ImageView
-        android:id="@+id/TakePhoto"
-        android:layout_width="85dp"
-        android:layout_height="85dp"
-        android:src="@drawable/releasedphoto"
-        />
+        <EditText
+            android:id="@+id/information"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="4"
+            android:background="@null"
+            android:gravity="start"
+            android:paddingTop="5dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:textCursorDrawable="@drawable/corlor_cusor"
+            android:maxLength="120"
+            />
 
+        <ImageView
+            android:id="@+id/TakePhoto"
+            android:layout_width="85dp"
+            android:layout_height="85dp"
+            android:src="@drawable/releasedphoto"
+            />
+    </LinearLayout>
 </LinearLayout>

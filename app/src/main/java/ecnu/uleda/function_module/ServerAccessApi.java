@@ -216,7 +216,7 @@ public class ServerAccessApi {
             throw new UServerAccessException(response.getRet());
         }
     }
-    public static JSONObject getComment(@NonNull String id,@NonNull String passport,@NonNull String postID,
+    public static String getComment(@NonNull String id,@NonNull String passport,@NonNull String postID,
                                         String start) throws UServerAccessException{
         id=UrlEncode(id);
         passport=UrlEncode(passport);
@@ -231,12 +231,32 @@ public class ServerAccessApi {
                 .withTimeout(SET_TIME_OUT)
                 .request();
         if(response.getRet()==200){
-            try {
-                return new JSONObject(response.getData());
-            }catch (JSONException e){
-                e.printStackTrace();
-                throw new UServerAccessException(UServerAccessException.ERROR_DATA);
-            }
+            return response.getData();
+        }else{
+            throw new UServerAccessException(response.getRet());
+        }
+    }
+
+    public static String getTakers(@NonNull String id,@NonNull String passport,
+                                   @NonNull String postID) throws UServerAccessException{
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        id=UrlEncode(id);
+        passport=UrlEncode(passport);
+        postID=UrlEncode(postID);
+        PhalApiClientResponse response=createClient()
+                .withService("Task.GetTakers")
+                .withParams("id",id)
+                .withParams("passport",passport)
+                .withParams("task_id",postID)
+                .withTimeout(SET_TIME_OUT)
+                .request();
+        Log.e("haha", "response: " + response.getData());
+        if(response.getRet()==200) {
+            return response.getData();
         }else{
             throw new UServerAccessException(response.getRet());
         }
@@ -348,6 +368,7 @@ public class ServerAccessApi {
                 .withParams("comment",comment)
                 .withTimeout(SET_TIME_OUT)
                 .request();
+        Log.e("haha", "status: " + response.getRet() + ", data: " + response.getData() + ", msg: " + response.getMsg());
         if(response.getRet()==200){//200的意思是正常返回
             try{
                 JSONObject data=new JSONObject(response.getData());
@@ -452,6 +473,37 @@ public class ServerAccessApi {
                 .request();
         if(response.getRet()==200){
             return "success";
+        }else{
+            throw new UServerAccessException(response.getRet());
+        }
+    }
+    public static String getPicture(@NonNull String id,@NonNull String passport,int picId)throws UServerAccessException{
+        PhalApiClient client = createClient();
+        PhalApiClientResponse response = client
+                .withService("Picture.GetPicture")
+                .withParams("picId",String.valueOf(picId))
+                .withParams("id",id)
+                .withParams("passport",passport)
+                .withTimeout(SET_TIME_OUT)
+                .request();
+        if(response.getRet() == 200){
+            return response.getData();
+        }else{
+            throw new UServerAccessException(response.getRet());
+        }
+    }
+    public static String uploadAvatar(@NonNull String id,@NonNull String passport,@NonNull String picture)throws UServerAccessException{
+        id=UrlEncode(id);
+        passport = UrlEncode(passport);
+        picture = UrlEncode(picture);
+        PhalApiClient client = createClient();
+        PhalApiClientResponse response= client.withService("Picture.UploadAvatar")
+                .withParams("id",id)
+                .withParams("passport",passport)
+                .withParams("pic",picture)
+                .request();
+        if(response.getRet() == 200){
+            return response.getData();
         }else{
             throw new UServerAccessException(response.getRet());
         }

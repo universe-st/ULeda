@@ -147,6 +147,7 @@
                 android:id="@+id/from_and_to"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:paddingBottom="2dp"
                 android:layout_marginLeft="8dp"
                 android:text="从五舍到邮局"
                 android:textColor="#8E8E8E"

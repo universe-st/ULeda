@@ -11,7 +11,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -50,6 +49,7 @@ import ecnu.uleda.exception.UServerAccessException;
 import ecnu.uleda.model.UTask;
 import ecnu.uleda.function_module.UTaskManager;
 import ecnu.uleda.function_module.Navigation;
+import ecnu.uleda.view_controller.task.activity.TaskDetailsActivity;
 
 public class UMainFragment extends Fragment implements View.OnTouchListener,View.OnClickListener{
     //主界面的Fragment
@@ -329,6 +329,18 @@ public class UMainFragment extends Fragment implements View.OnTouchListener,View
             mLocationManager.pauseLocationUpdates();
         }
         super.onDestroy();
+    }
+
+    public void pauseLocationUpdates() {
+        if (mLocationManager != null) {
+            mLocationManager.pauseLocationUpdates();
+        }
+    }
+
+    public void resumeLocationUpdates() {
+        if (mLocationManager != null) {
+            mLocationManager.resumeLocationUpdates();
+        }
     }
     public MapView getMapView(){
         return mMapView;
