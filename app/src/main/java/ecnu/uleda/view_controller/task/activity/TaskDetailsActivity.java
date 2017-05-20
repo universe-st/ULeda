@@ -80,6 +80,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
     private static final int MSG_COMMENT_SUCCESS = 4;
     private static final int MSG_COMMENT_FAILED = 5;
     private static final int MSG_TAKERS_GET = 6;
+    private static final int MSG_TASK_SUCCESS = 7;
     private UTask mTask;
     private TencentMap mTencentMap;
 
@@ -134,7 +135,8 @@ public class TaskDetailsActivity extends AppCompatActivity {
                 listViewInit();
                 mapInit();
                 final UserOperatorController uoc = UserOperatorController.getInstance();
-                if (mTask.getAuthorID() == Integer.parseInt(uoc.getId())) {
+                if (mTask.getAuthorID() == Integer.parseInt(uoc.getId())) {           //发布者进入自己任务详情
+
                     mButtonRight.setText("编辑任务");
                     mButtonRight.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -144,7 +146,8 @@ public class TaskDetailsActivity extends AppCompatActivity {
                             startActivityForResult(intent, 1);
                         }
                     });
-                } else if (mTask.getStatus() != 0) {
+
+                } else if (mTask.getStatus() != 0) {                                 //其他人进入任务详情时已被领取
                     mButtonRight.setEnabled(false);
                     mButtonRight.setBackgroundColor(ContextCompat.getColor(TaskDetailsActivity.this, android.R.color.darker_gray));
                     switch (mTask.getStatus()) {
@@ -155,7 +158,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
                             mButtonRight.setText("已被领取");
                             break;
                     }
-                } else {
+                } else {                                                             //其他人进入任务详情时还未被领取
                     mButtonRight.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -184,10 +187,19 @@ public class TaskDetailsActivity extends AppCompatActivity {
                 initTakers(uoc);
             } else if (msg.what == MSG_TAKE_SUCCESS) {
                 Toast.makeText(TaskDetailsActivity.this, "成功接受任务", Toast.LENGTH_SHORT).show();
-                mButtonRight.setEnabled(false);
                 mTask.setStatus(1);
-                mButtonRight.setText("已被领取");
-                mButtonRight.setBackgroundColor(ContextCompat.getColor(TaskDetailsActivity.this, android.R.color.darker_gray));
+                mButtonRight.setText("取消抢单");
+                mButtonRight.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View view) {
+                        Message msg = new Message();
+                        msg.what = 0;
+                        mButtonRight.setText("抢单");
+                        mTask.setStatus(0);
+                    }
+                });
+
+
             } else if (msg.what == MSG_COMMENT_GET) {
                 for (UserChatItem item : mUserChatItems) {
                     mDetailContainer.addView(getChatView(item), 2);
@@ -373,6 +385,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
         initComments(uoc);
         listViewInit();
     }
+
 
     private void initTakers(final UserOperatorController uoc) {
         mThreadPool.submit(new Runnable() {

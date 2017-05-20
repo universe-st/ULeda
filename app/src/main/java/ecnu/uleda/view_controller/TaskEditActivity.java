@@ -1,9 +1,13 @@
 package ecnu.uleda.view_controller;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -27,6 +31,10 @@ import ecnu.uleda.function_module.UserOperatorController;
 import ecnu.uleda.function_module.ServerAccessApi;
 
 public class TaskEditActivity extends AppCompatActivity {
+
+    private IntentFilter mIntentFilter;
+    private LocalReceiver mLocalReceiver;
+    private LocalBroadcastManager mLocalBroadcastManager;
 
     private Handler mClickHandler = new Handler() {
         @Override
@@ -53,6 +61,8 @@ public class TaskEditActivity extends AppCompatActivity {
                 //intent.putExtra("Task", );
                 TaskEditActivity.this.setResult(2,intent);
                 Toast.makeText(TaskEditActivity.this, "删除成功～", Toast.LENGTH_SHORT).show();
+                Intent intent1=new Intent("com.example.broadcasttest.Delete_BROADCAST");
+                mLocalBroadcastManager.sendBroadcast(intent1);
                 finish();
             } else {
                 UServerAccessException exception = (UServerAccessException) msg.obj;
@@ -116,6 +126,11 @@ public class TaskEditActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_edit);
+        mLocalBroadcastManager=LocalBroadcastManager.getInstance(this);
+        mIntentFilter=new IntentFilter();
+        mIntentFilter.addAction("com.example.broadcasttest.Delete_BROADCAST");
+        mLocalReceiver=new LocalReceiver();
+        mLocalBroadcastManager.registerReceiver(mLocalReceiver,mIntentFilter);
 
         mTask=(UTask)getIntent().getSerializableExtra("Task");
         final UserOperatorController uoc=UserOperatorController.getInstance();
@@ -261,7 +276,15 @@ public class TaskEditActivity extends AppCompatActivity {
         //mTask.setDescription(mDescription);
         //mTask.setPath(mPath);
         //////////////////////
+
     }
+
+
+
+    protected void onDestroy() {
+            super.onDestroy();
+            mLocalBroadcastManager.unregisterReceiver(mLocalReceiver);
+        }
 
 
     private void SpinnerInit() {
@@ -288,8 +311,16 @@ public class TaskEditActivity extends AppCompatActivity {
         });
     }
 
+    class LocalReceiver extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context, Intent intent){
+            Toast.makeText(context,"已收到广播",Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     private class MyTextWatcher implements TextWatcher {
+
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         }
