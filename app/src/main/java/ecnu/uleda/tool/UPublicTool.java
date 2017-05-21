@@ -181,4 +181,16 @@ public class UPublicTool {
         return result;
     }
 
+    public static boolean isTextEmpty(String text) {
+        return text == null || text.length() == 0;
+    }
+
+    public static boolean isTextEmpty(String text, String ignore) {
+        return text == null || text.length() == 0 || text.equals(ignore);
+    }
+
+    public static boolean isTextLegal(String text, int minLen, int maxLen) {
+        return isTextEmpty(text) && text.length() >= minLen && text.length() <= maxLen;
+    }
+
 }
