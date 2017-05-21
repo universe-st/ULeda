@@ -23,6 +23,9 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- Mob短信验证 -->
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.READ_SMS" />
 
     <application
         android:allowBackup="true"
@@ -120,6 +123,12 @@
         <activity android:name=".view_controller.CommonBigImageActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
 
+        <!-- Mob短信验证 -->
+        <activity
+            android:name="com.mob.tools.MobUIShell"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
 
         <!-- 会话列表 -->
         <!-- 聚合会话列表 -->

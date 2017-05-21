@@ -121,14 +121,6 @@ public class MessageFragment extends Fragment implements SelectableTitleView.OnT
         // 添加好友按钮点击事件
     }
 
-    @OnClick(R.id.my_friends)
-    void myFriends() {
-        // 左边按钮的点击事件（ps：这个按钮干啥的）
-        //我怎么知道
-
-        //todo: 不知道你写啥玩意儿捏~ 2333 -KSS
-    }
-
     @Override
     public void onItemSelected(int pos, String title) {
         if (pos == 0) {
