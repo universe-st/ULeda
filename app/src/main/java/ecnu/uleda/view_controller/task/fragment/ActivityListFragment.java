@@ -28,10 +28,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import ecnu.uleda.R;
+import ecnu.uleda.function_module.UActivityManager;
 import ecnu.uleda.model.UActivity;
 import ecnu.uleda.view_controller.task.activity.ActivityDetailsActivity;
 import ecnu.uleda.view_controller.widgets.BrochureItemDecoration;
@@ -48,14 +51,12 @@ public class ActivityListFragment extends Fragment {
 
     private static final int MESSAGE_LOAD_COMPLETE = 0x111;
 
-    public static final int TYPE_ALL = 0;
-    public static final int TYPE_SPORTS = 1;
-    public static final int TYPE_CLUB = 2;
-    public static final int TYPE_CHARITY = 3;
+    private static final String[] TYPES = new String[]{"全部", "运动", "社团", "公益"};
 
-    private int mType;
+    private String mType = TYPES[0];
 
     private Handler mLoadHandler;
+    private ExecutorService mThreadPool;
 
     private XRecyclerView mActivityRv;
     private List<UActivity> mActivityList;
@@ -76,7 +77,7 @@ public class ActivityListFragment extends Fragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void setType(TabLayout.Tab tab) {
-        mType = tab.getPosition();
+        mType = TYPES[tab.getPosition()];
     }
 
     @Nullable
@@ -88,7 +89,6 @@ public class ActivityListFragment extends Fragment {
         mActivityRv.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
-
             }
 
             @Override
@@ -136,6 +136,7 @@ public class ActivityListFragment extends Fragment {
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
+        mThreadPool.shutdownNow();
     }
 
     @Override
@@ -146,6 +147,8 @@ public class ActivityListFragment extends Fragment {
         mActivityRv.addItemDecoration(new TaskListItemDecoration(getContext(), 8, false));
         mActivityList = new ArrayList<>();
         mBrochureUrls = new ArrayList<>();
+        mThreadPool = Executors.newCachedThreadPool();
+        mThreadPool.submit(new RefreshRunnable());
         for (int i = 0; i < 10; i++) {
             mActivityList.add(new UActivity(getResources().getString(R.string.activity_example),
                     31.2284700000,
@@ -277,6 +280,13 @@ public class ActivityListFragment extends Fragment {
        @Override
        public int getItemCount() {
            return 4;
+       }
+   }
+
+   class RefreshRunnable implements Runnable {
+       @Override
+       public void run() {
+           UActivityManager.INSTANCE.refreshActivityInList(mType);
        }
    }
 }

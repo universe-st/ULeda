@@ -11,8 +11,10 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.List;
 
 import ecnu.uleda.BuildConfig;
+import ecnu.uleda.model.UActivity;
 import ecnu.uleda.tool.UPublicTool;
 import ecnu.uleda.exception.UServerAccessException;
 
@@ -374,6 +376,37 @@ public class ServerAccessApi {
             try{
                 JSONObject data=new JSONObject(response.getData());
                 return data.getString("success");
+            }catch (JSONException e){
+                Log.e("ServerAccessApi",e.toString());
+                //数据包无法解析，向上抛出一个异常
+                throw new UServerAccessException(UServerAccessException.ERROR_DATA);
+            }
+        }else{
+            //网络访问失败，抛出一个网络异常
+            throw new UServerAccessException(response.getRet());
+        }
+    }
+
+    public static String getActivities(@NonNull String id, @NonNull String passport, @NonNull String tag,
+                                                int from, int count) throws UServerAccessException {
+        id = UrlEncode(id);
+        passport = UrlEncode(passport);
+        tag = UrlEncode(tag);
+
+        PhalApiClientResponse response = createClient()
+                .withService("Activity.GetUnstartedList")
+                .withParams("id", id)
+                .withParams("passport", passport)
+                .withParams("tag", tag)
+                .withParams("from", String.valueOf(from))
+                .withParams("count", String.valueOf(count))
+                .withTimeout(SET_TIME_OUT)
+                .request();
+        if(response.getRet() == 200) {
+            Log.e("haha", UrlDecode(response.getData()));
+            try{
+                JSONArray data = new JSONArray(response.getData());
+                return data.toString();
             }catch (JSONException e){
                 Log.e("ServerAccessApi",e.toString());
                 //数据包无法解析，向上抛出一个异常
