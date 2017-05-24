@@ -27,6 +27,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import ecnu.uleda.R;
+import ecnu.uleda.model.UActivity;
 import ecnu.uleda.view_controller.widgets.BannerView;
 import ecnu.uleda.view_controller.widgets.NoScrollViewPager;
 import ecnu.uleda.view_controller.widgets.StickyNavLayout;
@@ -55,6 +56,7 @@ public class TaskActivityFragment extends Fragment implements StickyNavLayout.On
     TabLayout mIndicator;
     @BindView(R.id.id_stickynavlayout_viewpager)
     NoScrollViewPager mPager;
+    private List<UActivity> mActivityList;
 
     private static TaskActivityFragment mInstance;
 
@@ -84,7 +86,11 @@ public class TaskActivityFragment extends Fragment implements StickyNavLayout.On
         initPager();
         initIndicator();
         initRollPager();
-        mContainer.setOnRefreshListener(this);
+        mActivityList = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            mActivityList.add(new UActivity("xiaohong.jpg", "小蓝", System.currentTimeMillis() / 1000 - 24 * 3600,
+                    "校园", getResources().getString(R.string.activity_example), 1498874400, "幽灵地点"));
+        }
     }
 
     private void initHandler() {

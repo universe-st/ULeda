@@ -1,6 +1,5 @@
 package ecnu.uleda.view_controller.task.activity;
 
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +8,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -44,8 +42,6 @@ import com.tencent.tencentmap.mapsdk.map.MapView;
 import com.tencent.tencentmap.mapsdk.map.TencentMap;
 
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -70,13 +66,11 @@ import ecnu.uleda.function_module.UserOperatorController;
 import ecnu.uleda.function_module.ServerAccessApi;
 import ecnu.uleda.view_controller.SingleUserInfoActivity;
 import ecnu.uleda.view_controller.TaskEditActivity;
-import ecnu.uleda.view_controller.task.adapter.TakersAdapter;
 import me.xiaopan.sketch.SketchImageView;
 import me.xiaopan.sketch.request.DisplayOptions;
 import me.xiaopan.sketch.shaper.CircleImageShaper;
 
-@SuppressLint("WrongConstant")
-public class TaskDetailsActivity extends BaseDetailsActivity {
+public class TaskDetailsActivity extends AppCompatActivity {
 
     public static final String EXTRA_UTASK = "UTask";
     private static final int MSG_REFRESH_SUCCESS = 0;
@@ -86,6 +80,7 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
     private static final int MSG_COMMENT_SUCCESS = 4;
     private static final int MSG_COMMENT_FAILED = 5;
     private static final int MSG_TAKERS_GET = 6;
+    private static final int MSG_TASK_SUCCESS = 7;
     private UTask mTask;
     private TencentMap mTencentMap;
 
@@ -188,10 +183,19 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
                 initTakers(uoc);
             } else if (msg.what == MSG_TAKE_SUCCESS) {
                 Toast.makeText(TaskDetailsActivity.this, "成功接受任务", Toast.LENGTH_SHORT).show();
-                mButtonRight.setEnabled(false);
                 mTask.setStatus(1);
-                mButtonRight.setText("已被领取");
-                mButtonRight.setBackgroundColor(ContextCompat.getColor(TaskDetailsActivity.this, android.R.color.darker_gray));
+                mButtonRight.setText("取消抢单");
+                mButtonRight.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View view) {
+                        Message msg = new Message();
+                        msg.what = 0;
+                        mButtonRight.setText("抢单");
+                        mTask.setStatus(0);
+                    }
+                });
+
+
             } else if (msg.what == MSG_COMMENT_GET) {
                 addCommentView(mDetailContainer, 2);
             } else if (msg.what == MSG_COMMENT_SUCCESS) {
@@ -223,12 +227,15 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
     @OnClick(R.id.comment_bt)
     void comment() {
         showCommentPopup();
+        mPostCommentEdit.requestFocus();
         InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(0, InputMethodManager.SHOW_FORCED);
     }
 
-    @Override
-    public View getChatView(@NonNull UserChatItem userChatItem) {
+
+
+
+    public View getChatView(UserChatItem userChatItem) {
         View v;
         if (mTask.getAuthorUserName().equals(userChatItem.name)) {
             v = mInflater.inflate(R.layout.task_detail_chat_item_right, mDetailContainer, false);
@@ -277,6 +284,7 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
         mMapView.onDestroy();
         super.onDestroy();
     }
+
 
     private void initTakers(final UserOperatorController uoc) {
         mThreadPool.submit(new Runnable() {
@@ -560,7 +568,63 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
         }
     }
 
+    private static class TakerViewHolder extends RecyclerView.ViewHolder {
 
+        SketchImageView avatar;
 
+        public TakerViewHolder(View itemView) {
+            super(itemView);
+            this.avatar = (SketchImageView) ((LinearLayout)itemView).getChildAt(0);
+        }
+    }
 
+    private static class TakersAdapter extends RecyclerView.Adapter<TakerViewHolder> {
+
+        private Context mContext;
+        private List<UserInfo> mDatas;
+
+        public TakersAdapter(Context context, List<UserInfo> datas) {
+            mContext = context;
+            mDatas = datas;
+        }
+
+        @Override
+        public TakerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            LinearLayout container = new LinearLayout(mContext);
+            int width = (int) UPublicTool.dp2px(mContext, 70);
+            container.setLayoutParams(new RecyclerView.LayoutParams(width, width));
+            final SketchImageView imageView = new SketchImageView(mContext);
+            imageView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT));
+            DisplayOptions options = new DisplayOptions();
+            options.setImageShaper(new CircleImageShaper());
+            imageView.setOptions(options);
+            container.addView(imageView, 0);
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int pos = (int) imageView.getTag();
+                    // TODO
+                }
+            });
+            return new TakerViewHolder(container);
+        }
+
+        @Override
+        public void onBindViewHolder(TakerViewHolder holder, int position) {
+            holder.avatar.setTag(position);
+            holder.avatar.displayResourceImage(R.drawable.xiaohong);
+        }
+
+        @Override
+        public int getItemCount() {
+            return mDatas.size();
+        }
+
+        public void setDatas(List<UserInfo> datas) {
+            mDatas = datas;
+            Log.e("haha", "setdatas");
+            notifyDataSetChanged();
+        }
+    }
 }
