@@ -1,6 +1,9 @@
 package ecnu.uleda.view_controller.task.fragment;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -46,11 +49,13 @@ public class TaskMissionFragment extends Fragment {
 
     private static final String[] SORT_BY = {UTaskManager.TIME_LAST, UTaskManager.PRICE_DES,
             UTaskManager.PRICE_ASC, UTaskManager.DISTANCE};
+    public static final String ACTION_REFRESH = "ecnu.uleda.view_controller.TaskMissionFragment.refresh";
 
     private List<UTask> mTasksInList = new ArrayList<>();
 
     private Unbinder mUnbinder;
     private ExecutorService mThreadPool;
+    private BroadcastReceiver mReceiver;
 
     //Widgets go here.
     @BindView(R.id.spinner0)
@@ -197,6 +202,7 @@ public class TaskMissionFragment extends Fragment {
         EventBus.getDefault().unregister(this);
         mThreadPool.shutdownNow();
         mUnbinder.unbind();
+        getActivity().unregisterReceiver(mReceiver);
     }
 
     private void init() {
@@ -205,6 +211,20 @@ public class TaskMissionFragment extends Fragment {
         mThreadPool = Executors.newCachedThreadPool();
         initHandler();
         initRecyclerView();
+        initReceiver();
+    }
+
+    private void initReceiver() {
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (!mThreadPool.isShutdown()) {
+                    mThreadPool.submit(new RefreshThread());
+                }
+            }
+        };
+        IntentFilter filter = new IntentFilter(ACTION_REFRESH);
+        getActivity().registerReceiver(mReceiver, filter);
     }
 
 
@@ -216,12 +236,13 @@ public class TaskMissionFragment extends Fragment {
                     case REFRESH:
                         mTaskListView.refreshComplete();
                         if (isLoadedFromServer) {
-                            if (!hasMoreItems) {
-                                hasMoreItems = true;
-                                mTaskListView.setNoMore(true);
-                            } else {
-                                mTaskListView.setNoMore(false);
-                            }
+//                            if (!hasMoreItems) {
+//                                hasMoreItems = true;
+//                                mTaskListView.setNoMore(true);
+//                            } else {
+//                                mTaskListView.setNoMore(false);
+//                            }
+                            mTaskListView.setNoMore(false);
                         } else {
                             mTaskListView.setNoMore(true);
                         }
@@ -300,6 +321,7 @@ public class TaskMissionFragment extends Fragment {
         @Override
         public void run() {
             try {
+                Log.e("haha", "refresh list");
                 mUTaskManager.refreshTaskInList(getContext());
                 Message message = new Message();
                 message.what = REFRESH;

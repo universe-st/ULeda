@@ -43,6 +43,7 @@ import ecnu.uleda.exception.UServerAccessException;
 import ecnu.uleda.function_module.UserOperatorController;
 import ecnu.uleda.function_module.ServerAccessApi;
 import ecnu.uleda.view_controller.task.adapter.ImageChooseAdapter;
+import ecnu.uleda.view_controller.task.fragment.TaskMissionFragment;
 
 
 public class TaskPostActivity extends AppCompatActivity {
@@ -60,6 +61,7 @@ public class TaskPostActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {
             if (msg.what == 0) {
                 Toast.makeText(TaskPostActivity.this, "提交成功～", Toast.LENGTH_SHORT).show();
+                sendBroadcast(new Intent(TaskMissionFragment.ACTION_REFRESH));
                 finish();
             } else {
                 UServerAccessException exception = (UServerAccessException) msg.obj;

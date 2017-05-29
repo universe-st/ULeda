@@ -8,6 +8,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -42,6 +43,7 @@ import com.tencent.tencentmap.mapsdk.map.MapView;
 import com.tencent.tencentmap.mapsdk.map.TencentMap;
 
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -66,11 +68,12 @@ import ecnu.uleda.function_module.UserOperatorController;
 import ecnu.uleda.function_module.ServerAccessApi;
 import ecnu.uleda.view_controller.SingleUserInfoActivity;
 import ecnu.uleda.view_controller.TaskEditActivity;
+import ecnu.uleda.view_controller.task.adapter.TakersAdapter;
 import me.xiaopan.sketch.SketchImageView;
 import me.xiaopan.sketch.request.DisplayOptions;
 import me.xiaopan.sketch.shaper.CircleImageShaper;
 
-public class TaskDetailsActivity extends AppCompatActivity {
+public class TaskDetailsActivity extends BaseDetailsActivity {
 
     public static final String EXTRA_UTASK = "UTask";
     private static final int MSG_REFRESH_SUCCESS = 0;
@@ -165,7 +168,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
                                         String s = ServerAccessApi.acceptTask(uoc.getId(), uoc.getPassport(), mTask.getPostID());
                                         if (s.equals("success")) {
                                             Message msg = new Message();
-                                            msg.what = 3;
+                                            msg.what = MSG_TAKE_SUCCESS;
                                             mHandler.sendMessage(msg);
                                         }
                                     } catch (UServerAccessException e) {
@@ -227,7 +230,6 @@ public class TaskDetailsActivity extends AppCompatActivity {
     @OnClick(R.id.comment_bt)
     void comment() {
         showCommentPopup();
-        mPostCommentEdit.requestFocus();
         InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(0, InputMethodManager.SHOW_FORCED);
     }
@@ -568,63 +570,4 @@ public class TaskDetailsActivity extends AppCompatActivity {
         }
     }
 
-    private static class TakerViewHolder extends RecyclerView.ViewHolder {
-
-        SketchImageView avatar;
-
-        public TakerViewHolder(View itemView) {
-            super(itemView);
-            this.avatar = (SketchImageView) ((LinearLayout)itemView).getChildAt(0);
-        }
-    }
-
-    private static class TakersAdapter extends RecyclerView.Adapter<TakerViewHolder> {
-
-        private Context mContext;
-        private List<UserInfo> mDatas;
-
-        public TakersAdapter(Context context, List<UserInfo> datas) {
-            mContext = context;
-            mDatas = datas;
-        }
-
-        @Override
-        public TakerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            LinearLayout container = new LinearLayout(mContext);
-            int width = (int) UPublicTool.dp2px(mContext, 70);
-            container.setLayoutParams(new RecyclerView.LayoutParams(width, width));
-            final SketchImageView imageView = new SketchImageView(mContext);
-            imageView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT));
-            DisplayOptions options = new DisplayOptions();
-            options.setImageShaper(new CircleImageShaper());
-            imageView.setOptions(options);
-            container.addView(imageView, 0);
-            imageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int pos = (int) imageView.getTag();
-                    // TODO
-                }
-            });
-            return new TakerViewHolder(container);
-        }
-
-        @Override
-        public void onBindViewHolder(TakerViewHolder holder, int position) {
-            holder.avatar.setTag(position);
-            holder.avatar.displayResourceImage(R.drawable.xiaohong);
-        }
-
-        @Override
-        public int getItemCount() {
-            return mDatas.size();
-        }
-
-        public void setDatas(List<UserInfo> datas) {
-            mDatas = datas;
-            Log.e("haha", "setdatas");
-            notifyDataSetChanged();
-        }
-    }
 }
