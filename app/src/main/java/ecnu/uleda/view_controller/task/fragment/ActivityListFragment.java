@@ -60,7 +60,6 @@ public class ActivityListFragment extends Fragment {
 
     private XRecyclerView mActivityRv;
     private List<UActivity> mActivityList;
-    private List<String> mBrochureUrls;
 
     private static ActivityListFragment mInstance;
     public static ActivityListFragment getInstance() {
@@ -146,7 +145,6 @@ public class ActivityListFragment extends Fragment {
         mActivityRv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         mActivityRv.addItemDecoration(new TaskListItemDecoration(getContext(), 8, false));
         mActivityList = new ArrayList<>();
-        mBrochureUrls = new ArrayList<>();
         mThreadPool = Executors.newCachedThreadPool();
         mThreadPool.submit(new RefreshRunnable());
         for (int i = 0; i < 10; i++) {
@@ -164,7 +162,6 @@ public class ActivityListFragment extends Fragment {
                     new ArrayList<>(Arrays.asList(new String[]{String.valueOf(R.drawable.img1),
                             String.valueOf(R.drawable.img2),
                             String.valueOf(R.drawable.img3)}))));
-            mBrochureUrls.add(R.drawable.img1 + "," + R.drawable.img2 + "," + R.drawable.img3);
         }
     }
 
@@ -207,7 +204,7 @@ public class ActivityListFragment extends Fragment {
             holder.actTime.setText(df.format(new Date(uActivity.getHoldTime() * 1000)));
             holder.location.setText(uActivity.getLocation());
             holder.itemView.setTag(position);
-            holder.brochure.setAdapter(new BrochureAdapter(new ArrayList<>(Arrays.asList(mBrochureUrls.get(position).split(",")))));
+            holder.brochure.setAdapter(new BrochureAdapter(uActivity.getImgUrls()));
             holder.brochure.setLayoutManager(new LinearLayoutManager(getContext(),
                     LinearLayoutManager.HORIZONTAL, false));
             holder.brochure.addItemDecoration(new BrochureItemDecoration(getContext(), 3));
@@ -279,7 +276,7 @@ public class ActivityListFragment extends Fragment {
 
        @Override
        public int getItemCount() {
-           return 4;
+           return mUrls.size();
        }
    }
 

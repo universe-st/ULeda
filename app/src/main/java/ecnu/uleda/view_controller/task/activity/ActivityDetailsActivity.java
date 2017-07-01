@@ -72,7 +72,6 @@ import me.xiaopan.sketch.request.LoadListener;
 import me.xiaopan.sketch.request.LoadResult;
 import me.xiaopan.sketch.shaper.CircleImageShaper;
 
-@SuppressLint("WrongConstant")
 public class ActivityDetailsActivity extends BaseDetailsActivity {
 
     private static final String EXTRA_ACTIVITY = "extra_activity";
