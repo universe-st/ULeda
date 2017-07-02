@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.READ_LOGS" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- 通过GPS得到精确位置 -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -118,10 +119,10 @@
         <activity android:name=".view_controller.Chart" />
         <activity android:name=".view_controller.ReleasedUcircleActivity" />
         <activity android:name=".view_controller.task.activity.ActivityDetailsActivity"
-            android:theme="@style/NoStatusBarTheme"
-            android:parentActivityName=".view_controller.UMainActivity"/>
+                  android:theme="@style/NoStatusBarTheme"
+                  android:parentActivityName=".view_controller.UMainActivity"/>
         <activity android:name=".view_controller.CommonBigImageActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+                  android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
 
         <!-- Mob短信验证 -->
         <activity
