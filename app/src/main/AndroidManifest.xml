@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="ecnu.uleda">
+          xmlns:tools="http://schemas.android.com/tools"
+          package="ecnu.uleda">
 
     <!-- 通过GPS得到精确位置 -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -96,10 +96,10 @@
         <activity android:name=".view_controller.Chart" />
         <activity android:name=".view_controller.ReleasedUcircleActivity" />
         <activity android:name=".view_controller.task.activity.ActivityDetailsActivity"
-            android:theme="@style/NoStatusBarTheme"
-            android:parentActivityName=".view_controller.UMainActivity"/>
+                  android:theme="@style/NoStatusBarTheme"
+                  android:parentActivityName=".view_controller.UMainActivity"/>
         <activity android:name=".view_controller.CommonBigImageActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+                  android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
 
 
         <!-- 会话列表 -->

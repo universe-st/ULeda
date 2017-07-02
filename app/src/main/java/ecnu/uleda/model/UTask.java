@@ -13,11 +13,12 @@ public class UTask implements Serializable{
 
     //Task status code.
     public static final int UNRECEIVE=0;
-    public static final int IS_RECEIVED=1;
-    public static final int WAIT_REWARD=2;
-    public static final int IS_DONE=3;
-    public static final int INVAILDATION=4;
-    public static final int IN_DISPUTE=5;
+    public static final int WAITCHOOSE=1;
+    public static final int TASK_START=2;
+    public static final int SINGLE_FINISHED=3;
+    public static final int TASK_FINISH=4;
+    public static final int INVAILDATION=5;
+    public static final int IN_DISPUTE=6;
 
 
 

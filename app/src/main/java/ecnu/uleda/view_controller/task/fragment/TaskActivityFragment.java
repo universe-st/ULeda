@@ -86,7 +86,6 @@ public class TaskActivityFragment extends Fragment implements StickyNavLayout.On
         initPager();
         initIndicator();
         initRollPager();
-        mContainer.setOnRefreshListener(this);
         mActivityList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             mActivityList.add(new UActivity("xiaohong.jpg", "小蓝", System.currentTimeMillis() / 1000 - 24 * 3600,
