@@ -9,11 +9,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import ecnu.uleda.R;
 
 public class UserRegister extends AppCompatActivity implements View.OnClickListener{
-    private ImageButton mRegisterBack;
+    private TextView mRegisterBack;
     private Button MessageSendButton;
     private TimeCount time;
     @Override
@@ -24,7 +25,8 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
     }
     protected void init()
     {
-        mRegisterBack = (ImageButton)findViewById(R.id.register_back);
+        mRegisterBack = (TextView)findViewById(R.id.register_back);
+        mRegisterBack.setOnClickListener(this);
         time = new TimeCount(60000,1000);
         MessageSendButton = (Button)findViewById(R.id.Message_Send);
         MessageSendButton.setOnClickListener(this);
@@ -47,20 +49,20 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
         public TimeCount(long millisInFuture, long countDownInterval) {
             super(millisInFuture, countDownInterval);
         }
-
         @Override
         public void onTick(long millisUntilFinished) {
-            MessageSendButton.setBackgroundColor(Color.parseColor("#B6B6D8"));
+            MessageSendButton.setBackgroundColor(Color.parseColor("#DD5A44"));
             MessageSendButton.setClickable(false);
-            MessageSendButton.setText("("+millisUntilFinished / 1000 +") 秒后可重新发送");
+            MessageSendButton.setBackground(getResources().getDrawable(R.drawable.login_shape_button));
+            MessageSendButton.setText(""+millisUntilFinished / 1000 +"");
         }
-
         @Override
         public void onFinish() {
-            MessageSendButton.setText("重新获取验证码");
+            MessageSendButton.setBackground(getResources().getDrawable(R.drawable.login_shape_button));
+            MessageSendButton.setText("重新获取");
             MessageSendButton.setClickable(true);
-            MessageSendButton.setBackgroundColor(Color.parseColor("#4EB84A"));
 
+            MessageSendButton.setBackgroundColor(Color.parseColor("#4EB84A"));
         }
     }
 }
