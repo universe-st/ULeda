@@ -12,6 +12,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import ecnu.uleda.BuildConfig;
+import ecnu.uleda.tool.AESUtils;
+import ecnu.uleda.tool.MD5Utils;
 import ecnu.uleda.tool.UPublicTool;
 import ecnu.uleda.exception.UServerAccessException;
 
@@ -35,6 +37,29 @@ public class ServerAccessApi {
             }
         }
         throw new UServerAccessException(UServerAccessException.INTERNET_ERROR);
+    }
+    public static int Register(@NonNull String username,@NonNull String password,@NonNull String pcode,
+    @NonNull String phone)throws UServerAccessException
+    {
+        String aes_key = MD5Utils.MD5(getMainKey()).substring(0,16);
+        String aes = AESUtils.encrypt(password,aes_key);
+        String md5 = MD5Utils.MD5(aes);
+        PhalApiClient client=createClient();
+        PhalApiClientResponse response = client
+            .withService("User.Register")
+            .withParams("username",username)
+            .withParams("password",md5)
+            .withParams("pcode",pcode)
+            .withParams("phone",phone)
+            .request();
+        if(response.getRet() == 200)
+        {
+            return 1;
+        }
+        else
+        {
+            throw new UServerAccessException(response.getRet());
+        }
     }
     public static String getLoginToken(@NonNull String userName)throws UServerAccessException{
         //断言，保证传入参数的正确性，在DEBUG模式下才启用。
@@ -130,7 +155,7 @@ public class ServerAccessApi {
                 .withTimeout(SET_TIME_OUT)
                 .request();
         if(response.getRet()==200){//200的意思是正常返回
-            try{
+                try{
                 JSONObject data=new JSONObject(response.getData());
                 return data.getString("success");
             }catch (JSONException e){
