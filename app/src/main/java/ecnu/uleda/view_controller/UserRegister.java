@@ -131,33 +131,22 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
                             mphone = PhoneNumber.getText().toString();
                             mMessageSure = MessageSure.getText().toString();
 
-
-                            try
-                            {
-                                ServerAccessApi.Register(mUserName,mUserPassword,mMessageSure,mphone);
-                                Toast.makeText(UserRegister.this,"注册成功",
-                                        Toast.LENGTH_SHORT).show();
-                                finish();
-                            }catch (UServerAccessException e)
-                            {
-                                Flag = e.getStatus();
-                                if(Flag == 498)
-                                {
-                                    Toast.makeText(UserRegister.this,"账号已存在",
-                                            Toast.LENGTH_SHORT).show();
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Message msg = new Message();
+                                    try
+                                    {
+                                        Flag = ServerAccessApi.Register(mUserName,mUserPassword,mMessageSure,mphone);
+                                    }catch (UServerAccessException e)
+                                    {
+                                        Flag = e.getStatus();
+                                    }
+                                    handlerText.sendEmptyMessage(Flag);
                                 }
-                                if(Flag == 497)
-                                {
-                                    Toast.makeText(UserRegister.this,"手机验证错误",
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                                else
-                                {
-                                    Toast.makeText(UserRegister.this,""+Flag,
-                                            Toast.LENGTH_SHORT).show();
-                                }
+                            }).start();
                             }
-                        }
+
                     }
                 }
 
@@ -169,16 +158,37 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
     }
     Handler handlerText =new Handler(){
         public void handleMessage(Message msg) {
-            if(msg.what==1){
-                if(time>0){
+            switch (msg.what)
+            {
+                case 1:
+                    if(time>0){
                     MessageSendButton.setText(time+"s");
                     time--;
                     handlerText.sendEmptyMessageDelayed(1, 1000);
-                }else{
+                    }else{
                     MessageSendButton.setText("重新获取");
                     time = 60;
-                }
+                    }
+                    break;
+                case 200:
+                    Toast.makeText(UserRegister.this,"注册成功",
+                            Toast.LENGTH_SHORT).show();
+                    finish();
+                    break;
+                case 498:
+                    Toast.makeText(UserRegister.this,"用户名已存在",
+                            Toast.LENGTH_SHORT).show();
+                    break;
+                case 497:
+                    Toast.makeText(UserRegister.this,"手机验证错误",
+                            Toast.LENGTH_SHORT).show();
+                    break;
+                default:
+                    Toast.makeText(UserRegister.this,"服务器出现问题"+msg.what,
+                            Toast.LENGTH_SHORT).show();
+                    break;
             }
+
         };
     };
     Handler handler=new Handler(){

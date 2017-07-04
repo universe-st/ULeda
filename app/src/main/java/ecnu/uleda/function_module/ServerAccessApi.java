@@ -41,16 +41,13 @@ public class ServerAccessApi {
     public static int Register(@NonNull String username,@NonNull String password,@NonNull String pcode,
     @NonNull String phone)throws UServerAccessException
     {
-
         String aes_key = MD5Utils.MD5(getMainKey()).substring(0,16);
         String aes = AESUtils.encrypt(password,aes_key);
         String md5 = MD5Utils.MD5(aes);
-
         username = UrlEncode(username);
         md5 = UrlEncode(md5);
         pcode = UrlEncode(pcode);
         phone = UrlEncode(phone);
-
         PhalApiClient client=createClient();
         PhalApiClientResponse response = client
             .withService("User.Register")
@@ -62,7 +59,7 @@ public class ServerAccessApi {
             .request();
         if(response.getRet() == 200)
         {
-            return 1;
+            return 200;
         }
         else
         {
