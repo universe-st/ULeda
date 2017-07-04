@@ -126,11 +126,12 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
                         }
                         else
                         {
+                            mWorkDone.setTextColor(Color.parseColor("#DD5A44"));
+                            mWorkDone.setEnabled(false);
                             mUserName = Username.getText().toString();
                             mUserPassword = UserPassword.getText().toString();
                             mphone = PhoneNumber.getText().toString();
                             mMessageSure = MessageSure.getText().toString();
-
                             new Thread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -146,10 +147,8 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
                                 }
                             }).start();
                             }
-
                     }
                 }
-
                 break;
         }
     }
@@ -166,6 +165,8 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
                     time--;
                     handlerText.sendEmptyMessageDelayed(1, 1000);
                     }else{
+                        mWorkDone.setTextColor(Color.parseColor("#ffffff"));
+                        mWorkDone.setEnabled(true);
                     MessageSendButton.setText("重新获取");
                     time = 60;
                     }
@@ -188,7 +189,6 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
                             Toast.LENGTH_SHORT).show();
                     break;
             }
-
         };
     };
     Handler handler=new Handler(){
