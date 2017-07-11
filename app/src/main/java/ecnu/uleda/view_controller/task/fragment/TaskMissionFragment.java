@@ -321,7 +321,6 @@ public class TaskMissionFragment extends Fragment {
         @Override
         public void run() {
             try {
-                Log.e("haha", "refresh list");
                 mUTaskManager.refreshTaskInList(getContext());
                 Message message = new Message();
                 message.what = REFRESH;

@@ -13,7 +13,7 @@
         android:layout_gravity="center_vertical"
         android:background="@drawable/selectable_item_main">
 
-        <me.xiaopan.sketch.SketchImageView
+        <ImageView
             android:id="@+id/activity_avatar"
             android:layout_width="40dp"
             android:layout_height="40dp"

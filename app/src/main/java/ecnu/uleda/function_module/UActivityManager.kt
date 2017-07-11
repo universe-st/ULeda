@@ -18,7 +18,24 @@ object UActivityManager {
 
     fun refreshActivityInList(tag: String = TAG_ALL) {
         val resp = ServerAccessApi.getActivities(uoc.id, uoc.passport, tag, lastIndex, pageSize)
-        log(resp)
+        val length = resp.length()
+        activityList.clear()
+        for (i in 0..length - 1) {
+            val jsonObj = resp.getJSONObject(i)
+            val activity = UActivity(jsonObj.getString("act_title"),
+                    jsonObj.getDouble("lat"),
+                    jsonObj.getDouble("lon"),
+                    jsonObj.getString("location"),
+                    jsonObj.getString("tag"),
+                    jsonObj.getInt("author_id"),
+                    "no",
+                    "no",
+                    jsonObj.getString("description"),
+                    jsonObj.getLong("active_time"),
+                    jsonObj.getInt("taker_count_limit"),
+                    arrayListOf())
+            activityList.add(activity)
+        }
     }
 
 }

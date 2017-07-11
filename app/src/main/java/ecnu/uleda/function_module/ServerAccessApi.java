@@ -387,17 +387,17 @@ public class ServerAccessApi {
         }
     }
 
-    public static String getActivities(@NonNull String id, @NonNull String passport, @NonNull String tag,
+    public static JSONArray getActivities(@NonNull String id, @NonNull String passport, @NonNull String tag,
                                                 int from, int count) throws UServerAccessException {
         id = UrlEncode(id);
         passport = UrlEncode(passport);
         tag = UrlEncode(tag);
 
         PhalApiClientResponse response = createClient()
-                .withService("Activity.GetUnstartedList")
+                .withService("Activity.GetActivityList")
                 .withParams("id", id)
                 .withParams("passport", passport)
-                .withParams("tag", tag)
+//                .withParams("tag", tag)
                 .withParams("from", String.valueOf(from))
                 .withParams("count", String.valueOf(count))
                 .withTimeout(SET_TIME_OUT)
@@ -406,7 +406,7 @@ public class ServerAccessApi {
             Log.e("haha", UrlDecode(response.getData()));
             try{
                 JSONArray data = new JSONArray(response.getData());
-                return data.toString();
+                return data;
             }catch (JSONException e){
                 Log.e("ServerAccessApi",e.toString());
                 //数据包无法解析，向上抛出一个异常
