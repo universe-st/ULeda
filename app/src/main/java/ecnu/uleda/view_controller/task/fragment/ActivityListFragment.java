@@ -8,6 +8,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -62,6 +63,7 @@ public class ActivityListFragment extends Fragment {
 
     private Handler mLoadHandler;
     private ExecutorService mThreadPool;
+    private OnRefreshListener mListener;
 
     private RecyclerView mActivityRv;
     private ActivityListAdapter mAdapter;
@@ -79,10 +81,8 @@ public class ActivityListFragment extends Fragment {
         return mInstance;
     }
 
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void setType(TabLayout.Tab tab) {
-        mType = TYPES[tab.getPosition()];
+    public void setOnRefreshListener(OnRefreshListener listener) {
+        mListener = listener;
     }
 
     @Nullable
@@ -117,11 +117,19 @@ public class ActivityListFragment extends Fragment {
             public void handleMessage(Message msg) {
                 switch (msg.what) {
                     case MESSAGE_LOAD_COMPLETE:
+                        int size = mActivityList.size();
+                        mActivityList = UActivityManager.INSTANCE.getActivityList();
+                        int newSize = mActivityList.size();
+                        mAdapter.notifyItemRangeInserted(size, newSize - size);
+                        mActivityRv.smoothScrollBy(0, -1);
                         break;
                     case MESSAGE_REFRESH_COMPLETE:
                         mActivityList = UActivityManager.INSTANCE.getActivityList();
                         mAdapter.notifyDataSetChanged();
-                        mActivityRv.smoothScrollBy(0, 1);
+                        mActivityRv.smoothScrollBy(0, -1);
+                        if (mListener != null) {
+                            mListener.onRefreshComplete();
+                        }
                         break;
                 }
             }
@@ -132,13 +140,11 @@ public class ActivityListFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
     }
 
     @Override
@@ -173,6 +179,33 @@ public class ActivityListFragment extends Fragment {
         mActivityRv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         mActivityRv.addItemDecoration(new TaskListItemDecoration(getContext(), 8, false));
         mActivityRv.setHasFixedSize(true);
+        mActivityRv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE && !ViewCompat.canScrollVertically(recyclerView, 1)) {
+                    loadMore();
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
+        mThreadPool.submit(new RefreshRunnable());
+    }
+
+    private void loadMore() {
+        mThreadPool.submit(new LoadMoreRunnable());
+    }
+
+    public void refresh() {
+        mThreadPool.submit(new RefreshRunnable());
+    }
+
+    public void setTag(CharSequence text) {
+        mType = text.toString();
         mThreadPool.submit(new RefreshRunnable());
     }
 
@@ -303,4 +336,16 @@ public class ActivityListFragment extends Fragment {
            mLoadHandler.sendEmptyMessage(MESSAGE_REFRESH_COMPLETE);
        }
    }
+
+    class LoadMoreRunnable implements Runnable {
+        @Override
+        public void run() {
+            UActivityManager.INSTANCE.loadMoreActivityInList();
+            mLoadHandler.sendEmptyMessage(MESSAGE_LOAD_COMPLETE);
+        }
+    }
+
+    interface OnRefreshListener {
+        void onRefreshComplete();
+    }
 }

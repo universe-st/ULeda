@@ -15,27 +15,60 @@ object UActivityManager {
     private val uoc = UserOperatorController.getInstance()
     var activityList = arrayListOf<UActivity>()
     private var lastIndex = 0
+    private var tag = "全部"
+    private var hasMore = true
 
     fun refreshActivityInList(tag: String = TAG_ALL) {
+        this.tag = tag
+        lastIndex = 0
+        hasMore = true
         val resp = ServerAccessApi.getActivities(uoc.id, uoc.passport, tag, lastIndex, pageSize)
         val length = resp.length()
         activityList.clear()
-        for (i in 0..length - 1) {
-            val jsonObj = resp.getJSONObject(i)
-            val activity = UActivity(jsonObj.getString("act_title"),
-                    jsonObj.getDouble("lat"),
-                    jsonObj.getDouble("lon"),
-                    jsonObj.getString("location"),
-                    jsonObj.getString("tag"),
-                    jsonObj.getInt("author_id"),
-                    "no",
-                    "no",
-                    jsonObj.getString("description"),
-                    jsonObj.getLong("active_time"),
-                    jsonObj.getInt("taker_count_limit"),
-                    arrayListOf())
-            activityList.add(activity)
-        }
+        (0..length - 1)
+                .map { resp.getJSONObject(it) }
+                .map {
+                    UActivity(it.getString("act_title"),
+                            it.getDouble("lat"),
+                            it.getDouble("lon"),
+                            it.getString("location"),
+                            it.getString("tag"),
+                            it.getInt("author_id"),
+                            "no",
+                            "no",
+                            it.getString("description"),
+                            it.getLong("active_time"),
+                            it.getInt("taker_count_limit"),
+                            arrayListOf())
+                }
+                .forEach { activityList.add(it) }
+        lastIndex += length
+        if (length < pageSize) hasMore = false
+    }
+
+    fun loadMoreActivityInList() {
+        if (!hasMore) return
+        val resp = ServerAccessApi.getActivities(uoc.id, uoc.passport, tag, lastIndex, pageSize)
+        val length = resp.length()
+        (0..length - 1)
+                .map { resp.getJSONObject(it) }
+                .map {
+                    UActivity(it.getString("act_title"),
+                            it.getDouble("lat"),
+                            it.getDouble("lon"),
+                            it.getString("location"),
+                            it.getString("tag"),
+                            it.getInt("author_id"),
+                            "no",
+                            "no",
+                            it.getString("description"),
+                            it.getLong("active_time"),
+                            it.getInt("taker_count_limit"),
+                            arrayListOf())
+                }
+                .forEach { activityList.add(it) }
+        lastIndex += length
+        if (length < pageSize) hasMore = false
     }
 
 }
