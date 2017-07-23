@@ -29,6 +29,7 @@
     <uses-permission android:name="android.permission.READ_SMS" />
 
     <application
+        android:name="ecnu.uleda.function_module.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -70,6 +71,12 @@
             <intent-filter>
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
             </intent-filter>
+
+            <!-- ImSDK 3.0.2 后添加 -->
+            <intent-filter>
+                <action android:name="com.tencent.qalsdk.service.TASK_REMOVED" />
+            </intent-filter>
+
         </receiver>
         <activity
             android:name=".view_controller.UMainActivity"

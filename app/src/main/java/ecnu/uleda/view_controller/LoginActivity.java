@@ -7,6 +7,7 @@ import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -25,7 +26,6 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import ecnu.uleda.R;
 import ecnu.uleda.tool.UPublicTool;
 import ecnu.uleda.exception.UServerAccessException;
@@ -87,6 +87,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     };
     private UserOperatorController mUOC = UserOperatorController.getInstance();
+    private int sdkAppId = 1400036078;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +101,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             getWindow().setStatusBarColor(0xFFFDFDFD);
         }
-
     }
 
 

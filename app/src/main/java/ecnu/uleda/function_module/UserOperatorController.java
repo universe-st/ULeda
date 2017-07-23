@@ -1,6 +1,13 @@
 package ecnu.uleda.function_module;
 
+import android.app.Activity;
+import android.content.Context;
+import android.os.Environment;
 import android.util.Log;
+
+import com.tencent.imsdk.TIMLogLevel;
+import com.tencent.imsdk.TIMManager;
+import com.tencent.imsdk.TIMSdkConfig;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,13 +25,14 @@ import ecnu.uleda.tool.MD5Utils;
 
 public class UserOperatorController {
     private static UserOperatorController sUOC=null;
+    private int sdkAppId = 1400036078;
+
     public static UserOperatorController getInstance(){
         if(sUOC==null){
             sUOC=new UserOperatorController();
         }
         return sUOC;
     }
-
     private String mUserName;
     private String mPassword;
     private String mToken;
@@ -33,6 +41,8 @@ public class UserOperatorController {
     private int mStatus;
     private String mMessage="undefined";
     private String mId;
+    private String muserSig;
+
     public String getMessage(){
         return mMessage;
     }
@@ -132,5 +142,23 @@ public class UserOperatorController {
     }
     UserOperatorController(){
         //单例模式
+
+        //初始化SDK基本配置
+        TIMSdkConfig config = new TIMSdkConfig(sdkAppId)
+                .enableCrashReport(false)
+                .enableLogPrint(true)
+                .setLogLevel(TIMLogLevel.DEBUG) .setLogPath(Environment.getExternalStorageDirectory().getPath() + "/justfortest/");
+        //初始化SDK
+        TIMManager.getInstance().init(App.getContext(), config);
+        Log.d("UserOperatorController", TIMManager.getInstance().getVersion()+"xxx");//fine
     }
+
+    public String getUserSig() {
+        return muserSig;
+    }
+
+    public void setUserSig(String userSig) {
+        this.muserSig = userSig;
+    }
+
 }
