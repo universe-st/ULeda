@@ -73,7 +73,6 @@ public class MessageFragment extends Fragment implements SelectableTitleView.OnT
     private MessageFragmentLeftFragment mFragmentLeft;
     private MessageFragmentRightFragment mFragmentRight;
     private String tag = "MessageFragment";
-    //TODO:我帮你初始化好了，当然这只是个测试，如果觉得不合适可以删除了 -KSS
     private TIMManager mTIMManager = TIMManager.getInstance();
 
     private UserOperatorController uoc = UserOperatorController.getInstance();
@@ -92,26 +91,6 @@ public class MessageFragment extends Fragment implements SelectableTitleView.OnT
         super.onCreate(b);
         SPUtil.init(this.getContext());
 
-
-
-        /** 登录
-         * @param identifier 用户帐号
-         * @param userSig userSig，用户帐号签名，由私钥加密获得，具体请参考文档 * @param callback 回调接口
-         */
-        Log.d(tag, "login getUserSig() " + uoc.getUserSig() +"========"+uoc.getId());
-
-        TIMManager.getInstance().login(uoc.getId(),uoc.getUserSig(), new TIMCallBack() {
-            @Override
-            public void onError(int code, String desc) {
-                //错误码code和错误描述desc，可用于定位请求失败原因 //错误码code列表请参见错误码表
-                Log.d(tag, "login failed. code: " + code + " errmsg: " + desc);
-            }
-
-            @Override
-            public void onSuccess() {
-                Log.d(tag, "login success");
-            }
-        });
     }
 
 

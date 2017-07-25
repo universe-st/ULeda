@@ -26,6 +26,10 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.tencent.imsdk.TIMCallBack;
+import com.tencent.imsdk.TIMManager;
+
 import ecnu.uleda.R;
 import ecnu.uleda.tool.UPublicTool;
 import ecnu.uleda.exception.UServerAccessException;
@@ -128,6 +132,24 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     public void run() {
                         mUOC.login(mUserName.getText().toString(), mPassword.getText().toString());
                         Log.d("LoginActivity", mUOC.getMessage());
+                        /** 登录
+                         * @param identifier 用户帐号
+                         * @param userSig userSig，用户帐号签名，由私钥加密获得，具体请参考文档 * @param callback 回调接口
+                         */
+                        Log.d("LoginActivity", "TIM login getUserSig() " + mUOC.getUserSig() +"========TIM login getId()"+mUOC.getId());
+
+                        TIMManager.getInstance().login(mUOC.getId(),mUOC.getUserSig(), new TIMCallBack() {
+                            @Override
+                            public void onError(int code, String desc) {
+                                //错误码code和错误描述desc，可用于定位请求失败原因 //错误码code列表请参见错误码表
+                                Log.d("LoginActivity", "TIM login failed. code: " + code + " errmsg: " + desc);
+                            }
+
+                            @Override
+                            public void onSuccess() {
+                                Log.d("LoginActivity", "TIM login success");
+                            }
+                        });
                         Message message = new Message();
                         message.what = 0;
                         mHandler.sendMessage(message);
