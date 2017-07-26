@@ -657,7 +657,7 @@ public class ServerAccessApi {
     private static PhalApiClient createClient(){
         //这个函数创造一个客户端实例
         return PhalApiClient.create()
-                .withHost("http://api.uleda.top/Public/mobile/");
+                .withHost("http://118.89.156.167/mobile/");
     }
 
     private static String UrlEncode(String str)throws UServerAccessException{

@@ -1,5 +1,4 @@
 package ecnu.uleda.view_controller;
-
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Intent;
@@ -16,13 +15,11 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
 import ecnu.uleda.R;
 import ecnu.uleda.exception.UServerAccessException;
 import ecnu.uleda.function_module.ServerAccessApi;
-
 public class UserRegister extends AppCompatActivity implements View.OnClickListener{
     private TextView mRegisterBack;
     private Button MessageSendButton;
@@ -72,7 +69,6 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
         MessageSure.setOnClickListener(this);
         UserPassword.setOnClickListener(this);
     }
-
     public void onClick(View v)
     {
         switch (v.getId())
@@ -147,7 +143,7 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
                                     handlerText.sendEmptyMessage(Flag);
                                 }
                             }).start();
-                            }
+                        }
                     }
                 }
                 break;
@@ -162,14 +158,14 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
             {
                 case 1:
                     if(time>0){
-                    MessageSendButton.setText(time+"s");
-                    time--;
-                    handlerText.sendEmptyMessageDelayed(1, 1000);
+                        MessageSendButton.setText(time+"s");
+                        time--;
+                        handlerText.sendEmptyMessageDelayed(1, 1000);
                     }else{
                         mWorkDone.setTextColor(Color.parseColor("#ffffff"));
                         mWorkDone.setEnabled(true);
-                    MessageSendButton.setText("重新获取");
-                    time = 60;
+                        MessageSendButton.setText("重新获取");
+                        time = 60;
                     }
                     break;
                 case 200:
@@ -201,7 +197,6 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
             int event = msg.arg1;
             int result = msg.arg2;
             Object data = msg.obj;
-
             if (result == SMSSDK.RESULT_COMPLETE) {
                 //短信注册成功后，返回MainActivity,然后提示新好友
                 if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE){//服务器验证码发送成功

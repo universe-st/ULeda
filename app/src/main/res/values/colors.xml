@@ -14,9 +14,13 @@
 
     <color name="colorUBlue">#4FBDFE</color>
 
+    <color name="colorTextBlue">#1173CB</color>
+
     <color name="colorUDeepGray">#666666</color>
 
     <color name="colorUGray">#ABABAB</color>
+
+    <color name="colorBackgroundGray">#EBEBEB</color>
 
     <color name="colorUInfo">#f0b6ac</color>
     

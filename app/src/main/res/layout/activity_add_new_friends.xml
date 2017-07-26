@@ -15,7 +15,7 @@
         android:orientation="horizontal"
         android:weightSum="1">
 
-        <Button
+        <TextView
             android:id="@+id/add_Back"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -43,13 +43,14 @@
 
     </LinearLayout>
 
-    <LinearLayout
+
+    <!--LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="15dp"
-        android:background="#ededed"></LinearLayout>
+        android:background="#ededed"></LinearLayout-->
 
-    <LinearLayout
+    <!--LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:background="#ededed"
@@ -61,17 +62,72 @@
             android:layout_height="35sp"
             android:id="@+id/editText_add"
             android:textSize="24sp"
-            android:hint="   账号/邮箱地址"
+            android:hint="  账号/邮箱地址"
             android:layout_marginTop="10dp"
             android:background="#ffffff"
             android:gravity="top"
             android:maxLines="1"
             />
+    </LinearLayout-->
+
+    <LinearLayout
+        android:id="@id/title"
+        android:layout_width="match_parent"
+        android:background="@color/colorUWhite"
+        android:layout_height="46dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_alignParentTop="true"
+        android:gravity="center_vertical">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_search_inputbox"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:src="@drawable/search"/>
+            <EditText
+                android:id="@+id/edit_add_friends"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="8dp"
+                android:textCursorDrawable="@android:color/black"
+                android:hint="搜索ID或手机号"
+                android:textColorHint="@color/colorUGray"
+                android:textColor="@android:color/black"
+                android:imeOptions="actionSearch"
+                android:textSize="14sp"
+                android:inputType="phone"
+                android:background="@null"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+        <TextView
+            android:id="@+id/search_friends"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/colorTextBlue"
+            android:textSize="16sp"
+            android:text="搜索" />
+
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="34dp"
+        android:layout_height="10sp"></LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="46dp"
         android:orientation="horizontal"
         android:background="@color/colorUWhite"
         android:weightSum="100">
@@ -83,7 +139,7 @@
             android:id="@+id/imageView7"
             android:layout_weight="20"/>
 
-        <Button
+        <TextView
             android:id="@+id/findByPhoneNumber"
             android:layout_width="300dp"
             android:layout_height="35dp"
@@ -100,12 +156,14 @@
             android:layout_weight="10"
             />
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="10sp"></LinearLayout>
+
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="34dp"
+        android:layout_height="46dp"
         android:orientation="horizontal"
         android:background="@color/colorUWhite"
         android:weightSum="100">
@@ -116,8 +174,7 @@
             android:src="@drawable/paint"
             android:layout_weight="20"
             />
-
-        <Button
+        <TextView
             android:layout_width="300dp"
             android:layout_height="35dp"
             android:id="@+id/findByPaint"

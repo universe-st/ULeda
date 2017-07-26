@@ -1,4 +1,4 @@
-package ecnu.uleda.view_controller;
+package ecnu.uleda.view_controller.message;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,11 +13,12 @@ import java.util.List;
 import ecnu.uleda.R;
 import ecnu.uleda.model.Contacts;
 import ecnu.uleda.model.Friend;
-import io.rong.imlib.model.UserInfo;
+
 
 
 /**
  * Created by zhaoning on 2017/5/1.
+ * 信息界面右
  */
 
 public class MessageFragmentRightFragment extends Fragment {
@@ -46,22 +47,6 @@ public class MessageFragmentRightFragment extends Fragment {
         view = inflater.inflate(R.layout.message_fragment_right_fragment,container,false);
         return view;
     }
-
-//    private void initContacts(){
-//        for(int i=0;i<2;i++) {
-//            Contacts dyz = new Contacts("丁义珍",R.drawable.username);
-//            contastsList.add(dyz);
-//            Contacts hlp = new Contacts("侯亮平",R.drawable.user2);
-//            contastsList.add(hlp);
-//            Contacts ldk = new Contacts("李达康",R.drawable.username);
-//            contastsList.add(ldk);
-//            Contacts qtw = new Contacts("祁同伟",R.drawable.user4);
-//            contastsList.add(qtw);
-//            Contacts srj = new Contacts("沙瑞金",R.drawable.user5);
-//            contastsList.add(srj);
-//        }
-//    }
-
 
 
 
