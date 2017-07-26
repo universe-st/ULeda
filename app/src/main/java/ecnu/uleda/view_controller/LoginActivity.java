@@ -103,7 +103,33 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-
+    @Override
+    protected void onActivityResult(int requestCode,int resultCode,Intent data)
+    {
+        if(requestCode == 1)
+        {
+            Toast.makeText(LoginActivity.this,"自动登陆",
+                    Toast.LENGTH_SHORT).show();
+            LoginUser();
+        }
+    }
+    private void LoginUser()
+    {
+        setAllEnabled(false);
+        mIsWaiting = true;
+        mAnimator.start();
+        mUserConfig.setSavedUsernamePassword(mUserName.getText().toString(), mPassword.getText().toString());
+        new Thread() {
+            @Override
+            public void run() {
+                mUOC.login(mUserName.getText().toString(), mPassword.getText().toString());
+                Log.d("LoginActivity", mUOC.getMessage());
+                Message message = new Message();
+                message.what = 0;
+                mHandler.sendMessage(message);
+            }
+        }.start();
+    }
     protected void init() {
         mLogin = (Button) findViewById(R.id.login_button);
         mUserName = (EditText) findViewById(R.id.user_name);
@@ -119,20 +145,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setAllEnabled(false);
-                mIsWaiting = true;
-                mAnimator.start();
-                mUserConfig.setSavedUsernamePassword(mUserName.getText().toString(), mPassword.getText().toString());
-                new Thread() {
-                    @Override
-                    public void run() {
-                        mUOC.login(mUserName.getText().toString(), mPassword.getText().toString());
-                        Log.d("LoginActivity", mUOC.getMessage());
-                        Message message = new Message();
-                        message.what = 0;
-                        mHandler.sendMessage(message);
-                    }
-                }.start();
+               LoginUser();
             }
         });
         mLogin.setText("登 陆");

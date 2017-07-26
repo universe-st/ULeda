@@ -2,6 +2,7 @@ package ecnu.uleda.view_controller;
 
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -174,6 +175,7 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
                 case 200:
                     Toast.makeText(UserRegister.this,"注册成功",
                             Toast.LENGTH_SHORT).show();
+                    setResult(1);
                     finish();
                     break;
                 case 498:
