@@ -1,4 +1,4 @@
-package ecnu.uleda.view_controller;
+package ecnu.uleda.view_controller.message;
 
 
 import android.os.Bundle;
@@ -23,18 +23,7 @@ import ecnu.uleda.model.Friend;
  */
 
 public class MessageFragmentLeftFragment extends Fragment {
-    private List<ChatMessage> mChatMessageList = new ArrayList<>();
 
-    private ViewPager vpContent;
-    private List<Fragment> mFragments = new ArrayList<>();
-    private FragmentPagerAdapter adapter;
-    private Fragment mConversationFragment = null;
-    private Fragment mConversationList;
-    private String mUserid;
-
-
-    private List<Friend> userIdList;
-    private List<Friend> userList;
 
     private  String TAG="MFLF";//MessageFragmentLeftFragment is too long(interesting)
                                         /*I think so
@@ -49,18 +38,9 @@ public class MessageFragmentLeftFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.message_fragment_message_fragment,container,false);
-        //小柠柠早点睡，别熬夜太晚~代码可以明天写，不急不急~
+        View view = inflater.inflate(R.layout.message_fragment_left_fragment,container,false);
         return view;
 
     }
 
-
-    private void replaceFragment(Fragment fragment) {
-        FragmentManager fragmentManager = getFragmentManager();//getSupportFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.message_fragment_layout, fragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
-    }
 }

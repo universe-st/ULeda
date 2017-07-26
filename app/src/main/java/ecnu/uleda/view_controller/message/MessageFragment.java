@@ -1,8 +1,9 @@
-package ecnu.uleda.view_controller;
+package ecnu.uleda.view_controller.message;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tencent.imsdk.TIMCallBack;
@@ -49,6 +53,7 @@ import ecnu.uleda.function_module.UserOperatorController;
 import ecnu.uleda.model.Friend;
 import ecnu.uleda.model.UserInfo;
 import ecnu.uleda.tool.SPUtil;
+import ecnu.uleda.view_controller.AddNewFriends;
 import ecnu.uleda.view_controller.widgets.SelectableTitleView;
 import tencent.tls.platform.TLSSmsLoginListener;
 
@@ -69,6 +74,7 @@ public class MessageFragment extends Fragment implements SelectableTitleView.OnT
     private Fragment mFragmentContacts;
     private Context mContext;
     private List<Friend> userIdList;
+    private ImageButton mAddFriends;
     private Unbinder mUnbinder;
     private MessageFragmentLeftFragment mFragmentLeft;
     private MessageFragmentRightFragment mFragmentRight;
@@ -100,7 +106,6 @@ public class MessageFragment extends Fragment implements SelectableTitleView.OnT
         mActivity = getActivity();
         View view = inflater.inflate(R.layout.message_fragment, container, false);
         mUnbinder = ButterKnife.bind(this, view);
-
         return view;
     }
 
@@ -146,8 +151,10 @@ public class MessageFragment extends Fragment implements SelectableTitleView.OnT
     }
 
     @OnClick(R.id.add_friends)
-    void addFriends() {
-        // 添加好友按钮点击事件
+    void addFriends()
+    {
+        Intent intent = new Intent(getActivity(), AddNewFriends.class);
+        getActivity().startActivity(intent);
     }
 
     @Override
@@ -158,5 +165,4 @@ public class MessageFragment extends Fragment implements SelectableTitleView.OnT
             switchToRightFragment();
         }
     }
-
 }

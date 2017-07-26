@@ -1,4 +1,4 @@
-package ecnu.uleda.view_controller;
+package ecnu.uleda.view_controller.message;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -45,7 +45,6 @@ public class MessageFragmentRightFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.message_fragment_right_fragment,container,false);
-        //小柠柠早点睡，别熬夜太晚~代码可以明天写，不急不急~
         return view;
     }
 

@@ -16,6 +16,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import ecnu.uleda.R;
 import ecnu.uleda.function_module.UserOperatorController;
+import ecnu.uleda.view_controller.message.MessageFragment;
 import ecnu.uleda.view_controller.task.fragment.TaskListFragment;
 import ecnu.uleda.view_controller.widgets.BottomBarLayout;
 
