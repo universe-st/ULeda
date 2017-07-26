@@ -73,7 +73,7 @@ public class AddNewFriends extends AppCompatActivity {
 //添加好友请求
         TIMAddFriendRequest req = new TIMAddFriendRequest("8");//identifier
 //        req.setIdentifier(mSearchIdentifier);
-        req.setAddrSource("DemoApp");
+//        req.setAddrSource("Tag_SNS_IM_AddWording");
         req.setAddWording("add me");
         req.setRemark("Cat");
 
