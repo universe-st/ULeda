@@ -590,13 +590,18 @@ public class UMainFragment extends Fragment implements View.OnTouchListener,View
                     @Override
                     public void onLocationChanged(TencentLocation tencentLocation, int i, String s) {
                         super.onLocationChanged(tencentLocation,i,s);
-                        mNavigation.startNavigation(
-                                new Location((float) mCenter.getLatitude(),(float)mCenter.getLongitude()),
-                                new Location((float)mCurrentDestination.getLatitude(),
-                                        (float)mCurrentDestination.getLongitude())
-                        );
+//                        mNavigation.startNavigation(
+//                                new Location((float) mCenter.getLatitude(),(float)mCenter.getLongitude()),
+//                                new Location((float)mCurrentDestination.getLatitude(),
+//                                        (float)mCurrentDestination.getLongitude())
+//                        );
                     }
                 });
+        mNavigation.startNavigation(
+                new Location((float) mCenter.getLatitude(),(float)mCenter.getLongitude()),
+                new Location((float)mCurrentDestination.getLatitude(),
+                        (float)mCurrentDestination.getLongitude())
+        );
     }
 
     private void hideFab() {

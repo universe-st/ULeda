@@ -91,9 +91,6 @@
 
 
                 <include layout="@layout/activity_details_list_header_view" />
-                <View android:layout_width="match_parent"
-                    android:layout_height="64dp"
-                    android:background="#ffffffff"/>
 
             </LinearLayout>
         </android.support.v4.widget.NestedScrollView>

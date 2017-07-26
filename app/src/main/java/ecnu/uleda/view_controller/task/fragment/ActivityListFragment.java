@@ -8,15 +8,17 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
@@ -29,15 +31,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import ecnu.uleda.R;
+import ecnu.uleda.function_module.UActivityManager;
+import ecnu.uleda.function_module.UActivityManagerKt;
 import ecnu.uleda.model.UActivity;
-import ecnu.uleda.tool.UPublicTool;
 import ecnu.uleda.view_controller.task.activity.ActivityDetailsActivity;
 import ecnu.uleda.view_controller.widgets.BrochureItemDecoration;
 import ecnu.uleda.view_controller.widgets.TaskListItemDecoration;
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import me.xiaopan.sketch.SketchImageView;
 import me.xiaopan.sketch.request.DisplayOptions;
 import me.xiaopan.sketch.shaper.CircleImageShaper;
@@ -49,19 +55,19 @@ import me.xiaopan.sketch.shaper.CircleImageShaper;
 public class ActivityListFragment extends Fragment {
 
     private static final int MESSAGE_LOAD_COMPLETE = 0x111;
+    private static final int MESSAGE_REFRESH_COMPLETE = 0x112;
 
-    public static final int TYPE_ALL = 0;
-    public static final int TYPE_SPORTS = 1;
-    public static final int TYPE_CLUB = 2;
-    public static final int TYPE_CHARITY = 3;
+    private static final String[] TYPES = new String[]{"全部", "运动", "社团", "公益"};
 
-    private int mType;
+    private String mType = TYPES[0];
 
     private Handler mLoadHandler;
+    private ExecutorService mThreadPool;
+    private OnRefreshListener mListener;
 
-    private XRecyclerView mActivityRv;
+    private RecyclerView mActivityRv;
+    private ActivityListAdapter mAdapter;
     private List<UActivity> mActivityList;
-    private List<String> mBrochureUrls;
 
     private static ActivityListFragment mInstance;
     public static ActivityListFragment getInstance() {
@@ -75,46 +81,55 @@ public class ActivityListFragment extends Fragment {
         return mInstance;
     }
 
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void setType(TabLayout.Tab tab) {
-        mType = tab.getPosition();
+    public void setOnRefreshListener(OnRefreshListener listener) {
+        mListener = listener;
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mActivityRv = (XRecyclerView) inflater.inflate(R.layout.task_activity_innerview, container, false);
-        mActivityRv.setPullRefreshEnabled(false);
-        mActivityRv.setLoadingMoreProgressStyle(ProgressStyle.Pacman);
-        mActivityRv.setLoadingListener(new XRecyclerView.LoadingListener() {
-            @Override
-            public void onRefresh() {
-
-            }
-
-            @Override
-            public void onLoadMore() {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Thread.sleep(1000);
-                            mLoadHandler.sendEmptyMessage(MESSAGE_LOAD_COMPLETE);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-                }).start();
-            }
-        });
+        mActivityRv = (RecyclerView) inflater.inflate(R.layout.task_activity_innerview, container, false);
+//        mActivityRv.setPullRefreshEnabled(false);
+//        mActivityRv.setLoadingMoreProgressStyle(ProgressStyle.Pacman);
+//        mActivityRv.setLoadingListener(new XRecyclerView.LoadingListener() {
+//            @Override
+//            public void onRefresh() {
+//            }
+//
+//            @Override
+//            public void onLoadMore() {
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        try {
+//                            Thread.sleep(1000);
+//                            mLoadHandler.sendEmptyMessage(MESSAGE_LOAD_COMPLETE);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+//
+//                    }
+//                }).start();
+//            }
+//        });
         mLoadHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
                 switch (msg.what) {
                     case MESSAGE_LOAD_COMPLETE:
-                        mActivityRv.loadMoreComplete();
+                        int size = mActivityList.size();
+                        mActivityList = UActivityManager.INSTANCE.getActivityList();
+                        int newSize = mActivityList.size();
+                        mAdapter.notifyItemRangeInserted(size, newSize - size);
+                        mActivityRv.smoothScrollBy(0, -1);
+                        break;
+                    case MESSAGE_REFRESH_COMPLETE:
+                        mActivityList = UActivityManager.INSTANCE.getActivityList();
+                        mAdapter.notifyDataSetChanged();
+                        mActivityRv.smoothScrollBy(0, -1);
+                        if (mListener != null) {
+                            mListener.onRefreshComplete();
+                        }
                         break;
                 }
             }
@@ -125,34 +140,73 @@ public class ActivityListFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
     }
 
     @Override
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
+        mThreadPool.shutdownNow();
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mActivityRv.setAdapter(new ActivityListAdapter(getContext()));
+        mActivityList = UActivityManager.INSTANCE.getActivityList();
+        mThreadPool = Executors.newCachedThreadPool();
+//        for (int i = 0; i < 10; i++) {
+//            mActivityList.add(new UActivity(getResources().getString(R.string.activity_example),
+//                    31.2284700000,
+//                    121.4064000000,
+//                    "幽灵地点",
+//                    "校园",
+//                    1,
+//                    "小明",
+//                    "no",
+//                    null,
+//                    System.currentTimeMillis() / 1000 + 24 * 3600,
+//                    20,
+//                    new ArrayList<>(Arrays.asList(new String[]{String.valueOf(R.drawable.img1),
+//                            String.valueOf(R.drawable.img2),
+//                            String.valueOf(R.drawable.img3)}))));
+//        }
+        mActivityRv.setAdapter(mAdapter = new ActivityListAdapter(getContext()));
         mActivityRv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         mActivityRv.addItemDecoration(new TaskListItemDecoration(getContext(), 8, false));
-        mActivityList = new ArrayList<>();
-        mBrochureUrls = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            mActivityList.add(new UActivity("xiaohong.jpg", "小蓝", System.currentTimeMillis() / 1000 - 24 * 3600,
-                    "校园", getResources().getString(R.string.activity_example), 1498874400, "幽灵地点"));
-            mBrochureUrls.add(R.drawable.img1 + "," + R.drawable.img2 + "," + R.drawable.img3);
-        }
+        mActivityRv.setHasFixedSize(true);
+        mActivityRv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE && !ViewCompat.canScrollVertically(recyclerView, 1)) {
+                    loadMore();
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
+        mThreadPool.submit(new RefreshRunnable());
+    }
+
+    private void loadMore() {
+        mThreadPool.submit(new LoadMoreRunnable());
+    }
+
+    public void refresh() {
+        mThreadPool.submit(new RefreshRunnable());
+    }
+
+    public void setTag(CharSequence text) {
+        mType = text.toString();
+        mThreadPool.submit(new RefreshRunnable());
     }
 
     private class ActivityListAdapter extends RecyclerView.Adapter<ViewHolder> {
@@ -179,25 +233,30 @@ public class ActivityListFragment extends Fragment {
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
             UActivity uActivity = mActivityList.get(position);
-            DisplayOptions options = new DisplayOptions();
-            options.setImageShaper(new CircleImageShaper());
-            holder.avatar.setOptions(options);
-            if (uActivity.getAvatarUrl().equals("xiaohong.jpg")) {
-                holder.avatar.displayResourceImage(R.drawable.xiaohong);
+            if (uActivity.getAvatar().equals("no")) {
+                Glide.with(getContext()).load(R.drawable.xiaohong)
+                        .bitmapTransform(new CropCircleTransformation(getContext()))
+                        .into(holder.avatar);
             } else {
-                holder.avatar.displayImage(uActivity.getAvatarUrl());
+                Glide.with(getContext()).load(uActivity.getAvatar())
+                        .bitmapTransform(new CropCircleTransformation(getContext()))
+                        .into(holder.avatar);
             }
-            holder.time.setText(UPublicTool.parseTime(uActivity.getReleaseTime()));
-            holder.username.setText(uActivity.getUsername());
+            holder.time.setText(df.format(new Date(uActivity.getHoldTime())));
+            holder.username.setText(uActivity.getAuthorUsername());
             holder.tag.setText("#" + uActivity.getTag());
             holder.title.setText(uActivity.getTitle());
-            holder.actTime.setText(df.format(new Date(uActivity.getActTime() * 1000)));
+            holder.actTime.setText(df.format(new Date(uActivity.getHoldTime() * 1000)));
             holder.location.setText(uActivity.getLocation());
             holder.itemView.setTag(position);
-            holder.brochure.setAdapter(new BrochureAdapter(new ArrayList<>(Arrays.asList(mBrochureUrls.get(position).split(",")))));
-            holder.brochure.setLayoutManager(new LinearLayoutManager(getContext(),
-                    LinearLayoutManager.HORIZONTAL, false));
-            holder.brochure.addItemDecoration(new BrochureItemDecoration(getContext(), 3));
+            if (uActivity.getImgUrls() == null || uActivity.getImgUrls().size() <= 0) {
+                holder.brochure.setVisibility(View.GONE);
+            } else {
+                holder.brochure.setAdapter(new BrochureAdapter(uActivity.getImgUrls()));
+                holder.brochure.setLayoutManager(new LinearLayoutManager(getContext(),
+                        LinearLayoutManager.HORIZONTAL, false));
+                holder.brochure.addItemDecoration(new BrochureItemDecoration(getContext(), 3));
+            }
         }
 
         @Override
@@ -207,22 +266,13 @@ public class ActivityListFragment extends Fragment {
     }
 
     private void onItemClick(View v, int pos) {
-        // TODO 点击事件
-        SimpleDateFormat df = new SimpleDateFormat("M月d日 HH:mm");
-        UActivity act = mActivityList.get(pos);
-        ActivityDetailsActivity.startActivity(getActivity(),
-                act.getAvatarUrl(),
-                act.getTitle(),
-                act.getTag(),
-                df.format(new Date(act.getActTime() * 1000)),
-                act.getLocation(),
-                new ArrayList<>(Arrays.asList(mBrochureUrls.get(pos).split(","))));
+        ActivityDetailsActivity.startActivity(getActivity(), mActivityList.get(pos));
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
         private View itemView;
         @BindView(R.id.activity_avatar)
-        SketchImageView avatar;
+        ImageView avatar;
         @BindView(R.id.activity_username)
         TextView username;
         @BindView(R.id.activity_tag)
@@ -246,10 +296,10 @@ public class ActivityListFragment extends Fragment {
     }
 
     class BrochureHolder extends RecyclerView.ViewHolder {
-        SketchImageView imageView;
+        ImageView imageView;
         public BrochureHolder(View itemView) {
             super(itemView);
-            imageView = (SketchImageView) itemView;
+            imageView = (ImageView) itemView;
         }
     }
    class BrochureAdapter extends RecyclerView.Adapter<BrochureHolder> {
@@ -262,10 +312,10 @@ public class ActivityListFragment extends Fragment {
 
        @Override
        public BrochureHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-           SketchImageView sketchImageView = new SketchImageView(getContext());
-           sketchImageView.setLayoutParams(new RecyclerView.LayoutParams(mImageWidth, mImageWidth));
-           sketchImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-           return new BrochureHolder(sketchImageView);
+           ImageView imageView = new ImageView(getContext());
+           imageView.setLayoutParams(new RecyclerView.LayoutParams(mImageWidth, mImageWidth));
+           imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+           return new BrochureHolder(imageView);
        }
 
        @Override
@@ -275,7 +325,27 @@ public class ActivityListFragment extends Fragment {
 
        @Override
        public int getItemCount() {
-           return 4;
+           return mUrls.size();
        }
    }
+
+   class RefreshRunnable implements Runnable {
+       @Override
+       public void run() {
+           UActivityManager.INSTANCE.refreshActivityInList(mType);
+           mLoadHandler.sendEmptyMessage(MESSAGE_REFRESH_COMPLETE);
+       }
+   }
+
+    class LoadMoreRunnable implements Runnable {
+        @Override
+        public void run() {
+            UActivityManager.INSTANCE.loadMoreActivityInList();
+            mLoadHandler.sendEmptyMessage(MESSAGE_LOAD_COMPLETE);
+        }
+    }
+
+    interface OnRefreshListener {
+        void onRefreshComplete();
+    }
 }

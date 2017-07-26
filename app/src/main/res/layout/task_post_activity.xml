@@ -1,19 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:orientation="vertical">
-
-    <LinearLayout
-        android:id="@+id/task_post_padding"
-        android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:background="@color/colorUMain"
-        android:orientation="horizontal">
-
-    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/task_post_main_title_option"
@@ -28,10 +20,11 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2.5"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:drawableLeft="@drawable/ic_chevron_left_white_36dp"
             android:gravity="center_vertical"
             android:textColor="@android:color/white"
-            android:textSize="18sp"/>
+            android:textSize="18sp" />
 
         <FrameLayout
             android:layout_width="0dp"
@@ -45,23 +38,20 @@
                 android:gravity="center"
                 android:text="发布任务"
                 android:textColor="@color/colorUWhite"
-                android:textSize="20sp"/>
+                android:textSize="20sp" />
         </FrameLayout>
     </LinearLayout>
 
-    <ScrollView
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <LinearLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            >
+            android:orientation="vertical">
 
 
             <!--<LinearLayout-->
@@ -89,7 +79,7 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" />
 
                 <FrameLayout
                     android:layout_width="0dp"
@@ -104,7 +94,7 @@
                         android:paddingRight="5dp"
                         android:text="标题"
                         android:textColor="#404040"
-                        android:textSize="18sp"/>
+                        android:textSize="18sp" />
                 </FrameLayout>
 
                 <FrameLayout
@@ -122,66 +112,15 @@
                         android:hint="限5~25字"
                         android:maxLength="25"
                         android:maxLines="3"
-                        android:textColorHint="@color/colorUGray"/>
+                        android:textColorHint="@color/colorUGray" />
                 </FrameLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" />
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/task_post_activity_sponsor_option"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="8dp"
-                android:background="@color/colorUWhite"
-                android:weightSum="20">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"/>
-
-                <FrameLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="4">
-
-                    <TextView
-                        android:id="@+id/textView44"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical|left"
-                        android:paddingRight="5dp"
-                        android:text="主办方"
-                        android:textColor="#404040"
-                        android:textSize="18sp"/>
-                </FrameLayout>
-
-                <FrameLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="14">
-
-                    <EditText
-                        android:id="@+id/task_post_sponsor"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@null"
-                        android:ems="10"
-                        android:gravity="center_vertical|left"
-                        android:maxLength="25"
-                        android:maxLines="3"
-                        android:textColorHint="@color/colorUGray"/>
-                </FrameLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"/>
-            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/task_post_major_option"
@@ -194,7 +133,7 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" />
 
                 <FrameLayout
                     android:layout_width="0dp"
@@ -209,7 +148,7 @@
                         android:paddingRight="5dp"
                         android:text="负责人专业"
                         android:textColor="#404040"
-                        android:textSize="18sp"/>
+                        android:textSize="18sp" />
                 </FrameLayout>
 
                 <FrameLayout
@@ -221,15 +160,13 @@
                         android:id="@+id/major_spinner_task_post"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:textAlignment="center"
-                        >
-                    </Spinner>
+                        android:textAlignment="center"></Spinner>
                 </FrameLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" />
             </LinearLayout>
 
             <LinearLayout
@@ -243,7 +180,7 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -254,7 +191,7 @@
                     android:paddingTop="10dp"
                     android:text="项目详情"
                     android:textColor="#404040"
-                    android:textSize="18sp"/>
+                    android:textSize="18sp" />
 
                 <FrameLayout
                     android:layout_width="0dp"
@@ -271,13 +208,13 @@
                         android:hint="对项目或比赛的简述，限225字节内。"
                         android:maxLines="6"
                         android:paddingTop="10dp"
-                        android:textColorHint="@color/colorUGray"/>
+                        android:textColorHint="@color/colorUGray" />
                 </FrameLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" />
             </LinearLayout>
 
             <LinearLayout
@@ -288,46 +225,32 @@
                 android:background="@color/colorUWhite"
                 android:weightSum="20">
 
-                <LinearLayout
+                <View
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" />
 
-                <FrameLayout
+                <TextView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="4">
+                    android:layout_weight="4"
+                    android:gravity="center_vertical|left"
+                    android:paddingRight="5dp"
+                    android:text="时间"
+                    android:textColor="#404040"
+                    android:textSize="18sp" />
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical|left"
-                        android:paddingRight="5dp"
-                        android:text="时间"
-                        android:textColor="#404040"
-                        android:textSize="18sp"/>
-                </FrameLayout>
-
-                <FrameLayout
+                <TextView
+                    android:id="@+id/task_post_activity_time"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="14"
-                    >
-                </FrameLayout>
+                    android:background="@null"
+                    android:gravity="center_vertical"
+                    android:text="选择时间..."
+                    android:textSize="18sp" />
 
-                <FrameLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    >
 
-                    <ImageView
-                        android:id="@+id/imageView12"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:srcCompat="@drawable/ic_chevron_right_black_48dp"/>
-
-                </FrameLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -341,7 +264,7 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" />
 
                 <FrameLayout
                     android:layout_width="0dp"
@@ -356,27 +279,28 @@
                         android:paddingRight="5dp"
                         android:text="地点"
                         android:textColor="#404040"
-                        android:textSize="18sp"/>
+                        android:textSize="18sp" />
                 </FrameLayout>
 
-                <FrameLayout
+                <TextView
+                    android:id="@+id/task_post_location"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="14"
-                    >
-                </FrameLayout>
+                    android:gravity="center_vertical"
+                    android:text="选择地点..."
+                    android:textSize="18sp"/>
 
                 <FrameLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    >
+                    android:layout_weight="1">
 
                     <ImageView
                         android:id="@+id/imageView12"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:srcCompat="@drawable/ic_chevron_right_black_48dp"/>
+                        app:srcCompat="@drawable/ic_chevron_right_black_48dp" />
                 </FrameLayout>
             </LinearLayout>
 
@@ -388,45 +312,85 @@
                 android:background="@color/colorUWhite"
                 android:weightSum="20">
 
-                <LinearLayout
+                <View
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" />
 
-                <FrameLayout
+
+                <TextView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="4">
+                    android:layout_weight="4"
+                    android:gravity="center_vertical|left"
+                    android:text="分类"
+                    android:textColor="#404040"
+                    android:textSize="18sp" />
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical|left"
-                        android:text="分类"
-                        android:textColor="#404040"
-                        android:textSize="18sp"/>
-                </FrameLayout>
-
-                <FrameLayout
+                <TextView
+                    android:id="@+id/category"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="14">
+                    android:layout_weight="14"
+                    android:textSize="18sp"
+                    android:text="选择类别..."
+                    android:gravity="center_vertical">
 
-                    <Spinner
-                        android:id="@+id/spinner_task_post"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:textAlignment="center"
-                        >
+                    <!--<Spinner-->
+                        <!--android:id="@+id/spinner_task_post"-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="match_parent"-->
+                        <!--android:textAlignment="center" />-->
 
-                    </Spinner>
-                </FrameLayout>
+                </TextView>
 
-                <LinearLayout
+
+                <View
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1">
-                </LinearLayout>
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/task_post_people_count"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="8dp"
+                android:visibility="gone"
+                android:background="@color/colorUWhite"
+                android:weightSum="20">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="4"
+                    android:gravity="center_vertical"
+                    android:text="人数"
+                    android:textColor="#404040"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/max_people_count"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="14"
+                    android:textSize="18sp"
+                    android:background="@null"
+                    android:inputType="number"
+                    android:gravity="center_vertical">
+                </EditText>
+
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
             </LinearLayout>
 
             <LinearLayout
@@ -440,7 +404,7 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" />
 
                 <FrameLayout
                     android:layout_width="0dp"
@@ -453,7 +417,7 @@
                         android:gravity="center_vertical|left"
                         android:text="报酬"
                         android:textColor="#404040"
-                        android:textSize="18sp"/>
+                        android:textSize="18sp" />
                 </FrameLayout>
 
                 <FrameLayout
@@ -471,7 +435,7 @@
                         android:inputType="numberDecimal"
                         android:maxLength="6"
                         android:textColorHint="@color/colorUMain"
-                        android:textSize="18sp"/>
+                        android:textSize="18sp" />
                 </FrameLayout>
             </LinearLayout>
 
@@ -486,7 +450,7 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" />
 
                 <FrameLayout
                     android:layout_width="0dp"
@@ -499,7 +463,7 @@
                         android:gravity="center_vertical|left"
                         android:text="时效"
                         android:textColor="#404040"
-                        android:textSize="18sp"/>
+                        android:textSize="18sp" />
                 </FrameLayout>
 
                 <FrameLayout
@@ -516,7 +480,7 @@
                         android:hint="最低10min"
                         android:inputType="numberDecimal"
                         android:maxLength="10"
-                        android:textColorHint="@color/colorUGray"/>
+                        android:textColorHint="@color/colorUGray" />
                 </FrameLayout>
             </LinearLayout>
 
@@ -533,7 +497,7 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" />
 
                 <FrameLayout
                     android:layout_width="0dp"
@@ -546,7 +510,7 @@
                         android:gravity="center_vertical|left"
                         android:text="出发地"
                         android:textColor="#404040"
-                        android:textSize="18sp"/>
+                        android:textSize="18sp" />
                 </FrameLayout>
 
                 <FrameLayout
@@ -562,8 +526,7 @@
                         android:background="@color/colorUWhite"
                         android:text="选择地址"
                         android:textColor="@color/colorUGray"
-                        android:textSize="17dp"
-                        />
+                        android:textSize="17dp" />
                 </FrameLayout>
 
                 <FrameLayout
@@ -579,8 +542,7 @@
                         android:background="@color/colorULightGray"
                         android:text="删除"
                         android:textColor="@color/colorUGray"
-                        android:textSize="16dp"
-                        />
+                        android:textSize="16dp" />
                 </FrameLayout>
             </LinearLayout>
 
@@ -596,7 +558,7 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" />
 
                 <FrameLayout
                     android:layout_width="0dp"
@@ -609,7 +571,7 @@
                         android:gravity="center_vertical|left"
                         android:text="目的地"
                         android:textColor="#404040"
-                        android:textSize="18sp"/>
+                        android:textSize="18sp" />
                 </FrameLayout>
 
                 <FrameLayout
@@ -625,8 +587,7 @@
                         android:background="@color/colorUWhite"
                         android:text="选择地址"
                         android:textColor="@color/colorUGray"
-                        android:textSize="17dp"
-                        />
+                        android:textSize="17dp" />
                 </FrameLayout>
 
                 <FrameLayout
@@ -642,8 +603,7 @@
                         android:background="@color/colorULightGray"
                         android:text="删除"
                         android:textColor="@color/colorUGray"
-                        android:textSize="16dp"
-                        />
+                        android:textSize="16dp" />
                 </FrameLayout>
             </LinearLayout>
 
@@ -659,7 +619,7 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" />
 
                 <TextView
                     android:id="@+id/task_post_details_name"
@@ -670,7 +630,7 @@
                     android:paddingTop="10dp"
                     android:text="详情"
                     android:textColor="#404040"
-                    android:textSize="18sp"/>
+                    android:textSize="18sp" />
 
                 <FrameLayout
                     android:layout_width="0dp"
@@ -687,20 +647,20 @@
                         android:hint="您对订单的详细要求，没有可不填，限225字节内。"
                         android:maxLines="6"
                         android:paddingTop="10dp"
-                        android:textColorHint="@color/colorUGray"/>
+                        android:textColorHint="@color/colorUGray" />
                 </FrameLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1" />
             </LinearLayout>
 
 
             <LinearLayout
                 android:id="@+id/task_post_add_photo_option"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="8dp"
                 android:background="@color/colorUWhite"
@@ -710,7 +670,7 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1.0"/>
+                    android:layout_weight="1.0" />
 
                 <TextView
                     android:id="@+id/textView41"
@@ -720,16 +680,19 @@
                     android:gravity="left|center"
                     android:text="图片"
                     android:textColor="#404040"
-                    android:textSize="18sp"/>
+                    android:textSize="18sp" />
 
-                <ImageView
-                    android:id="@+id/imageView11"
+                <ecnu.uleda.view_controller.widgets.InfiniteGridView
+                    android:id="@+id/img_choose_grid"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_margin="10dp"
-                    android:layout_weight="4"
-                    android:scaleType="centerInside"
-                    app:srcCompat="@drawable/choose1"/>
+                    android:layout_weight="15"
+                    android:columnWidth="60dp"
+                    android:numColumns="auto_fit"
+                    android:horizontalSpacing="4dp"
+                    android:verticalSpacing="4dp"/>
+
             </LinearLayout>
 
         </LinearLayout>

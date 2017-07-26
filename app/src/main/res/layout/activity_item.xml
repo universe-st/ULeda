@@ -3,15 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    app:cardPreventCornerOverlap="false"
     app:cardCornerRadius="1dp"
     app:cardElevation="1dp">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:background="@drawable/selectable_item_main">
 
-        <me.xiaopan.sketch.SketchImageView
+        <ImageView
             android:id="@+id/activity_avatar"
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -120,8 +122,7 @@
             android:paddingBottom="3dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/activity_description"/>
+            app:layout_constraintRight_toRightOf="parent" />
 
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>

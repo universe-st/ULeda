@@ -22,6 +22,10 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (UserOperatorController.getInstance().getIsLogined()) {
+            startActivity(new Intent(getApplication(), UMainActivity.class));
+            WelcomeActivity.this.finish();
+        }
         setContentView(R.layout.activity_welcome);
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -33,19 +37,15 @@ public class WelcomeActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         //如果用户已经登陆成功，则不用展示欢迎界面
-        if(UserOperatorController.getInstance().getIsLogined()){
-            startActivity(new Intent(getApplication(),UMainActivity.class));
-            WelcomeActivity.this.finish();
-        }else {
-            Handler h = new Handler();
-            h.postDelayed(new WaitThread(), 1500);
-        }
+        Handler h = new Handler();
+        h.postDelayed(new WaitThread(), 1500);
+
     }
 
-    class WaitThread implements Runnable{
+    class WaitThread implements Runnable {
         @Override
-        public void run(){
-            startActivity(new Intent(getApplication(),LoginActivity.class));
+        public void run() {
+            startActivity(new Intent(getApplication(), LoginActivity.class));
             WelcomeActivity.this.finish();
         }
     }
