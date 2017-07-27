@@ -8,6 +8,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v7.graphics.Palette;
@@ -37,16 +38,18 @@ import me.xiaopan.sketch.SketchImageView;
  * Created by jimmyhsu on 2017/4/11.
  */
 
-public class TaskActivityFragment extends Fragment implements StickyNavLayout.OnRefreshListener {
+public class TaskActivityFragment extends Fragment implements StickyNavLayout.OnRefreshListener, ActivityListFragment.OnRefreshListener {
 
     private static final long BANNER_INTERVAL = 3000;
     private static final String[] TYPES = {"全部", "运动", "社团", "公益"};
     private static final int MESSAGE_REFRESH_COMPLETE = 0x110;
     private Unbinder mUnbinder;
     private Handler mHandler;
+    private ActivityListFragment mInnerFragment;
 
     private int[] mTitleBgColors;
     private int[] mTitleTextColors;
+    private boolean isRefreshing = false;
 
     @BindView(R.id.stickynavlayout)
     StickyNavLayout mContainer;
@@ -56,7 +59,6 @@ public class TaskActivityFragment extends Fragment implements StickyNavLayout.On
     TabLayout mIndicator;
     @BindView(R.id.id_stickynavlayout_viewpager)
     NoScrollViewPager mPager;
-    private List<UActivity> mActivityList;
 
     private static TaskActivityFragment mInstance;
 
@@ -86,11 +88,6 @@ public class TaskActivityFragment extends Fragment implements StickyNavLayout.On
         initPager();
         initIndicator();
         initRollPager();
-        mActivityList = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            mActivityList.add(new UActivity("xiaohong.jpg", "小蓝", System.currentTimeMillis() / 1000 - 24 * 3600,
-                    "校园", getResources().getString(R.string.activity_example), 1498874400, "幽灵地点"));
-        }
     }
 
     private void initHandler() {
@@ -100,8 +97,10 @@ public class TaskActivityFragment extends Fragment implements StickyNavLayout.On
                 super.handleMessage(msg);
                 switch (msg.what) {
                     case MESSAGE_REFRESH_COMPLETE:
-                        mContainer.refreshComplete();
-                        mBanner.startScrolling(BANNER_INTERVAL);
+                        if (isRefreshing) {
+                            mContainer.refreshComplete();
+                            mBanner.startScrolling(BANNER_INTERVAL);
+                        }
                         break;
                 }
             }
@@ -114,7 +113,9 @@ public class TaskActivityFragment extends Fragment implements StickyNavLayout.On
         mPager.setAdapter(new FragmentPagerAdapter(getChildFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
-                return ActivityListFragment.getInstance();
+                mInnerFragment = ActivityListFragment.getInstance();
+                mInnerFragment.setOnRefreshListener(TaskActivityFragment.this);
+                return mInnerFragment = ActivityListFragment.getInstance();
             }
 
             @Override
@@ -130,7 +131,9 @@ public class TaskActivityFragment extends Fragment implements StickyNavLayout.On
         mIndicator.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                EventBus.getDefault().post(tab);
+                if (mInnerFragment != null) {
+                    mInnerFragment.setTag(tab.getText());
+                }
             }
 
             @Override
@@ -223,16 +226,14 @@ public class TaskActivityFragment extends Fragment implements StickyNavLayout.On
     @Override
     public void onRefresh() {
         mBanner.stopScrolling();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(2000);
-                    mHandler.sendEmptyMessage(MESSAGE_REFRESH_COMPLETE);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+        if (mInnerFragment != null) {
+            isRefreshing = true;
+            mInnerFragment.refresh();
+        }
+    }
+
+    @Override
+    public void onRefreshComplete() {
+        mHandler.sendEmptyMessage(MESSAGE_REFRESH_COMPLETE);
     }
 }

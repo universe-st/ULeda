@@ -12,6 +12,7 @@
     <string name="load_more_str">加载更多</string>
     <string name="message_str">消息</string>
     <string name="back_str">〈 返回</string>
+
     <string name="scan_text">扫描签到</string>
     <string name="activity_example">这是一场我也不知道是什么的活动</string>
 

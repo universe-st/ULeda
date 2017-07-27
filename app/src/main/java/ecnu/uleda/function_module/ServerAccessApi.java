@@ -9,9 +9,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.List;
 
 import ecnu.uleda.BuildConfig;
+
+import ecnu.uleda.tool.AESUtils;
+import ecnu.uleda.tool.MD5Utils;
+
+import ecnu.uleda.model.UActivity;
+
 import ecnu.uleda.tool.UPublicTool;
 import ecnu.uleda.exception.UServerAccessException;
 
@@ -35,6 +43,34 @@ public class ServerAccessApi {
             }
         }
         throw new UServerAccessException(UServerAccessException.INTERNET_ERROR);
+    }
+    public static int Register(@NonNull String username,@NonNull String password,@NonNull String pcode,
+    @NonNull String phone)throws UServerAccessException
+    {
+        String aes_key = MD5Utils.MD5(getMainKey()).substring(0,16);
+        String aes = AESUtils.encrypt(password,aes_key);
+        String md5 = MD5Utils.MD5(aes);
+        username = UrlEncode(username);
+        md5 = UrlEncode(md5);
+        pcode = UrlEncode(pcode);
+        phone = UrlEncode(phone);
+        PhalApiClient client=createClient();
+        PhalApiClientResponse response = client
+            .withService("User.Register")
+            .withParams("username",username)
+            .withParams("password",md5)
+            .withParams("pcode",pcode)
+            .withParams("phone",phone)
+                .withTimeout(SET_TIME_OUT)
+            .request();
+        if(response.getRet() == 200)
+        {
+           return 200;
+        }
+        else
+        {
+            throw new UServerAccessException(response.getRet());
+        }
     }
     public static String getLoginToken(@NonNull String userName)throws UServerAccessException{
         //断言，保证传入参数的正确性，在DEBUG模式下才启用。
@@ -130,7 +166,7 @@ public class ServerAccessApi {
                 .withTimeout(SET_TIME_OUT)
                 .request();
         if(response.getRet()==200){//200的意思是正常返回
-            try{
+                try{
                 JSONObject data=new JSONObject(response.getData());
                 return data.getString("success");
             }catch (JSONException e){
@@ -239,11 +275,11 @@ public class ServerAccessApi {
 
     public static String getTakers(@NonNull String id,@NonNull String passport,
                                    @NonNull String postID) throws UServerAccessException{
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(1000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         id=UrlEncode(id);
         passport=UrlEncode(passport);
         postID=UrlEncode(postID);
@@ -254,7 +290,7 @@ public class ServerAccessApi {
                 .withParams("task_id",postID)
                 .withTimeout(SET_TIME_OUT)
                 .request();
-        Log.e("haha", "response: " + response.getData());
+//        Log.e("haha", "response: " + response.getData());
         if(response.getRet()==200) {
             return response.getData();
         }else{
@@ -299,15 +335,15 @@ public class ServerAccessApi {
     }
 
     public static String postTask(@NonNull String id,@NonNull String passport,@NonNull String title,
-                                  @NonNull String tag,String description,@NonNull String price,String path,
-                                  @NonNull String activeTime,@NonNull String position)throws UServerAccessException{
+                                    @NonNull String tag,String description,@NonNull String price,String path,
+                                    @NonNull String activeTime,@NonNull String position)throws UServerAccessException{
         if(BuildConfig.DEBUG){
             UPublicTool.UAssert( byteCount(title)>=5 && byteCount(title)<=30 );
             UPublicTool.UAssert( byteCount(title)<=30 );
             if(description!=null)
-            UPublicTool.UAssert( byteCount(description)<=450);
+                UPublicTool.UAssert( byteCount(description)<=450);
             if(path!=null)
-            UPublicTool.UAssert( byteCount(path)<=400 );
+                UPublicTool.UAssert( byteCount(path)<=400 );
         }
 
         id=UrlEncode(id);
@@ -373,6 +409,87 @@ public class ServerAccessApi {
             try{
                 JSONObject data=new JSONObject(response.getData());
                 return data.getString("success");
+            }catch (JSONException e){
+                Log.e("ServerAccessApi",e.toString());
+                //数据包无法解析，向上抛出一个异常
+                throw new UServerAccessException(UServerAccessException.ERROR_DATA);
+            }
+        }else{
+            //网络访问失败，抛出一个网络异常
+            throw new UServerAccessException(response.getRet());
+        }
+    }
+
+    public static JSONArray getActivities(@NonNull String id, @NonNull String passport, @NonNull String tag,
+                                                int from, int count) throws UServerAccessException {
+        id = UrlEncode(id);
+        passport = UrlEncode(passport);
+        tag = UrlEncode(tag);
+
+        PhalApiClientResponse response = createClient()
+                .withService("Activity.GetActivityList")
+                .withParams("id", id)
+                .withParams("passport", passport)
+//                .withParams("tag", tag)
+                .withParams("from", String.valueOf(from))
+                .withParams("count", String.valueOf(count))
+                .withTimeout(SET_TIME_OUT)
+                .request();
+        if(response.getRet() == 200) {
+            Log.e("haha", UrlDecode(response.getData()));
+            try{
+                JSONArray data = new JSONArray(response.getData());
+                return data;
+            }catch (JSONException e){
+                Log.e("ServerAccessApi",e.toString());
+                //数据包无法解析，向上抛出一个异常
+                throw new UServerAccessException(UServerAccessException.ERROR_DATA);
+            }
+        }else{
+            //网络访问失败，抛出一个网络异常
+            throw new UServerAccessException(response.getRet());
+        }
+    }
+
+    public static String postActivity(@NonNull String id,@NonNull String passport,@NonNull String title,
+                                  @NonNull String tag,String description,@NonNull String activeTime,
+                                  double latitude, double longitude, @NonNull String takerCountLimit, @NonNull String location)
+            throws UServerAccessException{
+        if(BuildConfig.DEBUG){
+            UPublicTool.UAssert(byteCount(title) >= 5 && byteCount(title) <= 30 && latitude > 0 && longitude > 0);
+            if(description!=null)
+                UPublicTool.UAssert(byteCount(description) <= 450);
+        }
+
+        String position = latitude + "," + longitude;
+        id = UrlEncode(id);
+        passport = UrlEncode(passport);
+        title = UrlEncode(title);
+        tag = UrlEncode(tag);
+        description = UrlEncode(description);
+        activeTime = UrlEncode(activeTime);
+        position = UrlEncode(position);
+        takerCountLimit = UrlEncode(takerCountLimit);
+        location = UrlEncode(location);
+
+        PhalApiClientResponse response=createClient()
+                .withService("Activity.Post")//接口的名称
+                .withParams("id",id)//插入一个参数对
+                .withParams("passport",passport)
+                .withParams("title",title)
+                .withParams("tag",tag)
+                .withParams("description",description)
+                .withParams("activeTime",activeTime)
+                .withParams("position",position)
+                .withParams("takerCountLimit", takerCountLimit)
+                .withParams("location",location)
+                .withTimeout(SET_TIME_OUT)
+                .request();
+        if(response.getRet() == 200) {
+            Log.e("haha", UrlDecode(response.getData()));
+            try{
+                JSONObject data = new JSONObject(response.getData());
+                return data.getString("act_id");
             }catch (JSONException e){
                 Log.e("ServerAccessApi",e.toString());
                 //数据包无法解析，向上抛出一个异常
@@ -547,6 +664,16 @@ public class ServerAccessApi {
         try{
             if(str==null)return null;
             return URLEncoder.encode(str,"UTF-8");
+        }catch (UnsupportedEncodingException e){
+            e.printStackTrace();
+            throw new UServerAccessException(UServerAccessException.PARAMS_ERROR);
+        }
+    }
+
+    private static String UrlDecode(String str)throws UServerAccessException{
+        try{
+            if(str==null)return null;
+            return URLDecoder.decode(str, "UTF-8");
         }catch (UnsupportedEncodingException e){
             e.printStackTrace();
             throw new UServerAccessException(UServerAccessException.PARAMS_ERROR);

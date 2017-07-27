@@ -1,12 +1,16 @@
 package ecnu.uleda.view_controller.task.fragment;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,11 +49,13 @@ public class TaskMissionFragment extends Fragment {
 
     private static final String[] SORT_BY = {UTaskManager.TIME_LAST, UTaskManager.PRICE_DES,
             UTaskManager.PRICE_ASC, UTaskManager.DISTANCE};
+    public static final String ACTION_REFRESH = "ecnu.uleda.view_controller.TaskMissionFragment.refresh";
 
     private List<UTask> mTasksInList = new ArrayList<>();
 
     private Unbinder mUnbinder;
     private ExecutorService mThreadPool;
+    private BroadcastReceiver mReceiver;
 
     //Widgets go here.
     @BindView(R.id.spinner0)
@@ -196,6 +202,7 @@ public class TaskMissionFragment extends Fragment {
         EventBus.getDefault().unregister(this);
         mThreadPool.shutdownNow();
         mUnbinder.unbind();
+        getActivity().unregisterReceiver(mReceiver);
     }
 
     private void init() {
@@ -204,6 +211,20 @@ public class TaskMissionFragment extends Fragment {
         mThreadPool = Executors.newCachedThreadPool();
         initHandler();
         initRecyclerView();
+        initReceiver();
+    }
+
+    private void initReceiver() {
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (!mThreadPool.isShutdown()) {
+                    mThreadPool.submit(new RefreshThread());
+                }
+            }
+        };
+        IntentFilter filter = new IntentFilter(ACTION_REFRESH);
+        getActivity().registerReceiver(mReceiver, filter);
     }
 
 
@@ -215,12 +236,13 @@ public class TaskMissionFragment extends Fragment {
                     case REFRESH:
                         mTaskListView.refreshComplete();
                         if (isLoadedFromServer) {
-                            if (!hasMoreItems) {
-                                hasMoreItems = true;
-                                mTaskListView.setNoMore(true);
-                            } else {
-                                mTaskListView.setNoMore(false);
-                            }
+//                            if (!hasMoreItems) {
+//                                hasMoreItems = true;
+//                                mTaskListView.setNoMore(true);
+//                            } else {
+//                                mTaskListView.setNoMore(false);
+//                            }
+                            mTaskListView.setNoMore(false);
                         } else {
                             mTaskListView.setNoMore(true);
                         }
@@ -256,10 +278,6 @@ public class TaskMissionFragment extends Fragment {
 
 
     private void initRecyclerView() {
-        if (mUTaskManager.getTasksInList() == null || mUTaskManager.getTasksInList().size() == 0) {
-            mThreadPool.submit(new RefreshFromFileThread());
-        }
-        mThreadPool.submit(new RefreshThread());
         mTasksInList = new ArrayList<>();
         mTaskListAdapter = new TaskListAdapter(getActivity(), mTasksInList);
         mTaskListAdapter.setHasStableIds(true);
@@ -288,6 +306,15 @@ public class TaskMissionFragment extends Fragment {
                 mThreadPool.submit(new LoadMoreThread());
             }
         });
+        if (mUTaskManager.getTasksInList() == null || mUTaskManager.getTasksInList().size() == 0) {
+//            mThreadPool.submit(new RefreshFromFileThread());
+            refreshFromFile();
+            mThreadPool.submit(new RefreshThread());
+        } else {
+            mTaskListAdapter.updateDataSource(mTasksInList = mUTaskManager.getTasksInList());
+            isLoadedFromServer = true;
+            mTaskListView.setLoadingMoreEnabled(true);
+        }
     }
 
     private class RefreshThread extends Thread {
@@ -306,6 +333,16 @@ public class TaskMissionFragment extends Fragment {
                 message.obj = e;
                 mRefreshHandler.sendMessage(message);
             }
+        }
+    }
+
+    private void refreshFromFile() {
+        mUTaskManager.refreshTaskInListFromFile(getContext());
+        List<UTask> taskList = mUTaskManager.getTasksInList();
+        if (taskList != null && taskList.size() > 0) {
+            mTasksInList = taskList;
+            mTaskListAdapter.updateDataSource(mTasksInList);
+            mTaskListView.scrollToPosition(0);
         }
     }
 
