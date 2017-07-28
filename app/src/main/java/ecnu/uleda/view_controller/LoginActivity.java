@@ -218,7 +218,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             if ((System.currentTimeMillis() - mExitTime) > 2000) {
                 Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
                 mExitTime = System.currentTimeMillis();
-
             } else {
                 finish();
                 Intent intent = new Intent(this, UMainActivity.class);
@@ -290,7 +289,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mPopupWindow.setContentView(view);
         mPopupWindow.showAtLocation(mPasswordForget, Gravity.BOTTOM, 0, 0);
         mPopupWindow.update();
-
     }
 
 //TIM 登出
