@@ -2,12 +2,15 @@ package ecnu.uleda.function_module;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.tencent.imsdk.protocol.im_common;
+
 import net.phalapi.sdk.*;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -44,6 +47,7 @@ public class ServerAccessApi {
         }
         throw new UServerAccessException(UServerAccessException.INTERNET_ERROR);
     }
+
     public static int Register(@NonNull String username,@NonNull String password,@NonNull String pcode,
     @NonNull String phone)throws UServerAccessException
     {
@@ -61,7 +65,7 @@ public class ServerAccessApi {
             .withParams("password",md5)
             .withParams("pcode",pcode)
             .withParams("phone",phone)
-                .withTimeout(SET_TIME_OUT)
+            .withTimeout(SET_TIME_OUT)
             .request();
         if(response.getRet() == 200)
         {
