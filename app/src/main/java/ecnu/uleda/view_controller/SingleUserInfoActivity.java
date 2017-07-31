@@ -29,6 +29,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
+import butterknife.OnClick;
 import ecnu.uleda.R;
 import ecnu.uleda.exception.UServerAccessException;
 import ecnu.uleda.model.UserInfo;
@@ -98,47 +99,64 @@ public class SingleUserInfoActivity extends AppCompatActivity {
         userClass = schoolClass.replaceAll("\\|"," ");
         textViewSchoolClass.setText(userClass);
 
-        if(mUserInfo.getId().equals(mUserOperatorController.getId()))
+        if(mUserOperatorController.getId().equals(mUserInfo.getId())) //判断是否是用户本人
         {
             buttonAddUser.setVisibility(View.INVISIBLE);
             buttonSendmsg.setVisibility(View.INVISIBLE);
         }
-        else
+        else //判断是否是好友
         {
-            //待获取用户资料的用户列表
+            //TODO： 待定
+            //待获取用户资料的好友列表
             List<String> users = new ArrayList<String>();
             users.add(mUserInfo.getId());
-
-//获取用户资料
-            TIMFriendshipManager.getInstance().getUsersProfile(users, new TIMValueCallBack<List<TIMUserProfile>>(){
+//获取好友资料
+            TIMFriendshipManagerExt.getInstance().getFriendsProfile(users, new TIMValueCallBack<List<TIMUserProfile>>(){
                 @Override
                 public void onError(int code, String desc){
                     //错误码code和错误描述desc，可用于定位请求失败原因
                     //错误码code列表请参见错误码表
-                    Log.e(tag, "getUsersProfile failed: " + code + " desc");
+                    buttonAddUser.setText("添加好友");
+                    buttonSendmsg.setText("发消息");
+                    Log.e(tag, "getFriendsProfile failed: " + code + " desc");
                 }
 
                 @Override
                 public void onSuccess(List<TIMUserProfile> result){
-                    Log.e(tag, "getUsersProfile succ");
+
+                    buttonAddUser.setText("删除好友");
+                    buttonSendmsg.setText("发消息");
+
+                    Log.e(tag, "getFriendsProfile succ");
                     for(TIMUserProfile res : result){
-                        if(res.getIdentifier().equals(mUserOperatorController.getId()))
-                        {
-                            buttonAddUser.setText("删除好友");
-                            buttonSendmsg.setText("发消息");
-                        }
-                        else
-                        {
-                            buttonAddUser.setText("添加好友");
-                            buttonSendmsg.setText("发消息");
-                        }
                         Log.e(tag, "identifier: " + res.getIdentifier() + " nickName: " + res.getNickName()
                                 + " remark: " + res.getRemark());
                     }
                 }
             });
-//            TIMFriendshipManager timFriendshipManager = TIMFriendshipManager.getInstance();
-//            timFriendshipManager
+
+            buttonAddUser.setOnClickListener(new View.OnClickListener(){
+                public void onClick(View v){
+                    if(buttonAddUser.getText().equals("添加好友"))
+                    {
+                        onAddFriends();
+                    }
+                    else if(buttonAddUser.getText().equals("删除好友"))
+                    {
+                        onDelFriends();
+                    }
+
+                }
+            });
+
+            buttonSendmsg.setOnClickListener(new View.OnClickListener(){
+                public void onClick(View v){
+                    //TODO : 接入单聊
+//                Intent intent = new Intent(SingleUserInfoActivity.this, SendMessage.class);
+//                startActivity(intent);
+                }
+            });
+
         }
     }
 
@@ -152,27 +170,6 @@ public class SingleUserInfoActivity extends AppCompatActivity {
         buttonBack.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 finish();
-            }
-        });
-
-        buttonAddUser.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                if(buttonAddUser.getText().equals("添加好友"))
-                {
-                    addFriends();
-                }
-                else if(buttonAddUser.getText().equals("删除好友"))
-                {
-                    delFriends();
-                }
-
-            }
-        });
-
-        buttonSendmsg.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-//                Intent intent = new Intent(SingleUserInfoActivity.this, SendMessage.class);
-//                startActivity(intent);
             }
         });
 
@@ -208,7 +205,7 @@ public class SingleUserInfoActivity extends AppCompatActivity {
         }
     }
 
-    void addFriends()
+    void onAddFriends()
     {
         //创建请求列表
         List<TIMAddFriendRequest> reqList = new ArrayList<TIMAddFriendRequest>();
@@ -238,7 +235,7 @@ public class SingleUserInfoActivity extends AppCompatActivity {
         });
     }
 
-    void delFriends()
+    void onDelFriends()
     {
         //删除好友
 //        List<TIMAddFriendRequest> reqList = new ArrayList<TIMAddFriendRequest>();
