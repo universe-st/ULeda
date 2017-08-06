@@ -150,7 +150,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onClick(View view) {
 
-               LoginUser();
                 setAllEnabled(false);
                 mIsWaiting = true;
                 mAnimator.start();

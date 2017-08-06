@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:weightSum="100">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="20"
+            android:weightSum="100">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/friend_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:src="@drawable/user" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="80"
+            android:weightSum="100"
+            android:paddingTop="0dp">
+
+            <TextView
+                android:id="@+id/friend_name"
+                android:textColor="@android:color/black"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="60"
+                android:textSize="17sp"
+                android:gravity="bottom" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="40">
+                <TextView
+                    android:textColor="@android:color/darker_gray"
+                    android:text=" 在吗？"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="80"
+                    android:id="@+id/friend_tag"
+                    android:textSize="15sp"
+                    android:ellipsize="end"
+                    android:gravity="center_vertical"
+                    android:maxLines="1" />
+                <TextView
+                    android:textColor="@android:color/black"
+                    android:text=" QAQ"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="20"
+                    android:textSize="15sp"
+                    android:ellipsize="end"
+                    android:gravity="center" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorBackgroundGray"></LinearLayout>
+
+
+</LinearLayout>
