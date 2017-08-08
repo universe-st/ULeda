@@ -12,7 +12,7 @@ public class Friend {
     private int imageId;
 
 
-    public Friend(String userid, String name, String imageUrl,String userTag) {
+    public Friend(String userid, String name,String userTag) {//TODO:头像的问题等会再说
         this.userId = userid;
         this.userName = name;
         this.imageUrl = imageUrl;

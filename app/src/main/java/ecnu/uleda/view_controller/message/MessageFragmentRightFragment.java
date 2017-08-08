@@ -1,5 +1,6 @@
 package ecnu.uleda.view_controller.message;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -8,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.tencent.imsdk.TIMUserProfile;
@@ -19,7 +21,7 @@ import java.util.List;
 import ecnu.uleda.R;
 import ecnu.uleda.model.Contacts;
 import ecnu.uleda.model.Friend;
-
+import ecnu.uleda.view_controller.SingleUserInfoActivity;
 
 
 /**
@@ -45,21 +47,30 @@ public class MessageFragmentRightFragment extends Fragment {
     private String tag = "MFRF";
     private FriendAdapter mFriendAdapter;
     private ListView mListView;
+    private boolean flag=false;
 
     @Override
     public void onCreate(Bundle b) {
         super.onCreate(b);
-
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.message_fragment_right_fragment,container,false);
-        mListView = (ListView)view.findViewById(R.id.contacts_list_view);
+        mListView = (ListView)view.findViewById(R.id.friend_list_view);
 
         initFriends();
-        mFriendAdapter = new FriendAdapter(MessageFragmentRightFragment.this.getContext(),R.layout.friend_item,mFriendList);
-        mListView.setAdapter(mFriendAdapter);
+
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Friend friend = mFriendList.get(position);
+                Intent intent = new Intent(getContext(), SingleUserInfoActivity.class);
+                intent.putExtra("userid", String.valueOf(friend.getUserId()));
+                startActivity(intent);
+            }
+        });
+
         return view;
     }
 
@@ -79,12 +90,21 @@ public class MessageFragmentRightFragment extends Fragment {
                 for(TIMUserProfile res : result){
                     Log.e(tag, "identifier: " + res.getIdentifier() + " nickName: " + res.getNickName()
                             + " remark: " + res.getRemark());
-                    Friend friend = new Friend(res.getIdentifier(),res.getNickName(),res.getFaceUrl(),res.getSelfSignature());
+                    Friend friend = new Friend(res.getIdentifier().toString(),res.getNickName().toString(),res.getSelfSignature().toString());
                             //String userid, String name, String imageUrl,String userTag)
+                    //TODO:头像显示的地址
                     mFriendList.add(friend);
+
                 }
+                flag=true;
+                mFriendAdapter = new FriendAdapter(MessageFragmentRightFragment.this.getContext(),R.layout.friend_item,mFriendList);
+                mListView.setAdapter(mFriendAdapter);
             }
         });
     }
 
+
+//    Intent intent = new Intent(TaskDetailsActivity.this, SingleUserInfoActivity.class);
+//                intent.putExtra("userid", String.valueOf(mTask.getAuthorID()));
+//    startActivity(intent);
 }

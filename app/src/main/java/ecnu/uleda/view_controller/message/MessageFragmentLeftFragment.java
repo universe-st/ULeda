@@ -25,9 +25,7 @@ import ecnu.uleda.model.Friend;
 public class MessageFragmentLeftFragment extends Fragment {
 
 
-    private  String TAG="MFLF";//MessageFragmentLeftFragment is too long(interesting)
-                                        /*I think so
-                                            * -KSS*/
+    private  String TAG="MFLF";//MessageFragmentLeftFragment is too long(interesting)      -KSS
 
     @Override
     public void onCreate(Bundle b) {

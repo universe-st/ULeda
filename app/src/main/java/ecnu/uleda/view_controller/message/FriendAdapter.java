@@ -31,15 +31,35 @@ public class FriendAdapter extends ArrayAdapter<Friend>{
     public View getView(int position, View convertView, ViewGroup parent)
     {
         Friend friend = getItem(position);
-        View view = LayoutInflater.from(getContext()).inflate(resourceId,parent,false);
-        CircleImageView friendImage = (CircleImageView)view.findViewById(R.id.friend_image);
-        TextView friendName = (TextView)view.findViewById(R.id.friend_name);
-        TextView friendTag = (TextView)view.findViewById(R.id.friend_tag);
+        View view;
+        ViewHolder viewHolder;
+        if(convertView==null)
+        {
+            view = LayoutInflater.from(getContext()).inflate(resourceId,parent,false);
+            viewHolder = new ViewHolder();
+            viewHolder.friendImage = (CircleImageView)view.findViewById(R.id.friend_image);
+            viewHolder.friendName = (TextView)view.findViewById(R.id.friend_name);
+            viewHolder.friendTag = (TextView)view.findViewById(R.id.friend_tag);
+            view.setTag(viewHolder);
+        }
+        else
+        {
+            view = convertView;
+            viewHolder = (ViewHolder)view.getTag();
+        }
 
-        friendImage.setImageResource(friend.getImageId());
-        friendName.setText(friend.getUserName());
-        friendTag.setText(friend.getUserId());
+
+        viewHolder.friendImage.setImageResource(friend.getImageId());
+        viewHolder.friendName.setText(friend.getUserName());
+        viewHolder.friendTag.setText("hhh");
 
         return view;
+    }
+
+    class ViewHolder
+    {
+        CircleImageView friendImage;
+        TextView friendName;
+        TextView friendTag;
     }
 }
