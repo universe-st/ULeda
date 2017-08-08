@@ -99,6 +99,7 @@ public class MessageFragmentRightFragment extends Fragment {
                 flag=true;
                 mFriendAdapter = new FriendAdapter(MessageFragmentRightFragment.this.getContext(),R.layout.friend_item,mFriendList);
                 mListView.setAdapter(mFriendAdapter);
+
             }
         });
     }
