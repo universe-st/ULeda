@@ -242,7 +242,7 @@ public class SingleUserInfoActivity extends AppCompatActivity {
 //        TIMAddFriendRequest req = new TIMAddFriendRequest(mUserInfo.getId());
 //        reqList.add(req);
         List<String>reqList = new ArrayList<String>();
-        String req = mUserInfo.toString();
+        String req = mUserInfo.getId().toString();
         reqList.add(req);
         TIMFriendshipManagerExt.DeleteFriendParam deleteFriendParam = new TIMFriendshipManagerExt.DeleteFriendParam();
         deleteFriendParam.setUsers(reqList);

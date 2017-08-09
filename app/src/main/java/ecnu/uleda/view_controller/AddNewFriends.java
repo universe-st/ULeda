@@ -71,7 +71,7 @@ public class AddNewFriends extends AppCompatActivity {
         List<TIMAddFriendRequest> reqList = new ArrayList<TIMAddFriendRequest>();
 
 //添加好友请求
-        TIMAddFriendRequest req = new TIMAddFriendRequest("6");//identifier
+        TIMAddFriendRequest req = new TIMAddFriendRequest("8");//identifier
 //        req.setIdentifier(mSearchIdentifier);
         req.setAddrSource("AddSource_Type_Android");
         req.setAddWording("add me");
