@@ -140,10 +140,15 @@ public class SingleUserInfoActivity extends AppCompatActivity {
                     if(buttonAddUser.getText().equals("添加好友"))
                     {
                         onAddFriends();
+                        buttonAddUser.setText("删除好友");
+                        Toast.makeText(SingleUserInfoActivity.this, "添加好友成功",Toast.LENGTH_SHORT).show();
                     }
                     else if(buttonAddUser.getText().equals("删除好友"))
                     {
                         onDelFriends();
+                        buttonAddUser.setText("添加好友");
+                        Toast.makeText(SingleUserInfoActivity.this, "删除好友成功",Toast.LENGTH_SHORT).show();
+
                     }
 
                 }
@@ -264,4 +269,6 @@ public class SingleUserInfoActivity extends AppCompatActivity {
             }
         });
     }
+
+
 }
