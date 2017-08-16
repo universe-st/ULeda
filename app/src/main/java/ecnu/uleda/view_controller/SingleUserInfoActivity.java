@@ -34,6 +34,7 @@ import ecnu.uleda.R;
 import ecnu.uleda.exception.UServerAccessException;
 import ecnu.uleda.model.UserInfo;
 import ecnu.uleda.function_module.UserOperatorController;
+import ecnu.uleda.view_controller.message.SendMessageActivity;
 
 public class SingleUserInfoActivity extends AppCompatActivity {
 
@@ -157,8 +158,9 @@ public class SingleUserInfoActivity extends AppCompatActivity {
             buttonSendmsg.setOnClickListener(new View.OnClickListener(){
                 public void onClick(View v){
                     //TODO : 接入单聊
-//                Intent intent = new Intent(SingleUserInfoActivity.this, SendMessage.class);
-//                startActivity(intent);
+                Intent intent = new Intent(SingleUserInfoActivity.this, AddNewFriends.class);
+                    intent.putExtra("userId", String.valueOf(mUserInfo.getId()));
+                    startActivity(intent);
                 }
             });
 
