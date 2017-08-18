@@ -158,7 +158,7 @@ public class SingleUserInfoActivity extends AppCompatActivity {
             buttonSendmsg.setOnClickListener(new View.OnClickListener(){
                 public void onClick(View v){
                     //TODO : 接入单聊
-                Intent intent = new Intent(SingleUserInfoActivity.this, AddNewFriends.class);
+                Intent intent = new Intent(SingleUserInfoActivity.this, SendMessageActivity.class);
                     intent.putExtra("userId", String.valueOf(mUserInfo.getId()));
                     startActivity(intent);
                 }
