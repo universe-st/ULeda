@@ -52,6 +52,7 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
             }
         };
         SMSSDK.registerEventHandler(eh);
+
     }
     protected void init()
     {

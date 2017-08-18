@@ -8,6 +8,12 @@ import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
 
+
+import com.mob.MobApplication;
+import com.mob.MobSDK;
+
+import cn.smssdk.SMSSDK;
+
 public class App extends Application {
     private static final String TAG = "App";
     private static Context context;
@@ -18,6 +24,9 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         context = getApplicationContext();
+
+        MobSDK.init(context,"1f19cb4168a4e","ad4ea8c6dfec607ffbaffec324b75131");
+
     }
 
     public static String getCurProcessName(Context context) {

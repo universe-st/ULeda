@@ -66,8 +66,6 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.0'
     compile 'com.contrarywind:Android-PickerView:3.2.5'
 
-    compile name:'SMSSDK-2.1.4',ext:'aar'
-
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="ecnu.uleda">
+          xmlns:tools="http://schemas.android.com/tools"
+          package="ecnu.uleda">
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.READ_LOGS" />
@@ -17,10 +17,6 @@
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -28,31 +24,16 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Mob短信验证 -->
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
-    <uses-permission android:name="android.permission.GET_TASKS" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <application
-        android:name="com.mob.MobApplication"
+        android:name="ecnu.uleda.function_module.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/UMainTheme">
-
-    <!-- Mob短信验证 -->
-    <uses-permission android:name="android.permission.RECEIVE_SMS" />
-    <uses-permission android:name="android.permission.READ_SMS" />
-
-
-
         <meta-data
             android:name="TencentMapSDK"
             android:value="DYXBZ-ALP33-ZZV3L-3LKO5-PLDRF-AKFEO" />
@@ -66,7 +47,6 @@
             android:exported="false"
             android:process=":QALSERVICE" >
         </service>
-
         <!-- 【必须】 离线消息广播接收器 -->
         <receiver
             android:name="com.tencent.qalsdk.QALBroadcastReceiver"
@@ -89,12 +69,10 @@
             <intent-filter>
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
             </intent-filter>
-
             <!-- ImSDK 3.0.2 后添加 -->
             <intent-filter>
                 <action android:name="com.tencent.qalsdk.service.TASK_REMOVED" />
             </intent-filter>
-
         </receiver>
         <activity
             android:name=".view_controller.UMainActivity"
@@ -109,13 +87,9 @@
             android:theme="@style/WelcomeTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!-- 通过AndroidManifest配置AppKey和AppSecret，如果你选择通过代码配置，则不需要配置以下meta-data -->
-        <meta-data android:name="Mob-AppKey" android:value="1f19cb4168a4e"/>
-        <meta-data android:name="Mob-AppSecret" android:value="ad4ea8c6dfec607ffbaffec324b75131"/>
         <activity
             android:name=".view_controller.task.activity.TaskDetailsActivity"
             android:screenOrientation="portrait"
@@ -151,17 +125,15 @@
                   android:parentActivityName=".view_controller.UMainActivity"/>
         <activity android:name=".view_controller.CommonBigImageActivity"
                   android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
-]
+        <!-- Mob短信验证 -->
         <activity
             android:name="com.mob.tools.MobUIShell"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:windowSoftInputMode="stateHidden|adjustResize"/>
-
         <!-- 会话列表 -->
         <!-- 聚合会话列表 -->
         <!-- 会话界面 -->
-
         <provider
             android:name=".function_module.PhotoFileProvider"
             android:authorities="com.example.cameraalbumtest.fileprovider"
@@ -172,5 +144,4 @@
                 android:resource="@xml/file_paths"/>
         </provider>
     </application>
-
 </manifest>
