@@ -53,7 +53,9 @@ import com.znq.zbarcode.utils.Config;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import ecnu.uleda.R;
@@ -62,6 +64,7 @@ import ecnu.uleda.model.UserInfo;
 import ecnu.uleda.function_module.UserOperatorController;
 import ecnu.uleda.model.AddOptions;
 import ecnu.uleda.tool.UPublicTool;
+import ecnu.uleda.view_controller.widgets.FileUploader;
 
 import static android.app.Activity.RESULT_OK;
 import static android.widget.ListPopupWindow.WRAP_CONTENT;
@@ -75,7 +78,7 @@ public class UserInfoFragment extends Fragment
         implements View.OnClickListener {
     public static final int CHOOSE_PHOTO = 2;
     private static final int REQUEST_CAMERA = 100;
-
+    final  HashMap<String,String> map = new HashMap<String,String>();
     private ImageButton setting;
     private TextView mMyInfo;
     private TextView mMyMoneyBag;
@@ -394,14 +397,41 @@ public class UserInfoFragment extends Fragment
             imagePath = uri.getPath();
         }
         displayImage(imagePath); // 根据图片路径显示图片
+        UploaderImage(imagePath);
     }
 
     private void handleImageBeforeKitKat(Intent data) {
         Uri uri = data.getData();
         String imagePath = getImagePath(uri, null);
         displayImage(imagePath);
+        UploaderImage(imagePath);
     }
+    private void UploaderImage(final String imagePath)
+    {
 
+        UserOperatorController us = UserOperatorController.getInstance();
+        String id = us.getId();
+        String passport = us.getPassport();
+        map.put("id",id);
+        map.put("passport",passport);
+        new Thread(){
+            public void run()
+            {
+                FileUploader.upload("http://118.89.156.167/mobile/",
+                        new File(imagePath),map,new FileUploader.FileUploadListener() {
+                    @Override
+                    public void onProgress(long pro, double precent) {
+                        Log.i("cky", precent+"");
+                    }
+
+                    @Override
+                    public void onFinish(int code, String res, Map<String, List<String>> headers) {
+                        Log.i("cky",res);
+                    }
+                });
+            }
+        }.start();
+    }
     private String getImagePath(Uri uri, String selection) {
         String path = null;
         // 通过Uri和selection来获取真实的图片路径
