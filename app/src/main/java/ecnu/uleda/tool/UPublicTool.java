@@ -36,7 +36,7 @@ public class UPublicTool {
             } else {
                 Calendar calendar = Calendar.getInstance();
                 calendar.add(Calendar.SECOND, (int) second);
-                return sb.append("截止").append(calendar.get(Calendar.MONTH) + 1).append("月").append(calendar.get(Calendar.DAY_OF_MONTH)).append("日").toString();
+                return sb.append("截止").append(calendar.get(Calendar.YEAR)).append("年").append(calendar.get(Calendar.MONTH) + 1).append("月").append(calendar.get(Calendar.DAY_OF_MONTH)).append("日").toString();
             }
         }
         sb.append("剩余");
