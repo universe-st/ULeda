@@ -96,6 +96,7 @@ public class UMainFragment extends Fragment implements View.OnTouchListener,View
         mTask.setOnTouchListener(this);
     }
     private void initAnimation() {
+
         mButtonInAnimation = AnimationUtils.loadAnimation(this.getActivity(), R.anim.button_in);
         mButtonOutAnimation = AnimationUtils.loadAnimation(this.getActivity(), R.anim.button_out);
         mButtonScaleLargeAnimation = AnimationUtils.loadAnimation(this.getActivity(), R.anim.button_scale_small);
@@ -187,12 +188,12 @@ public class UMainFragment extends Fragment implements View.OnTouchListener,View
             case R.id.float_button:
                 // 添加按钮
                 openPanelView();
-//                hideFab();
+
                 break;
 
             case R.id.close:// 关闭按钮
                 closePanelView();
-//                showFab();
+
                 break;
             case R.id.blank:
                 closePanelView();
@@ -252,9 +253,8 @@ public class UMainFragment extends Fragment implements View.OnTouchListener,View
     };
     @Override
     public void onCreate(Bundle savedInstanceState){
-        super.onCreate(savedInstanceState);
+             super.onCreate(savedInstanceState);
         mLocationManager = TencentLocationManager.getInstance(this.getActivity());
-
 
     }
     private class ULocationListener implements TencentLocationListener{
@@ -618,13 +618,13 @@ public class UMainFragment extends Fragment implements View.OnTouchListener,View
 
     private void showFab() {
         ObjectAnimator animatorX = ObjectAnimator.ofFloat(mFab, "scaleX", 0, 1)
-                .setDuration(100);
+            .setDuration(100);
         animatorX.setInterpolator(new AccelerateInterpolator());
-        ObjectAnimator animatorY = ObjectAnimator.ofFloat(mFab, "scaleY", 0, 1)
-                .setDuration(100);
+    ObjectAnimator animatorY = ObjectAnimator.ofFloat(mFab, "scaleY", 0, 1)
+            .setDuration(100);
         animatorY.setInterpolator(new AccelerateInterpolator());
-        AnimatorSet set = new AnimatorSet();
+    AnimatorSet set = new AnimatorSet();
         set.playTogether(animatorX, animatorY);
         set.start();
-    }
+}
 }
