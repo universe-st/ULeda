@@ -16,6 +16,10 @@ import com.tencent.imsdk.TIMUserProfile;
 import com.tencent.imsdk.TIMValueCallBack;
 import com.tencent.imsdk.ext.sns.TIMFriendshipManagerExt;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.List;
 import ecnu.uleda.R;
@@ -44,16 +48,30 @@ public class MessageFragmentRightFragment extends Fragment {
 
     private View view;
     private List<Friend> mFriendList = new ArrayList<>();
-    private String tag = "MFRF";
+    private static final String TAG = "MFRF";
     private FriendAdapter mFriendAdapter;
     private ListView mListView;
     private boolean flag=false;
 
+    public interface FriendRefreshEvent{
+
+    }
+
     @Override
     public void onCreate(Bundle b) {
         super.onCreate(b);
+        EventBus.getDefault().register(this);
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onRefreshFriends(FriendRefreshEvent e){
+        initFriends();
+    }
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.message_fragment_right_fragment,container,false);
@@ -82,13 +100,13 @@ public class MessageFragmentRightFragment extends Fragment {
             public void onError(int code, String desc){
                 //错误码code和错误描述desc，可用于定位请求失败原因
                 //错误码code列表请参见错误码表
-                Log.e(tag, "getFriendList failed: " + code + " desc");
+                Log.e(TAG, "getFriendList failed: " + code + " desc");
             }
 
             @Override
             public void onSuccess(List<TIMUserProfile> result){
                 for(TIMUserProfile res : result){
-                    Log.e(tag, "identifier: " + res.getIdentifier() + " nickName: " + res.getNickName()
+                    Log.e(TAG, "identifier: " + res.getIdentifier() + " nickName: " + res.getNickName()
                             + " remark: " + res.getRemark());
                     Friend friend = new Friend(res.getIdentifier().toString(),res.getNickName().toString(),res.getSelfSignature().toString());
                             //String userid, String name, String imageUrl,String userTag)

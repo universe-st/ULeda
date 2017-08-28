@@ -24,6 +24,8 @@ import com.tencent.imsdk.ext.sns.TIMFriendResult;
 import com.tencent.imsdk.ext.sns.TIMFriendStatus;
 import com.tencent.imsdk.ext.sns.TIMFriendshipManagerExt;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -34,6 +36,7 @@ import ecnu.uleda.R;
 import ecnu.uleda.exception.UServerAccessException;
 import ecnu.uleda.model.UserInfo;
 import ecnu.uleda.function_module.UserOperatorController;
+import ecnu.uleda.view_controller.message.MessageFragmentRightFragment;
 import ecnu.uleda.view_controller.message.SendMessageActivity;
 
 public class SingleUserInfoActivity extends AppCompatActivity {
@@ -235,6 +238,7 @@ public class SingleUserInfoActivity extends AppCompatActivity {
             @Override
             public void onSuccess(List<TIMFriendResult> result){
                 Log.e(tag, "addFriend succ");
+                //EventBus.getDefault().post(new MessageFragmentRightFragment.FriendRefreshEvent(){});
                 for(TIMFriendResult res : result){
                     Log.e(tag, "identifier: " + res.getIdentifer() + " status: " + res.getStatus());
                 }
