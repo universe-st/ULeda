@@ -134,7 +134,6 @@ public class TaskMissionFragment extends Fragment {
                     mMainSpinner.setText(mMainArrayTask.get(pos));
                     mUTaskManager.setTag(mMainArrayTask.get(pos));
                     mTaskListView.refresh();
-                    mThreadPool.submit(new RefreshThread());
                 }
             });
             mMainDropDownWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
@@ -159,7 +158,6 @@ public class TaskMissionFragment extends Fragment {
                     mSortSpinner.setText(mSortArray.get(pos));
                     mUTaskManager.setSortBy(SORT_BY[pos]);
                     mTaskListView.refresh();
-                    mThreadPool.submit(new RefreshThread());
                 }
             });
             mSortDropDownWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
