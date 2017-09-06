@@ -29,21 +29,6 @@ import java.net.*;
  */
 
 public class UPictureUploader {
-    public static void test(){
-        UPictureUploader uploader = UPictureUploader.create("http://www.xxx.com");
-        int retCode = uploader.withService("XXX.UploadPicture")
-                .withFiles("filename",null)
-                .withFiles("filename2",null)
-                .withParams("title","helloworld")
-                .withParams("content","xxxxxxxxx")
-                .upload();
-        if(retCode == 200){
-            String ret = uploader.getRet();
-            //...........................................
-        }else{
-            //失败
-        }
-    }
     private static final String TAG = "UPictureUploader";
     private static final int TIME_OUT = 10*10000000; //超时时间
     private static final String CHARSET = "utf-8"; //设置编码
@@ -51,8 +36,6 @@ public class UPictureUploader {
     private static final String LINE_END = "\r\n";
     private HashMap<String,File> mFiles = null;
     private HashMap<String,String> mParams = null;
-    private String mFileKey = null;
-    private File mFile = null;
     private String mHost = null;
     private String mRet = null;
     /*
