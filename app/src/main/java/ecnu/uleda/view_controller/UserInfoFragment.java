@@ -1,7 +1,6 @@
 package ecnu.uleda.view_controller;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -25,7 +24,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.support.annotation.MainThread;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -48,14 +46,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.znq.zbarcode.CaptureActivity;
-import com.znq.zbarcode.utils.Config;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import ecnu.uleda.R;
@@ -64,7 +60,6 @@ import ecnu.uleda.model.UserInfo;
 import ecnu.uleda.function_module.UserOperatorController;
 import ecnu.uleda.model.AddOptions;
 import ecnu.uleda.tool.UPublicTool;
-import ecnu.uleda.view_controller.widgets.FileUploader;
 
 import static android.app.Activity.RESULT_OK;
 import static android.widget.ListPopupWindow.WRAP_CONTENT;
@@ -397,41 +392,16 @@ public class UserInfoFragment extends Fragment
             imagePath = uri.getPath();
         }
         displayImage(imagePath); // 根据图片路径显示图片
-        UploaderImage(imagePath);
+
     }
 
     private void handleImageBeforeKitKat(Intent data) {
         Uri uri = data.getData();
         String imagePath = getImagePath(uri, null);
         displayImage(imagePath);
-        UploaderImage(imagePath);
-    }
-    private void UploaderImage(final String imagePath)
-    {
 
-        UserOperatorController us = UserOperatorController.getInstance();
-        String id = us.getId();
-        String passport = us.getPassport();
-        map.put("id",id);
-        map.put("passport",passport);
-        new Thread(){
-            public void run()
-            {
-                FileUploader.upload("http://118.89.156.167/mobile/",
-                        new File(imagePath),map,new FileUploader.FileUploadListener() {
-                    @Override
-                    public void onProgress(long pro, double precent) {
-                        Log.i("cky", precent+"");
-                    }
-
-                    @Override
-                    public void onFinish(int code, String res, Map<String, List<String>> headers) {
-                        Log.i("cky",res);
-                    }
-                });
-            }
-        }.start();
     }
+
     private String getImagePath(Uri uri, String selection) {
         String path = null;
         // 通过Uri和selection来获取真实的图片路径

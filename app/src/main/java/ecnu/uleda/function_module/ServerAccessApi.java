@@ -76,6 +76,44 @@ public class ServerAccessApi {
             throw new UServerAccessException(response.getRet());
         }
     }
+    public static JSONArray getUserTask(@NonNull int page,@NonNull int flag)throws UServerAccessException
+    {
+            UserOperatorController user = UserOperatorController.getInstance();
+            String id = user.getId();
+            id = UrlEncode(id);
+            String passport = user.getPassport();
+            passport = UrlEncode(passport);
+            String Page = String.valueOf(page);
+            Page = UrlEncode(Page);
+            String Flag = String.valueOf(flag);
+            Flag = UrlEncode(Flag);
+        PhalApiClient client=createClient();
+        PhalApiClientResponse response = client
+                .withService("Task.GetUserTasks")
+            .withParams("id",id)
+            .withParams("passport",passport)
+            .withParams("page",Page)
+            .withParams("flag",Flag)
+            .withTimeout(SET_TIME_OUT)
+            .request();
+        if(response.getRet() == 200)
+        {
+            try {
+                JSONArray info = new JSONArray(response.getData());
+                return  info;
+            }catch (JSONException e)
+            {
+                Log.e("ServerAccessApi",e.toString());
+                //数据包无法解析，向上抛出一个异常
+                throw new UServerAccessException(UServerAccessException.ERROR_DATA);
+            }
+
+        }
+        else
+        {
+            throw new UServerAccessException(response.getRet());
+        }
+    }
     public static String getLoginToken(@NonNull String userName)throws UServerAccessException{
         //断言，保证传入参数的正确性，在DEBUG模式下才启用。
         if(BuildConfig.DEBUG){
