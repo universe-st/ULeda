@@ -5,19 +5,51 @@ import android.util.Pair;
 import java.util.*;
 import java.io.*;
 import java.net.*;
-/**
+/*
  * Created by Shensheng on 2017/8/28.
  * 将图片文件上传到服务器的类
- * 仅仅支持一个文件
+ * 可携带多个文件。
+ * 调用方法示例：
+ *
+    public static void test(){
+        UPictureUploader uploader = UPictureUploader.create("http://www.xxx.com");
+        int retCode = uploader.withService("XXX.UploadPicture")
+                            .withFiles("filename",null)
+                            .withFiles("filename2",null)
+                            .withParams("title","helloworld")
+                            .withParams("content","xxxxxxxxx")
+                            .upload();
+                if(retCode == 200){
+                    String ret = uploader.getRet();
+                    //...........................................
+                }else{
+                    //失败
+                }
+    }
  */
 
 public class UPictureUploader {
+    public static void test(){
+        UPictureUploader uploader = UPictureUploader.create("http://www.xxx.com");
+        int retCode = uploader.withService("XXX.UploadPicture")
+                .withFiles("filename",null)
+                .withFiles("filename2",null)
+                .withParams("title","helloworld")
+                .withParams("content","xxxxxxxxx")
+                .upload();
+        if(retCode == 200){
+            String ret = uploader.getRet();
+            //...........................................
+        }else{
+            //失败
+        }
+    }
     private static final String TAG = "UPictureUploader";
     private static final int TIME_OUT = 10*10000000; //超时时间
     private static final String CHARSET = "utf-8"; //设置编码
     private static final String PREFIX = "--";
     private static final String LINE_END = "\r\n";
-
+    private HashMap<String,File> mFiles = null;
     private HashMap<String,String> mParams = null;
     private String mFileKey = null;
     private File mFile = null;
@@ -33,6 +65,7 @@ public class UPictureUploader {
     * 构造函数
     * */
     private UPictureUploader(String host){
+        mFiles = new HashMap<>();
         mParams = new HashMap<>();
         mHost = host;
     }
@@ -53,9 +86,13 @@ public class UPictureUploader {
     /*
     * 携带一个文件
     * */
-    public UPictureUploader withFile(String key, File file){
-        mFile = file;
-        mFileKey = key;
+    public UPictureUploader withFiles(String key, File file){
+        mFiles.put(key,file);
+        return this;
+    }
+
+    public UPictureUploader clearFiles(){
+        mFiles.clear();
         return this;
     }
     /*服务器上接口服务的名称*/
@@ -67,7 +104,7 @@ public class UPictureUploader {
         return mRet;
     }
     public int upload(){
-        Pair<Integer,String> pair = upload(mHost,mFile,mFileKey,mParams);
+        Pair<Integer,String> pair = upload(mHost,mParams,mFiles);
         if(pair == null){
             return -1;
         }
@@ -75,7 +112,7 @@ public class UPictureUploader {
         return pair.first;
     }
 
-    private static Pair<Integer,String> upload(String host,File file,String fileKey,Map<String,String> params){
+    private static Pair<Integer,String> upload(String host,Map<String,String> params,Map<String,File> files){
         final String BOUNDARY = UUID.randomUUID().toString(); //边界标识 随机生成 String PREFIX = "--" , LINE_END = "\r\n";
         String CONTENT_TYPE = "multipart/form-data"; //内容类型
         try {
@@ -90,11 +127,11 @@ public class UPictureUploader {
             conn.setDoInput(true); //允许输入流
             conn.setDoOutput(true); //允许输出流
             conn.setUseCaches(false); //不允许使用缓存
-            if(file!=null) {
+            if(files!=null) {
                 /* *
                  当文件不为空，把文件包装并且上传 */
-                OutputStream outputSteam=conn.getOutputStream();
-                DataOutputStream dos = new DataOutputStream(outputSteam);
+                OutputStream outputStream=conn.getOutputStream();
+                DataOutputStream dos = new DataOutputStream(outputStream);
                 StringBuffer sb = new StringBuffer();
                 sb.append(LINE_END);
                 if(params!=null){//根据格式，开始拼接文本参数
@@ -108,39 +145,28 @@ public class UPictureUploader {
                         sb.append(LINE_END);//换行！
                     }
                 }
-                sb.append(PREFIX);//开始拼接文件参数
-                sb.append(BOUNDARY); sb.append(LINE_END);
-                /**
-                 * 这里重点注意：
-                 * name里面的值为服务器端需要key 只有这个key 才可以得到对应的文件
-                 * filename是文件的名字，包含后缀名的 比如:abc.png
-                 */
-                sb.append("Content-Disposition: form-data; name=\"");
-                sb.append(fileKey);
-                sb.append("\"; filename=\""+file.getName()+"\""+LINE_END);
-                sb.append("Content-Type: image/png; charset="+CHARSET+LINE_END);
-                sb.append(LINE_END);
-                //写入文件数据
                 dos.write(sb.toString().getBytes());
-                InputStream is = new FileInputStream(file);
-                byte[] bytes = new byte[1024];
-                long totalBytes = file.length();
-                long curbytes = 0;
-                Log.i(TAG,"total="+totalBytes);
-                int len;
-                while((len=is.read(bytes))!=-1){
-                    curbytes += len;
-                    dos.write(bytes, 0, len);
+                for(Map.Entry<String,File> entry:files.entrySet()){
+                    StringBuilder isb = new StringBuilder();
+                    isb.append("Content-Disposition: form-data; name=\"");
+                    isb.append(entry.getKey());
+                    isb.append("\"; filename=\""+entry.getValue().getName()+"\""+LINE_END);
+                    isb.append("Content-Type: image/png; charset="+CHARSET+LINE_END);
+                    sb.append(LINE_END);
+                    dos.write(sb.toString().getBytes());
+                    InputStream iis = new FileInputStream(entry.getValue());
+                    byte[] bytes = new byte[1024];
+                    long totalBytes = entry.getValue().length();
+                    int len;
+                    while ((len = iis.read(bytes))!=-1){
+                        dos.write(bytes,0,len);
+                    }
+                    iis.close();
+                    dos.write(LINE_END.getBytes());
                 }
-                is.close();
-                dos.write(LINE_END.getBytes());
                 byte[] end_data = (PREFIX+BOUNDARY+PREFIX+LINE_END).getBytes();
                 dos.write(end_data);
                 dos.flush();
-                /**
-                 * 获取响应码 200=成功
-                 * 当响应成功，获取响应的流
-                 */
                 int code = conn.getResponseCode();
                 if(code != 200){
                     return new Pair<>(code,null);
