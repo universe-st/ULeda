@@ -293,6 +293,7 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
             @Override
             public void run() {
                 try {
+                    Thread.sleep(500);
                     String response = ServerAccessApi.getTakers(uoc.getId(),
                             uoc.getPassport(), mTask.getPostID());
                         mTakers.clear();
@@ -314,7 +315,7 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
                             mTakers.add(info);
                         }
                         mHandler.sendEmptyMessage(MSG_TAKERS_GET);
-                } catch (UServerAccessException | JSONException e) {
+                } catch (UServerAccessException | JSONException | InterruptedException e) {
                     e.printStackTrace();
                 }
             }
