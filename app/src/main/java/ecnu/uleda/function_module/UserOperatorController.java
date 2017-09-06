@@ -48,7 +48,7 @@ import static android.R.attr.type;
 
 public class UserOperatorController {
     private static UserOperatorController sUOC = null;
-    private int sdkAppId = 1400036078;
+    public static final int sdkAppId = 1400036078;
 
     public static UserOperatorController getInstance() {
         if (sUOC == null) {

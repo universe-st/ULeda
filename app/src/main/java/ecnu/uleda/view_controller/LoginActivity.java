@@ -66,6 +66,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     int keyCode;
     KeyEvent event;
     private boolean mIsWaiting = false;
+    private UserOperatorController mUOC = UserOperatorController.getInstance();
 
 
     private Handler mHandler = new Handler(Looper.getMainLooper()) {
@@ -90,8 +91,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         }
     };
-    private UserOperatorController mUOC = UserOperatorController.getInstance();
-    private int sdkAppId = 1400036078;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,11 +122,31 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mIsWaiting = true;
         mAnimator.start();
         mUserConfig.setSavedUsernamePassword(mUserName.getText().toString(), mPassword.getText().toString());
-        new Thread() {
+            new Thread() {
             @Override
             public void run() {
                 mUOC.login(mUserName.getText().toString(), mPassword.getText().toString());
                 Log.d("LoginActivity", mUOC.getMessage());
+
+//                /** TIM 登录
+//                 * @param identifier 用户帐号
+//                 * @param userSig userSig，用户帐号签名，由私钥加密获得，具体请参考文档 * @param callback 回调接口
+//                 */
+//                Log.d("LoginActivity", "TIM login getUserSig() " + mUOC.getUserSig() + "========TIM login getId()" + mUOC.getId());
+//
+//                TIMManager.getInstance().login(mUOC.getId(), mUOC.getUserSig(), new TIMCallBack() {
+//                    @Override
+//                    public void onError(int code, String desc) {
+//                        //错误码code和错误描述desc，可用于定位请求失败原因 //错误码code列表请参见错误码表
+//                        Log.d("LoginActivity", "TIM login failed. code: " + code + " errmsg: " + desc);
+//                    }
+//
+//                    @Override
+//                    public void onSuccess() {
+//                        Log.d("LoginActivity", "TIM login success");
+//                    }
+//                });
+
                 Message message = new Message();
                 message.what = 0;
                 mHandler.sendMessage(message);
@@ -150,7 +169,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onClick(View view) {
 
-               LoginUser();
                 setAllEnabled(false);
                 mIsWaiting = true;
                 mAnimator.start();
@@ -218,11 +236,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             if ((System.currentTimeMillis() - mExitTime) > 2000) {
                 Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
                 mExitTime = System.currentTimeMillis();
+
             } else {
                 finish();
-                Intent intent = new Intent(this, UMainActivity.class);
-                intent.putExtra(UMainActivity.TAG_EXIT, true);
-                startActivity(intent);
+//                Intent intent = new Intent(this, UMainActivity.class);
+//                intent.putExtra(UMainActivity.TAG_EXIT, true);
+//                startActivity(intent);
             }
             return true;
         }
