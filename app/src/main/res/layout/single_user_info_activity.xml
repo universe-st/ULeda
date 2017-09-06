@@ -245,6 +245,7 @@
                 android:layout_weight="1"
                 android:backgroundTint="@color/colorUGreen"
                 android:text="加为好友"
+                android:enabled="false"
                 android:textColor="@color/colorUWhite" />
 
         </LinearLayout>
