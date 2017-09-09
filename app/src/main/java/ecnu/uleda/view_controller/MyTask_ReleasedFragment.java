@@ -30,14 +30,15 @@ import ecnu.uleda.view_controller.MyOrderAdapter;
 public class MyTask_ReleasedFragment extends Fragment {
 
     private ListView mlistView;
-    private List<MyOrder> releasedList;
-  /*  private Handler handler = new Handler(){
+    private List<MyOrder> releasedList = new ArrayList<>();
+    private MyOrderAdapter mMyOrderAdapter;
+    private Handler handler = new Handler(){
         public void handleMessage(Message msg)
         {
             switch (msg.what)
             {
                 case 1:
-                        releasedList = new ArrayList<>();
+
                         JSONArray jsonArray = (JSONArray)msg.obj;
                         for(int i = 0;i < jsonArray.length();i++)
                         {
@@ -45,21 +46,28 @@ public class MyTask_ReleasedFragment extends Fragment {
                             {
                                 JSONObject json = jsonArray.getJSONObject(i);
                                 releasedList.add(new MyOrder()
-                                        .setTitle(json.getString()));
-                            }catch (JSONException e)
-                            {
+                                        .setTag(json.getString("tag"))
+                                        .setAuthorUserName(json.getString("authorUsername"))
+                                        .setActiveTime(Long.parseLong(json.getString("activetime")))
+                                        .setAuthorCredit(Integer.parseInt(json.getString("authorCredit")))
+                                        .setDescription(json.getString("description"))
+                                        .setTitle(json.getString("title"))
+                                        .setPrice(BigDecimal.valueOf(Double.parseDouble(json.getString("price"))))
+                                        .setPath(json.getString("path"))
+                                );
+                            }catch (JSONException e) {
                                 e.printStackTrace();
                             }
-
-
                         }
+                    mMyOrderAdapter.notifyDataSetChanged();
+                    mlistView.setAdapter(mMyOrderAdapter);
                         break;
 
                 default:
                         break;
             }
         }
-    };*/
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,9 +76,9 @@ public class MyTask_ReleasedFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle b) {
         View v=inflater.inflate(R.layout.fragment_my_task__released,parent,false);
         mlistView = (ListView) v.findViewById(R.id.list_view);
+        mMyOrderAdapter = new MyOrderAdapter(this.getActivity(),releasedList);
 
-        releasedList = new ArrayList<>();
-        releasedList.add(new MyOrder()
+        /*releasedList.add(new MyOrder()
                 .setTitle("帮忙重装系统")
                 .setDescription("")
                 .setPrice(BigDecimal.valueOf(10))
@@ -80,14 +88,10 @@ public class MyTask_ReleasedFragment extends Fragment {
                 .setAuthorUserName("TonyDanid")
                 .setPath("到理科大楼")
                 .setTag("学习帮助")
-                .setGetperson("徐洪义")
+
                 .setActiveTime(1260)
-        );
-        UserOperatorController us = UserOperatorController.getInstance();
-        String id = us.getId();
-        String passport = us.getPassport();
-        Toast.makeText(getActivity().getApplicationContext(),id+"*"+passport,Toast.LENGTH_LONG).show();
-       /* new Thread(new Runnable() {
+        );*/
+       new Thread(new Runnable() {
             @Override
             public void run() {
                 try
@@ -104,11 +108,11 @@ public class MyTask_ReleasedFragment extends Fragment {
 
 
             }
-        }).start();*/
+        }).start();
 
 
 
-        mlistView.setAdapter(new MyOrderAdapter(this.getActivity(),releasedList));
+
         return v;
     }
 }
