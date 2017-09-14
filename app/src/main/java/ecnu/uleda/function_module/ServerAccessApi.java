@@ -168,6 +168,22 @@ public class ServerAccessApi {
         }
     }
 
+    public static PhalApiClientResponse verifyTaker(@NonNull String id, @NonNull String passport,
+                                                    @NonNull String postID, @NonNull String verifyID) throws UServerAccessException {
+        id = UrlEncode(id);
+        passport = UrlEncode(passport);
+        postID = UrlEncode(postID);
+        verifyID = UrlEncode(verifyID);
+        return createClient()
+                .withService("Task.VerifyTaker")
+                .withParams("id", id)
+                .withParams("passport", passport)
+                .withParams("postID", postID)
+                .withParams("verifyID", verifyID)
+                .withTimeout(SET_TIME_OUT)
+                .request();
+    }
+
 
     public static String cancelTask(@NonNull String id,@NonNull String passport,@NonNull String postID)throws UServerAccessException{
 

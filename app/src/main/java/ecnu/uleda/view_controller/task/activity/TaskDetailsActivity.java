@@ -2,6 +2,7 @@ package ecnu.uleda.view_controller.task.activity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
@@ -10,6 +11,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -43,6 +45,8 @@ import com.tencent.tencentmap.mapsdk.map.MapView;
 import com.tencent.tencentmap.mapsdk.map.TencentMap;
 
 
+import net.phalapi.sdk.PhalApiClientResponse;
+
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -50,6 +54,7 @@ import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -60,7 +65,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import ecnu.uleda.R;
+import ecnu.uleda.function_module.UTaskManager;
 import ecnu.uleda.model.UserInfo;
+import ecnu.uleda.tool.RecyclerViewTouchListener;
 import ecnu.uleda.tool.UPublicTool;
 import ecnu.uleda.exception.UServerAccessException;
 import ecnu.uleda.model.UTask;
@@ -69,6 +76,15 @@ import ecnu.uleda.function_module.ServerAccessApi;
 import ecnu.uleda.view_controller.SingleUserInfoActivity;
 import ecnu.uleda.view_controller.TaskEditActivity;
 import ecnu.uleda.view_controller.task.adapter.TakersAdapter;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import me.xiaopan.sketch.SketchImageView;
 import me.xiaopan.sketch.request.DisplayOptions;
 import me.xiaopan.sketch.shaper.CircleImageShaper;
@@ -84,8 +100,10 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
     private static final int MSG_COMMENT_FAILED = 5;
     private static final int MSG_TAKERS_GET = 6;
     private static final int MSG_TASK_SUCCESS = 7;
+    public static final String TAG = "TaskDetailsActivity";
     private UTask mTask;
     private TencentMap mTencentMap;
+    private Disposable mDisposable;
 
     @BindView(R.id.head_line_layout)
     Toolbar mToolbar;
@@ -188,7 +206,7 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
                 Toast.makeText(TaskDetailsActivity.this, "成功接受任务", Toast.LENGTH_SHORT).show();
                 mTask.setStatus(1);
                 mButtonRight.setText("取消抢单");
-                mButtonRight.setOnClickListener(new View.OnClickListener(){
+                mButtonRight.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         Message msg = new Message();
@@ -233,8 +251,6 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
         InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(0, InputMethodManager.SHOW_FORCED);
     }
-
-
 
 
     public View getChatView(UserChatItem userChatItem) {
@@ -284,6 +300,7 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
     @Override
     public void onDestroy() {
         mMapView.onDestroy();
+        if (mDisposable != null && !mDisposable.isDisposed()) mDisposable.dispose();
         super.onDestroy();
     }
 
@@ -296,25 +313,25 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
                     Thread.sleep(500);
                     String response = ServerAccessApi.getTakers(uoc.getId(),
                             uoc.getPassport(), mTask.getPostID());
-                        mTakers.clear();
-                        JSONArray data = new JSONArray(response);
-                        int length = data.length();
-                        for (int i = 0; i < length; i++) {
-                            JSONObject person = data.getJSONObject(i);
-                            JSONObject personDetail = person.getJSONObject("taker_details");
-                            UserInfo info = new UserInfo();
-                            info.setAvatar("fake")
-                                    .setId(person.getString("taker_id"))
-                                    .setUserName(personDetail.getString("username"))
-                                    .setSex(personDetail.getInt("sex"))
-                                    .setBirthday(personDetail.getString("birthday"))
-                                    .setStudentId(personDetail.getString("studentid"))
-                                    .setRealName(personDetail.getString("realname"))
-                                    .setPhone(personDetail.getString("phone"))
-                                    .setSignature(personDetail.getString("signature"));
-                            mTakers.add(info);
-                        }
-                        mHandler.sendEmptyMessage(MSG_TAKERS_GET);
+                    mTakers.clear();
+                    JSONArray data = new JSONArray(response);
+                    int length = data.length();
+                    for (int i = 0; i < length; i++) {
+                        JSONObject person = data.getJSONObject(i);
+                        JSONObject personDetail = person.getJSONObject("taker_details");
+                        UserInfo info = new UserInfo();
+                        info.setAvatar("fake")
+                                .setId(person.getString("taker_id"))
+                                .setUserName(personDetail.getString("username"))
+                                .setSex(personDetail.getInt("sex"))
+                                .setBirthday(personDetail.getString("birthday"))
+                                .setStudentId(personDetail.getString("studentid"))
+                                .setRealName(personDetail.getString("realname"))
+                                .setPhone(personDetail.getString("phone"))
+                                .setSignature(personDetail.getString("signature"));
+                        mTakers.add(info);
+                    }
+                    mHandler.sendEmptyMessage(MSG_TAKERS_GET);
                 } catch (UServerAccessException | JSONException | InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -465,16 +482,91 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
         mProgress.setMessage("发布中...");
         mProgress.setIndeterminate(true);
         mProgress.setCanceledOnTouchOutside(false);
-        mTakersAdapter = new TakersAdapter(this, mTakers) {
-
-            @Override
-            protected void onItemClick(View v, int pos) {
-                // TODO 选择接单人
-            }
-        };
+        mTakersAdapter = new TakersAdapter(this, mTakers);
         mTaskTakersList.setAdapter(mTakersAdapter);
         mTaskTakersList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,
                 false));
+        mTaskTakersList.addOnItemTouchListener(new RecyclerViewTouchListener(mTaskTakersList) {
+            @Override
+            public void onItemClick(final int position, RecyclerView.ViewHolder viewHolder) {
+                if (mTask.getAuthorID() != Integer.valueOf(UserOperatorController.getInstance().getId())
+                        || mTakersAdapter.isVerifiedTaker()) return;
+                new AlertDialog.Builder(TaskDetailsActivity.this)
+                        .setMessage("是否选择" + mTakers.get(position).getUserName() + "作为接单人？")
+                        .setNegativeButton("取消", null)
+                        .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                verifyTaker(position);
+                            }
+                        })
+                        .create()
+                        .show();
+            }
+
+            @Override
+            public void onItemLongClick(int position, RecyclerView.ViewHolder viewHolder) {
+
+            }
+        });
+    }
+
+    private void verifyTaker(final int position) {
+        Observable.create(new ObservableOnSubscribe<PhalApiClientResponse>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<PhalApiClientResponse> e) throws Exception {
+                e.onNext(UTaskManager.getInstance()
+                        .verifyTaker(mTask.getPostID(), mTakers.get(position).getId()));
+                e.onComplete();
+            }
+        })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<PhalApiClientResponse>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                        mDisposable = d;
+                    }
+
+                    @Override
+                    public void onNext(@NonNull PhalApiClientResponse s) {
+                        Log.e(TAG, "verify taker: " + s.getData());
+                        if (s.getRet() == 200) {
+                            String data = s.getData();
+                            if (data.equals("success")) {
+                                Toast.makeText(TaskDetailsActivity.this, "选择接单人成功", Toast.LENGTH_SHORT).show();
+                                takerChosen(position);
+                            } else {
+                                Toast.makeText(TaskDetailsActivity.this, "选择接单人失败", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(TaskDetailsActivity.this, "选择接单人失败: " + s.getMsg(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        Toast.makeText(TaskDetailsActivity.this, "网络异常，选择接单人失败", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private void takerChosen(int position) {
+        int oldSize = mTakers.size();
+        List<UserInfo> deletingUsers = new ArrayList<>();
+        for (int i = 0; i < mTakers.size(); i++) {
+            if (i != position) deletingUsers.add(mTakers.get(i));
+        }
+        if (mTakers.removeAll(deletingUsers)) {
+            if (position != 0) mTakersAdapter.notifyItemRangeRemoved(0, position);
+            if (position != oldSize - 1) mTakersAdapter.notifyItemRangeRemoved(1, oldSize - position - 1);
+        }
+        mTakersAdapter.setVerifiedTaker(true);
     }
 
     public void mapInit() {
