@@ -1,7 +1,11 @@
 package ecnu.uleda.view_controller;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.app.AppOpsManager;
 import android.content.ContentUris;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -18,6 +22,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,6 +34,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v4.content.PermissionChecker;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -49,6 +55,7 @@ import com.znq.zbarcode.CaptureActivity;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,6 +67,7 @@ import ecnu.uleda.model.UserInfo;
 import ecnu.uleda.function_module.UserOperatorController;
 import ecnu.uleda.model.AddOptions;
 import ecnu.uleda.tool.UPublicTool;
+import kotlin.reflect.jvm.internal.impl.renderer.ClassifierNamePolicy;
 
 import static android.app.Activity.RESULT_OK;
 import static android.widget.ListPopupWindow.WRAP_CONTENT;
@@ -73,6 +81,7 @@ public class UserInfoFragment extends Fragment
         implements View.OnClickListener {
     public static final int CHOOSE_PHOTO = 2;
     private static final int REQUEST_CAMERA = 100;
+    private static final int MY_PERMISSIONS_REQUEST_CAMERA = 26;
     final  HashMap<String,String> map = new HashMap<String,String>();
     private ImageButton setting;
     private TextView mMyInfo;
@@ -91,6 +100,9 @@ public class UserInfoFragment extends Fragment
     private LinearLayout T4;
     private LinearLayout T5;
     private final int REQUEST_CODE = 1;
+
+    private boolean isHasSurface = false;
+    private boolean isOpenCamera = false;
     ImageView p1;
     private Handler mHandler = new Handler() {
         @Override
@@ -330,8 +342,21 @@ public class UserInfoFragment extends Fragment
                     Toast.makeText(getActivity(), "You denied the permission", Toast.LENGTH_SHORT).show();
                 }
                 break;
+            case MY_PERMISSIONS_REQUEST_CAMERA: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, imgUri);
+                    startActivityForResult(intent, REQUEST_CAMERA);
+
+                } else {
+                    Toast.makeText(getContext(),"抱歉,你的相机权限没有打开,无法正常服务",Toast.LENGTH_SHORT).show();
+                }
+                return;
+            }
             default:
         }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
@@ -582,7 +607,6 @@ public class UserInfoFragment extends Fragment
         return AList;
 
     }
-
 
 }
 

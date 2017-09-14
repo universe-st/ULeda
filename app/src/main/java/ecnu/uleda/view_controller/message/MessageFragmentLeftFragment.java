@@ -10,6 +10,9 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.tencent.imsdk.TIMConversation;
+
 import java.util.ArrayList;
 import java.util.List;
 import ecnu.uleda.R;
@@ -26,6 +29,7 @@ public class MessageFragmentLeftFragment extends Fragment {
 
 
     private  String TAG="MFLF";//MessageFragmentLeftFragment is too long(interesting)      -KSS
+
 
     @Override
     public void onCreate(Bundle b) {
