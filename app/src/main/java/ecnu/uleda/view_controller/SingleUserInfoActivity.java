@@ -24,6 +24,8 @@ import com.tencent.imsdk.ext.sns.TIMFriendResult;
 import com.tencent.imsdk.ext.sns.TIMFriendStatus;
 import com.tencent.imsdk.ext.sns.TIMFriendshipManagerExt;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -34,6 +36,7 @@ import ecnu.uleda.R;
 import ecnu.uleda.exception.UServerAccessException;
 import ecnu.uleda.model.UserInfo;
 import ecnu.uleda.function_module.UserOperatorController;
+import ecnu.uleda.view_controller.message.MessageFragmentRightFragment;
 import ecnu.uleda.view_controller.message.SendMessageActivity;
 
 public class SingleUserInfoActivity extends AppCompatActivity {
@@ -74,6 +77,8 @@ public class SingleUserInfoActivity extends AppCompatActivity {
         buttonAddUser = (Button) findViewById(R.id.button_adduser);
         buttonSendmsg = (Button) findViewById(R.id.button_sendmsg);
 
+        buttonAddUser.setEnabled(false);
+
         textViewUserName.setText(mUserInfo.getUserName());
 
         if(mUserInfo.getSex()==0)
@@ -108,6 +113,9 @@ public class SingleUserInfoActivity extends AppCompatActivity {
         else //判断是否是好友
         {
             //TODO： 待定
+            //TODO:设置按钮为不可按，直到获取好友成功 
+            //TODO:刷新好友列表
+
             //待获取用户资料的好友列表
             List<String> users = new ArrayList<String>();
             users.add(mUserInfo.getId());
@@ -118,7 +126,7 @@ public class SingleUserInfoActivity extends AppCompatActivity {
                     //错误码code和错误描述desc，可用于定位请求失败原因
                     //错误码code列表请参见错误码表
                     buttonAddUser.setText("添加好友");
-                    buttonSendmsg.setText("发消息");
+                    buttonAddUser.setEnabled(true);
                     Log.e(tag, "getFriendsProfile failed: " + code + " desc");
                 }
 
@@ -126,7 +134,7 @@ public class SingleUserInfoActivity extends AppCompatActivity {
                 public void onSuccess(List<TIMUserProfile> result){
 
                     buttonAddUser.setText("删除好友");
-                    buttonSendmsg.setText("发消息");
+                    buttonAddUser.setEnabled(true);
 
                     Log.e(tag, "getFriendsProfile succ");
                     for(TIMUserProfile res : result){
@@ -160,6 +168,7 @@ public class SingleUserInfoActivity extends AppCompatActivity {
                     //TODO : 接入单聊
                 Intent intent = new Intent(SingleUserInfoActivity.this, SendMessageActivity.class);
                     intent.putExtra("userId", String.valueOf(mUserInfo.getId()));
+                    intent.putExtra("userName", String.valueOf(mUserInfo.getUserName()));
                     startActivity(intent);
                 }
             });
@@ -235,6 +244,7 @@ public class SingleUserInfoActivity extends AppCompatActivity {
             @Override
             public void onSuccess(List<TIMFriendResult> result){
                 Log.e(tag, "addFriend succ");
+                //EventBus.getDefault().post(new MessageFragmentRightFragment.FriendRefreshEvent(){});
                 for(TIMFriendResult res : result){
                     Log.e(tag, "identifier: " + res.getIdentifer() + " status: " + res.getStatus());
                 }

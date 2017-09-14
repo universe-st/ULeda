@@ -28,6 +28,7 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
     private EditText PhoneNumber;
     private EditText MessageSure;
     private EditText UserPassword;
+    private EditText PasswordAgain;
     private String mUserName;
     private String mUserPassword;
     private String mphone;
@@ -65,6 +66,8 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
         PhoneNumber = (EditText)findViewById(R.id.Phone_Number);
         MessageSure = (EditText)findViewById(R.id.Message_Sure);
         UserPassword = (EditText)findViewById(R.id.userpassword);
+        PasswordAgain = (EditText)findViewById(R.id.userpasswordAgain);
+        PasswordAgain.setOnClickListener(this);
         Username.setOnClickListener(this);
         PhoneNumber.setOnClickListener(this);
         MessageSure.setOnClickListener(this);
@@ -101,7 +104,8 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.WorkDone:
                 if(TextUtils.isEmpty(Username.getText())||TextUtils.isEmpty(UserPassword.getText())||
-                        TextUtils.isEmpty(PhoneNumber.getText())||TextUtils.isEmpty(MessageSure.getText()))
+                        TextUtils.isEmpty(PhoneNumber.getText())||TextUtils.isEmpty(MessageSure.getText())
+                        ||TextUtils.isEmpty(PasswordAgain.getText()))
                 {
                     Toast.makeText(UserRegister.this,"请先输入账号或密码或验证码或手机号",
                             Toast.LENGTH_SHORT).show();
@@ -109,7 +113,12 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
                 else if(!TextUtils.isEmpty(PhoneNumber.getText()))
                 {
                     mphone = PhoneNumber.getText().toString();
-                    if(mphone.length()!=11)
+                    if(!PasswordAgain.getText().toString().equals(UserPassword.getText().toString()))
+                    {
+                        Toast.makeText(UserRegister.this,"两次输入密码不一致",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                    else if(mphone.length()!=11)
                     {
                         Toast.makeText(UserRegister.this,"请输入正确格式的手机号",
                                 Toast.LENGTH_SHORT).show();

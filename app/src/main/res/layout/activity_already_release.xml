@@ -127,7 +127,7 @@
         android:id="@+id/task_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="84" />
+        android:layout_weight="100" />
 
 
 </LinearLayout>

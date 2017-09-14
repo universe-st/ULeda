@@ -17,6 +17,11 @@ import cn.smssdk.SMSSDK;
 public class App extends Application {
     private static final String TAG = "App";
     private static Context context;
+    /*
+    * Something about Mob.
+    * */
+    public static final String MOB_APP_KEY="1f19cb4168a4e";
+    public static final String MOB_APP_SECRET="ad4ea8c6dfec607ffbaffec324b75131";
 
     public App() {
     }
@@ -25,7 +30,7 @@ public class App extends Application {
         super.onCreate();
         context = getApplicationContext();
 
-        MobSDK.init(context,"1f19cb4168a4e","ad4ea8c6dfec607ffbaffec324b75131");
+        MobSDK.init(context,MOB_APP_KEY,MOB_APP_SECRET);
 
     }
 
