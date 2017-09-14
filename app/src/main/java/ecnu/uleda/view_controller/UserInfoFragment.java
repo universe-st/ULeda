@@ -1,7 +1,6 @@
 package ecnu.uleda.view_controller;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -25,7 +24,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.support.annotation.MainThread;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -48,11 +46,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.znq.zbarcode.CaptureActivity;
-import com.znq.zbarcode.utils.Config;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -75,7 +73,7 @@ public class UserInfoFragment extends Fragment
         implements View.OnClickListener {
     public static final int CHOOSE_PHOTO = 2;
     private static final int REQUEST_CAMERA = 100;
-
+    final  HashMap<String,String> map = new HashMap<String,String>();
     private ImageButton setting;
     private TextView mMyInfo;
     private TextView mMyMoneyBag;
@@ -394,12 +392,14 @@ public class UserInfoFragment extends Fragment
             imagePath = uri.getPath();
         }
         displayImage(imagePath); // 根据图片路径显示图片
+
     }
 
     private void handleImageBeforeKitKat(Intent data) {
         Uri uri = data.getData();
         String imagePath = getImagePath(uri, null);
         displayImage(imagePath);
+
     }
 
     private String getImagePath(Uri uri, String selection) {
