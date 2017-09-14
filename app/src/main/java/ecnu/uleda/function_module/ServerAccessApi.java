@@ -2,12 +2,15 @@ package ecnu.uleda.function_module;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.tencent.imsdk.protocol.im_common;
+
 import net.phalapi.sdk.*;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -44,6 +47,7 @@ public class ServerAccessApi {
         }
         throw new UServerAccessException(UServerAccessException.INTERNET_ERROR);
     }
+
     public static int Register(@NonNull String username,@NonNull String password,@NonNull String pcode,
     @NonNull String phone)throws UServerAccessException
     {
@@ -61,11 +65,49 @@ public class ServerAccessApi {
             .withParams("password",md5)
             .withParams("pcode",pcode)
             .withParams("phone",phone)
-                .withTimeout(SET_TIME_OUT)
+            .withTimeout(SET_TIME_OUT)
             .request();
         if(response.getRet() == 200)
         {
            return 200;
+        }
+        else
+        {
+            throw new UServerAccessException(response.getRet());
+        }
+    }
+    public static JSONArray getUserTask(@NonNull int page,@NonNull int flag)throws UServerAccessException
+    {
+            UserOperatorController user = UserOperatorController.getInstance();
+            String id = user.getId();
+            id = UrlEncode(id);
+            String passport = user.getPassport();
+            passport = UrlEncode(passport);
+            String Page = String.valueOf(page);
+            Page = UrlEncode(Page);
+            String Flag = String.valueOf(flag);
+            Flag = UrlEncode(Flag);
+        PhalApiClient client=createClient();
+        PhalApiClientResponse response = client
+                .withService("Task.GetUserTasks")
+            .withParams("id",id)
+            .withParams("passport",passport)
+            .withParams("page",Page)
+            .withParams("flag",Flag)
+            .withTimeout(SET_TIME_OUT)
+            .request();
+        if(response.getRet() == 200)
+        {
+            try {
+                JSONArray info = new JSONArray(response.getData());
+                return  info;
+            }catch (JSONException e)
+            {
+                Log.e("ServerAccessApi",e.toString());
+                //数据包无法解析，向上抛出一个异常
+                throw new UServerAccessException(UServerAccessException.ERROR_DATA);
+            }
+
         }
         else
         {
