@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -44,6 +45,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import ecnu.uleda.R;
+import ecnu.uleda.function_module.UserOperatorController;
 import ecnu.uleda.tool.UPublicTool;
 import ecnu.uleda.exception.UServerAccessException;
 import ecnu.uleda.model.UTask;
@@ -96,6 +98,7 @@ public class UMainFragment extends Fragment implements View.OnTouchListener,View
         mTask.setOnTouchListener(this);
     }
     private void initAnimation() {
+
         mButtonInAnimation = AnimationUtils.loadAnimation(this.getActivity(), R.anim.button_in);
         mButtonOutAnimation = AnimationUtils.loadAnimation(this.getActivity(), R.anim.button_out);
         mButtonScaleLargeAnimation = AnimationUtils.loadAnimation(this.getActivity(), R.anim.button_scale_small);
@@ -187,12 +190,12 @@ public class UMainFragment extends Fragment implements View.OnTouchListener,View
             case R.id.float_button:
                 // 添加按钮
                 openPanelView();
-//                hideFab();
+
                 break;
 
             case R.id.close:// 关闭按钮
                 closePanelView();
-//                showFab();
+
                 break;
             case R.id.blank:
                 closePanelView();
@@ -252,9 +255,8 @@ public class UMainFragment extends Fragment implements View.OnTouchListener,View
     };
     @Override
     public void onCreate(Bundle savedInstanceState){
-        super.onCreate(savedInstanceState);
+             super.onCreate(savedInstanceState);
         mLocationManager = TencentLocationManager.getInstance(this.getActivity());
-
 
     }
     private class ULocationListener implements TencentLocationListener{
@@ -618,13 +620,13 @@ public class UMainFragment extends Fragment implements View.OnTouchListener,View
 
     private void showFab() {
         ObjectAnimator animatorX = ObjectAnimator.ofFloat(mFab, "scaleX", 0, 1)
-                .setDuration(100);
+            .setDuration(100);
         animatorX.setInterpolator(new AccelerateInterpolator());
-        ObjectAnimator animatorY = ObjectAnimator.ofFloat(mFab, "scaleY", 0, 1)
-                .setDuration(100);
+    ObjectAnimator animatorY = ObjectAnimator.ofFloat(mFab, "scaleY", 0, 1)
+            .setDuration(100);
         animatorY.setInterpolator(new AccelerateInterpolator());
-        AnimatorSet set = new AnimatorSet();
+    AnimatorSet set = new AnimatorSet();
         set.playTogether(animatorX, animatorY);
         set.start();
-    }
+}
 }
