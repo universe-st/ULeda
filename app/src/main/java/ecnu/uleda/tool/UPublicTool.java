@@ -21,6 +21,7 @@ import java.util.Date;
 public class UPublicTool {
 
     public static final String SERVICE_PHONE_NUMBER = "10086";
+    public static final String BASE_URL_AVATAR = "http://118.89.156.167/uploads/avatars/";
 
     public static String parseTime(long second) {
         int mi = 60;

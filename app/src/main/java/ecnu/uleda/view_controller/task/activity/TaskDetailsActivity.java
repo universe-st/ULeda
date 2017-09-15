@@ -320,7 +320,7 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
                         JSONObject person = data.getJSONObject(i);
                         JSONObject personDetail = person.getJSONObject("taker_details");
                         UserInfo info = new UserInfo();
-                        info.setAvatar("fake")
+                        info.setAvatar(UPublicTool.BASE_URL_AVATAR + personDetail.getString("avatar"))
                                 .setId(person.getString("taker_id"))
                                 .setUserName(personDetail.getString("username"))
                                 .setSex(personDetail.getInt("sex"))

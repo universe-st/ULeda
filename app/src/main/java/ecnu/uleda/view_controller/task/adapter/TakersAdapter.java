@@ -77,7 +77,8 @@ public class TakersAdapter extends RecyclerView.Adapter<TakersAdapter.TakerViewH
     @Override
     public void onBindViewHolder(TakerViewHolder holder, int position) {
         if (!isVerifiedTaker || position < getItemCount() - 1) {
-            holder.avatar.displayResourceImage(R.drawable.xiaohong);
+            Log.e("haha", mDatas.get(position).getAvatar());
+            holder.avatar.displayImage(mDatas.get(position).getAvatar());
         }
     }
 
