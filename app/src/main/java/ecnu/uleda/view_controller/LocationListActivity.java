@@ -90,13 +90,13 @@ public class LocationListActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 SearchResultObject.SearchResultData a=list.get(i);
-                Intent intent=new Intent();
+            Intent intent=new Intent();
                 intent.putExtra("title",a.title);
                 intent.putExtra("lat",a.location.lat);
                 intent.putExtra("lng",a.location.lng);
-                LocationListActivity.this.setResult(0,intent);
-                LocationListActivity.this.finish();
-            }
+            LocationListActivity.this.setResult(0,intent);
+            LocationListActivity.this.finish();
+        }
         });
         getLocation();
 

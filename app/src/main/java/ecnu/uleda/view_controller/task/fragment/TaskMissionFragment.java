@@ -134,7 +134,6 @@ public class TaskMissionFragment extends Fragment {
                     mMainSpinner.setText(mMainArrayTask.get(pos));
                     mUTaskManager.setTag(mMainArrayTask.get(pos));
                     mTaskListView.refresh();
-                    mThreadPool.submit(new RefreshThread());
                 }
             });
             mMainDropDownWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
@@ -159,7 +158,6 @@ public class TaskMissionFragment extends Fragment {
                     mSortSpinner.setText(mSortArray.get(pos));
                     mUTaskManager.setSortBy(SORT_BY[pos]);
                     mTaskListView.refresh();
-                    mThreadPool.submit(new RefreshThread());
                 }
             });
             mSortDropDownWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
@@ -281,15 +279,15 @@ public class TaskMissionFragment extends Fragment {
         mTasksInList = new ArrayList<>();
         mTaskListAdapter = new TaskListAdapter(getActivity(), mTasksInList);
         mTaskListAdapter.setHasStableIds(true);
-        mTaskListView.setAdapter(mTaskListAdapter);
-        mTaskListView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        mTaskListView.setRefreshProgressStyle(ProgressStyle.Pacman);
-        mTaskListView.setLoadingMoreProgressStyle(ProgressStyle.Pacman);
-        mTaskListView.setArrowImageView(R.drawable.pull_to_refresh_arrow);
-        mTaskListView.addItemDecoration(new TaskListItemDecoration(getContext(), 8, true));
-        mTaskListAdapter.setOnItemClickListener(new TaskListAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClicked(View v, UTask task) {
+                mTaskListView.setAdapter(mTaskListAdapter);
+                mTaskListView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+                mTaskListView.setRefreshProgressStyle(ProgressStyle.Pacman);
+                mTaskListView.setLoadingMoreProgressStyle(ProgressStyle.Pacman);
+                mTaskListView.setArrowImageView(R.drawable.pull_to_refresh_arrow);
+                mTaskListView.addItemDecoration(new TaskListItemDecoration(getContext(), 8, true));
+                mTaskListAdapter.setOnItemClickListener(new TaskListAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClicked(View v, UTask task) {
                 Intent intent = new Intent(getActivity().getApplicationContext(), TaskDetailsActivity.class);
                 intent.putExtra("UTask", task);
                 startActivity(intent);
