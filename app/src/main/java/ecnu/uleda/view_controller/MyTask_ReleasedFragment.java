@@ -2,12 +2,13 @@ package ecnu.uleda.view_controller;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.transition.Slide;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,15 +22,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ecnu.uleda.R;
+import ecnu.uleda.exception.UServerAccessException;
 import ecnu.uleda.function_module.ServerAccessApi;
 import ecnu.uleda.model.MyOrder;
+import ecnu.uleda.model.UTask;
 import ecnu.uleda.tool.RecyclerViewTouchListener;
+import ecnu.uleda.view_controller.task.activity.TaskDetailsActivity;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
@@ -39,7 +42,8 @@ public class MyTask_ReleasedFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private List<MyOrder> releasedList = new ArrayList<>();
     private MyOrderAdapter mMyOrderAdapter;
-    private int Index = 0;
+    private int index = 0;
+    private boolean hasMoreTask = true;
 
     private Handler handler = new Handler(){
         public void handleMessage(Message msg)
@@ -76,15 +80,32 @@ public class MyTask_ReleasedFragment extends Fragment {
 
             }
         });
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    if (!ViewCompat.canScrollVertically(recyclerView, 1) && hasMoreTask) {
+                        index++;
+                        getReleasedUserTask();
+                    }
+                }
+            }
+        });
         return v;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        getReleasedUserTask();
+    }
+
+    private void getReleasedUserTask() {
+        hasMoreTask = false; // 避免正在网络请求时再次触发"加载更多"
         Observable.create(new ObservableOnSubscribe<JSONArray>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<JSONArray> e) throws Exception {
-                e.onNext(ServerAccessApi.getUserTask(0, 0));
+                e.onNext(ServerAccessApi.getUserTask(index, 0));
                 e.onComplete();
             }
         })
@@ -94,6 +115,7 @@ public class MyTask_ReleasedFragment extends Fragment {
                     @Override
                     public void accept(JSONArray jsonArray) throws Exception {
                         int length = jsonArray.length();
+                        if (index == 0) releasedList.clear();
                         for (int i = 0; i < length; i++) {
                             try {
                                 JSONObject json = jsonArray.getJSONObject(i);
@@ -112,34 +134,12 @@ public class MyTask_ReleasedFragment extends Fragment {
                             }
                         }
                         mMyOrderAdapter.notifyDataSetChanged();
+                        if (length > 0) hasMoreTask = true; // 如果加载到了数据，说明可能还有更多
                     }
                 });
     }
-    public void loadUserData()
-    {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try
-                {
-                    JSONArray jsonArray = ServerAccessApi.getUserTask(Index,0);
-                    if(jsonArray.length() > 0)
-                    {
-                        Message msg = new Message();
-                        msg.what = 1;
-                        msg.obj = jsonArray;
-                        handler.sendMessage(msg);
-                    }
-                }catch (UServerAccessException e)
-                {
-                    e.printStackTrace();
-                }
 
-
-            }
-        }).start();
-    }
-    public void  getTask(final int position)
+    public void getTask(final int position)
     {
         new Thread(new Runnable() {
             @Override
