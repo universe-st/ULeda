@@ -8,20 +8,16 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.transition.Slide;
+import android.transition.TransitionInflater;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import ecnu.uleda.R;
-import ecnu.uleda.view_controller.MyTask_DoingFragment;
-import ecnu.uleda.view_controller.MyTask_DoneFragment;
-import ecnu.uleda.view_controller.MyTask_MyEvaluationFragment;
-import ecnu.uleda.view_controller.MyTask_ReleasedFragment;
-import ecnu.uleda.view_controller.MyTask_ToEvaluateFragment;
-import ecnu.uleda.view_controller.MyinfoFragmentAdapter;
 
 public class MyTaskInFo extends AppCompatActivity implements
         ViewPager.OnPageChangeListener, RadioGroup.OnCheckedChangeListener, OnClickListener {
@@ -107,33 +103,33 @@ public class MyTaskInFo extends AppCompatActivity implements
         switch (i1) {
             case 1: {
                 released.setChecked(true);
-                replaceFragement(new MyTask_ReleasedFragment());
+                replaceFragment(new MyTask_ReleasedFragment());
                 break;
             }
             case 2: {
                 doing.setChecked(true);
-                replaceFragement(new MyTask_DoingFragment());
+                replaceFragment(new MyTask_DoingFragment());
                 break;
             }
             case 3: {
                 evaluate.setChecked(true);
-                replaceFragement(new MyTask_ToEvaluateFragment());
+                replaceFragment(new MyTask_ToEvaluateFragment());
                 break;
             }
             case 4: {
                 done.setChecked(true);
-                replaceFragement(new MyTask_DoneFragment());
+                replaceFragment(new MyTask_DoneFragment());
                 break;
             }
             case 5: {
                 evaluation.setChecked(true);
-                replaceFragement(new MyTask_MyEvaluationFragment());
+                replaceFragment(new MyTask_MyEvaluationFragment());
                 break;
             }
         }
     }
 
-    private void replaceFragement(Fragment fragment) {
+    private void replaceFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.task_layout, fragment);
@@ -171,11 +167,17 @@ public class MyTaskInFo extends AppCompatActivity implements
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
+
+    //    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        if (item.getItemId() == android.R.id.home) {
+//            finish();
+//            return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 }

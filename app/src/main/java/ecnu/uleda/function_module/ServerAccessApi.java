@@ -114,6 +114,21 @@ public class ServerAccessApi {
             throw new UServerAccessException(response.getRet());
         }
     }
+
+    public static PhalApiClientResponse cancelTask(@NonNull String postID) throws UServerAccessException {
+        UserOperatorController user = UserOperatorController.getInstance();
+        String id = user.getId();
+        id = UrlEncode(id);
+        String passport = user.getPassport();
+        passport = UrlEncode(passport);
+        postID = UrlEncode(postID);
+        return createClient().withService("Task.Cancel")
+                .withParams("id", id)
+                .withParams("passport", passport)
+                .withParams("postID", postID)
+                .withTimeout(SET_TIME_OUT)
+                .request();
+    }
     public static String getLoginToken(@NonNull String userName)throws UServerAccessException{
         //断言，保证传入参数的正确性，在DEBUG模式下才启用。
         if(BuildConfig.DEBUG){
@@ -166,6 +181,22 @@ public class ServerAccessApi {
         }else{
             throw new UServerAccessException(response.getRet());
         }
+    }
+
+    public static PhalApiClientResponse verifyTaker(@NonNull String id, @NonNull String passport,
+                                                    @NonNull String postID, @NonNull String verifyID) throws UServerAccessException {
+        id = UrlEncode(id);
+        passport = UrlEncode(passport);
+        postID = UrlEncode(postID);
+        verifyID = UrlEncode(verifyID);
+        return createClient()
+                .withService("Task.VerifyTaker")
+                .withParams("id", id)
+                .withParams("passport", passport)
+                .withParams("postID", postID)
+                .withParams("verifyID", verifyID)
+                .withTimeout(SET_TIME_OUT)
+                .request();
     }
 
 
@@ -633,7 +664,7 @@ public class ServerAccessApi {
         if(response.getRet()==200){
             return "success";
         }else{
-            throw new UServerAccessException(response.getRet());
+            return response.getMsg();
         }
     }
     public static String getPicture(@NonNull String id,@NonNull String passport,int picId)throws UServerAccessException{

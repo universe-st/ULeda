@@ -305,12 +305,7 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
         if (mActivity.getAuthorUsername().equals(uoc.getUserName())) {
             mTakersList.setVisibility(View.VISIBLE);
             mTakersTitleView.setVisibility(View.VISIBLE);
-            mTakersList.setAdapter(new TakersAdapter(this, mTakerInfos) {
-
-                @Override
-                protected void onItemClick(View v, int pos) {
-                }
-            });
+            mTakersList.setAdapter(new TakersAdapter(this, mTakerInfos));
             mTakersList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,
                     false));
         }
