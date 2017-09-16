@@ -18,9 +18,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
+import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,8 +58,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -82,8 +86,10 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import me.xiaopan.sketch.SketchImageView;
 import me.xiaopan.sketch.request.DisplayOptions;
@@ -100,10 +106,12 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
     private static final int MSG_COMMENT_FAILED = 5;
     private static final int MSG_TAKERS_GET = 6;
     private static final int MSG_TASK_SUCCESS = 7;
+    private static final int MSG_CANCEL_TAKE = 8;
+    private static final int MENU_ITEM_DELETE = 100;
     public static final String TAG = "TaskDetailsActivity";
     private UTask mTask;
     private TencentMap mTencentMap;
-    private Disposable mDisposable;
+    private CompositeDisposable mDisposables = new CompositeDisposable();
 
     @BindView(R.id.head_line_layout)
     Toolbar mToolbar;
@@ -179,25 +187,7 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
                     mButtonRight.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            new Thread() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        String s = ServerAccessApi.acceptTask(uoc.getId(), uoc.getPassport(), mTask.getPostID());
-                                        if (s.equals("success")) {
-                                            Message msg = new Message();
-                                            msg.what = MSG_TAKE_SUCCESS;
-                                            mHandler.sendMessage(msg);
-                                        }
-                                    } catch (UServerAccessException e) {
-                                        e.printStackTrace();
-                                        Message msg = new Message();
-                                        msg.what = 1;
-                                        msg.obj = e.getMessage();
-                                        mHandler.sendMessage(msg);
-                                    }
-                                }
-                            }.start();
+                            acceptTask(uoc);
                         }
                     });
                 }
@@ -210,7 +200,8 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
                     @Override
                     public void onClick(View view) {
                         Message msg = new Message();
-                        msg.what = 0;
+                        msg.what = MSG_CANCEL_TAKE;
+                        // TODO 取消接单
                         mButtonRight.setText("抢单");
                         mTask.setStatus(0);
                     }
@@ -231,6 +222,47 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
             }
         }
     };
+
+    private void acceptTask(final UserOperatorController uoc) {
+        Observable<String> observable = Observable.create(new ObservableOnSubscribe<String>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<String> e) throws Exception {
+                e.onNext(ServerAccessApi.acceptTask(uoc.getId(), uoc.getPassport(), mTask.getPostID()));
+                e.onComplete();
+            }
+        });
+        Observer<String> observer = new Observer<String>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+                mDisposables.add(d);
+            }
+
+            @Override
+            public void onNext(@NonNull String s) {
+                if ("success".equals(s)) {
+                    Message msg = new Message();
+                    msg.what = MSG_TAKE_SUCCESS;
+                    mHandler.sendMessage(msg);
+                } else {
+                    Toast.makeText(TaskDetailsActivity.this, "接单失败：" + s, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                e.printStackTrace();
+                Toast.makeText(TaskDetailsActivity.this, "接单失败：网络错误", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        };
+        observable.observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(observer);
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -300,44 +332,83 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
     @Override
     public void onDestroy() {
         mMapView.onDestroy();
-        if (mDisposable != null && !mDisposable.isDisposed()) mDisposable.dispose();
+        mDisposables.clear();
         super.onDestroy();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (mTask.getAuthorID() == Integer.parseInt(UserOperatorController.getInstance().getId())) {
+            MenuItem menuItem = menu.add(0, MENU_ITEM_DELETE, 100, "删除");
+            menuItem.setIcon(R.drawable.ic_delete);
+            menuItem.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            return true;
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
 
     private void initTakers(final UserOperatorController uoc) {
-        mThreadPool.submit(new Runnable() {
+        Observable.create(new ObservableOnSubscribe<String>() {
             @Override
-            public void run() {
-                try {
-                    Thread.sleep(500);
-                    String response = ServerAccessApi.getTakers(uoc.getId(),
-                            uoc.getPassport(), mTask.getPostID());
-                    mTakers.clear();
-                    JSONArray data = new JSONArray(response);
-                    int length = data.length();
-                    for (int i = 0; i < length; i++) {
-                        JSONObject person = data.getJSONObject(i);
-                        JSONObject personDetail = person.getJSONObject("taker_details");
-                        UserInfo info = new UserInfo();
-                        info.setAvatar(UPublicTool.BASE_URL_AVATAR + personDetail.getString("avatar"))
-                                .setId(person.getString("taker_id"))
-                                .setUserName(personDetail.getString("username"))
-                                .setSex(personDetail.getInt("sex"))
-                                .setBirthday(personDetail.getString("birthday"))
-                                .setStudentId(personDetail.getString("studentid"))
-                                .setRealName(personDetail.getString("realname"))
-                                .setPhone(personDetail.getString("phone"))
-                                .setSignature(personDetail.getString("signature"));
-                        mTakers.add(info);
-                    }
-                    mHandler.sendEmptyMessage(MSG_TAKERS_GET);
-                } catch (UServerAccessException | JSONException | InterruptedException e) {
-                    e.printStackTrace();
-                }
+            public void subscribe(@NonNull ObservableEmitter<String> e) throws Exception {
+                Thread.sleep(500);
+                e.onNext(ServerAccessApi.getTakers(uoc.getId(),
+                        uoc.getPassport(), mTask.getPostID()));
             }
+        })
+                .map(new Function<String, JSONArray>() {
+                    @Override
+                    public JSONArray apply(@NonNull String s) throws Exception {
+                        return new JSONArray(s);
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<JSONArray>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                        mDisposables.add(d);
+                    }
 
-        });
+                    @Override
+                    public void onNext(@NonNull JSONArray data) {
+                        try {
+                            mTakers.clear();
+                            int length = data.length();
+                            for (int i = 0; i < length; i++) {
+                                JSONObject person = data.getJSONObject(i);
+                                JSONObject personDetail = person.getJSONObject("taker_details");
+                                UserInfo info = new UserInfo();
+                                if (uoc.getId().equals(person.getString("taker_id"))) {
+                                    mButtonRight.setText("取消抢单");
+                                }
+                                info.setAvatar(UPublicTool.BASE_URL_AVATAR + personDetail.getString("avatar"))
+                                        .setId(person.getString("taker_id"))
+                                        .setUserName(personDetail.getString("username"))
+                                        .setSex(personDetail.getInt("sex"))
+                                        .setBirthday(personDetail.getString("birthday"))
+                                        .setStudentId(personDetail.getString("studentid"))
+                                        .setRealName(personDetail.getString("realname"))
+                                        .setPhone(personDetail.getString("phone"))
+                                        .setSignature(personDetail.getString("signature"));
+                                mTakers.add(info);
+                            }
+                            mHandler.sendEmptyMessage(MSG_TAKERS_GET);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        Toast.makeText(TaskDetailsActivity.this, "获取接单人列表失败", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     private void initTakersView() {
@@ -525,7 +596,7 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
                 .subscribe(new Observer<PhalApiClientResponse>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
-                        mDisposable = d;
+                        mDisposables.add(d);
                     }
 
                     @Override
@@ -564,7 +635,8 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
         }
         if (mTakers.removeAll(deletingUsers)) {
             if (position != 0) mTakersAdapter.notifyItemRangeRemoved(0, position);
-            if (position != oldSize - 1) mTakersAdapter.notifyItemRangeRemoved(1, oldSize - position - 1);
+            if (position != oldSize - 1)
+                mTakersAdapter.notifyItemRangeRemoved(1, oldSize - position - 1);
         }
         mTakersAdapter.setVerifiedTaker(true);
     }
@@ -584,8 +656,58 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
         if (item.getItemId() == android.R.id.home) {
             finish();
             return true;
+        } else if (item.getItemId() == MENU_ITEM_DELETE) {
+            cancelTask();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void cancelTask() {
+        Observable.create(new ObservableOnSubscribe<PhalApiClientResponse>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<PhalApiClientResponse> e) throws Exception {
+                e.onNext(UTaskManager.getInstance().cancelTask(mTask.getPostID()));
+                e.onComplete();
+            }
+        })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<PhalApiClientResponse>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                        mDisposables.add(d);
+                    }
+
+                    @Override
+                    public void onNext(@NonNull PhalApiClientResponse phalApiClientResponse) {
+                        if (phalApiClientResponse.getRet() == 200) {
+                            String data = phalApiClientResponse.getData();
+                            if ("success".equals(data)) {
+                                Toast.makeText(TaskDetailsActivity.this, "取消成功", Toast.LENGTH_SHORT).show();
+                                mHandler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        finish();
+                                    }
+                                }, 500);
+                            } else {
+                                Toast.makeText(TaskDetailsActivity.this, "取消失败：" + phalApiClientResponse.getMsg(), Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(TaskDetailsActivity.this, "取消失败：" + phalApiClientResponse.getMsg(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        Toast.makeText(TaskDetailsActivity.this, "取消失败：网络异常", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     @Override

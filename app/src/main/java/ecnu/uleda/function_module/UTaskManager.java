@@ -378,6 +378,14 @@ public class UTaskManager {
                     postID,
                     verifyID);
         }
+    }
 
+    public PhalApiClientResponse cancelTask(String postID) throws UServerAccessException {
+        UserOperatorController uoc = UserOperatorController.getInstance();
+        if (!uoc.getIsLogined()) {
+            throw new UServerAccessException(UServerAccessException.UN_LOGIN);
+        } else {
+            return ServerAccessApi.cancelTask(postID);
+        }
     }
 }
