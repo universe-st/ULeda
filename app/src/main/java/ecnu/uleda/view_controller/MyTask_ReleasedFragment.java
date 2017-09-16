@@ -1,5 +1,6 @@
 package ecnu.uleda.view_controller;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -38,6 +39,25 @@ public class MyTask_ReleasedFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private List<MyOrder> releasedList = new ArrayList<>();
     private MyOrderAdapter mMyOrderAdapter;
+    private int Index = 0;
+
+    private Handler handler = new Handler(){
+        public void handleMessage(Message msg)
+        {
+            switch (msg.what)
+            {
+                case 2:
+                    Intent intent = new Intent(getActivity().getApplication(),TaskDetailsActivity.class);
+                    UTask utask = (UTask)msg.obj;
+                    intent.putExtra("UTask",utask);
+                    startActivity(intent);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
 
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle b) {
         View v = inflater.inflate(R.layout.fragment_my_task__released, parent, false);
@@ -48,7 +68,7 @@ public class MyTask_ReleasedFragment extends Fragment {
         mRecyclerView.addOnItemTouchListener(new RecyclerViewTouchListener(mRecyclerView) {
             @Override
             public void onItemClick(int position, RecyclerView.ViewHolder viewHolder) {
-
+                getTask(position);
             }
 
             @Override
@@ -94,5 +114,85 @@ public class MyTask_ReleasedFragment extends Fragment {
                         mMyOrderAdapter.notifyDataSetChanged();
                     }
                 });
+    }
+    public void loadUserData()
+    {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try
+                {
+                    JSONArray jsonArray = ServerAccessApi.getUserTask(Index,0);
+                    if(jsonArray.length() > 0)
+                    {
+                        Message msg = new Message();
+                        msg.what = 1;
+                        msg.obj = jsonArray;
+                        handler.sendMessage(msg);
+                    }
+                }catch (UServerAccessException e)
+                {
+                    e.printStackTrace();
+                }
+
+
+            }
+        }).start();
+    }
+    public void  getTask(final int position)
+    {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                UTask uTask = new UTask();
+                try {
+                    int index = 0;
+                    int temp = 0;
+                    if(position == 0)
+                    {
+                        index = 0;
+                    }
+                    else
+                    {
+                        if(position % 10 == 0)
+                        {
+                            index = position / 10 - 1;
+                        }
+                        else
+                        {
+                            index = position / 10;
+                        }
+                    }
+                    temp = position - 10 * index;
+                    JSONArray jsonArray = ServerAccessApi.getUserTask(index,0);
+                    JSONObject json = jsonArray.getJSONObject(temp);
+                    uTask.setTitle(json.getString("title"))
+                            .setStatus(Integer.parseInt(json.getString("status")))
+                            .setAuthorID(Integer.parseInt(json.getString("author")))
+                            .setAuthorAvatar(json.getString("authorAvatar"))
+                            .setAuthorUserName(json.getString("authorUsername"))
+                            .setAuthorCredit(Integer.parseInt(json.getString("authorCredit")))
+                            .setTag(json.getString("tag"))
+                            .setDescription(json.getString("description"))
+                            .setPostDate(Long.parseLong(json.getString("postdate")))
+                            .setActiveTime(Long.parseLong(json.getString("activetime")))
+                            .setPath(json.getString("path"))
+                            .setPrice(BigDecimal.valueOf(Double.parseDouble(json.getString("price"))))
+                            .setPostID(json.getString("postID"))
+                            .setTakersCount(Integer.parseInt(json.getString("taker")));
+                    Message msg = new Message();
+                    msg.what = 2;
+                    msg.obj = uTask;
+                    handler.sendMessage(msg);
+                }catch (UServerAccessException e)
+                {
+                    e.printStackTrace();
+                }
+                catch (JSONException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 }
