@@ -759,7 +759,6 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
         });
     }
 
-    //测试代码
     public static class UserChatItem {
         @SerializedName("author")
         public int authorId;
@@ -783,6 +782,64 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
             this.commentID = commentID;
             this.postDate = postDate;
         }
+    }
+
+    public static void startActivityFromMyTask(Context context, int position, int flag) {
+        UTask uTask = new UTask();
+        int index = 0;
+        int temp = 0;
+        if(position == 0) {
+            index = 0;
+        } else {
+            if(position % 10 == 0) {
+                index = position / 10 - 1;
+            } else {
+                index = position / 10;
+            }
+        }
+        temp = position - 10 * index;
+        startFromUTask(context, index, temp, flag);
+    }
+
+    private static void startFromUTask(final Context context, final int index, final int temp, final int flag) {
+        Observable.create(new ObservableOnSubscribe<JSONArray>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<JSONArray> e) throws Exception {
+                e.onNext(ServerAccessApi.getUserTask(index, flag));
+                e.onComplete();
+            }
+        })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Consumer<JSONArray>() {
+                    @Override
+                    public void accept(JSONArray jsonArray) throws Exception {
+                        JSONObject json = jsonArray.getJSONObject(temp);
+                        UTask uTask = new UTask();
+                        uTask.setTitle(json.getString("title"))
+                                .setStatus(Integer.parseInt(json.getString("status")))
+                                .setAuthorID(Integer.parseInt(json.getString("author")))
+                                .setAuthorAvatar(json.getString("authorAvatar"))
+                                .setAuthorUserName(json.getString("authorUsername"))
+                                .setAuthorCredit(Integer.parseInt(json.getString("authorCredit")))
+                                .setTag(json.getString("tag"))
+                                .setDescription(json.getString("description"))
+                                .setPostDate(Long.parseLong(json.getString("postdate")))
+                                .setActiveTime(Long.parseLong(json.getString("activetime")))
+                                .setPath(json.getString("path"))
+                                .setPrice(BigDecimal.valueOf(Double.parseDouble(json.getString("price"))))
+                                .setPostID(json.getString("postID"))
+                                .setTakersCount(Integer.parseInt(json.getString("taker")));
+                        Intent intent = new Intent(context, TaskDetailsActivity.class);
+                        intent.putExtra("UTask", uTask);
+                        context.startActivity(intent);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        throwable.printStackTrace();
+                    }
+                });
     }
 
 }

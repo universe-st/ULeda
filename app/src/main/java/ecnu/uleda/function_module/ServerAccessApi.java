@@ -29,6 +29,11 @@ import ecnu.uleda.exception.UServerAccessException;
 
 public class ServerAccessApi {
     private static final int SET_TIME_OUT = 9999;
+    public static final int USER_TASK_FLAG_RELEASED = 0;
+    public static final int USER_TASK_FLAG_DOING = 1;
+    public static final int USER_TASK_FLAG_TO_EVAL = 2;
+    public static final int USER_TASK_FLAG_DONE = 3;
+    public static final int USER_TASK_FLAG_MY = 4;
 
     public static String getMainKey()throws UServerAccessException {
         PhalApiClient client=createClient();

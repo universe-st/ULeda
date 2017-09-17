@@ -9,6 +9,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.transition.TransitionInflater;
+import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +45,10 @@ public class MyTask_ReleasedFragment extends Fragment {
     private List<MyOrder> releasedList = new ArrayList<>();
     private MyOrderAdapter mMyOrderAdapter;
     private int index = 0;
+    private int itemCount = 0;
     private boolean hasMoreTask = true;
+    private boolean isOnce = false;
+    private boolean isEmpty = false;
 
     private Handler handler = new Handler(){
         public void handleMessage(Message msg)
@@ -67,12 +72,13 @@ public class MyTask_ReleasedFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_my_task__released, parent, false);
         mRecyclerView = (RecyclerView) v.findViewById(R.id.list_view);
         mMyOrderAdapter = new MyOrderAdapter(this.getActivity().getApplicationContext(), releasedList);
+        if (isOnce && isEmpty) mMyOrderAdapter.setEmpty();
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         mRecyclerView.setAdapter(mMyOrderAdapter);
         mRecyclerView.addOnItemTouchListener(new RecyclerViewTouchListener(mRecyclerView) {
             @Override
             public void onItemClick(int position, RecyclerView.ViewHolder viewHolder) {
-                getTask(position);
+                TaskDetailsActivity.startActivityFromMyTask(getActivity(), position, ServerAccessApi.USER_TASK_FLAG_RELEASED);
             }
 
             @Override
@@ -97,7 +103,10 @@ public class MyTask_ReleasedFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        getReleasedUserTask();
+        if (!isOnce) {
+            getReleasedUserTask();
+            isOnce = true;
+        }
     }
 
     private void getReleasedUserTask() {
@@ -116,6 +125,11 @@ public class MyTask_ReleasedFragment extends Fragment {
                     public void accept(JSONArray jsonArray) throws Exception {
                         int length = jsonArray.length();
                         if (index == 0) releasedList.clear();
+                        if (index == 0 && length == 0) {
+                            mMyOrderAdapter.setEmpty();
+                            isEmpty = true;
+                            return;
+                        }
                         for (int i = 0; i < length; i++) {
                             try {
                                 JSONObject json = jsonArray.getJSONObject(i);
@@ -133,66 +147,17 @@ public class MyTask_ReleasedFragment extends Fragment {
                                 e.printStackTrace();
                             }
                         }
-                        mMyOrderAdapter.notifyDataSetChanged();
+                        TransitionManager.beginDelayedTransition(mRecyclerView, TransitionInflater.from(getContext()).inflateTransition(R.transition.slide_in));
+                        mMyOrderAdapter.notifyItemRangeInserted(itemCount, length);
+                        itemCount += length;
                         if (length > 0) hasMoreTask = true; // 如果加载到了数据，说明可能还有更多
                     }
                 });
     }
 
-    public void getTask(final int position)
-    {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                UTask uTask = new UTask();
-                try {
-                    int index = 0;
-                    int temp = 0;
-                    if(position == 0)
-                    {
-                        index = 0;
-                    }
-                    else
-                    {
-                        if(position % 10 == 0)
-                        {
-                            index = position / 10 - 1;
-                        }
-                        else
-                        {
-                            index = position / 10;
-                        }
-                    }
-                    temp = position - 10 * index;
-                    JSONArray jsonArray = ServerAccessApi.getUserTask(index,0);
-                    JSONObject json = jsonArray.getJSONObject(temp);
-                    uTask.setTitle(json.getString("title"))
-                            .setStatus(Integer.parseInt(json.getString("status")))
-                            .setAuthorID(Integer.parseInt(json.getString("author")))
-                            .setAuthorAvatar(json.getString("authorAvatar"))
-                            .setAuthorUserName(json.getString("authorUsername"))
-                            .setAuthorCredit(Integer.parseInt(json.getString("authorCredit")))
-                            .setTag(json.getString("tag"))
-                            .setDescription(json.getString("description"))
-                            .setPostDate(Long.parseLong(json.getString("postdate")))
-                            .setActiveTime(Long.parseLong(json.getString("activetime")))
-                            .setPath(json.getString("path"))
-                            .setPrice(BigDecimal.valueOf(Double.parseDouble(json.getString("price"))))
-                            .setPostID(json.getString("postID"))
-                            .setTakersCount(Integer.parseInt(json.getString("taker")));
-                    Message msg = new Message();
-                    msg.what = 2;
-                    msg.obj = uTask;
-                    handler.sendMessage(msg);
-                }catch (UServerAccessException e)
-                {
-                    e.printStackTrace();
-                }
-                catch (JSONException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mMyOrderAdapter = null;
     }
 }
