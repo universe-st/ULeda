@@ -80,6 +80,7 @@ import ecnu.uleda.function_module.ServerAccessApi;
 import ecnu.uleda.view_controller.SingleUserInfoActivity;
 import ecnu.uleda.view_controller.TaskEditActivity;
 import ecnu.uleda.view_controller.task.adapter.TakersAdapter;
+import ecnu.uleda.view_controller.task.fragment.TaskMissionFragment;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -98,6 +99,7 @@ import me.xiaopan.sketch.shaper.CircleImageShaper;
 public class TaskDetailsActivity extends BaseDetailsActivity {
 
     public static final String EXTRA_UTASK = "UTask";
+    private static final int REQUEST_EDIT = 1;
     private static final int MSG_REFRESH_SUCCESS = 0;
     private static final int MSG_REFRESH_FAIL = 1;
     private static final int MSG_COMMENT_GET = 2;
@@ -170,7 +172,7 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
                         public void onClick(View view) {
                             Intent intent = new Intent(TaskDetailsActivity.this, TaskEditActivity.class);
                             intent.putExtra("Task", mTask);
-                            startActivityForResult(intent, 1);
+                            startActivityForResult(intent, REQUEST_EDIT);
                         }
                     });
                 } else if (mTask.getStatus() != 0) {
@@ -275,15 +277,14 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if (intent == null) return;
-        if (resultCode == 1) {
-            Message msg = new Message();
-            msg.obj = intent.getSerializableExtra("Task");
-            msg.what = 0;
-            mHandler.sendMessage(msg);
-        } else if (resultCode == 2) {
-            setResult(RESULT_OK);
-            finish();
+        if (requestCode == REQUEST_EDIT && resultCode == RESULT_OK) {
+            UserOperatorController uoc = UserOperatorController.getInstance();
+            if (mThreadPool.isShutdown()) {
+                mThreadPool = Executors.newCachedThreadPool();
+            }
+            initDetails(uoc);
+            initComments(uoc);
+            listViewInit();
         }
     }
 
@@ -723,6 +724,7 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
                                     public void run() {
                                         setResult(RESULT_OK);
                                         finish();
+                                        sendBroadcast(new Intent(TaskMissionFragment.ACTION_REFRESH));
                                     }
                                 }, 500);
                             } else {

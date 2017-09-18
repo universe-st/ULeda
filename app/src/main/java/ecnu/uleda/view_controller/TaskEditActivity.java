@@ -10,6 +10,7 @@ import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -45,6 +46,7 @@ public class TaskEditActivity extends AppCompatActivity {
                 //TaskEditActivity.this.setResult(1,intent);
 
                 Toast.makeText(TaskEditActivity.this, "编辑任务成功～", Toast.LENGTH_SHORT).show();
+                setResult(RESULT_OK);
                 finish();
             } else {
                 UServerAccessException exception = (UServerAccessException) msg.obj;
@@ -97,7 +99,6 @@ public class TaskEditActivity extends AppCompatActivity {
     private EditText mEtActiveTime;
     private EditText mEtDescription;
 
-    private Button mButtonBack;
     private Button mButtonTaskEdit;
     private Button mBUttonTaskDelete;
     private ArrayAdapter<String> taskPostAdapter;
@@ -126,6 +127,10 @@ public class TaskEditActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_edit);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setTitle("");
         mLocalBroadcastManager=LocalBroadcastManager.getInstance(this);
         mIntentFilter=new IntentFilter();
         mIntentFilter.addAction("com.example.broadcasttest.Delete_BROADCAST");
@@ -136,22 +141,11 @@ public class TaskEditActivity extends AppCompatActivity {
         final UserOperatorController uoc=UserOperatorController.getInstance();
         if(!uoc.getIsLogined())
             return;
-        //
-        init();
 
+        init();
         SpinnerInit();
         SpinnerEvent();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
-
-        mButtonBack = (Button) findViewById(R.id.button_task_edit_back);
-        mButtonBack.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                finish();
-            }
-        });
         mEtPrice.addTextChangedListener(new TaskEditActivity.MyTextWatcher());
         mButtonTaskEdit.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -219,6 +213,14 @@ public class TaskEditActivity extends AppCompatActivity {
             longitude=data.getFloatExtra("lng",0f);
         }
     }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        setResult(RESULT_CANCELED);
+        onBackPressed();
+        return true;
+    }
+
     protected void init() {
         final UserOperatorController uoc=UserOperatorController.getInstance();
         mId = uoc.getId();
