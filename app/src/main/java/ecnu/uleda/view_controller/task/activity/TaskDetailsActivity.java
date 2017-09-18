@@ -111,6 +111,7 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
     public static final String TAG = "TaskDetailsActivity";
     private UTask mTask;
     private TencentMap mTencentMap;
+    private boolean isTakenByUser = false;
     private CompositeDisposable mDisposables = new CompositeDisposable();
 
     @BindView(R.id.head_line_layout)
@@ -192,22 +193,7 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
                     });
                 }
                 initTakers(uoc);
-            } else if (msg.what == MSG_TAKE_SUCCESS) {
-                Toast.makeText(TaskDetailsActivity.this, "成功接受任务", Toast.LENGTH_SHORT).show();
-                mTask.setStatus(1);
-                mButtonRight.setText("取消抢单");
-                mButtonRight.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Message msg = new Message();
-                        msg.what = MSG_CANCEL_TAKE;
-                        // TODO 取消接单
-                        mButtonRight.setText("抢单");
-                        mTask.setStatus(0);
-                    }
-                });
-
-
+                checkIsRelatedToMe();
             } else if (msg.what == MSG_COMMENT_GET) {
                 addCommentView(mDetailContainer, 2);
             } else if (msg.what == MSG_COMMENT_SUCCESS) {
@@ -222,6 +208,22 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
             }
         }
     };
+
+    private void checkIsRelatedToMe() {
+        // 未被领取，所有人可访问
+        if (mTask.getStatus() == 0) return;
+        // 是发布人本人，可以访问自己发布的任务
+        int id = Integer.parseInt(UserOperatorController.getInstance().getId());
+        if (mTask.getAuthorID() == id) return;
+        // 参与过接单，可以访问
+        for (UserInfo taker: mTakers) {
+            if (Integer.parseInt(taker.getId()) == id)
+                return;
+        }
+        // 当前任务对该用户不可访问，返回
+        setResult(RESULT_CANCELED);
+        finish();
+    }
 
     private void acceptTask(final UserOperatorController uoc) {
         Observable<String> observable = Observable.create(new ObservableOnSubscribe<String>() {
@@ -240,9 +242,16 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
             @Override
             public void onNext(@NonNull String s) {
                 if ("success".equals(s)) {
-                    Message msg = new Message();
-                    msg.what = MSG_TAKE_SUCCESS;
-                    mHandler.sendMessage(msg);
+                    Toast.makeText(TaskDetailsActivity.this, "成功接受任务", Toast.LENGTH_SHORT).show();
+                    mTask.setStatus(1);
+                    mButtonRight.setText("取消抢单");
+                    isTakenByUser = true;
+                    mButtonRight.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            cancelTake();
+                        }
+                    });
                 } else {
                     Toast.makeText(TaskDetailsActivity.this, "接单失败：" + s, Toast.LENGTH_SHORT).show();
                 }
@@ -273,6 +282,7 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
             msg.what = 0;
             mHandler.sendMessage(msg);
         } else if (resultCode == 2) {
+            setResult(RESULT_OK);
             finish();
         }
     }
@@ -381,6 +391,13 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
                                 UserInfo info = new UserInfo();
                                 if (uoc.getId().equals(person.getString("taker_id"))) {
                                     mButtonRight.setText("取消抢单");
+                                    mButtonRight.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            cancelTake();
+                                        }
+                                    });
+                                    isTakenByUser = true;
                                 }
                                 info.setAvatar(UPublicTool.BASE_URL_AVATAR + personDetail.getString("avatar"))
                                         .setId(person.getString("taker_id"))
@@ -409,6 +426,13 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
 
                     }
                 });
+    }
+
+    private void cancelTake() {
+        // TODO 取消接单接口
+        Toast.makeText(TaskDetailsActivity.this, "取消接口还没有", Toast.LENGTH_SHORT).show();
+        mButtonRight.setText("抢单");
+        mTask.setStatus(0);
     }
 
     private void initTakersView() {
@@ -653,13 +677,23 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-            return true;
-        } else if (item.getItemId() == MENU_ITEM_DELETE) {
+        if (item.getItemId() == MENU_ITEM_DELETE) {
             cancelTask();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        setResult(RESULT_OK);
+        onBackPressed();
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        setResult(RESULT_OK);
+        super.onBackPressed();
     }
 
     private void cancelTask() {
@@ -687,6 +721,7 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
                                 mHandler.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
+                                        setResult(RESULT_OK);
                                         finish();
                                     }
                                 }, 500);
