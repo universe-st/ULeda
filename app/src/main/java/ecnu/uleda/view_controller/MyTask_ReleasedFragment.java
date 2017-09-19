@@ -131,8 +131,6 @@ public class MyTask_ReleasedFragment extends Fragment {
                 {
                     e.printStackTrace();
                 }
-
-
             }
         }).start();
     }

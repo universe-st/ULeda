@@ -3,7 +3,10 @@ package ecnu.uleda.view_controller;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +17,18 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import ecnu.uleda.R;
+import ecnu.uleda.exception.UServerAccessException;
+import ecnu.uleda.function_module.ServerAccessApi;
 import ecnu.uleda.model.UCircle;
 import ecnu.uleda.view_controller.widgets.UcircleDetailActivity;
 
@@ -27,9 +39,45 @@ import ecnu.uleda.view_controller.widgets.UcircleDetailActivity;
 public class UCircleFragment extends Fragment implements View.OnClickListener{
 
     private ListView mlistView;
-    private ArrayList<UCircle> mCircleList;
+    private ArrayList<UCircle> mCircleList  = new ArrayList<>();
     private Button mAddButton;
     private UCircleListAdapter mUCircleListAdapter;
+    private Handler handler = new Handler()
+    {
+        public void handleMessage(Message msg)
+        {
+            switch (msg.what)
+            {
+                case 1:
+                        JSONArray jsonArray = (JSONArray)msg.obj;
+
+                            for(int i = 0; i < jsonArray.length();i++)
+                            {
+                                try{
+                                    JSONObject json = jsonArray.getJSONObject(i);
+                                mCircleList.add(new UCircle()
+                                                .setmPhotoId(json.getString("authorAvatar"))
+                                                .setmName(json.getString("authorName"))
+                                                .setmTitle(json.getString("title"))
+                                                .setmArticle(json.getString("absContent"))
+                                                .setmTime(json.getString("postTime"))
+                                                .setmGet("9")
+                                                .setmDynamic_Photo1(json.getString("pic1"))
+                                                .setmDynamic_Photo2(json.getString("pic2"))
+                                                .setmDynamic_Photo3(json.getString("pic3"))
+                                );
+                            }catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                    mUCircleListAdapter.notifyDataSetChanged();
+                    mlistView.setAdapter(mUCircleListAdapter);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
     @Override
     public void onCreate(Bundle b){
         super.onCreate(b);
@@ -38,70 +86,25 @@ public class UCircleFragment extends Fragment implements View.OnClickListener{
     {
         View v=inflater.inflate(R.layout.u_circle_fragment,parent,false);
         init(v);
-
-        //测试代码
-        mCircleList = new ArrayList<>();
-        mCircleList.add(new UCircle()
-                .setmPhotoId(R.drawable.user1)
-                .setmName("黄老邪")
-                .setmTitle("找黄蓉")
-                .setmArticle("黄蓉这个臭丫头又和郭靖那个傻小子跑了，谁把她找回来，" +
-                        "本岛主重重有赏")
-                .setmTime("9分钟前")
-                .setmGet("9")
-                .setmDynamic_Photo(0)
-        );
-        mCircleList.add(new UCircle()
-                .setmPhotoId(R.drawable.user2)
-                .setmName("老顽童")
-                .setmTitle("寻找九阴真经")
-                .setmArticle("黄老邪和他鬼灵精怪的老婆把我师兄给我的九阴真经给骗走了！！！！")
-                .setmTime("10分钟前")
-                .setmGet("9")
-                .setmDynamic_Photo(0)
-        );
-        mCircleList.add(new UCircle()
-                .setmPhotoId(R.drawable.user3)
-                .setmName("杨康")
-                .setmTitle("报仇")
-                .setmArticle("完颜洪烈这个贼人，害我亲生父母，并且让我认贼作父20多年，我要杀了你")
-                .setmTime("11分钟前")
-                .setmGet("11")
-                .setmDynamic_Photo(0)
-        );
-        mCircleList.add(new UCircle()
-                .setmPhotoId(R.drawable.user4)
-                .setmName("郭靖")
-                .setmTitle("报杀父之仇")
-                .setmArticle("当年在牛家村，完颜洪烈指使贼人杀我亲父，我要报仇！！！！！")
-                .setmTime("100分钟前")
-                .setmGet("11")
-                .setmDynamic_Photo(R.drawable.kk)
-        );
-        mCircleList.add(new UCircle()
-                .setmPhotoId(R.drawable.user5)
-                .setmName("黄蓉")
-                .setmTitle("找郭靖")
-                .setmArticle("婧哥哥你去哪里蓉儿就去哪里")
-                .setmTime("9分钟前")
-                .setmGet("9")
-                .setmDynamic_Photo(0)
-        );
         mUCircleListAdapter = new UCircleListAdapter(this.getActivity(),mCircleList);
-        mlistView.setAdapter(mUCircleListAdapter);
-
+        getUCircleList();
         mlistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             UCircle Item = (UCircle) mUCircleListAdapter.getItem(position);
             Intent intent = new Intent(UCircleFragment.this.getActivity(), UcircleDetailActivity.class);
-                String photo = String.valueOf(Item.getmPhotoId());
+
+                String photo = Item.getmPhotoId();
                 intent.putExtra("photo",photo);
                 intent.putExtra("publisher_name",Item.getmName());
                 intent.putExtra("Title",Item.getmTitle());
                 intent.putExtra("article",Item.getmArticle());
-                String dynamic_photo = String.valueOf(Item.getmDynamic_Photo());
-                intent.putExtra("dynamic_photo",dynamic_photo);
+                String dynamic_photo1 = Item.getmDynamic_Photo1();
+                String dynamic_photo2 = Item.getmDynamic_Photo2();
+                String dynamic_photo3 = Item.getmDynamic_Photo3();
+                intent.putExtra("dynamic_photo1",dynamic_photo1);
+                intent.putExtra("dynamic_photo2",dynamic_photo2);
+                intent.putExtra("dynamic_photo3",dynamic_photo3);
                 intent.putExtra("publish_time",Item.getmTime());
                 intent.putExtra("Get_zan",Item.getmGet());
                 startActivity(intent);
@@ -114,11 +117,12 @@ public class UCircleFragment extends Fragment implements View.OnClickListener{
         switch (view.getId())
         {
             case R.id.u_circle_button:
-            {
+
                 Intent i = new Intent(UCircleFragment.this.getActivity(),ReleasedUcircleActivity.class);
                 startActivity(i);
                 break;
-            }
+            default:
+                break;
         }
     }
     public void init(View v)
@@ -127,5 +131,26 @@ public class UCircleFragment extends Fragment implements View.OnClickListener{
         mAddButton = (Button) v.findViewById(R.id.u_circle_button);
         mAddButton.setOnClickListener(this);
     }
-
+    public void getUCircleList()
+    {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try
+                {
+                    JSONArray jsonArray = ServerAccessApi.getUCicleList();
+                    if(jsonArray.length() > 0)
+                    {
+                        Message msg = new Message();
+                        msg.obj = jsonArray;
+                        msg.what = 1;
+                        handler.sendMessage(msg);
+                    }
+                }catch (UServerAccessException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
 }

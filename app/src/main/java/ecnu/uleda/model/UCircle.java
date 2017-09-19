@@ -1,18 +1,26 @@
 package ecnu.uleda.model;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import ecnu.uleda.tool.UPublicTool;
+
 /**
  * Created by 胡楠 on 2017/1/24.
  */
 
 public class UCircle {
 
-    private   int mPhotoId;
+    private   String mPhotoId;
     private   String mName ;
     private   String mTitle;
     private   String mArticle ;
     private   String mTime ;
     private   String mGet ;
-    private   int mDynamic_Photo;
+    private   String mDynamic_Photo1;
+    private   String mDynamic_Photo2;
+    private   String mDynamic_Photo3;
 
     public String getmName() {
         return mName;
@@ -25,15 +33,33 @@ public class UCircle {
 
 
 
-    public int getmDynamic_Photo() {
-        return mDynamic_Photo;
+    public String  getmDynamic_Photo1() {
+        return mDynamic_Photo1;
     }
+    public String  getmDynamic_Photo2() {
+        return mDynamic_Photo2;
+    }
+    public String  getmDynamic_Photo3() {
+        return mDynamic_Photo3;
+    }
+    public UCircle setmDynamic_Photo1(String mDynamic_Photo) {
 
-    public UCircle setmDynamic_Photo(int mDynamic_Photo) {
-        this.mDynamic_Photo = mDynamic_Photo;
+            this.mDynamic_Photo1 = mDynamic_Photo;
+
         return this;
     }
+    public UCircle setmDynamic_Photo2(String mDynamic_Photo) {
 
+        this.mDynamic_Photo2 = mDynamic_Photo;
+
+        return this;
+    }
+    public UCircle setmDynamic_Photo3(String mDynamic_Photo) {
+
+        this.mDynamic_Photo3 = mDynamic_Photo;
+
+        return this;
+    }
     public String getmGet() {
         return mGet;
     }
@@ -44,7 +70,8 @@ public class UCircle {
     }
 
     public String getmTime() {
-        return mTime;
+        long Timeout = Long.parseLong(mTime);
+     return UPublicTool.dateToTimeBefore(new Date(Timeout * 1000));
     }
 
     public UCircle setmTime(String mTime) {
@@ -70,11 +97,11 @@ public class UCircle {
         return this;
     }
 
-    public int getmPhotoId() {
+    public String getmPhotoId() {
         return mPhotoId;
     }
 
-    public UCircle setmPhotoId(int mPhotoId) {
+    public UCircle setmPhotoId(String mPhotoId) {
         this.mPhotoId = mPhotoId;
         return this;
     }
