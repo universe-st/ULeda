@@ -30,12 +30,12 @@ public class Chart extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
 
-        setContentView(R.layout.activity_chart);
+        setContentView(R.layout.activity_chat);
 
         initMsgs();
         adapter = new MsgAdapter(Chart.this, R.layout.msg_item, msgList);
         inputText = (EditText)findViewById(R.id.input_text);
-        send = (Button)findViewById(R.id.chart_send);
+        send = (Button)findViewById(R.id.chat_send);
         msgListView = (ListView)findViewById(R.id.chart_list_view);
         msgListView.setAdapter(adapter);
         send.setOnClickListener(new View.OnClickListener() {

@@ -8,7 +8,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.tencent.imsdk.TIMConversation;
@@ -18,8 +20,12 @@ import com.tencent.imsdk.TIMMessage;
 import com.tencent.imsdk.TIMTextElem;
 import com.tencent.imsdk.TIMValueCallBack;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ecnu.uleda.R;
 import ecnu.uleda.function_module.UserOperatorController;
+import ecnu.uleda.model.Message;
 import ecnu.uleda.model.UserInfo;
 
 /**
@@ -35,7 +41,13 @@ public class SendMessageActivity extends AppCompatActivity {
     private View view;
     private TextView title;
     private EditText input;
+    private Button mButtonSendMessage;
     private TIMConversation mConversation;
+
+    private List<Message> messageList = new ArrayList<>();
+    private ChatAdapter adapter;
+    private ListView listView;
+//    private ChatPresenter presenter;
 
 
     @Override
