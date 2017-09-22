@@ -5,6 +5,8 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,18 +26,27 @@ import com.tencent.imsdk.ext.sns.TIMFriendResult;
 import com.tencent.imsdk.ext.sns.TIMFriendStatus;
 import com.tencent.imsdk.ext.sns.TIMFriendshipManagerExt;
 
-import org.greenrobot.eventbus.EventBus;
+import net.phalapi.sdk.PhalApiClient;
+import net.phalapi.sdk.PhalApiClientResponse;
 
+import org.greenrobot.eventbus.EventBus;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
 import butterknife.OnClick;
+import ecnu.uleda.BuildConfig;
 import ecnu.uleda.R;
 import ecnu.uleda.exception.UServerAccessException;
 import ecnu.uleda.model.UserInfo;
 import ecnu.uleda.function_module.UserOperatorController;
+import ecnu.uleda.tool.UPublicTool;
 import ecnu.uleda.view_controller.message.MessageFragmentRightFragment;
 import ecnu.uleda.view_controller.message.SendMessageActivity;
 
@@ -46,12 +57,38 @@ public class SingleUserInfoActivity extends AppCompatActivity {
     private Handler mHandler=new Handler(){
         @Override
         public void handleMessage(Message msg){
-            if(msg.what==0){
-                putInformation();
-            }else{
-                UServerAccessException exception=(UServerAccessException)msg.obj;
-                Toast.makeText(SingleUserInfoActivity.this,"获取信息失败："+exception.getMessage(),Toast.LENGTH_SHORT).show();
+            switch (msg.what)
+            {
+                case 0:
+                    putInformation();
+                    break;
+                case 1:
+                {
+                    String ret = (String) msg.obj;
+                    if(ret == ADD_FRIEND_SUCCESS)
+                        Toast.makeText(SingleUserInfoActivity.this,"添加好友成功～",Toast.LENGTH_SHORT).show();
+                    else if(ret==ADD_FRIEND_ALREADY)
+                        Toast.makeText(SingleUserInfoActivity.this,"您已经添加过该好友～",Toast.LENGTH_SHORT).show();
+                    else if(ret==ADD_FRIEND_NOT_FOUND)
+                        Toast.makeText(SingleUserInfoActivity.this,"抱歉～该用户不存在",Toast.LENGTH_SHORT).show();
+                    else if(ret==ADD_FRIEND_NOT_MYSELF)
+                        Toast.makeText(SingleUserInfoActivity.this,"不可以添加自己哦～",Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(SingleUserInfoActivity.this,"添加好友失败！",Toast.LENGTH_SHORT).show();
+                    break;
+                }
+                default:
+                {
+                    UServerAccessException exception=(UServerAccessException)msg.obj;
+                    Toast.makeText(SingleUserInfoActivity.this,"获取信息失败："+exception.getMessage(),Toast.LENGTH_SHORT).show();
+                    break;
+                }
+
             }
+//            else{
+//                UServerAccessException exception=(UServerAccessException)msg.obj;
+//                Toast.makeText(SingleUserInfoActivity.this,"获取信息失败："+exception.getMessage(),Toast.LENGTH_SHORT).show();
+//            }
         }
     };
     private TextView textViewUserName;
@@ -65,6 +102,12 @@ public class SingleUserInfoActivity extends AppCompatActivity {
     private Button buttonAddUser;
     private Button buttonSendmsg;
     private String tag = "SingleUserInfoActivity";
+    private static final String ADD_FRIEND_SUCCESS="success";
+    private static final String ADD_FRIEND_ALREADY="already";
+    private static final String ADD_FRIEND_NOT_FOUND="notFound";
+    private static final String ADD_FRIEND_NOT_MYSELF="notMyself";
+    private static final String ADD_FRIEND_FAILED="failed";
+
 
     private void putInformation(){
         //将用户信息显示在屏幕上
@@ -223,33 +266,93 @@ public class SingleUserInfoActivity extends AppCompatActivity {
 
     void onAddFriends()
     {
-        //创建请求列表
-        List<TIMAddFriendRequest> reqList = new ArrayList<TIMAddFriendRequest>();
-//添加好友请求
-        TIMAddFriendRequest req = new TIMAddFriendRequest(mUserInfo.getId());//identifier
-//        req.setIdentifier(mSearchIdentifier);
-//        req.setAddrSource("AddSource_Type_Android");
-//        req.setAddWording("add me");
-//        req.setRemark("Cat");
-        reqList.add(req);
+//        //创建请求列表
+//        List<TIMAddFriendRequest> reqList = new ArrayList<TIMAddFriendRequest>();
+////添加好友请求
+//        TIMAddFriendRequest req = new TIMAddFriendRequest(mUserInfo.getId());//identifier
+////        req.setIdentifier(mSearchIdentifier);
+////        req.setAddrSource("AddSource_Type_Android");
+////        req.setAddWording("add me");
+////        req.setRemark("Cat");
+//        reqList.add(req);
+//
+////申请添加好友
+//        TIMFriendshipManagerExt.getInstance().addFriend(reqList, new TIMValueCallBack<List<TIMFriendResult>>() {
+//            @Override
+//            public void onError(int code, String desc){
+//                //错误码code和错误描述desc，可用于定位请求失败原因
+//                //错误码code列表请参见错误码表
+//                Log.e(tag, "addFriend failed: " + code + " desc");
+//            }
+//            @Override
+//            public void onSuccess(List<TIMFriendResult> result){
+//                Log.e(tag, "addFriend succ");
+//                //EventBus.getDefault().post(new MessageFragmentRightFragment.FriendRefreshEvent(){});
+//                for(TIMFriendResult res : result){
+//                    Log.e(tag, "identifier: " + res.getIdentifer() + " status: " + res.getStatus());
+//                }
+//            }
+//        });
 
-//申请添加好友
-        TIMFriendshipManagerExt.getInstance().addFriend(reqList, new TIMValueCallBack<List<TIMFriendResult>>() {
+        new Thread(new Runnable() {
             @Override
-            public void onError(int code, String desc){
-                //错误码code和错误描述desc，可用于定位请求失败原因
-                //错误码code列表请参见错误码表
-                Log.e(tag, "addFriend failed: " + code + " desc");
-            }
-            @Override
-            public void onSuccess(List<TIMFriendResult> result){
-                Log.e(tag, "addFriend succ");
-                //EventBus.getDefault().post(new MessageFragmentRightFragment.FriendRefreshEvent(){});
-                for(TIMFriendResult res : result){
-                    Log.e(tag, "identifier: " + res.getIdentifer() + " status: " + res.getStatus());
+            public void run() {
+                try
+                {
+                    String ret = onAddFriend(mUserInfo.getId());
+                    Message msg = new Message();
+                    msg.what = 1;
+                    msg.obj = ret;
+                    mHandler.sendMessage(msg);
+                }catch (UServerAccessException e)
+                {
+                    e.printStackTrace();
                 }
+
+
             }
-        });
+        }).start();
+    }
+
+
+    public static String onAddFriend(@NonNull String inviteByID )throws UServerAccessException{
+        UserOperatorController user = UserOperatorController.getInstance();
+        String id = user.getId();
+        id = UrlEncode(id);
+        String passport = user.getPassport();
+        passport = UrlEncode(passport);
+        PhalApiClient client=createClient();
+        PhalApiClientResponse response=client
+                .withService("User.InviteFriend")//接口的名称
+                .withParams("id",id)
+                .withParams("passport",passport)
+                .withParams("inviteByID",inviteByID)
+                .request();
+        if(response.getRet()==200) {
+            try{
+                JSONObject data=new JSONObject(response.getData());
+                return ADD_FRIEND_SUCCESS;// "success"
+            }catch (JSONException e){
+                Log.e("ServerAccessApi",e.toString());
+                //数据包无法解析，向上抛出一个异常
+                throw new UServerAccessException(UServerAccessException.ERROR_DATA);
+            }
+        }
+        else if(response.getRet()==410)
+        {
+            return ADD_FRIEND_ALREADY;
+        }
+        else if(response.getRet()==408)
+        {
+            return ADD_FRIEND_NOT_FOUND;
+        }
+        else if(response.getRet()==409)
+        {
+            return ADD_FRIEND_NOT_MYSELF;
+        }
+        else {
+            throw new UServerAccessException(response.getRet());
+        }
     }
 
     void onDelFriends()
@@ -282,5 +385,21 @@ public class SingleUserInfoActivity extends AppCompatActivity {
         });
     }
 
+
+    private static String UrlEncode(String str)throws UServerAccessException{
+        try{
+            if(str==null)return null;
+            return URLEncoder.encode(str,"UTF-8");
+        }catch (UnsupportedEncodingException e){
+            e.printStackTrace();
+            throw new UServerAccessException(UServerAccessException.PARAMS_ERROR);
+        }
+    }
+
+    private static PhalApiClient createClient(){
+        //这个函数创造一个客户端实例
+        return PhalApiClient.create()
+                .withHost("http://118.89.156.167/mobile/");
+    }
 
 }
