@@ -178,6 +178,7 @@ public class ServerAccessApi {
                 .request();
         if(response.getRet()==200){
             try {
+                Log.e("TaskDetailsActivity", response.getData());
                 return new JSONObject(response.getData());
             }catch (JSONException e){
                 e.printStackTrace();
@@ -194,6 +195,7 @@ public class ServerAccessApi {
         passport = UrlEncode(passport);
         postID = UrlEncode(postID);
         verifyID = UrlEncode(verifyID);
+        Log.e("ServerAccessApi", "id = " + id + ", passport = " + passport + ", postID = " + postID + ", verifyID = " + verifyID);
         return createClient()
                 .withService("Task.VerifyTaker")
                 .withParams("id", id)
@@ -306,6 +308,34 @@ public class ServerAccessApi {
             //网络访问失败，抛出一个网络异常
             throw new UServerAccessException(response.getRet());
         }
+    }
+
+    public static PhalApiClientResponse verifyFinish(@NonNull String id, @NonNull String passport,
+                                      @NonNull String postID) throws UServerAccessException {
+        id=UrlEncode(id);
+        passport = UrlEncode(passport);
+        Log.e("TaskDetailsActivity", "id = " + id + ", passport = " + passport + ", postID = " + postID);
+        return createClient()
+                .withService("Task.VerifyFinish")
+                .withParams("id", id)
+                .withParams("passport", passport)
+                .withParams("postID", postID)
+                .withTimeout(SET_TIME_OUT)
+                .request();
+    }
+
+    public static PhalApiClientResponse finishTask(@NonNull String id, @NonNull String passport,
+                                                   @NonNull String postID) throws UServerAccessException {
+        id=UrlEncode(id);
+        passport = UrlEncode(passport);
+        Log.e("TaskDetailsActivity", "id = " + id + ", passport = " + passport + ", postID = " + postID);
+        return createClient()
+                .withService("Task.FinishTask")
+                .withParams("id", id)
+                .withParams("passport", passport)
+                .withParams("postID", postID)
+                .withTimeout(SET_TIME_OUT)
+                .request();
     }
 
     public static JSONArray getUserTasks(@NonNull String id,@NonNull String passport,int page,int flag)throws UServerAccessException{
@@ -449,6 +479,7 @@ public class ServerAccessApi {
                 .withTimeout(SET_TIME_OUT)
                 .request();
         if(response.getRet()==200){//200的意思是正常返回
+            Log.e("TaskDetailsActivity", "successful release: " + response.getData());
             try{
                 JSONObject data=new JSONObject(response.getData());
                 return data.getString("postID");
@@ -459,6 +490,7 @@ public class ServerAccessApi {
             }
         }else{
             //网络访问失败，抛出一个网络异常
+            Log.e("TaskDetailsActivity", "fail release: " + response.getMsg());
             throw new UServerAccessException(response.getRet());
         }
     }
@@ -564,7 +596,6 @@ public class ServerAccessApi {
                 .withTimeout(SET_TIME_OUT)
                 .request();
         if(response.getRet() == 200) {
-            Log.e("haha", UrlDecode(response.getData()));
             try{
                 JSONObject data = new JSONObject(response.getData());
                 return data.getString("act_id");
@@ -575,6 +606,7 @@ public class ServerAccessApi {
             }
         }else{
             //网络访问失败，抛出一个网络异常
+            Log.e("TaskDetailsActivity", "fail: " + response.getMsg());
             throw new UServerAccessException(response.getRet());
         }
     }

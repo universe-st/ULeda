@@ -388,4 +388,22 @@ public class UTaskManager {
             return ServerAccessApi.cancelTask(postID);
         }
     }
+
+    public PhalApiClientResponse verifyFinish(String postID) throws UServerAccessException {
+        UserOperatorController uoc = UserOperatorController.getInstance();
+        if (!uoc.getIsLogined()) {
+            throw new UServerAccessException(UServerAccessException.UN_LOGIN);
+        } else {
+            return ServerAccessApi.verifyFinish(uoc.getId(), uoc.getPassport(), postID);
+        }
+    }
+
+    public PhalApiClientResponse finishTask(String postID) throws UServerAccessException {
+        UserOperatorController uoc = UserOperatorController.getInstance();
+        if (!uoc.getIsLogined()) {
+            throw new UServerAccessException(UServerAccessException.UN_LOGIN);
+        } else {
+            return ServerAccessApi.finishTask(uoc.getId(), uoc.getPassport(), postID);
+        }
+    }
 }
