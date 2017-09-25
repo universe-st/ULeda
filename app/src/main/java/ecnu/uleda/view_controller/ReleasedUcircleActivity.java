@@ -110,14 +110,7 @@ public class ReleasedUcircleActivity extends Activity implements AdapterView.OnI
             public void onClick(View v) {
                 Bimp.tempSelectBitmap.clear();
                 Bimp.max = 0;
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        Intent intent=new Intent(ReleasedUcircleActivity.this,UCircleFragment.class);
-                        startActivity(intent);
-                    }
-                }).start();
+                finish();
             }
         });
         bt1.setOnClickListener(new View.OnClickListener() {
