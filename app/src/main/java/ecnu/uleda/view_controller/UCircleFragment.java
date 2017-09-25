@@ -37,7 +37,6 @@ import ecnu.uleda.view_controller.widgets.UcircleDetailActivity;
  */
 
 public class UCircleFragment extends Fragment implements View.OnClickListener{
-
     private ListView mlistView;
     private ArrayList<UCircle> mCircleList  = new ArrayList<>();
     private Button mAddButton;
