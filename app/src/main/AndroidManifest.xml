@@ -133,6 +133,15 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:windowSoftInputMode="stateHidden|adjustResize"/>
+
+        <activity android:name=".view_controller.AlbumActivity"
+            android:theme="@style/AppTheme"/>
+        <activity android:name=".view_controller.ImageFile"
+            android:theme="@style/AppTheme"/>
+        <activity android:name=".view_controller.ShowAllPhoto"
+            android:theme="@style/AppTheme"/>
+
+
         <!-- 会话列表 -->
         <!-- 聚合会话列表 -->
         <!-- 会话界面 -->

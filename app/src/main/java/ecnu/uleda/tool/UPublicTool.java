@@ -21,6 +21,7 @@ import java.util.Date;
 public class UPublicTool {
 
     public static final String SERVICE_PHONE_NUMBER = "10086";
+    public static final String BASE_URL_AVATAR = "http://118.89.156.167/uploads/avatars/";
 
     public static String parseTime(long second) {
         int mi = 60;
@@ -52,7 +53,9 @@ public class UPublicTool {
     public static String timeLeft(Date date){
         Date now = new Date();
         long timeLeft=(date.getTime()-now.getTime())/1000;
-        if(timeLeft<60){
+        if (timeLeft < 0) {
+            return "已失效";
+        } else if(timeLeft<60){
             return timeLeft+"秒";
         }
         if(timeLeft/60 < 60){

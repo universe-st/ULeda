@@ -21,7 +21,7 @@ import ecnu.uleda.BuildConfig;
 import ecnu.uleda.tool.AESUtils;
 import ecnu.uleda.tool.MD5Utils;
 
-import ecnu.uleda.model.UActivity;
+
 
 import ecnu.uleda.tool.UPublicTool;
 import ecnu.uleda.exception.UServerAccessException;
@@ -114,36 +114,46 @@ public class ServerAccessApi {
             throw new UServerAccessException(response.getRet());
         }
     }
-    public static JSONArray getUCicleList() throws UServerAccessException
-    {
+    public static JSONArray getUCicleList() throws UServerAccessException {
         UserOperatorController user = UserOperatorController.getInstance();
         String Id = user.getId();
         String passport = user.getPassport();
         Id = UrlEncode(Id);
         passport = UrlEncode(passport);
-        PhalApiClient client=createClient();
+        PhalApiClient client = createClient();
         PhalApiClientResponse response = client
-                        .withService("UCircle.GetList")
-                .withParams("id",Id)
-                .withParams("passport",passport)
+                .withService("UCircle.GetList")
+                .withParams("id", Id)
+                .withParams("passport", passport)
                 .withTimeout(SET_TIME_OUT)
                 .request();
-        if(response.getRet() == 200)
-        {
+        if (response.getRet() == 200) {
             try {
                 JSONArray info = new JSONArray(response.getData());
-                return  info;
-            }catch (JSONException e)
-            {
-                Log.e("ServerAccessApi",e.toString());
+                return info;
+            } catch (JSONException e) {
+                Log.e("ServerAccessApi", e.toString());
                 //数据包无法解析，向上抛出一个异常
                 throw new UServerAccessException(UServerAccessException.ERROR_DATA);
             }
-        }
-        else
-        {
+        } else {
             throw new UServerAccessException(response.getRet());
         }
+    }
+
+    public static PhalApiClientResponse cancelTask(@NonNull String postID) throws UServerAccessException {
+        UserOperatorController user = UserOperatorController.getInstance();
+        String id = user.getId();
+        id = UrlEncode(id);
+        String passport = user.getPassport();
+        passport = UrlEncode(passport);
+        postID = UrlEncode(postID);
+        return createClient().withService("Task.Cancel")
+                .withParams("id", id)
+                .withParams("passport", passport)
+                .withParams("postID", postID)
+                .withTimeout(SET_TIME_OUT)
+                .request();
     }
     public static String getLoginToken(@NonNull String userName)throws UServerAccessException{
         //断言，保证传入参数的正确性，在DEBUG模式下才启用。
@@ -197,6 +207,22 @@ public class ServerAccessApi {
         }else{
             throw new UServerAccessException(response.getRet());
         }
+    }
+
+    public static PhalApiClientResponse verifyTaker(@NonNull String id, @NonNull String passport,
+                                                    @NonNull String postID, @NonNull String verifyID) throws UServerAccessException {
+        id = UrlEncode(id);
+        passport = UrlEncode(passport);
+        postID = UrlEncode(postID);
+        verifyID = UrlEncode(verifyID);
+        return createClient()
+                .withService("Task.VerifyTaker")
+                .withParams("id", id)
+                .withParams("passport", passport)
+                .withParams("postID", postID)
+                .withParams("verifyID", verifyID)
+                .withTimeout(SET_TIME_OUT)
+                .request();
     }
 
 
@@ -664,7 +690,7 @@ public class ServerAccessApi {
         if(response.getRet()==200){
             return "success";
         }else{
-            throw new UServerAccessException(response.getRet());
+            return response.getMsg();
         }
     }
     public static String getPicture(@NonNull String id,@NonNull String passport,int picId)throws UServerAccessException{

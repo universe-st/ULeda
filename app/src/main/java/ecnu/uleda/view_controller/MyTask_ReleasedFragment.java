@@ -1,55 +1,109 @@
 package ecnu.uleda.view_controller;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.Toast;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-
 import ecnu.uleda.R;
 import ecnu.uleda.exception.UServerAccessException;
 import ecnu.uleda.function_module.ServerAccessApi;
-import ecnu.uleda.function_module.UserOperatorController;
 import ecnu.uleda.model.MyOrder;
 import ecnu.uleda.model.UTask;
-import ecnu.uleda.view_controller.MyOrderAdapter;
+import ecnu.uleda.tool.RecyclerViewTouchListener;
 import ecnu.uleda.view_controller.task.activity.TaskDetailsActivity;
-import ecnu.uleda.view_controller.task.adapter.TaskListAdapter;
-
-
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 public class MyTask_ReleasedFragment extends Fragment {
-
-    private ListView mlistView;
+    private RecyclerView mRecyclerView;
     private List<MyOrder> releasedList = new ArrayList<>();
     private MyOrderAdapter mMyOrderAdapter;
-    private int Index = 0;
+    private int index = 0;
+    private boolean hasMoreTask = true;
     private Handler handler = new Handler(){
         public void handleMessage(Message msg)
         {
             switch (msg.what)
             {
-                case 1:
-                        JSONArray jsonArray = (JSONArray)msg.obj;
-                        for(int i = 0;i < jsonArray.length();i++)
-                        {
-                            try
-                            {
+                case 2:
+                    Intent intent = new Intent(getActivity().getApplication(),TaskDetailsActivity.class);
+                    UTask utask = (UTask)msg.obj;
+                    intent.putExtra("UTask",utask);
+                    startActivity(intent);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+    public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle b) {
+        View v = inflater.inflate(R.layout.fragment_my_task__released, parent, false);
+        mRecyclerView = (RecyclerView) v.findViewById(R.id.list_view);
+        mMyOrderAdapter = new MyOrderAdapter(this.getActivity().getApplicationContext(), releasedList);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        mRecyclerView.setAdapter(mMyOrderAdapter);
+        mRecyclerView.addOnItemTouchListener(new RecyclerViewTouchListener(mRecyclerView) {
+            @Override
+            public void onItemClick(int position, RecyclerView.ViewHolder viewHolder) {
+                getTask(position);
+            }
+            @Override
+            public void onItemLongClick(int position, RecyclerView.ViewHolder viewHolder) {
+            }
+        });
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    if (!ViewCompat.canScrollVertically(recyclerView, 1) && hasMoreTask) {
+                        index++;
+                        getReleasedUserTask();
+                    }
+                }
+            }
+        });
+        return v;
+    }
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        getReleasedUserTask();
+    }
+    private void getReleasedUserTask() {
+        hasMoreTask = false; // 避免正在网络请求时再次触发"加载更多"
+        Observable.create(new ObservableOnSubscribe<JSONArray>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<JSONArray> e) throws Exception {
+                e.onNext(ServerAccessApi.getUserTask(index, 0));
+                e.onComplete();
+            }
+        })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Consumer<JSONArray>() {
+                    @Override
+                    public void accept(JSONArray jsonArray) throws Exception {
+                        int length = jsonArray.length();
+                        if (index == 0) releasedList.clear();
+                        for (int i = 0; i < length; i++) {
+                            try {
                                 JSONObject json = jsonArray.getJSONObject(i);
                                 releasedList.add(new MyOrder()
                                         .setTag(json.getString("tag"))
@@ -61,80 +115,16 @@ public class MyTask_ReleasedFragment extends Fragment {
                                         .setPrice(BigDecimal.valueOf(Double.parseDouble(json.getString("price"))))
                                         .setPath(json.getString("path"))
                                 );
-                            }catch (JSONException e) {
+                            } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         }
-                    mMyOrderAdapter.notifyDataSetChanged();
-                    mlistView.setAdapter(mMyOrderAdapter);
-                        break;
-                case 2:
-                    Intent intent = new Intent(getActivity().getApplication(),TaskDetailsActivity.class);
-                    UTask utask = (UTask)msg.obj;
-                    intent.putExtra("UTask",utask);
-                    startActivity(intent);
-                    break;
-                default:
-                        break;
-            }
-        }
-    };
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-    public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle b) {
-        View v=inflater.inflate(R.layout.fragment_my_task__released,parent,false);
-        mlistView = (ListView) v.findViewById(R.id.list_view);
-        mMyOrderAdapter = new MyOrderAdapter(this.getActivity(),releasedList);
-        loadUserData();
-        mlistView.setOnScrollListener(new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-                if(mlistView.getLastVisiblePosition() == mlistView.getCount() - 1)
-                {
-                    Index++;
-                    loadUserData();
-                }
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
-            }
-        });
-        mlistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                getTask(position);
-            }
-        });
-        return v;
-    }
-    public void loadUserData()
-    {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try
-                {
-                    JSONArray jsonArray = ServerAccessApi.getUserTask(Index,0);
-                    if(jsonArray.length() > 0)
-                    {
-                        Message msg = new Message();
-                        msg.what = 1;
-                        msg.obj = jsonArray;
-                        handler.sendMessage(msg);
+                        mMyOrderAdapter.notifyDataSetChanged();
+                        if (length > 0) hasMoreTask = true; // 如果加载到了数据，说明可能还有更多
                     }
-                }catch (UServerAccessException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+                });
     }
-    public void  getTask(final int position)
+    public void getTask(final int position)
     {
         new Thread(new Runnable() {
             @Override
