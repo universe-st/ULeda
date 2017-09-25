@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import ecnu.uleda.R;
 import ecnu.uleda.model.UCircle;
 import ecnu.uleda.view_controller.UCircleListAdapter;
@@ -25,7 +26,7 @@ public class UcircleDetailActivity extends AppCompatActivity implements View.OnC
         init();
     }
 
-    private ImageView mphotoImageView;
+    private CircleImageView mphotoImageView;
     private TextView mpublisher_nameTextView;
     private TextView mTitleTextView;
     private TextView marticleTextView;
@@ -39,7 +40,7 @@ public class UcircleDetailActivity extends AppCompatActivity implements View.OnC
     {
         mBack = (TextView) findViewById(R.id.back);
         mBack.setOnClickListener(this);
-        mphotoImageView = (ImageView) findViewById(R.id.photo);
+        mphotoImageView = (CircleImageView) findViewById(R.id.photo);
         mpublisher_nameTextView = (TextView) findViewById(R.id.publisher_name);
         mTitleTextView = (TextView) findViewById(R.id.Title);
         marticleTextView  = (TextView) findViewById(R.id.article);
