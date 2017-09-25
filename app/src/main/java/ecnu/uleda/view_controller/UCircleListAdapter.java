@@ -14,7 +14,6 @@ import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import ecnu.uleda.R;
 import ecnu.uleda.model.UCircle;
 
@@ -39,7 +38,7 @@ public class UCircleListAdapter extends ArrayAdapter<UCircle> {
             view = LayoutInflater.from(getContext().getApplicationContext()).inflate(R.layout.u_circle_list_item,parent,false);
             viewHolder = new ViewHolder();
 
-            viewHolder.photoImage = (CircleImageView) view.findViewById(R.id.photo);
+            viewHolder.photoImage = (ImageView) view.findViewById(R.id.photo);
 
             viewHolder.publishername = (TextView) view.findViewById(R.id.publisher_name);
 
@@ -111,7 +110,7 @@ public class UCircleListAdapter extends ArrayAdapter<UCircle> {
     }
     class ViewHolder
     {
-        CircleImageView photoImage;
+        ImageView photoImage;
         TextView publishername;
         TextView title;
         TextView article;
