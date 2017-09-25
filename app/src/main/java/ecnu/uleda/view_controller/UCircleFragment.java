@@ -21,7 +21,6 @@ import ecnu.uleda.model.UCircle;
  */
 
 public class UCircleFragment extends Fragment implements View.OnClickListener{
-
     private ListView mlistView;
     private ArrayList<UCircle> mCircleList;
     private Button mAddButton;
