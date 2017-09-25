@@ -11,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.transition.TransitionInflater;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -109,6 +110,11 @@ public class MyTask_ReleasedFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
     private void getReleasedUserTask() {
         hasMoreTask = false; // 避免正在网络请求时再次触发"加载更多"
         Observable.create(new ObservableOnSubscribe<JSONArray>() {
@@ -159,5 +165,12 @@ public class MyTask_ReleasedFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         mMyOrderAdapter = null;
+    }
+
+    public void notifyItemRemoved(int taskPos) {
+        if (taskPos >= 0 && taskPos < releasedList.size()) {
+            releasedList.remove(taskPos);
+            mMyOrderAdapter.notifyItemRemoved(taskPos);
+        }
     }
 }

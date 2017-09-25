@@ -398,12 +398,13 @@ public class UTaskManager {
         }
     }
 
-    public PhalApiClientResponse finishTask(String postID) throws UServerAccessException {
+    public PhalApiClientResponse finishTask(String taskID) throws UServerAccessException {
         UserOperatorController uoc = UserOperatorController.getInstance();
         if (!uoc.getIsLogined()) {
             throw new UServerAccessException(UServerAccessException.UN_LOGIN);
         } else {
-            return ServerAccessApi.finishTask(uoc.getId(), uoc.getPassport(), postID);
+            Log.e("TaskDetailsActivity", "id = " + uoc.getId() + ", passport = " + uoc.getPassport() + ", taskID = " + taskID);
+            return ServerAccessApi.finishTask(uoc.getId(), uoc.getPassport(), taskID);
         }
     }
 }

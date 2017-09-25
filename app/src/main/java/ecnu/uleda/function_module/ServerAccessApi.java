@@ -311,15 +311,15 @@ public class ServerAccessApi {
     }
 
     public static PhalApiClientResponse verifyFinish(@NonNull String id, @NonNull String passport,
-                                      @NonNull String postID) throws UServerAccessException {
+                                      @NonNull String taskID) throws UServerAccessException {
         id=UrlEncode(id);
         passport = UrlEncode(passport);
-        Log.e("TaskDetailsActivity", "id = " + id + ", passport = " + passport + ", postID = " + postID);
+        Log.e("TaskDetailsActivity", "id = " + id + ", passport = " + passport + ", postID = " + taskID);
         return createClient()
                 .withService("Task.VerifyFinish")
                 .withParams("id", id)
                 .withParams("passport", passport)
-                .withParams("postID", postID)
+                .withParams("taskID", taskID)
                 .withTimeout(SET_TIME_OUT)
                 .request();
     }
@@ -328,7 +328,6 @@ public class ServerAccessApi {
                                                    @NonNull String postID) throws UServerAccessException {
         id=UrlEncode(id);
         passport = UrlEncode(passport);
-        Log.e("TaskDetailsActivity", "id = " + id + ", passport = " + passport + ", postID = " + postID);
         return createClient()
                 .withService("Task.FinishTask")
                 .withParams("id", id)

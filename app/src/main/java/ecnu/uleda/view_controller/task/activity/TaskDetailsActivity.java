@@ -64,6 +64,7 @@ import ecnu.uleda.exception.UServerAccessException;
 import ecnu.uleda.model.UTask;
 import ecnu.uleda.function_module.UserOperatorController;
 import ecnu.uleda.function_module.ServerAccessApi;
+import ecnu.uleda.view_controller.MyTaskInFo;
 import ecnu.uleda.view_controller.SingleUserInfoActivity;
 import ecnu.uleda.view_controller.TaskEditActivity;
 import ecnu.uleda.view_controller.task.adapter.TakersAdapter;
@@ -139,6 +140,8 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
     TextView mTakersNone;
 
     private ProgressDialog mProgress;
+
+    private int mFromMyTaskPosition;
 
     private ExecutorService mThreadPool;
     private LayoutInflater mInflater;
@@ -318,6 +321,11 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
                             mButtonRight.setEnabled(false);
                             mButtonRight.setBackgroundColor(ContextCompat.getColor(TaskDetailsActivity.this,
                                     android.R.color.darker_gray));
+                            if (mFromMyTaskPosition >= 0) {
+                                Intent intent = new Intent(MyTaskInFo.ACTION_REFRESH);
+                                intent.putExtra(MyTaskInFo.EXTRA_TASK_POS, mFromMyTaskPosition);
+                                sendBroadcast(intent);
+                            }
                         } else {
                             Log.e("TaskDetailsActivity", "msg: " + phalApiClientResponse.getMsg());
                             Toast.makeText(TaskDetailsActivity.this, "确认失败：" + phalApiClientResponse.getMsg(), Toast.LENGTH_SHORT).show();
@@ -486,7 +494,7 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
             public void subscribe(@NonNull ObservableEmitter<String> e) throws Exception {
                 Thread.sleep(500);
                 e.onNext(ServerAccessApi.getTakers(uoc.getId(),
-                        uoc.getPassport(), mTask.getPostID()));
+                            uoc.getPassport(), mTask.getPostID()));
             }
         })
                 .map(new Function<String, JSONArray>() {
@@ -524,6 +532,7 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
                                     }
                                     isTakenByUser = true;
                                 }
+                                if (mTask.getStatus() > 0 && Integer.parseInt(person.getString("taker_id")) != mTask.getTaker()) continue;
                                 info.setAvatar(UPublicTool.BASE_URL_AVATAR + personDetail.getString("avatar"))
                                         .setId(person.getString("taker_id"))
                                         .setUserName(personDetail.getString("username"))
@@ -616,7 +625,8 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
                             .setAuthorCredit(j.getInt("authorCredit"))
                             .setPostID(mTask.getPostID())
                             .setActiveTime(j.getLong("activetime"))
-                            .setStatus(j.getInt("status"));
+                            .setStatus(j.getInt("status"))
+                            .setTaker(j.getInt("taker"));
                     String[] ps = j.getString("position").split(",");
                     task.setPosition(
                             new LatLng(Double.parseDouble(ps[0]), Double.parseDouble(ps[1]))
@@ -888,6 +898,7 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
         setTitle("");
         Intent intent = getIntent();
         mTask = (UTask) intent.getSerializableExtra(EXTRA_UTASK);
+        mFromMyTaskPosition = intent.getIntExtra("position", -1);
         init();
         final UserOperatorController uoc = UserOperatorController.getInstance();
         mTencentMap = mMapView.getMap();
@@ -1004,6 +1015,7 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
                                 .setTakersCount(Integer.parseInt(json.getString("taker")));
                         Intent intent = new Intent(context, TaskDetailsActivity.class);
                         intent.putExtra("UTask", uTask);
+                        intent.putExtra("position", 10 * index + temp);
                         context.startActivity(intent);
                     }
                 }, new Consumer<Throwable>() {

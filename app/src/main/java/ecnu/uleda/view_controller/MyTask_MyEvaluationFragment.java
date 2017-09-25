@@ -139,4 +139,11 @@ public class MyTask_MyEvaluationFragment extends Fragment {
                     }
                 });
     }
+
+    public void notifyItemRemoved(int taskPos) {
+        if (taskPos >= 0 && taskPos < doneList.size()) {
+            doneList.remove(taskPos);
+            mAdapter.notifyItemRemoved(taskPos);
+        }
+    }
 }

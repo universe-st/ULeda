@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.transition.Explode;
 import android.transition.TransitionInflater;
 import android.transition.TransitionManager;
 import android.util.Log;
@@ -51,7 +50,7 @@ public class MyTask_DoingFragment extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_my_task__doing, parent, false);
         mRecyclerView = (RecyclerView) v.findViewById(R.id.doing_item);
-        mMydoingAdapter = new MydoingAdapter(this.getActivity().getApplicationContext(), doinglist);
+        mMydoingAdapter = new MydoingAdapter(getActivity().getApplicationContext(), doinglist);
         if (isOnce && isEmpty) mMydoingAdapter.setEmpty();
         mRecyclerView.setAdapter(mMydoingAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
@@ -139,6 +138,13 @@ public class MyTask_DoingFragment extends Fragment {
                         }
                     }
                 });
+    }
+
+    public void notifyItemRemoved(int taskPos) {
+        if (taskPos >= 0 && taskPos < doinglist.size()) {
+            doinglist.remove(taskPos);
+            mMydoingAdapter.notifyItemRemoved(taskPos);
+        }
     }
 
 }
