@@ -380,6 +380,30 @@ public class UTaskManager {
         }
     }
 
+    public PhalApiClientResponse giveUpTask(String postID) throws UServerAccessException {
+        UserOperatorController uoc = UserOperatorController.getInstance();
+        if (!uoc.getIsLogined()) {
+            throw new UServerAccessException(UServerAccessException.UN_LOGIN);
+        } else {
+            return ServerAccessApi.giveUpTask(
+                    uoc.getId(),
+                    uoc.getPassport(),
+                    postID);
+        }
+    }
+
+    public PhalApiClientResponse forceGiveUpTask(String postID) throws UServerAccessException {
+        UserOperatorController uoc = UserOperatorController.getInstance();
+        if (!uoc.getIsLogined()) {
+            throw new UServerAccessException(UServerAccessException.UN_LOGIN);
+        } else {
+            return ServerAccessApi.forceGiveUpTask(
+                    uoc.getId(),
+                    uoc.getPassport(),
+                    postID);
+        }
+    }
+
     public PhalApiClientResponse cancelTask(String postID) throws UServerAccessException {
         UserOperatorController uoc = UserOperatorController.getInstance();
         if (!uoc.getIsLogined()) {

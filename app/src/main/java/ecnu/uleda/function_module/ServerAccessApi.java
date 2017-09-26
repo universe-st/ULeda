@@ -206,6 +206,36 @@ public class ServerAccessApi {
                 .request();
     }
 
+    public static PhalApiClientResponse giveUpTask(@NonNull String id, @NonNull String passport,
+                                                   @NonNull String postID) throws UServerAccessException {
+        id = UrlEncode(id);
+        passport = UrlEncode(passport);
+        postID = UrlEncode(postID);
+        Log.e("ServiceAccessApi",  "id = " + id + ", passport = " + passport + ", postID = " + postID);
+        return createClient()
+                .withService("Task.GiveUpTask")
+                .withParams("id", id)
+                .withParams("passport", passport)
+                .withParams("postID", postID)
+                .withTimeout(SET_TIME_OUT)
+                .request();
+    }
+
+    public static PhalApiClientResponse forceGiveUpTask(@NonNull String id, @NonNull String passport,
+                                                        @NonNull String postID) throws UServerAccessException {
+        id = UrlEncode(id);
+        passport = UrlEncode(passport);
+        postID = UrlEncode(postID);
+        Log.e("ServiceAccessApi",  "id = " + id + ", passport = " + passport + ", postID = " + postID);
+        return createClient()
+                .withService("Task.ForceGiveUpTask")
+                .withParams("id", id)
+                .withParams("passport", passport)
+                .withParams("postID", postID)
+                .withTimeout(SET_TIME_OUT)
+                .request();
+    }
+
 
     public static String cancelTask(@NonNull String id,@NonNull String passport,@NonNull String postID)throws UServerAccessException{
 

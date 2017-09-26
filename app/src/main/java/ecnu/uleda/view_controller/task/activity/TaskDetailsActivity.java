@@ -69,6 +69,7 @@ import ecnu.uleda.view_controller.SingleUserInfoActivity;
 import ecnu.uleda.view_controller.TaskEditActivity;
 import ecnu.uleda.view_controller.task.adapter.TakersAdapter;
 import ecnu.uleda.view_controller.task.fragment.TaskMissionFragment;
+import ecnu.uleda.view_controller.widgets.BubblePopup;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -87,7 +88,9 @@ import me.xiaopan.sketch.shaper.CircleImageShaper;
 public class TaskDetailsActivity extends BaseDetailsActivity {
 
     public static final String EXTRA_UTASK = "UTask";
+
     private static final int REQUEST_EDIT = 1;
+
     private static final int MSG_REFRESH_SUCCESS = 0;
     private static final int MSG_REFRESH_FAIL = 1;
     private static final int MSG_COMMENT_GET = 2;
@@ -97,7 +100,11 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
     private static final int MSG_TAKERS_GET = 6;
     private static final int MSG_TASK_SUCCESS = 7;
     private static final int MSG_CANCEL_TAKE = 8;
+
     private static final int MENU_ITEM_DELETE = 100;
+    private static final int MENU_ITEM_DISPUTE = 101;
+    private static final int MENU_ITEM_REQUEST_CANCEL = 102;
+
     public static final String TAG = "TaskDetailsActivity";
     private UTask mTask;
     private TencentMap mTencentMap;
@@ -140,6 +147,7 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
     TextView mTakersNone;
 
     private ProgressDialog mProgress;
+    private BubblePopup mBubblePopup;
 
     private int mFromMyTaskPosition;
 
@@ -156,6 +164,7 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
                 mapInit();
                 initTaskData();
                 initTakers(UserOperatorController.getInstance());
+                invalidateOptionsMenu();
             } else if (msg.what == MSG_COMMENT_GET) {
                 addCommentView(mDetailContainer, 2);
             } else if (msg.what == MSG_COMMENT_SUCCESS) {
@@ -198,7 +207,7 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
                     });
                     break;
                 case 3:
-                    mButtonRight.setText("已完成");
+                    mButtonRight.setText("已结束");
                     mButtonRight.setBackgroundColor(ContextCompat.getColor(TaskDetailsActivity.this, android.R.color.darker_gray));
                     mButtonRight.setEnabled(false);
                     break;
@@ -221,7 +230,6 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
         } else if (mTask.getStatus() != 0) {
             switch (mTask.getStatus()) {
                 case 1:
-                case 2:
                     mButtonRight.setText("确认完成");
                     mButtonRight.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -230,8 +238,14 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
                         }
                     });
                     break;
+                case 2:
+                    mButtonRight.setText("待确认");
+                    mButtonRight.setBackgroundColor(ContextCompat.getColor(TaskDetailsActivity.this, android.R.color.darker_gray));
+                    mButtonRight.setEnabled(false);
+                    showBubble("等待发布者确认任务完成");
+                    break;
                 case 3:
-                    mButtonRight.setText("已完成");
+                    mButtonRight.setText("已结束");
                     mButtonRight.setBackgroundColor(ContextCompat.getColor(TaskDetailsActivity.this, android.R.color.darker_gray));
                     mButtonRight.setEnabled(false);
                     break;
@@ -317,7 +331,7 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
                     public void accept(PhalApiClientResponse phalApiClientResponse) throws Exception {
                         if (phalApiClientResponse.getRet() == 200 && phalApiClientResponse.getData().equals("success")) {
                             Toast.makeText(TaskDetailsActivity.this, "完成订单", Toast.LENGTH_SHORT).show();
-                            mButtonRight.setText("已完成");
+                            mButtonRight.setText("已结束");
                             mButtonRight.setEnabled(false);
                             mButtonRight.setBackgroundColor(ContextCompat.getColor(TaskDetailsActivity.this,
                                     android.R.color.darker_gray));
@@ -457,6 +471,16 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
     }
 
     @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+    }
+
+    private void showBubble(String content) {
+        mBubblePopup.setPromptText(content);
+        mBubblePopup.showAsDropDown(mButtonRight, 0, -(int)UPublicTool.dp2px(this, 8));
+    }
+
+    @Override
     public void onStop() {
         mMapView.onStop();
         mDisposables.clear();
@@ -478,12 +502,29 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (mTask.getAuthorID() == Integer.parseInt(UserOperatorController.getInstance().getId())
-                && mTask.getStatus() == 0) {
-            MenuItem menuItem = menu.add(0, MENU_ITEM_DELETE, 100, "删除");
-            menuItem.setIcon(R.drawable.ic_delete);
-            menuItem.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        if (mTask.getAuthorID() == Integer.parseInt(UserOperatorController.getInstance().getId())) {
+            switch (mTask.getStatus()) {
+                case 0:
+                    MenuItem deleteTaskMenu = menu.add(0, MENU_ITEM_DELETE, 100, "删除");
+                    deleteTaskMenu.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+                    return true;
+                case 1:
+                case 2:
+                    MenuItem disputeMenu = menu.add(0, MENU_ITEM_DISPUTE, 100, "发起纠纷");
+                    disputeMenu.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+                    return true;
+            }
             return true;
+        } else {
+            switch (mTask.getStatus()) {
+                case 1:
+                    MenuItem forceCancelMenu = menu.add(0, MENU_ITEM_REQUEST_CANCEL, 100, "取消任务");
+                    forceCancelMenu.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+                case 2:
+                    MenuItem disputeMenu = menu.add(0, MENU_ITEM_DISPUTE, 100, "发起纠纷");
+                    disputeMenu.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+                    return true;
+            }
         }
         return super.onCreateOptionsMenu(menu);
     }
@@ -744,6 +785,7 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
 
             }
         });
+        mBubblePopup = new BubblePopup(this);
     }
 
     private void verifyTaker(final int position) {
@@ -823,10 +865,114 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == MENU_ITEM_DELETE) {
-            cancelTask();
+        switch (item.getItemId()) {
+            case MENU_ITEM_DELETE:
+                cancelTask();
+                break;
+            case MENU_ITEM_REQUEST_CANCEL:
+                requestGiveUpTask();
+                break;
+
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void requestGiveUpTask() {
+        new AlertDialog.Builder(this)
+                .setTitle("确认操作")
+                .setMessage("请求取消需要发布者确认（不扣除信用分），强制取消无需确认，但将扣除您一定信用分，是否继续？")
+                .setNeutralButton("请求取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        friendlyGiveUp();
+                    }
+                })
+                .setNeutralButton("强制取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        forceGiveUp();
+                    }
+                })
+                .setNegativeButton("不取消了", null)
+                .create()
+                .show();
+    }
+
+    private void forceGiveUp() {
+        Observable.create(new ObservableOnSubscribe<PhalApiClientResponse>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<PhalApiClientResponse> e) throws Exception {
+                e.onNext(UTaskManager.getInstance().forceGiveUpTask(mTask.getPostID()));
+                e.onComplete();
+            }
+        })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<PhalApiClientResponse>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                        mDisposables.add(d);
+                    }
+
+                    @Override
+                    public void onNext(@NonNull PhalApiClientResponse response) {
+                        if (response.getRet() == 200 && response.getData().equals("success")) {
+                            Toast.makeText(TaskDetailsActivity.this, "强制取消成功", Toast.LENGTH_SHORT).show();
+                            mButtonRight.setText("已结束");
+                            mButtonRight.setEnabled(false);
+                            mButtonRight.setBackgroundColor(ContextCompat.getColor(TaskDetailsActivity.this, android.R.color.darker_gray));
+                        } else {
+                            Toast.makeText(TaskDetailsActivity.this, response.getMsg(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        Toast.makeText(TaskDetailsActivity.this, "申请取消失败：网络异常", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private void friendlyGiveUp() {
+        Observable.create(new ObservableOnSubscribe<PhalApiClientResponse>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<PhalApiClientResponse> e) throws Exception {
+                e.onNext(UTaskManager.getInstance().giveUpTask(mTask.getPostID()));
+                e.onComplete();
+            }
+        })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<PhalApiClientResponse>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                        mDisposables.add(d);
+                    }
+
+                    @Override
+                    public void onNext(@NonNull PhalApiClientResponse response) {
+                        if (response.getRet() == 200 && response.getData().equals("success")) {
+                            Toast.makeText(TaskDetailsActivity.this, "申请取消成功", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(TaskDetailsActivity.this, response.getMsg(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        Toast.makeText(TaskDetailsActivity.this, "申请取消失败：网络异常", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     @Override
