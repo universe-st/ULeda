@@ -14,14 +14,19 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -113,8 +118,6 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
 
     @BindView(R.id.head_line_layout)
     Toolbar mToolbar;
-    @BindView(R.id.task_tool_title)
-    TextView mHeadlineLayout;
     @BindView(R.id.task_map_view)
     MapView mMapView;
     @BindView(R.id.comment_bt)
@@ -150,6 +153,7 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
     private BubblePopup mBubblePopup;
 
     private int mFromMyTaskPosition;
+    private String mDisputeDesc;
 
     private ExecutorService mThreadPool;
     private LayoutInflater mInflater;
@@ -505,12 +509,12 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
         if (mTask.getAuthorID() == Integer.parseInt(UserOperatorController.getInstance().getId())) {
             switch (mTask.getStatus()) {
                 case 0:
-                    MenuItem deleteTaskMenu = menu.add(0, MENU_ITEM_DELETE, 100, "删除");
+                    MenuItem deleteTaskMenu = menu.add(Menu.NONE, MENU_ITEM_DELETE, 100, "删除");
                     deleteTaskMenu.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
                     return true;
                 case 1:
                 case 2:
-                    MenuItem disputeMenu = menu.add(0, MENU_ITEM_DISPUTE, 100, "发起纠纷");
+                    MenuItem disputeMenu = menu.add(Menu.NONE, MENU_ITEM_DISPUTE, 100, "发起纠纷");
                     disputeMenu.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
                     return true;
             }
@@ -518,10 +522,10 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
         } else {
             switch (mTask.getStatus()) {
                 case 1:
-                    MenuItem forceCancelMenu = menu.add(0, MENU_ITEM_REQUEST_CANCEL, 100, "取消任务");
+                    MenuItem forceCancelMenu = menu.add(Menu.NONE, MENU_ITEM_REQUEST_CANCEL, 101, "取消任务");
                     forceCancelMenu.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
                 case 2:
-                    MenuItem disputeMenu = menu.add(0, MENU_ITEM_DISPUTE, 100, "发起纠纷");
+                    MenuItem disputeMenu = menu.add(Menu.NONE, MENU_ITEM_DISPUTE, 102, "发起纠纷");
                     disputeMenu.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
                     return true;
             }
@@ -752,7 +756,7 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
 
 
     public void init() {
-        mHeadlineLayout.setText(mTask.getTitle());
+        setTitle(mTask.getTitle());
         mInflater = LayoutInflater.from(this);
         mProgress = new ProgressDialog(this);
         mProgress.setMessage("发布中...");
@@ -811,6 +815,8 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
                             String data = s.getData();
                             if (data.equals("success")) {
                                 Toast.makeText(TaskDetailsActivity.this, "选择接单人成功", Toast.LENGTH_SHORT).show();
+                                mTask.setStatus(1);
+                                invalidateOptionsMenu();
                                 takerChosen(position);
                             } else {
                                 Toast.makeText(TaskDetailsActivity.this, "选择接单人失败", Toast.LENGTH_SHORT).show();
@@ -872,9 +878,62 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
             case MENU_ITEM_REQUEST_CANCEL:
                 requestGiveUpTask();
                 break;
+            case MENU_ITEM_DISPUTE:
+                showDisputeDialog();
+                break;
 
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showDisputeDialog() {
+        final AlertDialog dialog = new AlertDialog.Builder(this).create();
+        dialog.show();
+        dialog.setContentView(R.layout.dialog_edit_dispute);
+        dialog.setCanceledOnTouchOutside(false);
+        Window dialogView = dialog.getWindow();
+        dialogView.clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+        final EditText disputeDescEdt = (EditText) dialogView.findViewById(R.id.id_dispute_desc);
+        Button cancelDispute = (Button) dialogView.findViewById(R.id.id_dispute_cancel);
+        final Button releaseDispute = (Button) dialogView.findViewById(R.id.id_dispute_release);
+        cancelDispute.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDisputeDesc = disputeDescEdt.getText().toString();
+                dialog.dismiss();
+            }
+        });
+        releaseDispute.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDisputeDesc = disputeDescEdt.getText().toString();
+                dialog.dismiss();
+                releaseDispute();
+            }
+        });
+        if (!TextUtils.isEmpty(mDisputeDesc)) {
+            disputeDescEdt.setText(mDisputeDesc);
+        }
+    }
+
+    private void releaseDispute() {
+        new AlertDialog.Builder(this)
+                .setTitle("确认发起")
+                .setMessage("一旦提交纠纷，就不能修改陈述了哦，是否确认？")
+                .setPositiveButton("是，发布", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // TODO 真正发布纠纷
+                    }
+                })
+                .setNegativeButton("返回编辑", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        showDisputeDialog();
+                    }
+                })
+                .create()
+                .show();
     }
 
     private void requestGiveUpTask() {
@@ -1041,7 +1100,7 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
     @Override
     public void initActivity(@Nullable Bundle savedInstanceState) {
         setSupportActionBar(mToolbar);
-        setTitle("");
+        setTitle("任务详情");
         Intent intent = getIntent();
         mTask = (UTask) intent.getSerializableExtra(EXTRA_UTASK);
         mFromMyTaskPosition = intent.getIntExtra("position", -1);
