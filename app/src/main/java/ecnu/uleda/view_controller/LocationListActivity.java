@@ -111,6 +111,7 @@ public class LocationListActivity extends AppCompatActivity {
     }
     private void searchPOIAndPut(){
         mButton.setEnabled(false);
+        mLocation.lat(31.228470f).lng(121.40640f); // 记得移除
         SearchParam.Nearby mNearBy = new SearchParam.Nearby().point(mLocation);
         mNearBy.r(5000);
         SearchParam object = new SearchParam().keyword(mKeyWord).boundary(mNearBy);

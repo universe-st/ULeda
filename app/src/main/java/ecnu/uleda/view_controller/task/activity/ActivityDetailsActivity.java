@@ -15,18 +15,22 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.os.Bundle;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.view.inputmethod.InputMethodManager;
@@ -34,6 +38,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.tencent.mapsdk.raster.model.BitmapDescriptorFactory;
 import com.tencent.mapsdk.raster.model.LatLng;
@@ -42,6 +47,8 @@ import com.tencent.mapsdk.raster.model.MarkerOptions;
 import com.tencent.tencentmap.mapsdk.map.MapView;
 import com.tencent.tencentmap.mapsdk.map.TencentMap;
 import com.tencent.tencentmap.mapsdk.map.UiSettings;
+
+import net.phalapi.sdk.PhalApiClientResponse;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,6 +63,7 @@ import java.util.concurrent.Executors;
 import butterknife.BindView;
 import butterknife.OnClick;
 import ecnu.uleda.R;
+import ecnu.uleda.function_module.ServerAccessApi;
 import ecnu.uleda.function_module.UserOperatorController;
 import ecnu.uleda.model.UActivity;
 import ecnu.uleda.model.UserInfo;
@@ -63,6 +71,13 @@ import ecnu.uleda.tool.UPublicTool;
 import ecnu.uleda.view_controller.CommonBigImageActivity;
 import ecnu.uleda.view_controller.task.adapter.TakersAdapter;
 import ecnu.uleda.view_controller.widgets.BannerView;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import me.xiaopan.sketch.Sketch;
 import me.xiaopan.sketch.SketchImageView;
 import me.xiaopan.sketch.request.CancelCause;
@@ -98,6 +113,8 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
     SketchImageView mAvatarView;
     @BindView(R.id.activity_detail_info)
     TextView mDescView;
+    @BindView(R.id.activity_map_shader)
+    View mMapShader;
     @BindView(R.id.activity_tag)
     TextView mTagView;
     @BindView(R.id.activity_location)
@@ -118,6 +135,10 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
     RecyclerView mTakersList;
     @BindView(R.id.activity_takers_title)
     TextView mTakersTitleView;
+    @BindView(R.id.activity_map_toggle)
+    FloatingActionButton mMapToggle;
+    @BindView(R.id.activity_detail_comment_container)
+    LinearLayout mCommentContainer;
     private ProgressDialog mProgress;
 
     private List<String> mUrls;
@@ -145,11 +166,12 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
     }
 
     private void initDataFromIntent() {
-        SimpleDateFormat df = new SimpleDateFormat("yy年M月d日 HH:mm");
+        SimpleDateFormat df = new SimpleDateFormat("yyyy年M月d日 HH:mm");
         Intent data = getIntent();
         mActivity = (UActivity) data.getSerializableExtra(EXTRA_ACTIVITY);
         mTagView.setText(mActivity.getTag());
         mTimeView.setText(df.format(mActivity.getHoldTime()));
+        mDescView.setText(mActivity.getDescription());
         mLocationText.setText(mActivity.getLocation());
         mUrls = mActivity.getImgUrls();
         String avatarUrl = mActivity.getAvatar();
@@ -179,6 +201,19 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
             textColors[i] = BannerView.DEFAULT_TITLE_TEXT_COLOR;
         }
         mBanner.setAutoPlay(false);
+        if (mUrls.size() <= 0) {
+            mBanner.setVisibility(View.GONE);
+            mMapToggle.setVisibility(View.GONE);
+            mMapView.setVisibility(View.VISIBLE);
+            Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
+            mMapShader.setVisibility(View.VISIBLE);
+            mMapShader.startAnimation(fadeIn);
+        } else {
+            mBanner.setVisibility(View.VISIBLE);
+            mMapToggle.setVisibility(View.VISIBLE);
+            mMapView.setVisibility(View.GONE);
+            mMapShader.setVisibility(View.GONE);
+        }
         mBanner.setHolder(new BannerView.Holder<String>(mUrls) {
             // for testing
             private final int[] RESOURCES = {R.drawable.img1, R.drawable.img2, R.drawable.img3};
@@ -326,6 +361,9 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
             animation.setInterpolator(new AccelerateInterpolator());
             mMapView.setVisibility(View.VISIBLE);
             animation.start();
+            mMapShader.setVisibility(View.VISIBLE);
+            Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
+            mMapShader.startAnimation(fadeIn);
             mCollapsingToolbar.setExpandedTitleColor(0x00000000);
         } else {
             Animator animator = getCircularClose();
@@ -339,6 +377,24 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
                 }
             });
             animator.start();
+            Animation fadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out);
+            fadeOut.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    mMapShader.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+            mMapShader.startAnimation(fadeOut);
             mCollapsingToolbar.setExpandedTitleColor(0xffffffff);
         }
         isMapOpen = !isMapOpen;
@@ -394,7 +450,7 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
 
     private void loadDataFromServer() {
         mThreadPool = Executors.newCachedThreadPool();
-        mThreadPool.submit(new LoadActivityService());
+//        mThreadPool.submit(new LoadActivityService());
     }
 
     @OnClick(R.id.comment_bt)
@@ -430,9 +486,39 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
     }
 
     @Override
-    public void onSubmitComment(@NotNull String comment) {
+    public void onSubmitComment(@NotNull final String comment) {
         mProgress.show();
-        mThreadPool.submit(new PostCommentService(comment));
+        Observable.create(new ObservableOnSubscribe<PhalApiClientResponse>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<PhalApiClientResponse> e) throws Exception {
+                UserOperatorController uoc = UserOperatorController.getInstance();
+                e.onNext(ServerAccessApi.postActivityComment(uoc.getId(), uoc.getPassport(),
+                        String.valueOf(mActivity.getId()), comment,
+                        String.valueOf(System.currentTimeMillis() / 1000)));
+                e.onComplete();
+            }
+        })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Consumer<PhalApiClientResponse>() {
+                    @Override
+                    public void accept(PhalApiClientResponse response) throws Exception {
+                        if (response.getRet() == 200 && response.getMsg().equals("success")) {
+                            Toast.makeText(ActivityDetailsActivity.this, "评论成功", Toast.LENGTH_SHORT).show();
+                            addCommentView(comment, mCommentContainer, 0);
+                        } else {
+                            Toast.makeText(ActivityDetailsActivity.this,
+                                    TextUtils.isEmpty(response.getMsg()) ? "未知异常" : response.getMsg(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        throwable.printStackTrace();
+                        Toast.makeText(ActivityDetailsActivity.this, "网络异常", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     @NotNull
@@ -463,59 +549,28 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
         return v;
     }
 
-    private class LoadActivityService implements Runnable {
-        @Override
-        public void run() {
-            try {
-                // for testing
-                Thread.sleep(1000);
-                Bundle bundle = new Bundle();
-                bundle.putString(BUNDLE_USERNAME, "小明");
-                bundle.putString(BUNDLE_DESC, "我是一个无聊的活动\n我没有什么特别的\n\n\n\n\n测试\n哈哈");
-                bundle.putInt(BUNDLE_PARTICIPATE_COUNT, 20);
-                bundle.putDouble(BUNDLE_LATITUDE, 31.2276926429);
-                bundle.putDouble(BUNDLE_LONGITUDE, 121.4040112495);
-                Message msg = Message.obtain();
-                msg.what = MSG_LOAD_COMPLETE;
-                msg.setData(bundle);
-                mHandler.sendMessage(msg);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+//    private class LoadActivityService implements Runnable {
+//        @Override
+//        public void run() {
+//            try {
+//                // for testing
+//                Thread.sleep(1000);
+//                Bundle bundle = new Bundle();
+//                bundle.putString(BUNDLE_USERNAME, "小明");
+//                bundle.putString(BUNDLE_DESC, "我是一个无聊的活动\n我没有什么特别的\n\n\n\n\n测试\n哈哈");
+//                bundle.putInt(BUNDLE_PARTICIPATE_COUNT, 20);
+//                bundle.putDouble(BUNDLE_LATITUDE, 31.2276926429);
+//                bundle.putDouble(BUNDLE_LONGITUDE, 121.4040112495);
+//                Message msg = Message.obtain();
+//                msg.what = MSG_LOAD_COMPLETE;
+//                msg.setData(bundle);
+//                mHandler.sendMessage(msg);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
 
-    private class PostCommentService implements Runnable {
-
-        private String mComment;
-
-        public PostCommentService(String comment) {
-            mComment = comment;
-        }
-
-        @Override
-        public void run() {
-            // 模拟提交
-            try {
-                Thread.sleep(1000);
-                toast(ActivityDetailsActivity.this, "发布成功");
-            } catch (InterruptedException e) {
-                toast(ActivityDetailsActivity.this, "发布失败");
-                e.printStackTrace();
-            } finally {
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.toggleSoftInput(0, InputMethodManager.SHOW_FORCED);
-                        addCommentView(mComment, mDetailContainer, 1);
-                        getMPopupWindow().dismiss();
-                        mProgress.dismiss();
-                    }
-                });
-            }
-        }
-    }
 
     static class DetailsHandler extends Handler {
 

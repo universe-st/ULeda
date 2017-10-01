@@ -362,7 +362,7 @@ public class ServerAccessApi {
                 .withService("Task.FinishTask")
                 .withParams("id", id)
                 .withParams("passport", passport)
-                .withParams("postID", postID)
+                .withParams("taskID", postID)
                 .withTimeout(SET_TIME_OUT)
                 .request();
     }
@@ -588,6 +588,35 @@ public class ServerAccessApi {
             //网络访问失败，抛出一个网络异常
             throw new UServerAccessException(response.getRet());
         }
+    }
+
+    public static PhalApiClientResponse getPromotedTasks(@NonNull String id, @NonNull String passport) throws UServerAccessException {
+        id=UrlEncode(id);
+        passport = UrlEncode(passport);
+        return createClient()
+                .withService("Activity.GetPromotedActivity")
+                .withParams("id", id)
+                .withParams("passport", passport)
+                .withTimeout(SET_TIME_OUT)
+                .request();
+    }
+
+    public static PhalApiClientResponse postActivityComment(@NonNull String id, @NonNull String passport,
+                                                            @NonNull String actId, @NonNull String content, @NonNull String postDate) throws UServerAccessException {
+        id=UrlEncode(id);
+        passport = UrlEncode(passport);
+        actId = UrlEncode(actId);
+        postDate = UrlEncode(postDate);
+        content = UrlEncode(content);
+        return createClient()
+                .withService("Activity.AddComment")
+                .withParams("id", id)
+                .withParams("passport", passport)
+                .withParams("actId", actId)
+                .withParams("content", content)
+                .withParams("postdate", postDate)
+                .withTimeout(SET_TIME_OUT)
+                .request();
     }
 
     public static String postActivity(@NonNull String id,@NonNull String passport,@NonNull String title,

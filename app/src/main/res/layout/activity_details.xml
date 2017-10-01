@@ -47,6 +47,14 @@
                 app:layout_collapseMode="parallax"
                 app:layout_collapseParallaxMultiplier="0.7" />
 
+            <View
+                android:id="@+id/activity_map_shader"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="88dp"
+                android:fitsSystemWindows="true"
+                android:background="#aaaaaaaa"/>
+
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
@@ -91,6 +99,11 @@
 
 
                 <include layout="@layout/activity_details_list_header_view" />
+                <LinearLayout
+                    android:id="@+id/activity_detail_comment_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"/>
 
             </LinearLayout>
         </android.support.v4.widget.NestedScrollView>
