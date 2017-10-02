@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.text.ParseException;
 import java.util.List;
 
 import ecnu.uleda.BuildConfig;
@@ -76,6 +77,33 @@ public class ServerAccessApi {
             throw new UServerAccessException(response.getRet());
         }
     }
+    public static int ReleasedUcircle(@NonNull String title,@NonNull String content)throws UServerAccessException
+    {
+        UserOperatorController user = UserOperatorController.getInstance();
+        String id = user.getId();
+        id = UrlEncode(id);
+        String passport = user.getPassport();
+        passport = UrlEncode(passport);
+        title = UrlEncode(title);
+        content = UrlEncode(content);
+        PhalApiClient client=createClient();
+        PhalApiClientResponse response = client
+                .withService("UCircle.Post")
+                .withParams("id",id)
+                .withParams("passport",passport)
+                .withParams("title",title)
+                .withParams("content",content)
+                .withTimeout(SET_TIME_OUT)
+                .request();
+        if(response.getRet() == 200)
+        {
+            return 200;
+        }
+        else
+        {
+            throw new UServerAccessException(response.getRet());
+        }
+    }
     public static JSONArray getUserTask(@NonNull int page,@NonNull int flag)throws UServerAccessException
     {
             UserOperatorController user = UserOperatorController.getInstance();
@@ -114,16 +142,27 @@ public class ServerAccessApi {
             throw new UServerAccessException(response.getRet());
         }
     }
-    public static JSONArray getUCicleList() throws UServerAccessException {
+    public static JSONArray getUCicleList(int frompost) throws UServerAccessException {
         UserOperatorController user = UserOperatorController.getInstance();
         String Id = user.getId();
         String passport = user.getPassport();
         Id = UrlEncode(Id);
         passport = UrlEncode(passport);
+        String Frompost;
+        if(frompost < 0)
+        {
+            Frompost = "";
+        }
+       else
+        {
+            Frompost = frompost + "";
+        }
+        Frompost = UrlEncode(Frompost);
         PhalApiClient client = createClient();
         PhalApiClientResponse response = client
                 .withService("UCircle.GetList")
                 .withParams("id", Id)
+                .withParams("fromPost",Frompost)
                 .withParams("passport", passport)
                 .withTimeout(SET_TIME_OUT)
                 .request();

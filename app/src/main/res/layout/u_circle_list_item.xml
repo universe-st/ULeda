@@ -11,7 +11,7 @@
         android:orientation="horizontal"
         >
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/photo"
             android:layout_width="0dp"
             android:layout_height="75dp"

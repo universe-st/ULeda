@@ -18,6 +18,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +28,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -36,12 +38,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import ecnu.uleda.R;
+import ecnu.uleda.exception.UServerAccessException;
+import ecnu.uleda.function_module.ServerAccessApi;
 
-public class ReleasedUcircleActivity extends Activity implements AdapterView.OnItemClickListener{
+import static java.lang.Thread.sleep;
+
+public class ReleasedUcircleActivity extends Activity implements AdapterView.OnItemClickListener,View.OnClickListener{
     private TextView mBack;
     private TextView mRealsed;
     private ImageView mPhoto;
-
+    private EditText UcircleTitle;
     public static final int TAKE_PHOTO=6;
     public static final int CHOOSE_PHOTO=7;
     private ImageView picture;
@@ -53,7 +59,7 @@ public class ReleasedUcircleActivity extends Activity implements AdapterView.OnI
     private LinearLayout ll_popup;
     private View parentView;
     private GridView gridView;
-
+    private EditText UcircleContent;
 
 
     @Override
@@ -71,11 +77,15 @@ public class ReleasedUcircleActivity extends Activity implements AdapterView.OnI
     {
         mBack = (TextView) findViewById(R.id.back);
         mRealsed=(TextView)findViewById(R.id.ucircle_release);
+        mRealsed.setOnClickListener(this);
 //        mRealsed.setOnClickListener((View.OnClickListener) this);
 //        mPhoto=(ImageView)findViewById(R.id.addPhoto);
 //        mPhoto.setOnClickListener(this);
         gridView = (GridView) findViewById(R.id.pic_gridView);
 
+        UcircleContent = (EditText)findViewById(R.id.information);
+
+        UcircleTitle = (EditText) findViewById(R.id.UcicleTitle);
 
         pop = new PopupWindow(ReleasedUcircleActivity.this);
         View view = getLayoutInflater().inflate(R.layout.activity_bottom_dialog, null);
@@ -146,7 +156,7 @@ public class ReleasedUcircleActivity extends Activity implements AdapterView.OnI
 
 
 
-        mRealsed.setOnClickListener(new View.OnClickListener() {
+        /*mRealsed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Toast.makeText(getBaseContext(),"Submit this task",Toast.LENGTH_SHORT).show();
@@ -156,7 +166,7 @@ public class ReleasedUcircleActivity extends Activity implements AdapterView.OnI
                 progressDialog.setCancelable(true);
                 progressDialog.show();
             }
-        });
+        });*/
 
 
         //生成动态数组，并且转入数据
@@ -197,14 +207,60 @@ public class ReleasedUcircleActivity extends Activity implements AdapterView.OnI
                 finish();
                 break;
             case R.id.ucircle_release:
+                if(TextUtils.isEmpty(UcircleTitle.getText().toString()))
+                {
+                    Toast.makeText(this,"标题不能为空",Toast.LENGTH_SHORT).show();
+                }
+                else if(TextUtils.isEmpty(UcircleContent.getText().toString()))
+                {
+                    Toast.makeText(this,"内容不能为空",Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    if(UcircleContent.getText().toString().length() < 5)
+                    {
+                        Toast.makeText(this,"内容长度小于5",Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try
+                                {
+                                    ServerAccessApi.ReleasedUcircle(UcircleTitle.getText().toString(),UcircleContent.getText().toString());
+                                }catch (UServerAccessException e)
+                                {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }).start();
+                    final ProgressDialog progressDialog = new ProgressDialog(ReleasedUcircleActivity.this);
+                    progressDialog.setTitle("正在提交");
+                    progressDialog.setMessage("Loading...");
+                    progressDialog.setCancelable(true);
+                    progressDialog.show();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try
+                            {
+                                sleep(1000);
+                            }catch (InterruptedException e)
+                            {
+                                e.printStackTrace();
+                            }
+                            progressDialog.cancel();
+                            finish();
+                        }
+                    }).start();
+                    }
 
+                }
                 break;
-//            case R.id.addPhoto:
-//
-//
-//                break;
 
 
+            default:
+                break;
 
         }
     }
