@@ -601,6 +601,34 @@ public class ServerAccessApi {
                 .request();
     }
 
+    public static PhalApiClientResponse participateInActivity(@NonNull String id, @NonNull String passport,
+                                                              @NonNull String actId) throws UServerAccessException {
+        id=UrlEncode(id);
+        passport = UrlEncode(passport);
+        actId = UrlEncode(actId);
+        return createClient()
+                .withService("Activity.Participate")
+                .withParams("id", id)
+                .withParams("passport", passport)
+                .withParams("actId", actId)
+                .withTimeout(SET_TIME_OUT)
+                .request();
+    }
+
+    public static PhalApiClientResponse cancelParticipateInActivity(@NonNull String id, @NonNull String passport,
+                                                              @NonNull String actId) throws UServerAccessException {
+        id=UrlEncode(id);
+        passport = UrlEncode(passport);
+        actId = UrlEncode(actId);
+        return createClient()
+                .withService("Activity.CancelParticipation")
+                .withParams("id", id)
+                .withParams("passport", passport)
+                .withParams("actId", actId)
+                .withTimeout(SET_TIME_OUT)
+                .request();
+    }
+
     public static PhalApiClientResponse postActivityComment(@NonNull String id, @NonNull String passport,
                                                             @NonNull String actId, @NonNull String content, @NonNull String postDate) throws UServerAccessException {
         id=UrlEncode(id);

@@ -51,7 +51,7 @@
                 android:id="@+id/activity_map_shader"
                 android:visibility="gone"
                 android:layout_width="match_parent"
-                android:layout_height="88dp"
+                android:layout_height="76dp"
                 android:fitsSystemWindows="true"
                 android:background="#aaaaaaaa"/>
 

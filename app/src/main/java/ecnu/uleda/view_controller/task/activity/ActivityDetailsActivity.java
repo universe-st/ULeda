@@ -40,6 +40,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jakewharton.rxbinding2.view.RxView;
 import com.tencent.mapsdk.raster.model.BitmapDescriptorFactory;
 import com.tencent.mapsdk.raster.model.LatLng;
 import com.tencent.mapsdk.raster.model.Marker;
@@ -59,6 +60,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -128,7 +130,7 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
     @BindView(R.id.activity_detail_map)
     MapView mMapView;
     @BindView(R.id.right_button)
-    Button actionView;
+    Button mRightButton;
     @BindView(R.id.task_detail_list_view)
     LinearLayout mDetailContainer;
     @BindView(R.id.activity_takers_list)
@@ -143,6 +145,7 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
 
     private List<String> mUrls;
     private List<UserInfo> mTakerInfos;
+    private boolean isSelfParticipated = false;
     private UActivity mActivity;
 
     private boolean isMapOpen = false;
@@ -343,6 +346,8 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
             mTakersList.setAdapter(new TakersAdapter(this, mTakerInfos));
             mTakersList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,
                     false));
+        } else {
+            mTakersList.setVisibility(View.GONE);
         }
     }
 
@@ -352,9 +357,81 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
         if (mHideTitleAnimator.isRunning()) mHideTitleAnimator.cancel();
     }
 
+    void onRightButtonClick() {
+        UserOperatorController uoc = UserOperatorController.getInstance();
+        if (!uoc.getId().equals(String.valueOf(mActivity.getAuthorId()))) {
+            if (mActivity.getStatus() == 0) {
+                if (!isSelfParticipated) {
+                    participateInActivity(uoc.getId(), uoc.getPassport(), String.valueOf(mActivity.getId()));
+                } else {
+                    cancelParticipateInActivity(uoc.getId(), uoc.getPassport(), String.valueOf(mActivity.getId()));
+                }
+            }
+        }
+    }
 
-    @OnClick(R.id.activity_map_toggle)
-    void toggleMap() {
+    private void participateInActivity(final String id, final String passport, final String actId) {
+        Observable.create(new ObservableOnSubscribe<PhalApiClientResponse>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<PhalApiClientResponse> e) throws Exception {
+                e.onNext(ServerAccessApi.participateInActivity(id, passport, actId));
+                e.onComplete();
+            }
+        })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Consumer<PhalApiClientResponse>() {
+                    @Override
+                    public void accept(PhalApiClientResponse response) throws Exception {
+                        if (response.getRet() == 200 && response.getData().equals("success")) {
+                            mRightButton.setText("取消参加");
+                            isSelfParticipated = true;
+                            Toast.makeText(ActivityDetailsActivity.this, "报名成功", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(ActivityDetailsActivity.this, "报名失败：" + response.getMsg(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        throwable.printStackTrace();
+                        Toast.makeText(ActivityDetailsActivity.this, "报名失败：网络异常", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void cancelParticipateInActivity(final String id, final String passport, final String actId) {
+        Observable.create(new ObservableOnSubscribe<PhalApiClientResponse>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<PhalApiClientResponse> e) throws Exception {
+                e.onNext(ServerAccessApi.cancelParticipateInActivity(id, passport, actId));
+                e.onComplete();
+            }
+        })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Consumer<PhalApiClientResponse>() {
+                    @Override
+                    public void accept(PhalApiClientResponse response) throws Exception {
+                        if (response.getRet() == 200 && response.getData().equals("success")) {
+                            mRightButton.setText("参加");
+                            isSelfParticipated = false;
+                            Toast.makeText(ActivityDetailsActivity.this, "取消报名成功", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(ActivityDetailsActivity.this, "取消报名失败：" + response.getMsg(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        throwable.printStackTrace();
+                        Toast.makeText(ActivityDetailsActivity.this, "取消报名失败：网络异常", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+
+    private void toggleMap() {
         if (!isMapOpen) {
             Animator animation = getCircularReveal();
             animation.setDuration(400);
@@ -470,6 +547,7 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
         initBanner(savedInstanceState);
         initCollapsingToolbar();
         initTakersList();
+        initClickEvents();
     }
 
     private void initProgressBar() {
@@ -477,6 +555,25 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
         mProgress.setIndeterminate(true);
         mProgress.setMessage("发布中...");
         mProgress.setCancelable(false);
+    }
+
+    private void initClickEvents() {
+        RxView.clicks(mRightButton)
+                .throttleFirst(2, TimeUnit.SECONDS)
+                .subscribe(new Consumer<Object>() {
+                    @Override
+                    public void accept(Object o) throws Exception {
+                        onRightButtonClick();
+                    }
+                });
+        RxView.clicks(mMapToggle)
+                .throttleFirst(400, TimeUnit.MILLISECONDS)
+                .subscribe(new Consumer<Object>() {
+                    @Override
+                    public void accept(Object o) throws Exception {
+                        toggleMap();
+                    }
+                });
     }
 
     @Override

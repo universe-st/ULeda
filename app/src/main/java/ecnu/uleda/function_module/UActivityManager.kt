@@ -40,7 +40,8 @@ object UActivityManager {
                             it.getLong("active_time"),
                             it.getInt("taker_count_limit"),
                             arrayListOf(),
-                            it.getInt("act_id"))
+                            it.getInt("act_id"),
+                            it.getInt("status"))
                 }
                 .forEach { activityList.add(it) }
         lastIndex += length
@@ -66,7 +67,8 @@ object UActivityManager {
                             it.getLong("active_time"),
                             it.getInt("taker_count_limit"),
                             arrayListOf(),
-                            it.getInt("act_id"))
+                            it.getInt("act_id"),
+                            it.getInt("status"))
                 }
                 .forEach { activityList.add(it) }
         lastIndex += length

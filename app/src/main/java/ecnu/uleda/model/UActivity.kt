@@ -19,5 +19,6 @@ data class UActivity(
     var holdTime: Long,
     var takersCount: Int,
     var imgUrls: ArrayList<String>,
-    var id: Int
+    var id: Int,
+    var status: Int
 ): Serializable
