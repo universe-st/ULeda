@@ -21,6 +21,61 @@ public class UCircle {
     private   String mDynamic_Photo1;
     private   String mDynamic_Photo2;
     private   String mDynamic_Photo3;
+    private   String id;
+    private   String Commentcontent;
+    private   String CommentTime;
+    private   String CommentName;
+    private   String CommentImage;
+    public String getCommentImage() {
+        return CommentImage;
+    }
+
+    public UCircle setCommentImage(String commentImage) {
+        CommentImage = commentImage;
+        return this;
+    }
+
+
+    public String getCommentName() {
+        return CommentName;
+    }
+
+    public UCircle setCommentName(String commentName) {
+        CommentName = commentName;
+        return this;
+    }
+
+
+    public String getCommentTime() {
+        return CommentTime;
+    }
+
+    public UCircle setCommentTime(String commentTime) {
+        CommentTime = commentTime;
+        return this;
+    }
+
+
+
+    public String getCommentcontent() {
+        return Commentcontent;
+    }
+
+    public UCircle setCommentcontent(String commentcontent) {
+        Commentcontent = commentcontent;
+        return this;
+    }
+
+
+
+    public String getId() {
+        return id;
+    }
+
+    public UCircle setId(String id) {
+        this.id = id;
+        return this;
+    }
 
     public String getmName() {
         return mName;

@@ -142,6 +142,60 @@ public class ServerAccessApi {
             throw new UServerAccessException(response.getRet());
         }
     }
+    public static JSONObject getUciclePost(@NonNull String postId)throws UServerAccessException
+    {
+        UserOperatorController user = UserOperatorController.getInstance();
+        String Id = user.getId();
+        String passport = user.getPassport();
+        Id = UrlEncode(Id);
+        passport = UrlEncode(passport);
+        postId = UrlEncode(postId);
+        PhalApiClient client = createClient();
+        PhalApiClientResponse response = client
+               .withService("UCircle.GetPost")
+                .withParams("id",Id)
+                .withParams("passport",passport)
+                .withParams("postID",postId)
+                .withTimeout(SET_TIME_OUT)
+                .request();
+        if (response.getRet() == 200) {
+            try {
+                JSONObject info = new JSONObject(response.getData());
+                return info;
+            } catch (JSONException e) {
+                Log.e("ServerAccessApi", e.toString());
+                //数据包无法解析，向上抛出一个异常
+                throw new UServerAccessException(UServerAccessException.ERROR_DATA);
+            }
+        } else {
+            throw new UServerAccessException(response.getRet());
+        }
+    }
+    public static String Comment(String postId,String content)throws UServerAccessException
+    {
+        UserOperatorController user = UserOperatorController.getInstance();
+        String Id = user.getId();
+        String passport = user.getPassport();
+        Id = UrlEncode(Id);
+        passport = UrlEncode(passport);
+        postId = UrlEncode(postId);
+        content = UrlEncode(content);
+        PhalApiClient client = createClient();
+        PhalApiClientResponse response = client
+                .withService("UCircle.Comment")
+                .withParams("id",Id)
+                .withParams("passport",passport)
+                .withParams("postID",postId)
+                .withParams("content",content)
+                .withTimeout(SET_TIME_OUT)
+                .request();
+        if(response.getRet()==200){//200的意思是正常返回
+                return "success";
+        }else{
+            //网络访问失败，抛出一个网络异常
+            throw new UServerAccessException(response.getRet());
+        }
+    }
     public static JSONArray getUCicleList(int frompost) throws UServerAccessException {
         UserOperatorController user = UserOperatorController.getInstance();
         String Id = user.getId();

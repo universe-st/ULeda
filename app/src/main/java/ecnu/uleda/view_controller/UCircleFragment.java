@@ -67,10 +67,11 @@ public class UCircleFragment extends Fragment implements View.OnClickListener{
                                                 .setmTitle(json.getString("title"))
                                                 .setmArticle(json.getString("absContent"))
                                                 .setmTime(json.getString("postTime"))
-                                                .setmGet("9")
+                                                .setmGet(json.getString("countComment"))
                                                 .setmDynamic_Photo1(json.getString("pic1"))
                                                 .setmDynamic_Photo2(json.getString("pic2"))
                                                 .setmDynamic_Photo3(json.getString("pic3"))
+                                                .setId(json.getString("id"))
                                 );
                                     if(i == jsonArray.length() - 1)
                                     {
@@ -107,10 +108,11 @@ public class UCircleFragment extends Fragment implements View.OnClickListener{
                                         .setmTitle(json.getString("title"))
                                         .setmArticle(json.getString("absContent"))
                                         .setmTime(json.getString("postTime"))
-                                        .setmGet("9")
+                                        .setmGet(json.getString("countComment"))
                                         .setmDynamic_Photo1(json.getString("pic1"))
                                         .setmDynamic_Photo2(json.getString("pic2"))
                                         .setmDynamic_Photo3(json.getString("pic3"))
+                                        .setId(json.getString("id"))
                                 );
                             }
                         }catch (JSONException e) {
@@ -129,7 +131,7 @@ public class UCircleFragment extends Fragment implements View.OnClickListener{
     public void onCreate(Bundle b){
         super.onCreate(b);
     }
-    public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle b)
+    public View onCreateView(final LayoutInflater inflater, ViewGroup parent, Bundle b)
     {
         View v=inflater.inflate(R.layout.u_circle_fragment,parent,false);
         init(v);
@@ -140,20 +142,7 @@ public class UCircleFragment extends Fragment implements View.OnClickListener{
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             UCircle Item = (UCircle) mUCircleListAdapter.getItem(position);
             Intent intent = new Intent(UCircleFragment.this.getActivity(), UcircleDetailActivity.class);
-
-                String photo = Item.getmPhotoId();
-                intent.putExtra("photo",photo);
-                intent.putExtra("publisher_name",Item.getmName());
-                intent.putExtra("Title",Item.getmTitle());
-                intent.putExtra("article",Item.getmArticle());
-                String dynamic_photo1 = Item.getmDynamic_Photo1();
-                String dynamic_photo2 = Item.getmDynamic_Photo2();
-                String dynamic_photo3 = Item.getmDynamic_Photo3();
-                intent.putExtra("dynamic_photo1",dynamic_photo1);
-                intent.putExtra("dynamic_photo2",dynamic_photo2);
-                intent.putExtra("dynamic_photo3",dynamic_photo3);
-                intent.putExtra("publish_time",Item.getmTime());
-                intent.putExtra("Get_zan",Item.getmGet());
+                intent.putExtra("id",Item.getId());
                 startActivity(intent);
             }
         });

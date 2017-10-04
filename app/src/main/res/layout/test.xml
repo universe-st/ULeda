@@ -38,12 +38,28 @@
                 android:src="@drawable/main_icon"
                 />
         </FrameLayout>
-        </LinearLayout>
-    <LinearLayout
+    </LinearLayout>
+    <ScrollView
+        android:id="@+id/Scroll"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:orientation="horizontal"
         android:layout_weight="90"
+        android:fillViewport="true"
+        >
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         >
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -121,23 +137,24 @@
                 android:orientation="horizontal"
                 android:weightSum="90"
                 >
+
                 <ImageView
                     android:id="@+id/dynamic_photo1"
                     android:layout_width="0dp"
-                    android:layout_weight="30"
                     android:layout_height="100dp"
+                    android:layout_weight="30"
                     />
                 <ImageView
                     android:id="@+id/dynamic_photo2"
                     android:layout_width="0dp"
-                    android:layout_weight="30"
                     android:layout_height="100dp"
+                    android:layout_weight="30"
                     />
                 <ImageView
                     android:id="@+id/dynamic_photo3"
                     android:layout_width="0dp"
-                    android:layout_weight="30"
                     android:layout_height="100dp"
+                    android:layout_weight="30"
                     />
             </LinearLayout>
 
@@ -188,11 +205,11 @@
                         >
 
                         <ImageView
+                            android:id="@+id/CommentButton"
                             android:layout_width="37dp"
                             android:layout_height="37dp"
                             android:paddingBottom="12dp"
-                            android:src="@drawable/zan"
-                            />
+                            android:src="@drawable/zan"/>
 
                         <TextView
                             android:id="@+id/Get_zan"
@@ -208,4 +225,12 @@
         </LinearLayout>
     </LinearLayout>
 
+        <ListView
+            android:id="@+id/comment_listview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+    </LinearLayout>
+
+    </ScrollView>
 </LinearLayout>
