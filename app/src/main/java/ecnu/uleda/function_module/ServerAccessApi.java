@@ -590,13 +590,58 @@ public class ServerAccessApi {
         }
     }
 
-    public static PhalApiClientResponse getPromotedTasks(@NonNull String id, @NonNull String passport) throws UServerAccessException {
+    public static PhalApiClientResponse getPromotedActivities(@NonNull String id, @NonNull String passport) throws UServerAccessException {
         id=UrlEncode(id);
         passport = UrlEncode(passport);
+        return createClient()
+                .withService("Activity.GetActivity")
+                .withParams("id", id)
+                .withParams("passport", passport)
+                .withTimeout(SET_TIME_OUT)
+                .request();
+    }
+
+    public static PhalApiClientResponse getActivityDetail(@NonNull String id, @NonNull String passport,
+                                                          @NonNull String actId) throws UServerAccessException {
+        id=UrlEncode(id);
+        passport = UrlEncode(passport);
+        actId = UrlEncode(actId);
         return createClient()
                 .withService("Activity.GetPromotedActivity")
                 .withParams("id", id)
                 .withParams("passport", passport)
+                .withParams("actId", actId)
+                .withTimeout(SET_TIME_OUT)
+                .request();
+    }
+
+    public static PhalApiClientResponse editActivity(@NonNull String id, @NonNull String passport,
+                                                     @NonNull String actId, @NonNull String title,
+                                                     @NonNull String description, @NonNull String holdTime,
+                                                     @NonNull String lat, @NonNull String lon,
+                                                     @NonNull String takerCountLimit, @NonNull String location)
+        throws UServerAccessException {
+        id=UrlEncode(id);
+        passport = UrlEncode(passport);
+        actId = UrlEncode(actId);
+        title = UrlEncode(title);
+        description = UrlEncode(description);
+        long activeTime = (Long.parseLong(holdTime) - System.currentTimeMillis()) / 1000;
+        String activeTimeStr = UrlEncode(String.valueOf(activeTime));
+        String position = lat + "," + lon;
+        takerCountLimit = UrlEncode(takerCountLimit);
+        location = UrlEncode(location);
+        return createClient()
+                .withService("Activity.Edit")
+                .withParams("id", id)
+                .withParams("passport", passport)
+                .withParams("actId", actId)
+                .withParams("title", title)
+                .withParams("description", description)
+                .withParams("activeTime", activeTimeStr)
+                .withParams("position", position)
+                .withParams("takerCountLimit", takerCountLimit)
+                .withParams("location", location)
                 .withTimeout(SET_TIME_OUT)
                 .request();
     }
@@ -643,6 +688,20 @@ public class ServerAccessApi {
                 .withParams("actId", actId)
                 .withParams("content", content)
                 .withParams("postdate", postDate)
+                .withTimeout(SET_TIME_OUT)
+                .request();
+    }
+
+    public static PhalApiClientResponse getActivityTakers(@NonNull String id, @NonNull String passport,
+                                                          @NonNull String actId) throws UServerAccessException {
+        id=UrlEncode(id);
+        passport = UrlEncode(passport);
+        actId = UrlEncode(actId);
+        return createClient()
+                .withService("Activity.GetActivityTaker")
+                .withParams("id", id)
+                .withParams("passport", passport)
+                .withParams("actId", actId)
                 .withTimeout(SET_TIME_OUT)
                 .request();
     }

@@ -98,8 +98,9 @@ public class LocationListActivity extends AppCompatActivity {
             LocationListActivity.this.finish();
         }
         });
-        getLocation();
-
+//        getLocation();
+        mTencentSearch = new TencentSearch(getApplicationContext());
+        searchPOIAndPut();
         mButtonBack = (Button)findViewById(R.id.button_location_list_back);
         mButtonBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,6 +112,7 @@ public class LocationListActivity extends AppCompatActivity {
     }
     private void searchPOIAndPut(){
         mButton.setEnabled(false);
+        mLocation = new Location();
         mLocation.lat(31.228470f).lng(121.40640f); // 记得移除
         SearchParam.Nearby mNearBy = new SearchParam.Nearby().point(mLocation);
         mNearBy.r(5000);
@@ -133,6 +135,8 @@ public class LocationListActivity extends AppCompatActivity {
             }
             @Override
             public void onFailure(int i, String s, Throwable throwable) {
+                throwable.printStackTrace();
+                Log.e("bb", "fail");
                 mButton.setEnabled(true);
             }
         });

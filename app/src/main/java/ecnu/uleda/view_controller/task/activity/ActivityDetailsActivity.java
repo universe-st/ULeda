@@ -3,26 +3,24 @@ package ecnu.uleda.view_controller.task.activity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
@@ -33,7 +31,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -47,19 +44,18 @@ import com.tencent.mapsdk.raster.model.Marker;
 import com.tencent.mapsdk.raster.model.MarkerOptions;
 import com.tencent.tencentmap.mapsdk.map.MapView;
 import com.tencent.tencentmap.mapsdk.map.TencentMap;
-import com.tencent.tencentmap.mapsdk.map.UiSettings;
 
 import net.phalapi.sdk.PhalApiClientResponse;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -92,8 +88,7 @@ import me.xiaopan.sketch.shaper.CircleImageShaper;
 public class ActivityDetailsActivity extends BaseDetailsActivity {
 
     private static final String EXTRA_ACTIVITY = "extra_activity";
-
-    private static final int MSG_LOAD_COMPLETE = 1;
+    private static final int REQUEST_EDIT = 1;
 
     private static final String BUNDLE_DESC = "bundle_desc";
     private static final String BUNDLE_USERNAME = "bundle_username";
@@ -119,12 +114,12 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
     View mMapShader;
     @BindView(R.id.activity_tag)
     TextView mTagView;
+    @BindView(R.id.activity_title)
+    TextView mTitleView;
     @BindView(R.id.activity_location)
     TextView mLocationText;
     @BindView(R.id.activity_detail_state)
     TextView mTimeView;
-    @BindView(R.id.activity_detail_participate_count)
-    TextView mParticipateCountView;
     @BindView(R.id.activity_banner)
     BannerView mBanner;
     @BindView(R.id.activity_detail_map)
@@ -137,22 +132,23 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
     RecyclerView mTakersList;
     @BindView(R.id.activity_takers_title)
     TextView mTakersTitleView;
+    @BindView(R.id.activity_detail_participate_count)
+    TextView mMaxTakersCount;
     @BindView(R.id.activity_map_toggle)
     FloatingActionButton mMapToggle;
     @BindView(R.id.activity_detail_comment_container)
     LinearLayout mCommentContainer;
     private ProgressDialog mProgress;
 
-    private List<String> mUrls;
+    private List<String> mUrls = new ArrayList<>();
     private List<UserInfo> mTakerInfos;
+    private TakersAdapter mTakerAdapter;
     private boolean isSelfParticipated = false;
     private UActivity mActivity;
 
     private boolean isMapOpen = false;
     private TencentMap mTMap;
 
-    private DetailsHandler mHandler;
-    private ExecutorService mThreadPool;
 
     private int mOffSet = 0;
     private ObjectAnimator mShowTitleAnimator;
@@ -168,15 +164,24 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
         window.setStatusBarColor(Color.TRANSPARENT);
     }
 
-    private void initDataFromIntent() {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy年M月d日 HH:mm");
-        Intent data = getIntent();
-        mActivity = (UActivity) data.getSerializableExtra(EXTRA_ACTIVITY);
+    private void parseData() {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy年M月d日 HH:mm", Locale.CHINA);
+        mTitleView.setText(mActivity.getTitle());
         mTagView.setText(mActivity.getTag());
         mTimeView.setText(df.format(mActivity.getHoldTime()));
         mDescView.setText(mActivity.getDescription());
         mLocationText.setText(mActivity.getLocation());
+        mMaxTakersCount.setText("最大参加人数：" + mActivity.getTakersCount());
         mUrls = mActivity.getImgUrls();
+        LatLng position = new LatLng(31.22847,
+                121.40640);
+        mTMap.setZoom(18);
+        mTMap.setCenter(position);
+        Marker marker = mTMap.addMarker(new MarkerOptions()
+                .position(position)
+                .icon(BitmapDescriptorFactory.defaultMarker()).draggable(false)
+        );
+        marker.setTitle(mActivity.getLocation());
         String avatarUrl = mActivity.getAvatar();
         DisplayOptions opt = new DisplayOptions();
         opt.setImageShaper(new CircleImageShaper());
@@ -187,16 +192,11 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
             // for testing
             mAvatarView.displayResourceImage(R.drawable.xiaohong);
         }
+        initBanner();
     }
 
 
-    private void initBanner(Bundle savedInstanceState) {
-        mMapView.onCreate(savedInstanceState);
-        mTMap = mMapView.getMap();
-        UiSettings uiSettings = mMapView.getUiSettings();
-        uiSettings.setScaleViewPosition(UiSettings.SCALEVIEW_POSITION_RIGHT_BOTTOM);
-        uiSettings.setZoomGesturesEnabled(true);
-        uiSettings.setScrollGesturesEnabled(true);
+    private void initBanner() {
         final int[] colors = new int[mUrls.size()];
         final int[] textColors = new int[mUrls.size()];
         for (int i = 0; i < colors.length; i++) {
@@ -214,7 +214,6 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
         } else {
             mBanner.setVisibility(View.VISIBLE);
             mMapToggle.setVisibility(View.VISIBLE);
-            mMapView.setVisibility(View.GONE);
             mMapShader.setVisibility(View.GONE);
         }
         mBanner.setHolder(new BannerView.Holder<String>(mUrls) {
@@ -343,12 +342,55 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
         if (mActivity.getAuthorUsername().equals(uoc.getUserName())) {
             mTakersList.setVisibility(View.VISIBLE);
             mTakersTitleView.setVisibility(View.VISIBLE);
-            mTakersList.setAdapter(new TakersAdapter(this, mTakerInfos));
+            mTakersList.setAdapter(mTakerAdapter = new TakersAdapter(this, mTakerInfos));
             mTakersList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,
                     false));
+            initTakersData();
         } else {
             mTakersList.setVisibility(View.GONE);
         }
+    }
+
+    private void initTakersData() {
+        Observable.create(new ObservableOnSubscribe<PhalApiClientResponse>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<PhalApiClientResponse> e) throws Exception {
+                UserOperatorController uoc = UserOperatorController.getInstance();
+                e.onNext(ServerAccessApi.getActivityTakers(uoc.getId(),
+                        uoc.getPassport(),
+                        String.valueOf(mActivity.getId())));
+                e.onComplete();
+            }
+        })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Consumer<PhalApiClientResponse>() {
+                    @Override
+                    public void accept(PhalApiClientResponse response) throws Exception {
+                        if (response.getRet() == 200) {
+                            JSONArray takersArray = new JSONArray(response.getData());
+                            mTakerInfos.clear();
+                            int length = takersArray.length();
+                            for (int i = 0; i < length; i++) {
+                                JSONObject taker = takersArray.getJSONObject(i);
+                                UserInfo user = new UserInfo();
+                                user.setId(taker.getString("taker_id"))
+                                        .setAvatar(UPublicTool.BASE_URL_AVATAR + taker.getString("avatar"))
+                                        .setUserName(taker.getString("username"));
+                                mTakerInfos.add(user);
+                            }
+                            if (mTakerAdapter != null) {
+                                mTakerAdapter.notifyDataSetChanged();
+                            }
+                        }
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        throwable.printStackTrace();
+                        Toast.makeText(ActivityDetailsActivity.this, "获取参与者失败", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
 
@@ -357,16 +399,17 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
         if (mHideTitleAnimator.isRunning()) mHideTitleAnimator.cancel();
     }
 
-    void onRightButtonClick() {
+    private void onRightButtonClick() {
         UserOperatorController uoc = UserOperatorController.getInstance();
-        if (!uoc.getId().equals(String.valueOf(mActivity.getAuthorId()))) {
-            if (mActivity.getStatus() == 0) {
-                if (!isSelfParticipated) {
-                    participateInActivity(uoc.getId(), uoc.getPassport(), String.valueOf(mActivity.getId()));
-                } else {
-                    cancelParticipateInActivity(uoc.getId(), uoc.getPassport(), String.valueOf(mActivity.getId()));
-                }
+        if (!uoc.getId().equals(String.valueOf(mActivity.getAuthorId())) &&
+                mActivity.getStatus() == 0) { // 不是发布者，且活动未开始
+            if (!isSelfParticipated) {
+                participateInActivity(uoc.getId(), uoc.getPassport(), String.valueOf(mActivity.getId()));
+            } else {
+                cancelParticipateInActivity(uoc.getId(), uoc.getPassport(), String.valueOf(mActivity.getId()));
             }
+        } else if (mActivity.getStatus() == 0) { // 是发布者，且活动未开始
+            ActivityEditActivity.startActivity(this, mActivity);
         }
     }
 
@@ -498,7 +541,6 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
             mMapView.onStop();
         }
         super.onStop();
-        mThreadPool.shutdownNow();
     }
 
     @Override
@@ -526,8 +568,77 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
     }
 
     private void loadDataFromServer() {
-        mThreadPool = Executors.newCachedThreadPool();
-//        mThreadPool.submit(new LoadActivityService());
+        Observable.create(new ObservableOnSubscribe<PhalApiClientResponse>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<PhalApiClientResponse> e) throws Exception {
+                UserOperatorController uoc = UserOperatorController.getInstance();
+                e.onNext(ServerAccessApi.getActivityDetail(uoc.getId(),
+                        uoc.getPassport(),
+                        String.valueOf(mActivity.getId())));
+                e.onComplete();
+            }
+        })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Consumer<PhalApiClientResponse>() {
+                    @Override
+                    public void accept(PhalApiClientResponse response) throws Exception {
+                        if (response.getRet() == 200) {
+                            JSONArray activityArr = new JSONArray(response.getData());
+                            JSONObject activityObj = activityArr.getJSONObject(0);
+                            mActivity.setTitle(activityObj.getString("act_title"));
+                            mActivity.setAuthorId(activityObj.getInt("author_id"));
+                            mActivity.setTag(activityObj.getString("tag"));
+                            mActivity.setStatus(activityObj.getInt("status"));
+                            mActivity.setDescription(activityObj.getString("description"));
+                            mActivity.setHoldTime(System.currentTimeMillis() + activityObj.getLong("active_time") * 1000);
+                            mActivity.setLat(activityObj.getDouble("lat"));
+                            mActivity.setLon(activityObj.getDouble("lon"));
+                            mActivity.setTakersCount(activityObj.getInt("taker_count_limit"));
+                            mActivity.setLocation(activityObj.getString("location"));
+                            ArrayList<String> imgUrls = new ArrayList<>();
+                            imgUrls.add(activityObj.getString("image"));
+                            mActivity.setImgUrls(imgUrls);
+                            parseData();
+                            initTakersList();
+                            initRightButton();
+                        } else {
+                            Toast.makeText(ActivityDetailsActivity.this, "获取活动详情失败：" + response.getMsg(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        throwable.printStackTrace();
+                        Toast.makeText(ActivityDetailsActivity.this, "网络异常", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void initRightButton() {
+        // 对于已经开始或者取消的活动，所有用户的处理是一致的
+        if (mActivity.getStatus() > 0) {
+            mRightButton.setEnabled(false);
+            mRightButton.setBackgroundColor(ContextCompat.getColor(this, android.R.color.darker_gray));
+        } else {
+            mRightButton.setEnabled(true);
+            mRightButton.setBackgroundColor(ContextCompat.getColor(this, R.color.colorUMain));
+        }
+        if (mActivity.getStatus() == 1) { // 进行中
+            mRightButton.setText("进行中");
+        } else if (mActivity.getStatus() == 2) { // 活动正常结束
+            mRightButton.setText("已结束");
+        } else if (mActivity.getStatus() == 3) {
+            mRightButton.setText("已取消"); // 被发布者取消
+        }
+        // 以下是未开始活动的处理
+        // 发布者
+        if (String.valueOf(mActivity.getAuthorId()).equals(UserOperatorController.getInstance().getId())
+                && mActivity.getStatus() == 0) {
+            mRightButton.setText("编辑活动");
+        } else if (mActivity.getStatus() == 0) { // 参与者
+            // TODO 判断是参加还是取消参加任务
+        }
     }
 
     @OnClick(R.id.comment_bt)
@@ -540,14 +651,22 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setTitle("");
-        mHandler = new DetailsHandler(this);
         initProgressBar();
-        initDataFromIntent();
+        Intent data = getIntent();
+        mActivity = (UActivity) data.getSerializableExtra(EXTRA_ACTIVITY);
         loadDataFromServer();
-        initBanner(savedInstanceState);
+        initMap(savedInstanceState);
         initCollapsingToolbar();
-        initTakersList();
         initClickEvents();
+    }
+
+    private void initMap(Bundle savedInstanceState) {
+        mTMap = mMapView.getMap();
+        mMapView.onCreate(savedInstanceState);
+//        UiSettings uiSettings = mMapView.getUiSettings();
+//        uiSettings.setScaleViewPosition(UiSettings.SCALEVIEW_POSITION_RIGHT_BOTTOM);
+//        uiSettings.setZoomGesturesEnabled(true);
+//        uiSettings.setScrollGesturesEnabled(true);
     }
 
     private void initProgressBar() {
@@ -574,6 +693,14 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
                         toggleMap();
                     }
                 });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_EDIT && resultCode == RESULT_OK) {
+            loadDataFromServer();
+        }
     }
 
     @Override
@@ -667,39 +794,6 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
 //            }
 //        }
 //    }
-
-
-    static class DetailsHandler extends Handler {
-
-        private WeakReference<ActivityDetailsActivity> mActivityReference;
-
-        public DetailsHandler(ActivityDetailsActivity activity) {
-            super(Looper.getMainLooper());
-            this.mActivityReference = new WeakReference<>(activity);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            if (msg.what == MSG_LOAD_COMPLETE) {
-                SimpleDateFormat df = new SimpleDateFormat("MM月dd日 HH:mm");
-                ActivityDetailsActivity activity = mActivityReference.get();
-                Bundle bundle = msg.getData();
-                activity.mDescView.setText(bundle.getString(BUNDLE_DESC));
-                activity.mUsernameView.setText(bundle.getString(BUNDLE_USERNAME));
-                activity.mParticipateCountView.setText("已有" +
-                        bundle.getInt(BUNDLE_PARTICIPATE_COUNT) + "人报名");
-                LatLng position = new LatLng(bundle.getDouble(BUNDLE_LATITUDE),
-                        bundle.getDouble(BUNDLE_LONGITUDE));
-                activity.mTMap.setCenter(position);
-                activity.mTMap.setZoom(18);
-                Marker marker = activity.mTMap.addMarker(new MarkerOptions()
-                        .position(position)
-                        .icon(BitmapDescriptorFactory.defaultMarker()).draggable(false)
-                );
-            }
-        }
-    }
 
     public static void startActivity(Context context, UActivity activity) {
         Intent intent = new Intent(context, ActivityDetailsActivity.class)
