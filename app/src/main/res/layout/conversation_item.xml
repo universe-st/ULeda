@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content">
+              android:layout_height="match_parent">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -18,7 +18,7 @@
             android:weightSum="100">
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/friend_image"
+                android:id="@+id/conversation_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
@@ -36,7 +36,7 @@
             android:paddingTop="0dp">
 
             <TextView
-                android:id="@+id/friend_name"
+                android:id="@+id/conversation_name"
                 android:textColor="@android:color/black"
                 android:text="kuangthree"
                 android:layout_width="match_parent"
@@ -51,11 +51,11 @@
                 android:layout_weight="40">
                 <TextView
                     android:textColor="@android:color/darker_gray"
-                    android:text="软件工程第一才子"
+                    android:text=" 在吗？"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="80"
-                    android:id="@+id/friend_tag"
+                    android:id="@+id/contacts_content"
                     android:textSize="15sp"
                     android:ellipsize="end"
                     android:gravity="center_vertical"
@@ -71,12 +71,6 @@
                     android:gravity="center" />
             </LinearLayout>
         </LinearLayout>
-
     </LinearLayout>
-    <!--LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/colorBackgroundGray"></LinearLayout-->
-
 
 </LinearLayout>
