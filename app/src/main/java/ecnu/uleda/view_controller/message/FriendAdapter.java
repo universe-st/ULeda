@@ -69,7 +69,7 @@ public class FriendAdapter extends ArrayAdapter<Friend>{
                 .into(viewHolder.friendImage);
 //        viewHolder.friendImage.setImageURI(mURI);
         viewHolder.friendName.setText(friend.getUserName());
-        viewHolder.friendTag.setText("hhh");
+        viewHolder.friendTag.setText(friend.getUserTag());
 
         return view;
     }

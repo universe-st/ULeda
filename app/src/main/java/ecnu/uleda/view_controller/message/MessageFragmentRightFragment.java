@@ -79,7 +79,7 @@ public class MessageFragmentRightFragment extends Fragment {
             switch (msg.what)
             {
                 case 1:
-
+                {
                     JSONArray jsonArray = (JSONArray)msg.obj;
                     for(int i = 0;i < jsonArray.length();i++)
                     {
@@ -88,9 +88,10 @@ public class MessageFragmentRightFragment extends Fragment {
                             JSONObject json = jsonArray.getJSONObject(i);
                             Friend mfriend = new Friend().setUserId(json.getString("id"))
                                     .setUserName(json.getString("username"))
-                                    .setImageUrl(("http://118.89.156.167/uploads/avatars/"+json.getString("avatar")));
+                                    .setImageUrl(("http://118.89.156.167/uploads/avatars/"+json.getString("avatar")))
+                                    .setUserTag(json.getString("signature"));
                             mFriendList.add(mfriend);
-
+                            Log.e(TAG, "handleMessage: "+json.getString("id"));
                         }catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -98,6 +99,7 @@ public class MessageFragmentRightFragment extends Fragment {
                     mFriendAdapter = new FriendAdapter(MessageFragmentRightFragment.this.getContext(),R.layout.friend_item,mFriendList);
                     mListView.setAdapter(mFriendAdapter);
                     break;
+                }
 
                 default:
                     break;
@@ -144,33 +146,6 @@ public class MessageFragmentRightFragment extends Fragment {
 
     private void initFriends()
     {
-        //获取好友列表
-//        TIMFriendshipManagerExt.getInstance().getFriendList(new TIMValueCallBack<List<TIMUserProfile>>(){
-//            @Override
-//            public void onError(int code, String desc){
-//                //错误码code和错误描述desc，可用于定位请求失败原因
-//                //错误码code列表请参见错误码表
-//                Log.e(TAG, "getFriendList failed: " + code + " desc");
-//            }
-//
-//            @Override
-//            public void onSuccess(List<TIMUserProfile> result){
-//                for(TIMUserProfile res : result){
-//                    Log.e(TAG, "identifier: " + res.getIdentifier() + " nickName: " + res.getNickName()
-//                            + " remark: " + res.getRemark());
-//                    Friend friend = new Friend(res.getIdentifier().toString(),res.getNickName().toString(),res.getSelfSignature().toString());
-//                            //String userid, String name, String imageUrl,String userTag)
-//                    //TODO:头像显示的地址
-//                    mFriendList.add(friend);
-//
-//                }
-//                flag=true;
-//                mFriendAdapter = new FriendAdapter(MessageFragmentRightFragment.this.getContext(),R.layout.friend_item,mFriendList);
-//                mListView.setAdapter(mFriendAdapter);
-//
-//            }
-//        });
-
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -209,10 +184,11 @@ public class MessageFragmentRightFragment extends Fragment {
         {
             try {
                 JSONArray mFriendList = new JSONArray(response.getData());
+                Log.e("MFRF","getFriendList");
                 return  mFriendList;
             }catch (JSONException e)
             {
-                Log.e("ServerAccessApi",e.toString());
+                Log.e("MFRF","ServerAccessApi"+e.toString());
                 //数据包无法解析，向上抛出一个异常
                 throw new UServerAccessException(UServerAccessException.ERROR_DATA);
             }

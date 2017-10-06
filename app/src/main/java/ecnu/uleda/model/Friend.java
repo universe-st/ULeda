@@ -11,8 +11,15 @@ public class Friend {
     private String userId;
     private String userName;
     private String imageUrl;
+
+
+
     private String userTag;
     private int imageId;
+
+
+
+    private String signature;
 
 
     public Friend(){
@@ -60,4 +67,8 @@ public class Friend {
         return this;
     }
 
+    public Friend setUserTag(String userTag) {
+        this.userTag = userTag;
+        return this;
+    }
 }

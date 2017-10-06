@@ -30,6 +30,7 @@ import net.phalapi.sdk.PhalApiClient;
 import net.phalapi.sdk.PhalApiClientResponse;
 
 import org.greenrobot.eventbus.EventBus;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -44,9 +45,11 @@ import butterknife.OnClick;
 import ecnu.uleda.BuildConfig;
 import ecnu.uleda.R;
 import ecnu.uleda.exception.UServerAccessException;
+import ecnu.uleda.model.Friend;
 import ecnu.uleda.model.UserInfo;
 import ecnu.uleda.function_module.UserOperatorController;
 import ecnu.uleda.tool.UPublicTool;
+import ecnu.uleda.view_controller.message.FriendAdapter;
 import ecnu.uleda.view_controller.message.MessageFragmentRightFragment;
 import ecnu.uleda.view_controller.message.SendMessageActivity;
 
@@ -54,6 +57,7 @@ public class SingleUserInfoActivity extends AppCompatActivity {
 
     private UserInfo mUserInfo;
     private UserOperatorController mUserOperatorController;
+    private int isFriend;
     private Handler mHandler=new Handler(){
         @Override
         public void handleMessage(Message msg){
@@ -66,7 +70,12 @@ public class SingleUserInfoActivity extends AppCompatActivity {
                 {
                     String ret = (String) msg.obj;
                     if(ret == ADD_FRIEND_SUCCESS)
+                    {
                         Toast.makeText(SingleUserInfoActivity.this,"添加好友成功～",Toast.LENGTH_SHORT).show();
+                        buttonAddUser.setEnabled(true);
+                        buttonAddUser.setText("删除好友");
+
+                    }
                     else if(ret==ADD_FRIEND_ALREADY)
                         Toast.makeText(SingleUserInfoActivity.this,"您已经添加过该好友～",Toast.LENGTH_SHORT).show();
                     else if(ret==ADD_FRIEND_NOT_FOUND)
@@ -76,6 +85,18 @@ public class SingleUserInfoActivity extends AppCompatActivity {
                     else
                         Toast.makeText(SingleUserInfoActivity.this,"添加好友失败！",Toast.LENGTH_SHORT).show();
                     break;
+                }
+                case 2:
+                {
+                    String ret = (String) msg.obj;
+                    if(ret == ADD_FRIEND_SUCCESS)
+                    {
+                        buttonAddUser.setEnabled(true);
+                        Toast.makeText(SingleUserInfoActivity.this,"删除好友成功～",Toast.LENGTH_SHORT).show();
+                        buttonAddUser.setText("添加好友");
+                    }
+                    else
+                        Toast.makeText(SingleUserInfoActivity.this,"删除好友失败！",Toast.LENGTH_SHORT).show();
                 }
                 default:
                 {
@@ -117,8 +138,8 @@ public class SingleUserInfoActivity extends AppCompatActivity {
         textViewUserAge = (TextView) findViewById(R.id.user_age);
         textViewUsersign = (TextView) findViewById(R.id.text_sign);
         textViewSchoolClass = (TextView) findViewById(R.id.user_class);
-        buttonAddUser = (Button) findViewById(R.id.button_adduser);
-        buttonSendmsg = (Button) findViewById(R.id.button_sendmsg);
+//        buttonAddUser = (Button) findViewById(R.id.button_adduser);
+//        buttonSendmsg = (Button) findViewById(R.id.button_sendmsg);
 
         buttonAddUser.setEnabled(false);
 
@@ -148,6 +169,8 @@ public class SingleUserInfoActivity extends AppCompatActivity {
         userClass = schoolClass.replaceAll("\\|"," ");
         textViewSchoolClass.setText(userClass);
 
+        isFriend = mUserInfo.getFriendStatus();
+
         if(mUserOperatorController.getId().equals(mUserInfo.getId())) //判断是否是用户本人
         {
             buttonAddUser.setVisibility(View.INVISIBLE);
@@ -159,62 +182,17 @@ public class SingleUserInfoActivity extends AppCompatActivity {
             //TODO:设置按钮为不可按，直到获取好友成功 
             //TODO:刷新好友列表
 
-            //待获取用户资料的好友列表
-            List<String> users = new ArrayList<String>();
-            users.add(mUserInfo.getId());
-//获取好友资料
-            TIMFriendshipManagerExt.getInstance().getFriendsProfile(users, new TIMValueCallBack<List<TIMUserProfile>>(){
-                @Override
-                public void onError(int code, String desc){
-                    //错误码code和错误描述desc，可用于定位请求失败原因
-                    //错误码code列表请参见错误码表
-                    buttonAddUser.setText("添加好友");
-                    buttonAddUser.setEnabled(true);
-                    Log.e(tag, "getFriendsProfile failed: " + code + " desc");
-                }
+            if(isFriend==2)
+            {
+                buttonAddUser.setText("删除好友");
+                buttonAddUser.setEnabled(true);
+            }
 
-                @Override
-                public void onSuccess(List<TIMUserProfile> result){
-
-                    buttonAddUser.setText("删除好友");
-                    buttonAddUser.setEnabled(true);
-
-                    Log.e(tag, "getFriendsProfile succ");
-                    for(TIMUserProfile res : result){
-                        Log.e(tag, "identifier: " + res.getIdentifier() + " nickName: " + res.getNickName()
-                                + " remark: " + res.getRemark());
-                    }
-                }
-            });
-
-            buttonAddUser.setOnClickListener(new View.OnClickListener(){
-                public void onClick(View v){
-                    if(buttonAddUser.getText().equals("添加好友"))
-                    {
-                        onAddFriends();
-                        buttonAddUser.setText("删除好友");
-                        Toast.makeText(SingleUserInfoActivity.this, "添加好友成功",Toast.LENGTH_SHORT).show();
-                    }
-                    else if(buttonAddUser.getText().equals("删除好友"))
-                    {
-                        onDelFriends();
-                        buttonAddUser.setText("添加好友");
-                        Toast.makeText(SingleUserInfoActivity.this, "删除好友成功",Toast.LENGTH_SHORT).show();
-
-                    }
-
-                }
-            });
-
-            buttonSendmsg.setOnClickListener(new View.OnClickListener(){
-                public void onClick(View v){
-                    //TODO : 接入单聊
-                Intent intent = new Intent(SingleUserInfoActivity.this, SendMessageActivity.class);
-                    intent.putExtra("userId", String.valueOf(mUserInfo.getId()));
-                    intent.putExtra("userName", String.valueOf(mUserInfo.getUserName()));
-                    startActivity(intent);
-                }
-            });
+            if(isFriend==1||isFriend==0)
+            {
+                buttonAddUser.setText("添加好友");
+                buttonAddUser.setEnabled(true);
+            }
 
         }
     }
@@ -226,6 +204,9 @@ public class SingleUserInfoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.single_user_info_activity);
         Button buttonBack=(Button) findViewById(R.id.button_back);
+        buttonAddUser = (Button) findViewById(R.id.button_adduser);
+        buttonSendmsg = (Button) findViewById(R.id.button_sendmsg);
+
         buttonBack.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
                 finish();
@@ -239,7 +220,9 @@ public class SingleUserInfoActivity extends AppCompatActivity {
         if(intent.getBooleanExtra("isGet",false)){
             mUserInfo=(UserInfo)intent.getSerializableExtra("userinfo");
             //mUserOperatorController=(UserOperatorController)intent.getSerializableExtra("operatorcontroller");
+
             putInformation();
+
         }else {
             final String id = intent.getStringExtra("userid");
             new Thread() {
@@ -262,38 +245,42 @@ public class SingleUserInfoActivity extends AppCompatActivity {
                 }
             }.start();
         }
+
+
+        buttonAddUser.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                if(buttonAddUser.getText().equals("添加好友"))
+                {
+                    AddFriends();
+                    buttonAddUser.setEnabled(false);
+
+//                    buttonAddUser.setText("删除好友");
+                }
+                else if(buttonAddUser.getText().equals("删除好友"))
+                {
+                    RemoveFriend();
+                    buttonAddUser.setEnabled(false);
+//                    buttonAddUser.setText("添加好友");
+
+                }
+
+            }
+        });
+
+        buttonSendmsg.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                //TODO : 接入单聊
+                Intent intent = new Intent(SingleUserInfoActivity.this, SendMessageActivity.class);
+                intent.putExtra("userId", String.valueOf(mUserInfo.getId()));
+                intent.putExtra("userName", String.valueOf(mUserInfo.getUserName()));
+                startActivity(intent);
+            }
+        });
+
     }
 
-    void onAddFriends()
+    void AddFriends()
     {
-//        //创建请求列表
-//        List<TIMAddFriendRequest> reqList = new ArrayList<TIMAddFriendRequest>();
-////添加好友请求
-//        TIMAddFriendRequest req = new TIMAddFriendRequest(mUserInfo.getId());//identifier
-////        req.setIdentifier(mSearchIdentifier);
-////        req.setAddrSource("AddSource_Type_Android");
-////        req.setAddWording("add me");
-////        req.setRemark("Cat");
-//        reqList.add(req);
-//
-////申请添加好友
-//        TIMFriendshipManagerExt.getInstance().addFriend(reqList, new TIMValueCallBack<List<TIMFriendResult>>() {
-//            @Override
-//            public void onError(int code, String desc){
-//                //错误码code和错误描述desc，可用于定位请求失败原因
-//                //错误码code列表请参见错误码表
-//                Log.e(tag, "addFriend failed: " + code + " desc");
-//            }
-//            @Override
-//            public void onSuccess(List<TIMFriendResult> result){
-//                Log.e(tag, "addFriend succ");
-//                //EventBus.getDefault().post(new MessageFragmentRightFragment.FriendRefreshEvent(){});
-//                for(TIMFriendResult res : result){
-//                    Log.e(tag, "identifier: " + res.getIdentifer() + " status: " + res.getStatus());
-//                }
-//            }
-//        });
-
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -313,6 +300,29 @@ public class SingleUserInfoActivity extends AppCompatActivity {
             }
         }).start();
     }
+
+    void RemoveFriend()
+    {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try
+                {
+                    String ret = onRemoveFriend(mUserInfo.getId());
+                    Message msg = new Message();
+                    msg.what = 2;
+                    msg.obj = ret;
+                    mHandler.sendMessage(msg);
+                }catch (UServerAccessException e)
+                {
+                    e.printStackTrace();
+                }
+
+
+            }
+        }).start();
+    }
+
 
 
     public static String onAddFriend(@NonNull String inviteByID )throws UServerAccessException{
@@ -355,35 +365,69 @@ public class SingleUserInfoActivity extends AppCompatActivity {
         }
     }
 
-    void onDelFriends()
-    {
-        //删除好友
-//        List<TIMAddFriendRequest> reqList = new ArrayList<TIMAddFriendRequest>();
-//        TIMAddFriendRequest req = new TIMAddFriendRequest(mUserInfo.getId());
-//        reqList.add(req);
-        List<String>reqList = new ArrayList<String>();
-        String req = mUserInfo.getId().toString();
-        reqList.add(req);
-        TIMFriendshipManagerExt.DeleteFriendParam deleteFriendParam = new TIMFriendshipManagerExt.DeleteFriendParam();
-        deleteFriendParam.setUsers(reqList);
 
-//指定删除双向好友
-        TIMFriendshipManagerExt.getInstance().delFriend(deleteFriendParam, new TIMValueCallBack<List<TIMFriendResult>>() {
-            @Override
-            public void onError(int code, String desc){
-                //错误码code和错误描述desc，可用于定位请求失败原因
-                //错误码code列表请参见错误码表
-                Log.e(tag, "delFriend failed: " + code + " desc");
+    public static String onRemoveFriend(@NonNull String unfollowID )throws UServerAccessException{
+        UserOperatorController user = UserOperatorController.getInstance();
+        String id = user.getId();
+        id = UrlEncode(id);
+        String passport = user.getPassport();
+        passport = UrlEncode(passport);
+        PhalApiClient client=createClient();
+        PhalApiClientResponse response=client
+                .withService("User.RemoveFriend")//接口的名称
+                .withParams("id",id)
+                .withParams("passport",passport)
+                .withParams("unfollowByID",unfollowID)
+                .request();
+        if(response.getRet()==200) {
+            try {
+                String data = new String(response.getData());
+                return ADD_FRIEND_SUCCESS;// "success"
+            } catch (Exception e) {
+                Log.e("ServerAccessApi", e.toString());
+                //数据包无法解析，向上抛出一个异常
+                throw new UServerAccessException(UServerAccessException.ERROR_DATA);
             }
-
-            @Override
-            public void onSuccess(List<TIMFriendResult> result){
-                for(TIMFriendResult res : result){
-                    Log.e(tag, "identifier: " + res.getIdentifer() + " status: " + res.getStatus());
-                }
-            }
-        });
+        }
+        else {
+            throw new UServerAccessException(response.getRet());
+        }
     }
+
+    public static JSONArray getFriendList() throws UServerAccessException
+    {
+        UserOperatorController user = UserOperatorController.getInstance();
+        String id = user.getId();
+        id = UrlEncode(id);
+        String passport = user.getPassport();
+        passport = UrlEncode(passport);
+        PhalApiClient client=createClient();
+        PhalApiClientResponse response = client
+                .withService("User.GetFriendList")
+                .withParams("id",id)
+                .withParams("passport",passport)
+                .request();
+        if(response.getRet() == 200)
+        {
+            try {
+                JSONArray mFriendList = new JSONArray(response.getData());
+                Log.e("MFRF","getFriendList");
+                return  mFriendList;
+            }catch (JSONException e)
+            {
+                Log.e("MFRF","ServerAccessApi"+e.toString());
+                //数据包无法解析，向上抛出一个异常
+                throw new UServerAccessException(UServerAccessException.ERROR_DATA);
+            }
+
+        }
+        else
+        {
+            throw new UServerAccessException(response.getRet());
+        }
+    }
+
+
 
 
     private static String UrlEncode(String str)throws UServerAccessException{
