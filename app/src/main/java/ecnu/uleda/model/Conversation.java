@@ -10,6 +10,7 @@ public class Conversation {
     private String mImageUrl;
     private String mContent;
 
+
     public String getConversationuId() {
         return mConversationuId;
     }
