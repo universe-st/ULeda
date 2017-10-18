@@ -2,6 +2,7 @@ package ecnu.uleda.view_controller.message;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +44,7 @@ public class ConversationAdapter extends ArrayAdapter<Conversation> {
         {
             view = LayoutInflater.from(getContext()).inflate(resourceId,parent,false);
             viewHolder = new ConversationAdapter.ViewHolder();
-//            viewHolder.Image = (CircleImageView)view.findViewById(R.id.);
+            viewHolder.conversationImage = (CircleImageView)view.findViewById(R.id.conversation_image);
             viewHolder.conversationName = (TextView)view.findViewById(R.id.conversation_name);
             viewHolder.contactsContent = (TextView)view.findViewById(R.id.contacts_content);
             view.setTag(viewHolder);
@@ -57,10 +58,11 @@ public class ConversationAdapter extends ArrayAdapter<Conversation> {
 //        mURI = Uri.parse(friend.getImageUrl());
 //        Log.d(TAG, "getImageUri: "+mURI);
 
-//        Glide.with(getContext())
-//                .load(conversation.getImageUrl())
-//                .into(viewHolder.friendImage);
-//        viewHolder.friendImage.setImageURI(mURI);
+        Glide.with(getContext())
+                .load(conversation.getImageUrl())
+                .into(viewHolder.conversationImage);
+        Log.e(TAG, "getImageUrl" +conversation.getImageUrl());
+//        viewHolder.Image.setImageURI(mURI);
         viewHolder.conversationName.setText(conversation.getConversationName());
         viewHolder.contactsContent.setText(conversation.getContent());
 
@@ -69,7 +71,7 @@ public class ConversationAdapter extends ArrayAdapter<Conversation> {
 
     class ViewHolder
     {
-        CircleImageView friendImage;
+        CircleImageView conversationImage;
         TextView conversationName;
         TextView contactsContent;
     }

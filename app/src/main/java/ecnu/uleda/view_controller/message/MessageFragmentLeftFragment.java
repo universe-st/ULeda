@@ -2,6 +2,7 @@ package ecnu.uleda.view_controller.message;
 
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -40,6 +42,7 @@ import ecnu.uleda.model.ChatMessage;
 import ecnu.uleda.model.Conversation;
 import ecnu.uleda.model.Friend;
 import ecnu.uleda.model.UserInfo;
+import ecnu.uleda.view_controller.SingleUserInfoActivity;
 
 
 /**
@@ -83,7 +86,7 @@ public class MessageFragmentLeftFragment extends Fragment {
 
 
         //test
-        Conversation conversation = new Conversation().setConversationuId("8")
+        final Conversation conversation = new Conversation().setConversationuId("8")
                 .setConversationName("赵宁")
                 .setContent("hahaha");
         mConversationList.add(conversation);
@@ -103,6 +106,16 @@ public class MessageFragmentLeftFragment extends Fragment {
         mConversationAdapter = new ConversationAdapter(MessageFragmentLeftFragment.this.getContext(),R.layout.conversation_item,mConversationList);
         mListView.setAdapter(mConversationAdapter);
 
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Conversation conversation1 = mConversationList.get(position);
+                Intent intent = new Intent(getContext(), SendMessageActivity.class);
+                intent.putExtra("userId", String.valueOf(conversation1.getConversationuId()));
+                intent.putExtra("userName", String.valueOf(conversation1.getConversationName()));
+                startActivity(intent);
+            }
+        });
         return view;
 
     }
@@ -152,35 +165,8 @@ public class MessageFragmentLeftFragment extends Fragment {
 
                                         TIMTextElem textElem = (TIMTextElem) elem;
 
-//                        //获取当前元素的类型
-//                        TIMElemType elemType = elem.getType();
-//                        Log.d(TAG, "elem type: " + elemType.name());
-//                        if (elemType == TIMElemType.Text) {
-//                            //处理文本消息
-//                        } else if (elemType == TIMElemType.Image) {
-//                            //处理图片消息
-//                        }//...处理更多消息
                                     message = textElem.getText().toString();
                                 }
-
-//                                getActivity().runOnUiThread(new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//
-//                                        try {
-//                                            userInfo = getUserId(peerId);
-////                                            Message message = new Message();
-////                                            message.what = 0;
-////                                            mHandler.sendMessage(message);
-//                                        }
-//                                        catch (UServerAccessException e)
-//                                        {
-//                                            e.printStackTrace();
-//                                            System.exit(1);
-//                                        }
-//                                    }
-//                                });
-
                             Conversation conversation = new Conversation().setConversationuId(peerId)
                                     .setConversationName(peerId)
                                     .setContent(message);
@@ -190,43 +176,76 @@ public class MessageFragmentLeftFragment extends Fragment {
                             mConversationAdapter.notifyDataSetChanged();
                             }
 
+                            new Thread(new MyRunnable()).start();
+
+
                         }
                     });
-
         }
 
 
     }
 
-//
-//    public UserInfo getUserId(String id) throws UServerAccessException
-//    {
-//        UserOperatorController mUOC = UserOperatorController.getInstance();
-//        String mId = mUOC.getId();
-//        String mPwd = mUOC.getPassport();
-//        UserInfo userInfo = new UserInfo();
-//        try {
-//            JSONObject json = ServerAccessApi.getBasicInfo(mId, mPwd, id);
-//            userInfo.setAvatar(json.getString("avatar"))
-//                    .setPhone(json.getString("phone"))
-//                    .setSex(json.getInt("sex"))
-//                    .setRealName(json.getString("realname"))
-//                    .setSchool(json.getString("school"))
-//                    .setSchoolClass(json.getString("class"))
-//                    .setUserName(json.getString("username"))
-//                    .setId(id)
-//                    .setSignature(json.getString("signature"))
-//                    .setFriendStatus(Integer.valueOf(json.getString("friendStatus")));
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//            System.exit(1);
-//        }
-//        catch (UServerAccessException e)
-//        {
-//            e.printStackTrace();
-//            System.exit(1);
-//        }
-//        return userInfo;
-//    }
+
+    public UserInfo getUserId(String id) throws UServerAccessException
+    {
+        UserOperatorController mUOC = UserOperatorController.getInstance();
+        String mId = mUOC.getId();
+        String mPwd = mUOC.getPassport();
+        UserInfo userInfo = new UserInfo();
+        try {
+            JSONObject json = ServerAccessApi.getBasicInfo(mId, mPwd, id);
+            userInfo.setAvatar(json.getString("avatar"))
+                    .setPhone(json.getString("phone"))
+                    .setSex(json.getInt("sex"))
+                    .setRealName(json.getString("realname"))
+                    .setSchool(json.getString("school"))
+                    .setUserName(json.getString("username"))
+                    .setSignature(json.getString("signature"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        catch (UServerAccessException e)
+        {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return userInfo;
+    }
+
+
+    class MyRunnable implements Runnable {
+
+        @Override
+        public void run()
+        {
+            for( Conversation mConver:mConversationList)
+            {
+                try
+                {
+                    userInfo = getUserId(mConver.getConversationuId());
+                    mConver.setConversationName(userInfo.getUserName());
+                    mConver.setImageUrl("http://118.89.156.167/uploads/avatars/"+userInfo.getAvatar());
+
+                    getActivity().runOnUiThread(new MyUiRunnable());
+
+                }
+                catch (UServerAccessException e)
+                {
+                    e.printStackTrace();
+                    System.exit(1);
+                }
+            }
+        }
+    }
+
+    class MyUiRunnable implements Runnable{
+        @Override
+        public void run()
+        {
+            mConversationAdapter.notifyDataSetChanged();
+        }
+    }
 
 }
