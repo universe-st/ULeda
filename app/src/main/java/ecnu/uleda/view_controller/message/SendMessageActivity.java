@@ -50,6 +50,7 @@ public class SendMessageActivity extends AppCompatActivity {
     private TextView title;
     private EditText input;
     private Button mButtonSendMessage;
+    private Button mButtonBack;
     private TIMConversation mConversation;
     private ListView listView;
 
@@ -76,6 +77,7 @@ public class SendMessageActivity extends AppCompatActivity {
         title.setText(mFriendName);
         input = (EditText)findViewById(R.id.message_edit_text);
         mButtonSendMessage = (Button)findViewById(R.id.button_send_message);
+        mButtonBack = (Button)findViewById(R.id.button_chat_back);
 
         adapter = new ChatAdapter(this, R.layout.item_message, messageList);
         listView = (ListView) findViewById(R.id.chat_list);
@@ -90,6 +92,12 @@ public class SendMessageActivity extends AppCompatActivity {
 
         Log.e(TAG, "SendMessageActivity:id = "+mFriendId+" ,name = "+mFriendName);
 
+        mButtonBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         TIMManager.getInstance().addMessageListener(new TIMMessageListener()
         {

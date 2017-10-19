@@ -95,14 +95,6 @@ public class MessageFragmentLeftFragment extends Fragment {
         mListView = (ListView)view.findViewById(R.id.conversation_list);
         lastMessagg = (TextView)view.findViewById(R.id.contacts_content);
 
-
-        //test
-        final Conversation conversation = new Conversation().setConversationuId("8")
-                .setConversationName("赵宁")
-                .setContent("hahaha")
-                .setImageUrl("http://118.89.156.167/uploads/avatars/avatar-5.png");
-        mConversationList.add(conversation);
-
         accessServer();
 
 //        new Thread(new MyInvitesRunnable()).start();

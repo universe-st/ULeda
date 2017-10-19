@@ -8,7 +8,9 @@
         android:id="@+id/left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -30,6 +32,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:background="@drawable/bg_bubble_gray"
+            android:textSize="15dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="10dp"
             android:text="" />
 
 
@@ -54,6 +59,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:background="@drawable/bg_bubble_blue"
+            android:textSize="15dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="10dp"
             android:text="" />
 
         <LinearLayout
