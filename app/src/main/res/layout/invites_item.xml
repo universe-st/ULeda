@@ -18,7 +18,7 @@
             android:weightSum="100">
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/conversation_image"
+                android:id="@+id/invites_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
@@ -30,13 +30,13 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="80"
+            android:layout_weight="50"
             android:orientation="vertical"
             android:paddingTop="0dp"
             android:weightSum="100">
 
             <TextView
-                android:id="@+id/conversation_name"
+                android:id="@+id/invites_name"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="60"
@@ -51,14 +51,14 @@
                 android:layout_weight="40">
 
                 <TextView
-                    android:id="@+id/contacts_content"
+                    android:id="@+id/invites_content"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="80"
                     android:ellipsize="end"
                     android:gravity="center_vertical"
                     android:maxLines="1"
-                    android:text=" 在吗？"
+                    android:text=" 好友申请：来自ID查找"
                     android:textColor="@android:color/darker_gray"
                     android:textSize="15sp"/>
 
@@ -73,6 +73,23 @@
                     android:textSize="15sp"/>
             </LinearLayout>
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="30">
+
+            <Button
+                android:id="@+id/button_invites"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorUBlue"
+                android:text="同意"
+                android:textColor="@color/colorUWhite"
+                android:layout_gravity="center"
+                android:layout_marginLeft="5dp" />
+        </LinearLayout>
     </LinearLayout>
+
 
 </LinearLayout>

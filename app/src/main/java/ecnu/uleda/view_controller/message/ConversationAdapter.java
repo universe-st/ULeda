@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import java.util.List;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import ecnu.uleda.R;
@@ -22,57 +23,107 @@ import ecnu.uleda.model.Friend;
  * Created by zhaoning on 2017/10/17.
  */
 
-public class ConversationAdapter extends ArrayAdapter<Conversation> {
-    private int resourceId;
-    private Uri mURI;
+public class ConversationAdapter extends ArrayAdapter<Object> {
+    private int resourceId1;
+    private int resourceId2;
+
+    //Invites类的type标志
+    private static final int TYPE_INVATES = 0;
+    //Conversation类的type标志
+    private static final int TYPE_CONVERSATION = 1;
 
     private static final String TAG = "ConversationAdapter";
 
-    public ConversationAdapter (Context context, int textViewResourceId, List<Conversation> objects)
+    public ConversationAdapter (Context context, int textViewResourceId1,int textViewResourceId2, List<Object> objects)
     {
-        super(context,textViewResourceId,objects);
-        resourceId = textViewResourceId;
+        super(context,textViewResourceId1,objects);
+        resourceId1 = textViewResourceId1;
+        resourceId2 = textViewResourceId2;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent)
     {
-        Conversation conversation = getItem(position);
+        Object obj = getItem(position);
         View view;
-        ConversationAdapter.ViewHolder viewHolder;
-        if(convertView==null)
+
+        if(obj instanceof Conversation)
         {
-            view = LayoutInflater.from(getContext()).inflate(resourceId,parent,false);
-            viewHolder = new ConversationAdapter.ViewHolder();
-            viewHolder.conversationImage = (CircleImageView)view.findViewById(R.id.conversation_image);
-            viewHolder.conversationName = (TextView)view.findViewById(R.id.conversation_name);
-            viewHolder.contactsContent = (TextView)view.findViewById(R.id.contacts_content);
-            view.setTag(viewHolder);
+            Conversation conversation = (Conversation)obj;
+
+            ConversationAdapter.ViewHolder1 viewHolder;
+
+            if(convertView==null)
+            {
+                view = LayoutInflater.from(getContext()).inflate(resourceId1,parent,false);
+                viewHolder = new ConversationAdapter.ViewHolder1();
+                viewHolder.conversationImage = (CircleImageView)view.findViewById(R.id.conversation_image);
+                viewHolder.conversationName = (TextView)view.findViewById(R.id.conversation_name);
+                viewHolder.contactsContent = (TextView)view.findViewById(R.id.contacts_content);
+                view.setTag(viewHolder);
+            }
+            else
+            {
+                view = convertView;
+                viewHolder = (ConversationAdapter.ViewHolder1)view.getTag();
+            }
+
+
+            Glide.with(getContext())
+                    .load(conversation.getImageUrl())
+                    .into(viewHolder.conversationImage);
+            Log.e(TAG, "Conversation getImageUrl" +conversation.getImageUrl());
+//        viewHolder.Image.setImageURI(mURI);
+            viewHolder.conversationName.setText(conversation.getConversationName());
+            viewHolder.contactsContent.setText(conversation.getContent());
+
         }
         else
         {
-            view = convertView;
-            viewHolder = (ConversationAdapter.ViewHolder)view.getTag();
-        }
-//
-//        mURI = Uri.parse(friend.getImageUrl());
-//        Log.d(TAG, "getImageUri: "+mURI);
+            ConversationAdapter.ViewHolder2 viewHolder;
 
-        Glide.with(getContext())
-                .load(conversation.getImageUrl())
-                .into(viewHolder.conversationImage);
-        Log.e(TAG, "getImageUrl" +conversation.getImageUrl());
+            Invites invites = (Invites)obj;
+
+            if(convertView==null)
+            {
+                view = LayoutInflater.from(getContext()).inflate(resourceId2,parent,false);
+                viewHolder = new ConversationAdapter.ViewHolder2();
+                viewHolder.invitesImage = (CircleImageView)view.findViewById(R.id.invites_image);
+                viewHolder.invitesName = (TextView)view.findViewById(R.id.invites_name);
+                viewHolder.invitesContent = (TextView)view.findViewById(R.id.invites_content);
+                view.setTag(viewHolder);
+            }
+            else
+            {
+                view = convertView;
+                viewHolder = (ConversationAdapter.ViewHolder2)view.getTag();
+            }
+
+
+            Glide.with(getContext())
+                    .load(invites.getImageUrl())
+                    .into(viewHolder.invitesImage);
+            Log.e(TAG, "Invites getImageUrl" +invites.getImageUrl());
 //        viewHolder.Image.setImageURI(mURI);
-        viewHolder.conversationName.setText(conversation.getConversationName());
-        viewHolder.contactsContent.setText(conversation.getContent());
+            viewHolder.invitesName.setText(invites.getInvitesName());
+//            viewHolder.invitesContent.setText(invites.getContent());
+
+        }
 
         return view;
     }
 
-    class ViewHolder
+    class ViewHolder1
     {
         CircleImageView conversationImage;
         TextView conversationName;
         TextView contactsContent;
     }
+    class ViewHolder2
+    {
+        CircleImageView invitesImage;
+        TextView invitesName;
+        TextView invitesContent;
+    }
+
 }
