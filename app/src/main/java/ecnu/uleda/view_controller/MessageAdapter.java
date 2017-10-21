@@ -23,7 +23,7 @@ import ecnu.uleda.model.Msg;
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder> {
     //TODO
-    //还有点问题
+    //这个好像是融云残存的，可以删了应该
     private List<Msg> mMsgList;
 
     static class ViewHolder extends RecyclerView.ViewHolder {

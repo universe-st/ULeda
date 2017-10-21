@@ -126,6 +126,7 @@
         <activity android:name=".view_controller.CommonBigImageActivity"
                   android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <activity android:name=".view_controller.message.SendMessageActivity"
+                  android:windowSoftInputMode="adjustPan"
                   android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <!-- Mob短信验证 -->
         <activity
