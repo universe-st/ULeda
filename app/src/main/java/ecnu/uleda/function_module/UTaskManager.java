@@ -5,6 +5,8 @@ import android.util.Log;
 
 import com.tencent.mapsdk.raster.model.LatLng;
 
+import net.phalapi.sdk.PhalApiClientResponse;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -362,6 +364,28 @@ public class UTaskManager {
                 return tasks;
             default:
                 return tasks;
+        }
+    }
+
+    public PhalApiClientResponse verifyTaker(String postID, String verifyID) throws UServerAccessException {
+        UserOperatorController uoc = UserOperatorController.getInstance();
+        if (!uoc.getIsLogined()) {
+            throw new UServerAccessException(UServerAccessException.UN_LOGIN);
+        } else {
+            return ServerAccessApi.verifyTaker(
+                    uoc.getId(),
+                    uoc.getPassport(),
+                    postID,
+                    verifyID);
+        }
+    }
+
+    public PhalApiClientResponse cancelTask(String postID) throws UServerAccessException {
+        UserOperatorController uoc = UserOperatorController.getInstance();
+        if (!uoc.getIsLogined()) {
+            throw new UServerAccessException(UServerAccessException.UN_LOGIN);
+        } else {
+            return ServerAccessApi.cancelTask(postID);
         }
     }
 }

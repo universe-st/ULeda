@@ -1,49 +1,109 @@
 package ecnu.uleda.view_controller;
-
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.Toast;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-
 import ecnu.uleda.R;
 import ecnu.uleda.exception.UServerAccessException;
 import ecnu.uleda.function_module.ServerAccessApi;
-import ecnu.uleda.function_module.UserOperatorController;
 import ecnu.uleda.model.MyOrder;
-import ecnu.uleda.view_controller.MyOrderAdapter;
-
-
+import ecnu.uleda.model.UTask;
+import ecnu.uleda.tool.RecyclerViewTouchListener;
+import ecnu.uleda.view_controller.task.activity.TaskDetailsActivity;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 public class MyTask_ReleasedFragment extends Fragment {
-
-    private ListView mlistView;
+    private RecyclerView mRecyclerView;
     private List<MyOrder> releasedList = new ArrayList<>();
     private MyOrderAdapter mMyOrderAdapter;
+    private int index = 0;
+    private boolean hasMoreTask = true;
     private Handler handler = new Handler(){
         public void handleMessage(Message msg)
         {
             switch (msg.what)
             {
-                case 1:
-
-                        JSONArray jsonArray = (JSONArray)msg.obj;
-                        for(int i = 0;i < jsonArray.length();i++)
-                        {
-                            try
-                            {
+                case 2:
+                    Intent intent = new Intent(getActivity().getApplication(),TaskDetailsActivity.class);
+                    UTask utask = (UTask)msg.obj;
+                    intent.putExtra("UTask",utask);
+                    startActivity(intent);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+    public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle b) {
+        View v = inflater.inflate(R.layout.fragment_my_task__released, parent, false);
+        mRecyclerView = (RecyclerView) v.findViewById(R.id.list_view);
+        mMyOrderAdapter = new MyOrderAdapter(this.getActivity().getApplicationContext(), releasedList);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        mRecyclerView.setAdapter(mMyOrderAdapter);
+        mRecyclerView.addOnItemTouchListener(new RecyclerViewTouchListener(mRecyclerView) {
+            @Override
+            public void onItemClick(int position, RecyclerView.ViewHolder viewHolder) {
+                getTask(position);
+            }
+            @Override
+            public void onItemLongClick(int position, RecyclerView.ViewHolder viewHolder) {
+            }
+        });
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    if (!ViewCompat.canScrollVertically(recyclerView, 1) && hasMoreTask) {
+                        index++;
+                        getReleasedUserTask();
+                    }
+                }
+            }
+        });
+        return v;
+    }
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        getReleasedUserTask();
+    }
+    private void getReleasedUserTask() {
+        hasMoreTask = false; // 避免正在网络请求时再次触发"加载更多"
+        Observable.create(new ObservableOnSubscribe<JSONArray>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<JSONArray> e) throws Exception {
+                e.onNext(ServerAccessApi.getUserTask(index, 0));
+                e.onComplete();
+            }
+        })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Consumer<JSONArray>() {
+                    @Override
+                    public void accept(JSONArray jsonArray) throws Exception {
+                        int length = jsonArray.length();
+                        if (index == 0) releasedList.clear();
+                        for (int i = 0; i < length; i++) {
+                            try {
                                 JSONObject json = jsonArray.getJSONObject(i);
                                 releasedList.add(new MyOrder()
                                         .setTag(json.getString("tag"))
@@ -55,64 +115,69 @@ public class MyTask_ReleasedFragment extends Fragment {
                                         .setPrice(BigDecimal.valueOf(Double.parseDouble(json.getString("price"))))
                                         .setPath(json.getString("path"))
                                 );
-                            }catch (JSONException e) {
+                            } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         }
-                    mMyOrderAdapter.notifyDataSetChanged();
-                    mlistView.setAdapter(mMyOrderAdapter);
-                        break;
-
-                default:
-                        break;
-            }
-        }
-    };
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+                        mMyOrderAdapter.notifyDataSetChanged();
+                        if (length > 0) hasMoreTask = true; // 如果加载到了数据，说明可能还有更多
+                    }
+                });
     }
-    public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle b) {
-        View v=inflater.inflate(R.layout.fragment_my_task__released,parent,false);
-        mlistView = (ListView) v.findViewById(R.id.list_view);
-        mMyOrderAdapter = new MyOrderAdapter(this.getActivity(),releasedList);
-
-        /*releasedList.add(new MyOrder()
-                .setTitle("帮忙重装系统")
-                .setDescription("")
-                .setPrice(BigDecimal.valueOf(10))
-                .setActiveTime(15)
-                .setAuthorCredit(5)
-                .setAuthorID(110)
-                .setAuthorUserName("TonyDanid")
-                .setPath("到理科大楼")
-                .setTag("学习帮助")
-
-                .setActiveTime(1260)
-        );*/
-       new Thread(new Runnable() {
+    public void getTask(final int position)
+    {
+        new Thread(new Runnable() {
             @Override
             public void run() {
-                try
-                {
-                    JSONArray jsonArray = ServerAccessApi.getUserTask(0,0);
+                UTask uTask = new UTask();
+                try {
+                    int index = 0;
+                    int temp = 0;
+                    if(position == 0)
+                    {
+                        index = 0;
+                    }
+                    else
+                    {
+                        if(position % 10 == 0)
+                        {
+                            index = position / 10 - 1;
+                        }
+                        else
+                        {
+                            index = position / 10;
+                        }
+                    }
+                    temp = position - 10 * index;
+                    JSONArray jsonArray = ServerAccessApi.getUserTask(index,0);
+                    JSONObject json = jsonArray.getJSONObject(temp);
+                    uTask.setTitle(json.getString("title"))
+                            .setStatus(Integer.parseInt(json.getString("status")))
+                            .setAuthorID(Integer.parseInt(json.getString("author")))
+                            .setAuthorAvatar(json.getString("authorAvatar"))
+                            .setAuthorUserName(json.getString("authorUsername"))
+                            .setAuthorCredit(Integer.parseInt(json.getString("authorCredit")))
+                            .setTag(json.getString("tag"))
+                            .setDescription(json.getString("description"))
+                            .setPostDate(Long.parseLong(json.getString("postdate")))
+                            .setActiveTime(Long.parseLong(json.getString("activetime")))
+                            .setPath(json.getString("path"))
+                            .setPrice(BigDecimal.valueOf(Double.parseDouble(json.getString("price"))))
+                            .setPostID(json.getString("postID"))
+                            .setTakersCount(Integer.parseInt(json.getString("taker")));
                     Message msg = new Message();
-                    msg.what = 1;
-                    msg.obj = jsonArray;
+                    msg.what = 2;
+                    msg.obj = uTask;
                     handler.sendMessage(msg);
                 }catch (UServerAccessException e)
                 {
                     e.printStackTrace();
                 }
-
-
+                catch (JSONException e)
+                {
+                    e.printStackTrace();
+                }
             }
         }).start();
-
-
-
-
-        return v;
     }
 }

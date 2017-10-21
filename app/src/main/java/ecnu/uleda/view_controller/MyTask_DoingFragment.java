@@ -1,5 +1,6 @@
 package ecnu.uleda.view_controller;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -7,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ListView;
 
 import org.json.JSONArray;
@@ -27,6 +29,7 @@ public class MyTask_DoingFragment extends Fragment {
     private ListView mListView;
     private List<MyOrder> doinglist = new ArrayList<>();;
     private MydoingAdapter mMydoingAdapter;
+    private int Index = 0;
     private Handler handler = new Handler(){
         public void handleMessage(Message msg)
         {
@@ -77,34 +80,43 @@ public class MyTask_DoingFragment extends Fragment {
 
         View v =  inflater.inflate(R.layout.fragment_my_task__doing, parent, false);
         mListView = (ListView)v.findViewById(R.id.doing_item);
-       mMydoingAdapter = new MydoingAdapter(this.getActivity(),doinglist);
+        mMydoingAdapter = new MydoingAdapter(this.getActivity(),doinglist);
+        loadUserData();
+        mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if(mListView.getLastVisiblePosition() == mListView.getCount() - 1)
+                {
+                    Index++;
+                    loadUserData();
+                }
+            }
 
-       /* doinglist.add(new MyOrder()
-                .setTitle("帮忙重装系统")
-                .setDescription("")
-                .setPrice(BigDecimal.valueOf(10))
-                .setActiveTime(15)
-                .setAuthorCredit(5)
-                .setAuthorID(110)
-                .setAuthorUserName("TonyDanid")
-                .setPath("到理科大楼")
-                .setTag("学习帮助")
-                .setGetperson("徐洪义")
-                .setActiveTime(1260)
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+            }
+        });
 
 
-        );*/
-
+        return v;
+    }
+    public void loadUserData()
+    {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try
                 {
-                    JSONArray jsonArray = ServerAccessApi.getUserTask(0,1);
-                    Message msg = new Message();
-                    msg.what = 1;
-                    msg.obj = jsonArray;
-                    handler.sendMessage(msg);
+                    JSONArray jsonArray = ServerAccessApi.getUserTask(Index,1);
+                    if(jsonArray.length() > 0)
+                    {
+                        Message msg = new Message();
+                        msg.what = 1;
+                        msg.obj = jsonArray;
+                        handler.sendMessage(msg);
+                    }
+
                 }catch (UServerAccessException e)
                 {
                     e.printStackTrace();
@@ -113,8 +125,7 @@ public class MyTask_DoingFragment extends Fragment {
 
             }
         }).start();
-        return v;
-    }
 
+    }
 
 }

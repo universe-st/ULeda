@@ -39,13 +39,18 @@
             android:background="@android:color/transparent"
             android:textColor="@android:color/white"/>
     </LinearLayout>
+    <com.cjj.MaterialRefreshLayout
+        android:id="@+id/refresh"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight = "93"
+        >
     <ListView
         android:id="@+id/u_circle_list_view"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="93"
+        android:layout_height="match_parent"
         />
-
+    </com.cjj.MaterialRefreshLayout>
 
 
 

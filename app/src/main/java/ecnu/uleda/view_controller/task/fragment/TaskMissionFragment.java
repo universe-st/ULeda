@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
@@ -279,15 +280,15 @@ public class TaskMissionFragment extends Fragment {
         mTasksInList = new ArrayList<>();
         mTaskListAdapter = new TaskListAdapter(getActivity(), mTasksInList);
         mTaskListAdapter.setHasStableIds(true);
-        mTaskListView.setAdapter(mTaskListAdapter);
-        mTaskListView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        mTaskListView.setRefreshProgressStyle(ProgressStyle.Pacman);
-        mTaskListView.setLoadingMoreProgressStyle(ProgressStyle.Pacman);
-        mTaskListView.setArrowImageView(R.drawable.pull_to_refresh_arrow);
-        mTaskListView.addItemDecoration(new TaskListItemDecoration(getContext(), 8, true));
-        mTaskListAdapter.setOnItemClickListener(new TaskListAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClicked(View v, UTask task) {
+                mTaskListView.setAdapter(mTaskListAdapter);
+                mTaskListView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+                mTaskListView.setRefreshProgressStyle(ProgressStyle.Pacman);
+                mTaskListView.setLoadingMoreProgressStyle(ProgressStyle.Pacman);
+                mTaskListView.setArrowImageView(R.drawable.pull_to_refresh_arrow);
+                mTaskListView.addItemDecoration(new TaskListItemDecoration(getContext(), 8, true));
+                mTaskListAdapter.setOnItemClickListener(new TaskListAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClicked(View v, UTask task) {
                 Intent intent = new Intent(getActivity().getApplicationContext(), TaskDetailsActivity.class);
                 intent.putExtra("UTask", task);
                 startActivity(intent);
