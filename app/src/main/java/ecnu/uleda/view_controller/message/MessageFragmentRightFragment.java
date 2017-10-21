@@ -144,6 +144,13 @@ public class MessageFragmentRightFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onHiddenChanged(boolean hidden)
+    {
+        mFriendList.clear();
+        initFriends();
+    }
+
     private void initFriends()
     {
         new Thread(new Runnable() {

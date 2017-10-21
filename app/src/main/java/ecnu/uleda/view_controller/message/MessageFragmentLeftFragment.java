@@ -3,6 +3,7 @@ package ecnu.uleda.view_controller.message;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -18,10 +19,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.tencent.imsdk.TIMConversation;
 import com.tencent.imsdk.TIMConversationType;
 import com.tencent.imsdk.TIMElem;
+import com.tencent.imsdk.TIMElemType;
 import com.tencent.imsdk.TIMManager;
 import com.tencent.imsdk.TIMMessage;
 import com.tencent.imsdk.TIMTextElem;
@@ -40,6 +43,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import ecnu.uleda.R;
 import ecnu.uleda.exception.UServerAccessException;
 import ecnu.uleda.function_module.ServerAccessApi;
@@ -50,15 +57,17 @@ import ecnu.uleda.model.Friend;
 import ecnu.uleda.model.UserInfo;
 import ecnu.uleda.view_controller.SingleUserInfoActivity;
 
+import static com.tencent.imsdk.TIMElemType.Text;
+
 
 /**
  * Created by zhaoning on 2017/5/1.
  * 信息界面左
  */
 
-public class MessageFragmentLeftFragment extends Fragment {
+public class MessageFragmentLeftFragment extends Fragment implements ConversationAdapter.OnAddedFriendListener{
 
-    private List<Object> mConversationList = new ArrayList<>();
+    private final List<Object> mConversationList = new ArrayList<>();
     private ListView mListView;
     private  String TAG="MFLF";//MessageFragmentLeftFragment is too long(interesting)      -KSS
     private TextView lastMessagg;
@@ -66,12 +75,19 @@ public class MessageFragmentLeftFragment extends Fragment {
     private String message;
     private String peerId;
     private UserInfo userInfo;
+    private ExecutorService cachedThredPool;
 
     private static final String INVITES_SUCCESS="success";
     private static final String USERE_NOT_FOUND="notFound";
     private static final String PASSWORD_ERROR="passwordError";
 
+    @Override
+    public void onAdded(Invites i) {
+        mConversationList.remove(i);
+        mConversationAdapter.notifyDataSetChanged();
+        Toast.makeText(getContext(),"接收好友请求成功！",Toast.LENGTH_SHORT).show();
 
+    }
 //    private Handler mHandler=new Handler() {
 //        @Override
 //        public void handleMessage(Message msg) {
@@ -85,6 +101,7 @@ public class MessageFragmentLeftFragment extends Fragment {
     @Override
     public void onCreate(Bundle b) {
         super.onCreate(b);
+        cachedThredPool = Executors.newCachedThreadPool();
     }
 
 
@@ -97,21 +114,9 @@ public class MessageFragmentLeftFragment extends Fragment {
 
         accessServer();
 
-//        new Thread(new MyInvitesRunnable()).start();
-
-//        try {
-//            initConversation();
-//        }
-//        catch (UServerAccessException e)
-//        {
-//            e.printStackTrace();
-//            System.exit(1);
-//        }
-
-
         mConversationAdapter = new ConversationAdapter(MessageFragmentLeftFragment.this.getContext(),R.layout.conversation_item,R.layout.invites_item,mConversationList);
         mListView.setAdapter(mConversationAdapter);
-
+        mConversationAdapter.setOnAddedFriendListener(this);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -134,32 +139,17 @@ public class MessageFragmentLeftFragment extends Fragment {
         return view;
 
     }
-//
-//    void initFriendRequest()
-//    {
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                try
-//                {
-//                    JSONArray ret = onInitFriendRequest();
-//                    Message msg = new Message();
-//                    msg.what = 1;
-//                    msg.obj = ret;
-//                    mHandler.sendMessage(msg);
-//                }catch (UServerAccessException e)
-//                {
-//                    e.printStackTrace();
-//                }
-//
-//
-//            }
-//        }).start();
-//    }
 
-    public List<Invites> onInitFriendRequest() throws UServerAccessException
+
+    @Override
+    public void onHiddenChanged(boolean hidden)
     {
-        List<Invites> invitesList = new ArrayList<>();
+        mConversationList.clear();
+        accessServer();
+    }
+
+    void onInitFriendRequest() throws UServerAccessException
+    {
         UserOperatorController user = UserOperatorController.getInstance();
         String id = user.getId();
         id = UrlEncode(id);
@@ -178,38 +168,35 @@ public class MessageFragmentLeftFragment extends Fragment {
                 {
                     JSONObject jsonObj = data.getJSONObject(i);
                     String user1id = jsonObj.getString("user1");
-                    Invites invites = new Invites().setInvitesId(user1id)
+                    final Invites invites = new Invites().setInvitesId(user1id)
                             .setInvitesName("hahaha")
                             .setImageUrl("http://118.89.156.167/uploads/avatars/avatar-5.png");
                     UserInfo userInfo = getUserId(user1id);
                     invites.setInvitesName(userInfo.getUserName())
                             .setImageUrl("http://118.89.156.167/uploads/avatars/"+userInfo.getAvatar());
-                    invitesList.add(invites);
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mConversationList.add(0,invites);
+                            mConversationAdapter.notifyDataSetChanged();
+                        }
+                    });
 //                    new Thread(new MyRunnable()).start();
                     //TODO:多线程对mConversationList进行操作
                 }
-                return invitesList;
+//                return invitesList;
             }catch (JSONException e){
                 Log.e("ServerAccessApi",e.toString());
                 throw new UServerAccessException(UServerAccessException.ERROR_DATA);
             }
         }
-//        else if(response.getRet()==401)
-//        {
-//            return USERE_NOT_FOUND;
-//        }
-//        else if(response.getRet()==405)
-//        {
-//            return PASSWORD_ERROR;
-//        }
         else {
             throw new UServerAccessException(response.getRet());
         }
     }
 
-    List<Conversation> initConversation() throws UServerAccessException
+    void initConversation() throws UServerAccessException
     {
-        final List<Conversation> conversations = new ArrayList<>();
         List<TIMConversation> list = TIMManagerExt.getInstance().getConversionList();
         for(TIMConversation timConversation : list)
         {
@@ -240,11 +227,13 @@ public class MessageFragmentLeftFragment extends Fragment {
                                 Log.e(TAG, "get msg: " + lastMsg.timestamp() + " self: " + lastMsg.isSelf() + " seq: " + lastMsg.getMsg().seq());
 
 //                            }
-                            if(peerId.length()!=0)
+                            if(peerId.length()!=0 )
+
                             {
                                 for(int i = 0; i < lastMsg.getElementCount(); ++i) {
                                     TIMElem elem = lastMsg.getElement(0);
 
+                                    Log.e(TAG, "lastMsg.getType: "+ lastMsg.getElement(0).getType());
                                         TIMTextElem textElem = (TIMTextElem) elem;
 
                                     message = textElem.getText().toString();
@@ -254,66 +243,61 @@ public class MessageFragmentLeftFragment extends Fragment {
                                     .setContent(message)
                                     .setImageUrl("http://118.89.156.167/uploads/avatars/avatar-5.png");
 
-                                new Thread(){
+                                cachedThredPool.execute(new Runnable() {
                                     @Override
-                                    public void run(){
-                                        try {
-                                            UserInfo userInfo = getUserId(peerId);
-                                            conversation.setConversationName(userInfo.getUserName())
-                                                    .setImageUrl("http://118.89.156.167/uploads/avatars/"+userInfo.getAvatar());
-                                        } catch (UServerAccessException e) {
-                                            e.printStackTrace();
-                                            System.exit(1);
+                                    public void run() {
+                                        {
+                                            try {
+                                                UserInfo userInfo = getUserId(peerId);
+                                                conversation.setConversationName(userInfo.getUserName())
+                                                        .setImageUrl("http://118.89.156.167/uploads/avatars/"+userInfo.getAvatar());
+                                                getActivity().runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        mConversationList.add(conversation);
+                                                        mConversationAdapter.notifyDataSetChanged();
+                                                    }
+                                                });
+                                            } catch (UServerAccessException e) {
+                                                e.printStackTrace();
+                                                System.exit(1);
+                                            }
                                         }
                                     }
-                                }.start();
-
-                                conversations.add(conversation);
-
-                            Log.e(TAG, "initConversation: "+ conversations.size() );
-
-//                            mConversationAdapter.notifyDataSetChanged();
+                                });
                             }
-
-//                            new Thread(new MyRunnable()).start();
                         }
                     });
         }
-        return conversations;
-
     }
 
 
     public UserInfo getUserId(String id) throws UServerAccessException
     {
         UserOperatorController mUOC = UserOperatorController.getInstance();
-        final String mId = mUOC.getId();
-        final String mPwd = mUOC.getPassport();
+        String mId = mUOC.getId();
+        mId = UrlEncode(mId);
+        String mPwd = mUOC.getPassport();
+        mPwd = UrlEncode(mPwd);
         final UserInfo userInfo = new UserInfo();
-
-//        new Thread(){
-//            @Override
-//            public void run(){
-                try {
-                    JSONObject json = ServerAccessApi.getBasicInfo(mId, mPwd, id);
-                    userInfo.setAvatar(json.getString("avatar"))
-                            .setPhone(json.getString("phone"))
-                            .setSex(json.getInt("sex"))
-                            .setRealName(json.getString("realname"))
-                            .setSchool(json.getString("school"))
-                            .setUserName(json.getString("username"))
-                            .setSignature(json.getString("signature"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    System.exit(1);
-                }
-                catch (UServerAccessException e)
-                {
-                    e.printStackTrace();
-                    System.exit(1);
-                }
-//            }
-//        }.start();
+        try {
+            JSONObject json = ServerAccessApi.getBasicInfo(mId, mPwd, id);
+            userInfo.setAvatar(json.getString("avatar"))
+                    .setPhone(json.getString("phone"))
+                    .setSex(json.getInt("sex"))
+                    .setRealName(json.getString("realname"))
+                    .setSchool(json.getString("school"))
+                    .setUserName(json.getString("username"))
+                    .setSignature(json.getString("signature"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        catch (UServerAccessException e)
+        {
+            e.printStackTrace();
+            System.exit(1);
+        }
 
         return userInfo;
     }
@@ -406,27 +390,27 @@ public class MessageFragmentLeftFragment extends Fragment {
 //    }
 
     public void accessServer(){
-        new Thread(){
+        cachedThredPool.execute(new Runnable() {
             @Override
-            public void run(){
+            public void run() {
                 try{
-                    final List<Conversation> conversations = initConversation();
-                    final List<Invites> invites = onInitFriendRequest();
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mConversationList.addAll(invites);
-                            mConversationList.addAll(conversations);
-                            mConversationAdapter.notifyDataSetChanged();
-                        }
-                    });
+                    initConversation();
+                    onInitFriendRequest();
+//                    getActivity().runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            mConversationList.addAll(invites);
+//                            mConversationList.addAll(conversations);
+//                            mConversationAdapter.notifyDataSetChanged();
+//                        }
+//                    });
                 }
                 catch (UServerAccessException e){
                     e.printStackTrace();
                     System.exit(1);
                 }
             }
-        }.start();
+        });
     }
 
 

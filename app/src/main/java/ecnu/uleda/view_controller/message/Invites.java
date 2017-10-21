@@ -48,4 +48,13 @@ public class Invites {
         mContent = content;
         return this;
     }
+
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof Invites){
+            Invites n = (Invites)o;
+            return this.mInvitesId.equals(n.mInvitesId) && this.mInvitesName.equals(n.mInvitesName);
+        }
+        return false;
+    }
 }

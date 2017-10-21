@@ -98,12 +98,12 @@ public class SingleUserInfoActivity extends AppCompatActivity {
                     else
                         Toast.makeText(SingleUserInfoActivity.this,"删除好友失败！",Toast.LENGTH_SHORT).show();
                 }
-                default:
-                {
-                    UServerAccessException exception=(UServerAccessException)msg.obj;
-                    Toast.makeText(SingleUserInfoActivity.this,"获取信息失败："+exception.getMessage(),Toast.LENGTH_SHORT).show();
-                    break;
-                }
+//                default:
+//                {
+//                    UServerAccessException exception=(UServerAccessException)msg.obj;
+//                    Toast.makeText(SingleUserInfoActivity.this,"获取信息失败："+exception.getMessage(),Toast.LENGTH_SHORT).show();
+//                    break;
+//                }
 
             }
 //            else{

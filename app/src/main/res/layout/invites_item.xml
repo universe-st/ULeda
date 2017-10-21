@@ -30,7 +30,7 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="50"
+            android:layout_weight="60"
             android:orientation="vertical"
             android:paddingTop="0dp"
             android:weightSum="100">
@@ -77,7 +77,7 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="30">
+            android:layout_weight="20">
 
             <Button
                 android:id="@+id/button_invites"
