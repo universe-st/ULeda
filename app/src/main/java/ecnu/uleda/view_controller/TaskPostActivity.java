@@ -64,8 +64,8 @@ public class TaskPostActivity extends AppCompatActivity {
                 sendBroadcast(new Intent(TaskMissionFragment.ACTION_REFRESH));
                 finish();
             } else {
-                UServerAccessException exception = (UServerAccessException) msg.obj;
-                Toast.makeText(TaskPostActivity.this, "提交任务失败：" + exception.getMessage(), Toast.LENGTH_SHORT).show();
+                String exception = (String) msg.obj;
+                Toast.makeText(TaskPostActivity.this, "提交任务失败：" + exception, Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -386,14 +386,17 @@ public class TaskPostActivity extends AppCompatActivity {
     private void onImageChosen(Intent data) {
         Uri uri = data.getData();
         Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-        cursor.moveToFirst();
-        String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
-        cursor.close();
-        mImagePaths.add(path);
-        mImgAdapter.notifyDataSetChanged();
-        mImgChooserGrid.requestLayout();
-        if (mImagePaths.size() == 7) {
-            Toast.makeText(this, "已到达最大图片数", Toast.LENGTH_SHORT).show();
+        if (cursor.moveToFirst()) {
+            String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+            cursor.close();
+            mImagePaths.add(path);
+            mImgAdapter.notifyDataSetChanged();
+            mImgChooserGrid.requestLayout();
+            if (mImagePaths.size() == 7) {
+                Toast.makeText(this, "已到达最大图片数", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(this, "获取图片失败", Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -30,6 +30,11 @@ import ecnu.uleda.exception.UServerAccessException;
 
 public class ServerAccessApi {
     private static final int SET_TIME_OUT = 9999;
+    public static final int USER_TASK_FLAG_RELEASED = 0;
+    public static final int USER_TASK_FLAG_DOING = 1;
+    public static final int USER_TASK_FLAG_TO_EVAL = 2;
+    public static final int USER_TASK_FLAG_DONE = 3;
+    public static final int USER_TASK_FLAG_MY = 4;
 
     public static String getMainKey()throws UServerAccessException {
         PhalApiClient client=createClient();
@@ -292,6 +297,7 @@ public class ServerAccessApi {
                 .request();
         if(response.getRet()==200){
             try {
+                Log.e("TaskDetailsActivity", response.getData());
                 return new JSONObject(response.getData());
             }catch (JSONException e){
                 e.printStackTrace();
@@ -308,12 +314,43 @@ public class ServerAccessApi {
         passport = UrlEncode(passport);
         postID = UrlEncode(postID);
         verifyID = UrlEncode(verifyID);
+        Log.e("ServerAccessApi", "id = " + id + ", passport = " + passport + ", postID = " + postID + ", verifyID = " + verifyID);
         return createClient()
                 .withService("Task.VerifyTaker")
                 .withParams("id", id)
                 .withParams("passport", passport)
                 .withParams("postID", postID)
                 .withParams("verifyID", verifyID)
+                .withTimeout(SET_TIME_OUT)
+                .request();
+    }
+
+    public static PhalApiClientResponse giveUpTask(@NonNull String id, @NonNull String passport,
+                                                   @NonNull String postID) throws UServerAccessException {
+        id = UrlEncode(id);
+        passport = UrlEncode(passport);
+        postID = UrlEncode(postID);
+        Log.e("ServiceAccessApi",  "id = " + id + ", passport = " + passport + ", postID = " + postID);
+        return createClient()
+                .withService("Task.GiveUpTask")
+                .withParams("id", id)
+                .withParams("passport", passport)
+                .withParams("postID", postID)
+                .withTimeout(SET_TIME_OUT)
+                .request();
+    }
+
+    public static PhalApiClientResponse forceGiveUpTask(@NonNull String id, @NonNull String passport,
+                                                        @NonNull String postID) throws UServerAccessException {
+        id = UrlEncode(id);
+        passport = UrlEncode(passport);
+        postID = UrlEncode(postID);
+        Log.e("ServiceAccessApi",  "id = " + id + ", passport = " + passport + ", postID = " + postID);
+        return createClient()
+                .withService("Task.ForceGiveUpTask")
+                .withParams("id", id)
+                .withParams("passport", passport)
+                .withParams("postID", postID)
                 .withTimeout(SET_TIME_OUT)
                 .request();
     }
@@ -420,6 +457,33 @@ public class ServerAccessApi {
             //网络访问失败，抛出一个网络异常
             throw new UServerAccessException(response.getRet());
         }
+    }
+
+    public static PhalApiClientResponse verifyFinish(@NonNull String id, @NonNull String passport,
+                                      @NonNull String taskID) throws UServerAccessException {
+        id=UrlEncode(id);
+        passport = UrlEncode(passport);
+        Log.e("TaskDetailsActivity", "id = " + id + ", passport = " + passport + ", postID = " + taskID);
+        return createClient()
+                .withService("Task.VerifyFinish")
+                .withParams("id", id)
+                .withParams("passport", passport)
+                .withParams("taskID", taskID)
+                .withTimeout(SET_TIME_OUT)
+                .request();
+    }
+
+    public static PhalApiClientResponse finishTask(@NonNull String id, @NonNull String passport,
+                                                   @NonNull String postID) throws UServerAccessException {
+        id=UrlEncode(id);
+        passport = UrlEncode(passport);
+        return createClient()
+                .withService("Task.FinishTask")
+                .withParams("id", id)
+                .withParams("passport", passport)
+                .withParams("taskID", postID)
+                .withTimeout(SET_TIME_OUT)
+                .request();
     }
 
     public static JSONArray getUserTasks(@NonNull String id,@NonNull String passport,int page,int flag)throws UServerAccessException{
@@ -563,6 +627,7 @@ public class ServerAccessApi {
                 .withTimeout(SET_TIME_OUT)
                 .request();
         if(response.getRet()==200){//200的意思是正常返回
+            Log.e("TaskDetailsActivity", "successful release: " + response.getData());
             try{
                 JSONObject data=new JSONObject(response.getData());
                 return data.getString("postID");
@@ -573,6 +638,7 @@ public class ServerAccessApi {
             }
         }else{
             //网络访问失败，抛出一个网络异常
+            Log.e("TaskDetailsActivity", "fail release: " + response.getMsg());
             throw new UServerAccessException(response.getRet());
         }
     }
@@ -643,6 +709,122 @@ public class ServerAccessApi {
         }
     }
 
+    public static PhalApiClientResponse getPromotedActivities(@NonNull String id, @NonNull String passport) throws UServerAccessException {
+        id=UrlEncode(id);
+        passport = UrlEncode(passport);
+        return createClient()
+                .withService("Activity.GetActivity")
+                .withParams("id", id)
+                .withParams("passport", passport)
+                .withTimeout(SET_TIME_OUT)
+                .request();
+    }
+
+    public static PhalApiClientResponse getActivityDetail(@NonNull String id, @NonNull String passport,
+                                                          @NonNull String actId) throws UServerAccessException {
+        id=UrlEncode(id);
+        passport = UrlEncode(passport);
+        actId = UrlEncode(actId);
+        return createClient()
+                .withService("Activity.GetPromotedActivity")
+                .withParams("id", id)
+                .withParams("passport", passport)
+                .withParams("actId", actId)
+                .withTimeout(SET_TIME_OUT)
+                .request();
+    }
+
+    public static PhalApiClientResponse editActivity(@NonNull String id, @NonNull String passport,
+                                                     @NonNull String actId, @NonNull String title,
+                                                     @NonNull String description, @NonNull String holdTime,
+                                                     @NonNull String lat, @NonNull String lon,
+                                                     @NonNull String takerCountLimit, @NonNull String location)
+        throws UServerAccessException {
+        id=UrlEncode(id);
+        passport = UrlEncode(passport);
+        actId = UrlEncode(actId);
+        title = UrlEncode(title);
+        description = UrlEncode(description);
+        long activeTime = (Long.parseLong(holdTime) - System.currentTimeMillis()) / 1000;
+        String activeTimeStr = UrlEncode(String.valueOf(activeTime));
+        String position = lat + "," + lon;
+        takerCountLimit = UrlEncode(takerCountLimit);
+        location = UrlEncode(location);
+        return createClient()
+                .withService("Activity.Edit")
+                .withParams("id", id)
+                .withParams("passport", passport)
+                .withParams("actId", actId)
+                .withParams("title", title)
+                .withParams("description", description)
+                .withParams("activeTime", activeTimeStr)
+                .withParams("position", position)
+                .withParams("takerCountLimit", takerCountLimit)
+                .withParams("location", location)
+                .withTimeout(SET_TIME_OUT)
+                .request();
+    }
+
+    public static PhalApiClientResponse participateInActivity(@NonNull String id, @NonNull String passport,
+                                                              @NonNull String actId) throws UServerAccessException {
+        id=UrlEncode(id);
+        passport = UrlEncode(passport);
+        actId = UrlEncode(actId);
+        return createClient()
+                .withService("Activity.Participate")
+                .withParams("id", id)
+                .withParams("passport", passport)
+                .withParams("actId", actId)
+                .withTimeout(SET_TIME_OUT)
+                .request();
+    }
+
+    public static PhalApiClientResponse cancelParticipateInActivity(@NonNull String id, @NonNull String passport,
+                                                              @NonNull String actId) throws UServerAccessException {
+        id=UrlEncode(id);
+        passport = UrlEncode(passport);
+        actId = UrlEncode(actId);
+        return createClient()
+                .withService("Activity.CancelParticipation")
+                .withParams("id", id)
+                .withParams("passport", passport)
+                .withParams("actId", actId)
+                .withTimeout(SET_TIME_OUT)
+                .request();
+    }
+
+    public static PhalApiClientResponse postActivityComment(@NonNull String id, @NonNull String passport,
+                                                            @NonNull String actId, @NonNull String content, @NonNull String postDate) throws UServerAccessException {
+        id=UrlEncode(id);
+        passport = UrlEncode(passport);
+        actId = UrlEncode(actId);
+        postDate = UrlEncode(postDate);
+        content = UrlEncode(content);
+        return createClient()
+                .withService("Activity.AddComment")
+                .withParams("id", id)
+                .withParams("passport", passport)
+                .withParams("actId", actId)
+                .withParams("content", content)
+                .withParams("postdate", postDate)
+                .withTimeout(SET_TIME_OUT)
+                .request();
+    }
+
+    public static PhalApiClientResponse getActivityTakers(@NonNull String id, @NonNull String passport,
+                                                          @NonNull String actId) throws UServerAccessException {
+        id=UrlEncode(id);
+        passport = UrlEncode(passport);
+        actId = UrlEncode(actId);
+        return createClient()
+                .withService("Activity.GetActivityTaker")
+                .withParams("id", id)
+                .withParams("passport", passport)
+                .withParams("actId", actId)
+                .withTimeout(SET_TIME_OUT)
+                .request();
+    }
+
     public static String postActivity(@NonNull String id,@NonNull String passport,@NonNull String title,
                                   @NonNull String tag,String description,@NonNull String activeTime,
                                   double latitude, double longitude, @NonNull String takerCountLimit, @NonNull String location)
@@ -678,7 +860,6 @@ public class ServerAccessApi {
                 .withTimeout(SET_TIME_OUT)
                 .request();
         if(response.getRet() == 200) {
-            Log.e("haha", UrlDecode(response.getData()));
             try{
                 JSONObject data = new JSONObject(response.getData());
                 return data.getString("act_id");
@@ -689,6 +870,7 @@ public class ServerAccessApi {
             }
         }else{
             //网络访问失败，抛出一个网络异常
+            Log.e("TaskDetailsActivity", "fail: " + response.getMsg());
             throw new UServerAccessException(response.getRet());
         }
     }

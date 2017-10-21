@@ -22,26 +22,14 @@
         app:elevation="0dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:theme="@style/toolbar_theme">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/head_line_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:navigationIcon="@drawable/ic_chevron_left_white_36dp">
-
-            <TextView
-                android:id="@+id/task_tool_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:ellipsize="end"
-                android:maxEms="5"
-                android:maxLines="1"
-                android:text="标题测试测试测试"
-                android:textColor="#ffffff"
-                android:textSize="18sp" />
-        </android.support.v7.widget.Toolbar>
+            app:navigationIcon="@drawable/ic_chevron_left_white_36dp"/>
     </android.support.design.widget.AppBarLayout>
 
     <!--<RelativeLayout-->

@@ -25,7 +25,7 @@ object UActivityManager {
         val resp = ServerAccessApi.getActivities(uoc.id, uoc.passport, tag, lastIndex, pageSize)
         val length = resp.length()
         activityList.clear()
-        (0..length - 1)
+        (0 until length)
                 .map { resp.getJSONObject(it) }
                 .map {
                     UActivity(it.getString("act_title"),
@@ -39,7 +39,9 @@ object UActivityManager {
                             it.getString("description"),
                             it.getLong("active_time"),
                             it.getInt("taker_count_limit"),
-                            arrayListOf())
+                            arrayListOf(),
+                            it.getInt("act_id"),
+                            it.getInt("status"))
                 }
                 .forEach { activityList.add(it) }
         lastIndex += length
@@ -64,7 +66,9 @@ object UActivityManager {
                             it.getString("description"),
                             it.getLong("active_time"),
                             it.getInt("taker_count_limit"),
-                            arrayListOf())
+                            arrayListOf(),
+                            it.getInt("act_id"),
+                            it.getInt("status"))
                 }
                 .forEach { activityList.add(it) }
         lastIndex += length

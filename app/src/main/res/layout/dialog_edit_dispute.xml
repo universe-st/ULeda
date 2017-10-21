@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/dispute_prompt_title"
+        android:textSize="18sp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:ellipsize="end"
+        android:textColor="#ffffff"
+        android:drawableStart="@drawable/ic_sentiment_dissatisfied_black_24dp"
+        android:drawableTint="#ffffff"
+        android:drawablePadding="8dp"
+        android:background="@color/colorPrimaryDark"/>
+    <EditText
+        android:id="@+id/id_dispute_desc"
+        android:layout_marginTop="6dp"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:gravity="start"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/edt_bg"
+        android:hint="@string/dispute_hint"/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="end">
+        <Button
+            android:id="@+id/id_dispute_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="取消"
+            android:textColor="@color/colorPrimaryDark"
+            style="?android:attr/buttonBarButtonStyle"/>
+        <Button
+            android:id="@+id/id_dispute_release"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="提交"
+            android:textColor="@color/colorPrimaryDark"
+            style="?android:attr/buttonBarButtonStyle"/>
+    </LinearLayout>
+
+
+</LinearLayout>
