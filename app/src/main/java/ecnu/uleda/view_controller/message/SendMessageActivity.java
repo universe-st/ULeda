@@ -145,6 +145,9 @@ public class SendMessageActivity extends AppCompatActivity {
             public void onClick(View v){
                 Log.e(TAG, "sendButton click!");
 
+                if(input.getText().toString().length()==0)return;
+                //WARNING:你忘记做这个判断了~下次注意。-K
+
                 TIMMessage msg = new TIMMessage();
                 TIMTextElem elem = new TIMTextElem();
                 elem.setText(input.getText().toString());
@@ -201,7 +204,9 @@ public class SendMessageActivity extends AppCompatActivity {
     public void showMessage(MsgInfo message) {
 
 
-        if (message.equals(null)) {
+        //if (message.equals(null)) {
+        // 判断null不用equals哦…… -K
+        if(message==null){
             Toast.makeText(SendMessageActivity.this, "发送内容不能为空",Toast.LENGTH_SHORT).show();
             return;
         }
