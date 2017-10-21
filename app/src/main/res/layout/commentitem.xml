@@ -24,6 +24,7 @@
        <TextView
            android:id="@+id/comment_name"
            android:layout_width="wrap_content"
+           android:textColor="@android:color/black"
            android:text="hunan"
            android:textSize="15dp"
            android:layout_height="30dp"/>
@@ -31,10 +32,12 @@
            android:layout_width="wrap_content"
            android:layout_height="30dp"
            android:textSize="15dp"
+           android:textColor="@android:color/black"
            android:text="  评论于  "
            />
        <TextView
            android:id="@+id/CommentTime"
+           android:textColor="@android:color/black"
            android:layout_width="wrap_content"
            android:layout_height="30dp"
            android:text="20"
@@ -48,6 +51,7 @@
         <TextView
             android:id="@+id/Commentcontent"
             android:layout_width="match_parent"
+            android:textColor="@android:color/black"
             android:layout_height="match_parent"
             android:text="dsadasdqwdsadasdqwdsa"
             android:textSize="20dp"

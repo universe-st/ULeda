@@ -8,41 +8,32 @@
     android:background="#ededed"
     android:weightSum="100">
 
-    <LinearLayout
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="3"
-        android:background="@color/colorUMain"/>
+        android:layout_height="56dp"
+        android:theme="@style/toolbar_theme"
+        app:elevation="0dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="8"
-        android:background="@color/colorUMain"
-        android:weightSum="10">
-        <Button
-            android:id="@+id/button_task_edit_back"
-            android:layout_width="0dp"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:text="〈 "
-            android:textSize="25sp"
-            android:gravity="left|center"
-            android:background="@android:color/transparent"
-            android:textColor="@android:color/white"/>
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="6">
+            app:navigationIcon="@drawable/ic_chevron_left_white_36dp">
+
             <TextView
-                android:text="编辑任务"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="center"
-                android:textSize="23sp"
-                android:textColor="@color/colorUWhite" />
-        </FrameLayout>
-    </LinearLayout>
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:text="编辑任务"
+                android:textColor="#fff"
+                android:textSize="18sp" />
+        </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
 
     <LinearLayout
         android:orientation="vertical"

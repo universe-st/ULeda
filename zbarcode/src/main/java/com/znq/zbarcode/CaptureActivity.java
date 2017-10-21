@@ -236,7 +236,7 @@ public class CaptureActivity extends AppCompatActivity implements SurfaceHolder.
             case MY_PERMISSIONS_REQUEST_CAMERA: {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    finish();
+//                    finish();
 
                 } else {
                     finish();

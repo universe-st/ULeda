@@ -5,6 +5,7 @@ import android.graphics.Point;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,24 +24,48 @@ import ecnu.uleda.model.MyOrder;
  */
 
 public class MyOrderAdapter extends RecyclerView.Adapter<MyOrderAdapter.MyOrderViewHolder> {
+    private static final int VIEW_TYPE_EMPTY = 0;
+    private static final int VIEW_TYPE_NORMAL = 1;
     private LayoutInflater mInflater;
     private List<MyOrder> objects;
     private Context mContext;
+    private boolean isEmpty = false;
     public MyOrderAdapter(Context context, List<MyOrder> objects) {
         mInflater = LayoutInflater.from(context);
         this.objects = objects;
         mContext = context;
     }
 
+    public void setEmpty() {
+        isEmpty = true;
+        objects.add(new MyOrder());
+        notifyItemInserted(0);
+    }
+
     private Point mSize = null;
 
     @Override
     public MyOrderViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == VIEW_TYPE_EMPTY) {
+            TextView emptyView = new TextView(mContext);
+            emptyView.setText("未找到符合条件的订单");
+            emptyView.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT));
+            emptyView.setGravity(Gravity.CENTER);
+            emptyView.setTextSize(16);
+            return new MyOrderViewHolder((emptyView));
+        }
         return new MyOrderViewHolder(mInflater.inflate(R.layout.my_order_item, parent, false));
     }
 
     @Override
+    public int getItemViewType(int position) {
+        return isEmpty && position == 0 ? VIEW_TYPE_EMPTY : VIEW_TYPE_NORMAL;
+    }
+
+    @Override
     public void onBindViewHolder(MyOrderViewHolder holder, int position) {
+        if (position == 0 && isEmpty) return;
         MyOrder order = objects.get(position);
         holder.tasktype.setText(order.getTag().substring(0, 2));
 
@@ -105,6 +130,7 @@ public class MyOrderAdapter extends RecyclerView.Adapter<MyOrderAdapter.MyOrderV
 
         MyOrderViewHolder(View itemView) {
             super(itemView);
+            if (itemView instanceof TextView) return;
             tasktype = (TextView) itemView.findViewById(R.id.task_type);
             publishername = (TextView) itemView.findViewById(R.id.publisher_name);
             publisherstars = (TextView) itemView.findViewById(R.id.publisher_stars);
