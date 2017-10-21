@@ -13,8 +13,8 @@ import java.util.List;
 
 import ecnu.uleda.model.Msg;
 import ecnu.uleda.R;
-
-public class Chart extends AppCompatActivity {
+//我不知道这个文件有什么用………………………… -K
+public class ChatActivity extends AppCompatActivity {
 
     private ListView msgListView;
     private EditText inputText;
@@ -33,7 +33,7 @@ public class Chart extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
 
         initMsgs();
-        adapter = new MsgAdapter(Chart.this, R.layout.msg_item, msgList);
+        adapter = new MsgAdapter(ChatActivity.this, R.layout.msg_item, msgList);
         inputText = (EditText)findViewById(R.id.input_text);
         send = (Button)findViewById(R.id.chat_send);
         msgListView = (ListView)findViewById(R.id.chart_list_view);
@@ -42,7 +42,7 @@ public class Chart extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String content = inputText.getText().toString();
-                if(!"".equals(content)) {
+                if(content.length()>0) {
                     Msg msg = new Msg(content, Msg.TYPE_SEND);
                     msgList.add(msg);
                     adapter.notifyDataSetChanged();

@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+                android:id="@+id/task_post_title_option"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/colorUWhite"
+                android:weightSum="20">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="4">
+
+                    <TextView
+                        android:id="@+id/task_post_title_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical|left"
+                        android:paddingRight="5dp"
+                        android:text="活动名"
+                        android:textColor="#404040"
+                        android:textSize="18sp" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="14">
+
+                    <EditText
+                        android:id="@+id/activity_post_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@null"
+                        android:ems="10"
+                        android:gravity="center_vertical|left"
+                        android:hint="5~30字"
+                        android:maxLength="25"
+                        android:maxLines="3"
+                        android:textColorHint="@color/colorUGray" />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/task_post_activity_time_option"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/colorUWhite"
+                android:weightSum="20">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="4"
+                    android:gravity="center_vertical|left"
+                    android:paddingRight="5dp"
+                    android:text="时间"
+                    android:textColor="#404040"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/activity_post_activity_time"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="14"
+                    android:background="@null"
+                    android:gravity="center_vertical"
+                    android:text="选择时间..."
+                    android:textSize="18sp" />
+
+
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/task_post_activity_location_option"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/colorUWhite"
+                android:weightSum="20">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="4">
+
+                    <TextView
+                        android:id="@+id/task_post_activity_location_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical|left"
+                        android:paddingRight="5dp"
+                        android:text="地点"
+                        android:textColor="#404040"
+                        android:textSize="18sp" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/activity_post_location"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="14"
+                    android:gravity="center_vertical"
+                    android:text="选择地点..."
+                    android:textSize="18sp"/>
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <ImageView
+                        android:id="@+id/imageView12"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:srcCompat="@drawable/ic_chevron_right_black_48dp" />
+                </FrameLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/task_post_category_option"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/colorUWhite"
+                android:weightSum="20">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="4"
+                    android:gravity="center_vertical|left"
+                    android:text="分类"
+                    android:textColor="#404040"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/activity_post_category"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="14"
+                    android:textSize="18sp"
+                    android:text="选择类别..."
+                    android:gravity="center_vertical">
+
+                    <!--<Spinner-->
+                    <!--android:id="@+id/spinner_task_post"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:textAlignment="center" />-->
+
+                </TextView>
+
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/task_post_people_count"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/colorUWhite"
+                android:weightSum="20">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="4"
+                    android:gravity="center_vertical"
+                    android:text="人数"
+                    android:textColor="#404040"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/max_people_count"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="14"
+                    android:textSize="18sp"
+                    android:background="@null"
+                    android:inputType="number"
+                    android:gravity="center_vertical">
+                </EditText>
+
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/task_post_details_option"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/colorUWhite"
+                android:paddingRight="5dp"
+                android:weightSum="20">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/task_post_details_name"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="4"
+                    android:gravity="left"
+                    android:paddingTop="10dp"
+                    android:text="详情"
+                    android:textColor="#404040"
+                    android:textSize="18sp" />
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="14">
+
+                    <EditText
+                        android:id="@+id/activity_post_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@null"
+                        android:ems="20"
+                        android:gravity="top|left"
+                        android:hint="简述活动具体内容，限450字内。"
+                        android:maxLines="6"
+                        android:paddingTop="10dp"
+                        android:textColorHint="@color/colorUGray" />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/task_post_add_photo_option"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/colorUWhite"
+                android:orientation="horizontal"
+                android:weightSum="20">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.0" />
+
+                <TextView
+                    android:id="@+id/textView41"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="4"
+                    android:gravity="left|center"
+                    android:text="图片"
+                    android:textColor="#404040"
+                    android:textSize="18sp" />
+
+                <ecnu.uleda.view_controller.widgets.InfiniteGridView
+                    android:id="@+id/img_choose_grid"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="10dp"
+                    android:layout_weight="15"
+                    android:columnWidth="60dp"
+                    android:numColumns="auto_fit"
+                    android:horizontalSpacing="4dp"
+                    android:verticalSpacing="4dp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/id_activity_edit_submit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorUMain"
+        android:gravity="center"
+        android:text="修改"
+        android:textColor="@color/colorUWhite"
+        android:textSize="18sp" />
+
+</LinearLayout>

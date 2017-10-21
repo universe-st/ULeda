@@ -41,6 +41,8 @@ import ecnu.uleda.view_controller.widgets.DrawableLeftCenterTextView;
 import ecnu.uleda.view_controller.widgets.TaskListFilterWindow;
 import ecnu.uleda.view_controller.widgets.TaskListItemDecoration;
 
+import static android.app.Activity.RESULT_CANCELED;
+
 /**
  * Created by jimmyhsu on 2017/4/10.
  */
@@ -50,6 +52,7 @@ public class TaskMissionFragment extends Fragment {
     private static final String[] SORT_BY = {UTaskManager.TIME_LAST, UTaskManager.PRICE_DES,
             UTaskManager.PRICE_ASC, UTaskManager.DISTANCE};
     public static final String ACTION_REFRESH = "ecnu.uleda.view_controller.TaskMissionFragment.refresh";
+    private static final int REQUEST_DETAIL = 1000;
 
     private List<UTask> mTasksInList = new ArrayList<>();
 
@@ -279,18 +282,18 @@ public class TaskMissionFragment extends Fragment {
         mTasksInList = new ArrayList<>();
         mTaskListAdapter = new TaskListAdapter(getActivity(), mTasksInList);
         mTaskListAdapter.setHasStableIds(true);
-        mTaskListView.setAdapter(mTaskListAdapter);
-        mTaskListView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        mTaskListView.setRefreshProgressStyle(ProgressStyle.Pacman);
-        mTaskListView.setLoadingMoreProgressStyle(ProgressStyle.Pacman);
-        mTaskListView.setArrowImageView(R.drawable.pull_to_refresh_arrow);
-        mTaskListView.addItemDecoration(new TaskListItemDecoration(getContext(), 8, true));
-        mTaskListAdapter.setOnItemClickListener(new TaskListAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClicked(View v, UTask task) {
-                Intent intent = new Intent(getActivity().getApplicationContext(), TaskDetailsActivity.class);
-                intent.putExtra("UTask", task);
-                startActivity(intent);
+                mTaskListView.setAdapter(mTaskListAdapter);
+                mTaskListView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+                mTaskListView.setRefreshProgressStyle(ProgressStyle.Pacman);
+                mTaskListView.setLoadingMoreProgressStyle(ProgressStyle.Pacman);
+                mTaskListView.setArrowImageView(R.drawable.pull_to_refresh_arrow);
+                mTaskListView.addItemDecoration(new TaskListItemDecoration(getContext(), 8, true));
+                mTaskListAdapter.setOnItemClickListener(new TaskListAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClicked(View v, UTask task) {
+                        Intent intent = new Intent(getActivity().getApplicationContext(), TaskDetailsActivity.class);
+                        intent.putExtra("UTask", task);
+                        startActivityForResult(intent, REQUEST_DETAIL);
             }
         });
         mTaskListView.setLoadingListener(new XRecyclerView.LoadingListener() {
@@ -312,6 +315,14 @@ public class TaskMissionFragment extends Fragment {
             mTaskListAdapter.updateDataSource(mTasksInList = mUTaskManager.getTasksInList());
             isLoadedFromServer = true;
             mTaskListView.setLoadingMoreEnabled(true);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_DETAIL && resultCode == RESULT_CANCELED) {
+            Toast.makeText(getActivity(), "任务已接单成功或失效，不能访问", Toast.LENGTH_SHORT).show();
         }
     }
 

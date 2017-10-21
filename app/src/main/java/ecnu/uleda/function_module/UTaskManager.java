@@ -5,6 +5,8 @@ import android.util.Log;
 
 import com.tencent.mapsdk.raster.model.LatLng;
 
+import net.phalapi.sdk.PhalApiClientResponse;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -362,6 +364,71 @@ public class UTaskManager {
                 return tasks;
             default:
                 return tasks;
+        }
+    }
+
+    public PhalApiClientResponse verifyTaker(String postID, String verifyID) throws UServerAccessException {
+        UserOperatorController uoc = UserOperatorController.getInstance();
+        if (!uoc.getIsLogined()) {
+            throw new UServerAccessException(UServerAccessException.UN_LOGIN);
+        } else {
+            return ServerAccessApi.verifyTaker(
+                    uoc.getId(),
+                    uoc.getPassport(),
+                    postID,
+                    verifyID);
+        }
+    }
+
+    public PhalApiClientResponse giveUpTask(String postID) throws UServerAccessException {
+        UserOperatorController uoc = UserOperatorController.getInstance();
+        if (!uoc.getIsLogined()) {
+            throw new UServerAccessException(UServerAccessException.UN_LOGIN);
+        } else {
+            return ServerAccessApi.giveUpTask(
+                    uoc.getId(),
+                    uoc.getPassport(),
+                    postID);
+        }
+    }
+
+    public PhalApiClientResponse forceGiveUpTask(String postID) throws UServerAccessException {
+        UserOperatorController uoc = UserOperatorController.getInstance();
+        if (!uoc.getIsLogined()) {
+            throw new UServerAccessException(UServerAccessException.UN_LOGIN);
+        } else {
+            return ServerAccessApi.forceGiveUpTask(
+                    uoc.getId(),
+                    uoc.getPassport(),
+                    postID);
+        }
+    }
+
+    public PhalApiClientResponse cancelTask(String postID) throws UServerAccessException {
+        UserOperatorController uoc = UserOperatorController.getInstance();
+        if (!uoc.getIsLogined()) {
+            throw new UServerAccessException(UServerAccessException.UN_LOGIN);
+        } else {
+            return ServerAccessApi.cancelTask(postID);
+        }
+    }
+
+    public PhalApiClientResponse verifyFinish(String postID) throws UServerAccessException {
+        UserOperatorController uoc = UserOperatorController.getInstance();
+        if (!uoc.getIsLogined()) {
+            throw new UServerAccessException(UServerAccessException.UN_LOGIN);
+        } else {
+            return ServerAccessApi.verifyFinish(uoc.getId(), uoc.getPassport(), postID);
+        }
+    }
+
+    public PhalApiClientResponse finishTask(String taskID) throws UServerAccessException {
+        UserOperatorController uoc = UserOperatorController.getInstance();
+        if (!uoc.getIsLogined()) {
+            throw new UServerAccessException(UServerAccessException.UN_LOGIN);
+        } else {
+            Log.e("TaskDetailsActivity", "id = " + uoc.getId() + ", passport = " + uoc.getPassport() + ", taskID = " + taskID);
+            return ServerAccessApi.finishTask(uoc.getId(), uoc.getPassport(), taskID);
         }
     }
 }

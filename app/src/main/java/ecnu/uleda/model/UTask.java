@@ -33,15 +33,22 @@ public class UTask implements Serializable{
     private long mPostDate;
     private long mActiveTime;
     private String mPath;
-
-
     private BigDecimal mPrice;
     private double mLat;
     private double mLng;
     private String mPostID;
-
     private int mTakersCount;
+    private int mTaker;
     private String mAvatar;
+
+    public int getTaker() {
+        return mTaker;
+    }
+
+    public UTask setTaker(int taker) {
+        this.mTaker = taker;
+        return this;
+    }
 
     public int getTakersCount() {
         return mTakersCount;

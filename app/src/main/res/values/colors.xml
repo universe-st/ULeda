@@ -28,6 +28,7 @@
     <color name="colorUInfo">#f0b6ac</color>
     
     <color name="colorULightGray">#F5F5F5</color>
+    <color name="colorUDarkAlphaGray">#88666666</color>
 
     <color name="colorUWhite">#ffffff </color>
 
@@ -52,5 +53,10 @@
     <color name="result_view">#b0000000</color>
     <color name="viewfinder_mask">#60000000</color>
     <color name="possible_result_points">#c0ffff00</color>
+
+    <!-- 上传图片添加的颜色 -->
+    <color name="none_color">#00000000</color>
+    <color name="albumback">#E1E0DE</color>
+    <color name="plugin_camera_black">#000000</color>
 
 </resources>
