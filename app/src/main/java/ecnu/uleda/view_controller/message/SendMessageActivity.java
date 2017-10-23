@@ -25,6 +25,7 @@ import com.tencent.imsdk.TIMMessage;
 import com.tencent.imsdk.TIMMessageListener;
 import com.tencent.imsdk.TIMTextElem;
 import com.tencent.imsdk.TIMValueCallBack;
+import com.tencent.imsdk.ext.message.TIMConversationExt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +58,6 @@ public class SendMessageActivity extends AppCompatActivity {
 
     private List<Message> messageList = new ArrayList<>();
     private ChatAdapter adapter;
-//    private ChatPresenter presenter;
 
     private List<MsgInfo> mMsgInfoList = new ArrayList<>();
     private ChatsAdapter mChatsAdapter;
@@ -90,6 +90,8 @@ public class SendMessageActivity extends AppCompatActivity {
                 TIMConversationType.C2C,    //会话类型：单聊
                 mFriendId);
 
+        initConversation(mFriendId);
+
         Log.e(TAG, "SendMessageActivity:id = "+mFriendId+" ,name = "+mFriendName);
 
         mButtonBack.setOnClickListener(new View.OnClickListener() {
@@ -109,15 +111,6 @@ public class SendMessageActivity extends AppCompatActivity {
                         TIMElem elem = item.getElement(i);
 
                         TIMTextElem textElem = (TIMTextElem) elem;
-
-//                        //获取当前元素的类型
-//                        TIMElemType elemType = elem.getType();
-//                        Log.d(TAG, "elem type: " + elemType.name());
-//                        if (elemType == TIMElemType.Text) {
-//                            //处理文本消息
-//                        } else if (elemType == TIMElemType.Image) {
-//                            //处理图片消息
-//                        }//...处理更多消息
                         String m = textElem.getText().toString();
                         if(item.isSelf())
                         {
@@ -147,6 +140,7 @@ public class SendMessageActivity extends AppCompatActivity {
 
                 if(input.getText().toString().length()==0)return;
                 //WARNING:你忘记做这个判断了~下次注意。-K
+                //妈耶我以为我做了。。可能是撒子。 -N
 
                 TIMMessage msg = new TIMMessage();
                 TIMTextElem elem = new TIMTextElem();
@@ -167,18 +161,12 @@ public class SendMessageActivity extends AppCompatActivity {
         mConversation.sendMessage(message, new TIMValueCallBack<TIMMessage>() {
             @Override
             public void onError(int code, String desc) {//发送消息失败
-                //错误码code和错误描述desc，可用于定位请求失败原因
-                //错误码code含义请参见错误码表
-//                view.onSendMessageFail(code, desc, message);
                 Log.d(TAG, "send message failed. code: " + code + " errmsg: " + desc);
 
             }
 
             @Override
             public void onSuccess(TIMMessage msg) {
-//                发送消息成功,消息状态已在sdk中修改，此时只需更新界面
-//                MessageEvent.getInstance().onNewMessage(null);
-//                showMessage(msg);
                 String m = input.getText().toString();
                 Log.e(TAG, "Send: "+ m);
                 if(msg.isSelf())
@@ -197,8 +185,6 @@ public class SendMessageActivity extends AppCompatActivity {
 
             }
         });
-        //message对象为发送中状态
-//        MessageEvent.getInstance().onNewMessage(message);
     }
 
     public void showMessage(MsgInfo message) {
@@ -206,53 +192,72 @@ public class SendMessageActivity extends AppCompatActivity {
 
         //if (message.equals(null)) {
         // 判断null不用equals哦…… -K
+        //晓得晓得了 -N
         if(message==null){
             Toast.makeText(SendMessageActivity.this, "发送内容不能为空",Toast.LENGTH_SHORT).show();
             return;
         }
 
-
         mMsgInfoList.add(message);
         mChatsAdapter.addDataToAdapter(message);
         mChatsAdapter.notifyDataSetChanged();
         listView.setSelection(mMsgInfoList.size()-1);
-
         input.setText("");
 
-
-
-//        if (message == null) {
-//            adapter.notifyDataSetChanged();
-//        } else {
-//            Message mMessage = new Message(message);
-////            if (mMessage != null) {
-////                if (mMessage instanceof CustomMessage) {
-////                    CustomMessage.Type messageType = ((CustomMessage) mMessage).getType();
-////                    switch (messageType) {
-////                        case TYPING:
-////                            TemplateTitle title = (TemplateTitle) findViewById(R.id.chat_title);
-////                            title.setTitleText(getString(R.string.chat_typing));
-////                            handler.removeCallbacks(resetTitle);
-////                            handler.postDelayed(resetTitle, 3000);
-////                            break;
-////                        default:
-////                            break;
-////                    }
-////                } else {
-//                    if (messageList.size() == 0) {
-//                        mMessage.setHasTime(null);
-//                    } else {
-//                        mMessage.setHasTime(messageList.get(messageList.size() - 1).getMessage());
-//                    }
-//                    messageList.add(mMessage);
-//                    adapter.notifyDataSetChanged();
-//                    listView.setSelection(adapter.getCount() - 1);
-////                }
-
-//            }
         }
 
 
+        void initConversation(String peerID)
+        {
+            //获取会话扩展实例
+            TIMConversation con = TIMManager.getInstance().getConversation(TIMConversationType.C2C,peerID);
+            TIMConversationExt conExt = new TIMConversationExt(con);
+
+//获取此会话的消息
+            conExt.getLocalMessage(10, //获取此会话最近的10条消息
+                    null, //不指定从哪条消息开始获取 - 等同于从最新的消息开始往前
+                    new TIMValueCallBack<List<TIMMessage>>() {//回调接口
+                        @Override
+                        public void onError(int code, String desc) {//获取消息失败
+                            //接口返回了错误码code和错误描述desc，可用于定位请求失败原因
+                            //错误码code含义请参见错误码表
+                            Log.d(TAG, "get message failed. code: " + code + " errmsg: " + desc);
+                        }
+
+                        @Override
+                        public void onSuccess(List<TIMMessage> msgs) {//获取消息成功
+                            //遍历取得的消息
+                            for(int i = msgs.size()-1;i>=0;i--) {
+                                TIMMessage lastMsg = msgs.get(i);
+
+//                                for(int i = 0; i < lastMsg.getElementCount(); ++i) {
+                                    TIMElem elem = lastMsg.getElement(0);
+
+                                    TIMTextElem textElem = (TIMTextElem) elem;
+                                    String m = textElem.getText().toString();
+                                    if(lastMsg.isSelf())
+                                    {
+                                        MsgInfo msgInfo = new MsgInfo(null,m);
+                                        mChatsAdapter.addDataToAdapter(msgInfo);
+                                        mChatsAdapter.notifyDataSetChanged();
+                                        listView.setSelection(mMsgInfoList.size()-1);
+                                    }
+                                    else
+                                    {
+                                        MsgInfo msgInfo = new MsgInfo(m,null);
+                                        mChatsAdapter.addDataToAdapter(msgInfo);
+                                        mChatsAdapter.notifyDataSetChanged();
+                                        listView.setSelection(mMsgInfoList.size()-1);
+                                    }
+
+//                                }
+                                //可以通过timestamp()获得消息的时间戳, isSelf()是否为自己发送的消息
+//                                Log.e(TAG, "get msg: " + msg.timestamp() + " self: " + msg.isSelf() + " seq: " + msg.getMsg().seq());
+
+                            }
+                        }
+                    });
+        }
 
 
     }
