@@ -11,10 +11,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import ecnu.uleda.BuildConfig;
 
@@ -25,9 +27,17 @@ import ecnu.uleda.model.UActivity;
 
 import ecnu.uleda.tool.UPublicTool;
 import ecnu.uleda.exception.UServerAccessException;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 
 public class ServerAccessApi {
+    public static final String BASE_URL = "http://118.89.156.167/mobile/";
     private static final int SET_TIME_OUT = 9999;
     public static final int USER_TASK_FLAG_RELEASED = 0;
     public static final int USER_TASK_FLAG_DOING = 1;
@@ -706,10 +716,11 @@ public class ServerAccessApi {
                 .request();
     }
 
-    public static String postActivity(@NonNull String id,@NonNull String passport,@NonNull String title,
+    public static Response postActivity(@NonNull String id,@NonNull String passport,@NonNull String title,
                                   @NonNull String tag,String description,@NonNull String activeTime,
-                                  double latitude, double longitude, @NonNull String takerCountLimit, @NonNull String location)
-            throws UServerAccessException{
+                                  double latitude, double longitude, @NonNull String takerCountLimit, @NonNull String location,
+                                      List<String> imgPaths)
+            throws UServerAccessException, IOException {
         if(BuildConfig.DEBUG){
             UPublicTool.UAssert(byteCount(title) >= 5 && byteCount(title) <= 30 && latitude > 0 && longitude > 0);
             if(description!=null)
@@ -726,34 +737,60 @@ public class ServerAccessApi {
         position = UrlEncode(position);
         takerCountLimit = UrlEncode(takerCountLimit);
         location = UrlEncode(location);
+        MultipartBody.Builder builder = new MultipartBody.Builder();
+        builder.setType(MultipartBody.FORM);
 
-        PhalApiClientResponse response=createClient()
-                .withService("Activity.Post")//接口的名称
-                .withParams("id",id)//插入一个参数对
-                .withParams("passport",passport)
-                .withParams("title",title)
-                .withParams("tag",tag)
-                .withParams("description",description)
-                .withParams("activeTime",activeTime)
-                .withParams("position",position)
-                .withParams("takerCountLimit", takerCountLimit)
-                .withParams("location",location)
-                .withTimeout(SET_TIME_OUT)
-                .request();
-        if(response.getRet() == 200) {
-            try{
-                JSONObject data = new JSONObject(response.getData());
-                return data.getString("act_id");
-            }catch (JSONException e){
-                Log.e("ServerAccessApi",e.toString());
-                //数据包无法解析，向上抛出一个异常
-                throw new UServerAccessException(UServerAccessException.ERROR_DATA);
-            }
-        }else{
-            //网络访问失败，抛出一个网络异常
-            Log.e("TaskDetailsActivity", "fail: " + response.getMsg());
-            throw new UServerAccessException(response.getRet());
+        builder.addFormDataPart("id", id)
+                .addFormDataPart("passport", passport)
+                .addFormDataPart("title", title)
+                .addFormDataPart("tag", tag)
+                .addFormDataPart("description", description)
+                .addFormDataPart("activeTime", activeTime)
+                .addFormDataPart("position", position)
+                .addFormDataPart("takerCountLimit", takerCountLimit)
+                .addFormDataPart("location", location);
+        for (int i = 0; i < imgPaths.size(); i++) {
+            String path = imgPaths.get(i);
+            String filename = path.substring(path.lastIndexOf("/") + 1);
+            File file = new File(path);
+            if (!file.exists()) throw new IOException();
+            builder.addFormDataPart("pic" + (i + 1), filename, RequestBody.create(null, file));
         }
+        MultipartBody body = builder.build();
+        Request request = new Request.Builder().url(BASE_URL + "?service=Activity.Post")
+                .post(body).build();
+        OkHttpClient client = new OkHttpClient.Builder().writeTimeout(30, TimeUnit.SECONDS)
+                .build();
+        Call call = client.newCall(request);
+        return call.execute();
+
+//        PhalApiClientResponse response=createClient()
+//                .withService("Activity.Post")//接口的名称
+//                .withParams("id",id)//插入一个参数对
+//                .withParams("passport",passport)
+//                .withParams("title",title)
+//                .withParams("tag",tag)
+//                .withParams("description",description)
+//                .withParams("activeTime",activeTime)
+//                .withParams("position",position)
+//                .withParams("takerCountLimit", takerCountLimit)
+//                .withParams("location",location)
+//                .withTimeout(SET_TIME_OUT)
+//                .request();
+//        if(response.getRet() == 200) {
+//            try{
+//                JSONObject data = new JSONObject(response.getData());
+//                return data.getString("act_id");
+//            }catch (JSONException e){
+//                Log.e("ServerAccessApi",e.toString());
+//                //数据包无法解析，向上抛出一个异常
+//                throw new UServerAccessException(UServerAccessException.ERROR_DATA);
+//            }
+//        }else{
+//            //网络访问失败，抛出一个网络异常
+//            Log.e("TaskDetailsActivity", "fail: " + response.getMsg());
+//            throw new UServerAccessException(response.getRet());
+//        }
     }
 
     public static String followUser(@NonNull String id,@NonNull String passport,@NonNull String followByID)throws UServerAccessException{
