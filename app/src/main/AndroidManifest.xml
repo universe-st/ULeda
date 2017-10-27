@@ -127,6 +127,7 @@
                   android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <activity android:name=".view_controller.message.SendMessageActivity"
                   android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        <activity android:name=".view_controller.task.activity.ActivityEditActivity"/>
         <!-- Mob短信验证 -->
         <activity
             android:name="com.mob.tools.MobUIShell"
