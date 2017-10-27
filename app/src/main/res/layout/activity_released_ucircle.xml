@@ -68,7 +68,13 @@
         android:orientation="vertical"
         android:weightSum="10"
         >
-
+        <EditText
+            android:id="@+id/UcicleTitle"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:hint="动态标题（必填）"
+            />
         <EditText
             android:id="@+id/information"
             android:layout_width="match_parent"
@@ -76,18 +82,22 @@
             android:layout_weight="4"
             android:background="@null"
             android:gravity="start"
-            android:paddingTop="5dp"
+            android:hint="在U圈发布点什么吧..."
+            android:maxLength="120"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
-            android:textCursorDrawable="@drawable/corlor_cusor"
-            android:maxLength="120"
-            />
+            android:paddingTop="5dp"
+            android:textCursorDrawable="@drawable/corlor_cusor" />
 
-        <ImageView
-            android:id="@+id/TakePhoto"
-            android:layout_width="85dp"
-            android:layout_height="85dp"
-            android:src="@drawable/releasedphoto"
-            />
+        <GridView
+            android:id="@+id/pic_gridView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="5"
+            android:columnWidth="80dp"
+            android:horizontalSpacing="10dp"
+            android:numColumns="auto_fit"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="10dp" />
     </LinearLayout>
 </LinearLayout>

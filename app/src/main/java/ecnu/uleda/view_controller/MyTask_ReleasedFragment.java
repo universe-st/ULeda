@@ -1,5 +1,4 @@
 package ecnu.uleda.view_controller;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,15 +14,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-
 import ecnu.uleda.R;
 import ecnu.uleda.exception.UServerAccessException;
 import ecnu.uleda.function_module.ServerAccessApi;
@@ -38,10 +34,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
-
-
 public class MyTask_ReleasedFragment extends Fragment {
-
     private RecyclerView mRecyclerView;
     private List<MyOrder> releasedList = new ArrayList<>();
     private MyOrderAdapter mMyOrderAdapter;
@@ -67,8 +60,6 @@ public class MyTask_ReleasedFragment extends Fragment {
             }
         }
     };
-
-
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle b) {
         View v = inflater.inflate(R.layout.fragment_my_task__released, parent, false);
         mRecyclerView = (RecyclerView) v.findViewById(R.id.list_view);
@@ -81,10 +72,8 @@ public class MyTask_ReleasedFragment extends Fragment {
             public void onItemClick(int position, RecyclerView.ViewHolder viewHolder) {
                 TaskDetailsActivity.startActivityFromMyTask(getActivity(), position, ServerAccessApi.USER_TASK_FLAG_RELEASED);
             }
-
             @Override
             public void onItemLongClick(int position, RecyclerView.ViewHolder viewHolder) {
-
             }
         });
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -101,7 +90,6 @@ public class MyTask_ReleasedFragment extends Fragment {
         });
         return v;
     }
-
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         if (!isOnce) {
@@ -114,7 +102,6 @@ public class MyTask_ReleasedFragment extends Fragment {
     public void onResume() {
         super.onResume();
     }
-
     private void getReleasedUserTask() {
         hasMoreTask = false; // 避免正在网络请求时再次触发"加载更多"
         Observable.create(new ObservableOnSubscribe<JSONArray>() {
@@ -159,6 +146,53 @@ public class MyTask_ReleasedFragment extends Fragment {
                         if (length > 0) hasMoreTask = true; // 如果加载到了数据，说明可能还有更多
                     }
                 });
+    }
+
+    public void getTask(final int position) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                UTask uTask = new UTask();
+                try {
+                    int index = 0;
+                    int temp = 0;
+                    if (position == 0) {
+                        index = 0;
+                    } else {
+                        if (position % 10 == 0) {
+                            index = position / 10 - 1;
+                        } else {
+                            index = position / 10;
+                        }
+                    }
+                    temp = position - 10 * index;
+                    JSONArray jsonArray = ServerAccessApi.getUserTask(index, 0);
+                    JSONObject json = jsonArray.getJSONObject(temp);
+                    uTask.setTitle(json.getString("title"))
+                            .setStatus(Integer.parseInt(json.getString("status")))
+                            .setAuthorID(Integer.parseInt(json.getString("author")))
+                            .setAuthorAvatar(json.getString("authorAvatar"))
+                            .setAuthorUserName(json.getString("authorUsername"))
+                            .setAuthorCredit(Integer.parseInt(json.getString("authorCredit")))
+                            .setTag(json.getString("tag"))
+                            .setDescription(json.getString("description"))
+                            .setPostDate(Long.parseLong(json.getString("postdate")))
+                            .setActiveTime(Long.parseLong(json.getString("activetime")))
+                            .setPath(json.getString("path"))
+                            .setPrice(BigDecimal.valueOf(Double.parseDouble(json.getString("price"))))
+                            .setPostID(json.getString("postID"))
+                            .setTakersCount(Integer.parseInt(json.getString("taker")));
+                    Message msg = new Message();
+                    msg.what = 2;
+                    msg.obj = uTask;
+                    handler.sendMessage(msg);
+                } catch (UServerAccessException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     @Override

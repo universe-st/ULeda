@@ -43,6 +43,7 @@
             android:id="@+id/chat_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:transcriptMode="alwaysScroll"
             android:divider="@null">
         </ListView>
     </FrameLayout>
@@ -51,6 +52,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="horizontal"
+        android:background="@color/colorBackgroundGray"
         android:layout_weight="8">
 
         <EditText
@@ -58,7 +60,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:maxLines="3"/>
+            android:maxLines="5"
+            android:fitsSystemWindows="true"/>
 
         <Button
             android:id="@+id/button_send_message"

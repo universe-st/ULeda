@@ -1,58 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#7f000000"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/ll_popup"
         android:layout_width="match_parent"
-        android:background="#ffffff"
-        android:orientation="vertical"
+        android:layout_height="180dp"
         android:layout_alignParentBottom="true"
-        android:layout_height="180dp">
+        android:background="#ffffff"
+        android:orientation="vertical">
 
         <Button
             android:id="@+id/btn_open_camera"
             android:layout_width="match_parent"
             android:layout_height="42dp"
-            android:background="#dd5a44"
-            android:gravity="center"
-            android:text="拍照"
-            android:textColor="#ffffff"
-            android:textSize="18sp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"
-            android:onClick="onClick" />
+            android:background="#dd5a44"
+            android:gravity="center"
+            android:onClick="onClick"
+            android:text="拍照"
+            android:textColor="#ffffff"
+            android:textSize="18sp" />
 
         <Button
             android:id="@+id/btn_choose_img"
             android:layout_width="match_parent"
             android:layout_height="42dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:layout_marginTop="13dp"
             android:background="#dd5a44"
             android:gravity="center"
             android:text="从相册中选取"
             android:textColor="#ffffff"
-            android:textSize="18sp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp" />
+            android:textSize="18sp" />
 
         <Button
             android:id="@+id/btn_cancel"
+            android:layout_width="match_parent"
             android:layout_height="42dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:layout_marginTop="13dp"
             android:background="#dd5a44"
             android:gravity="center"
             android:text="取消"
             android:textColor="#ffffff"
-            android:textSize="18sp"
-            android:layout_width="match_parent"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp" />
+            android:textSize="18sp" />
     </LinearLayout>
 
 

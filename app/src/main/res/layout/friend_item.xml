@@ -38,11 +38,12 @@
             <TextView
                 android:id="@+id/friend_name"
                 android:textColor="@android:color/black"
+                android:text="kuangthree"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="60"
-                android:textSize="17sp"
-                android:gravity="bottom" />
+                android:textSize="20sp"
+                android:gravity="bottom"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -50,7 +51,7 @@
                 android:layout_weight="40">
                 <TextView
                     android:textColor="@android:color/darker_gray"
-                    android:text=" 在吗？"
+                    android:text="软件工程第一才子"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="80"
