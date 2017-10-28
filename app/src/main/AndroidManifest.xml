@@ -128,7 +128,8 @@
         <activity android:name=".view_controller.message.SendMessageActivity"
                   android:windowSoftInputMode="adjustPan"
                   android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
-        <activity android:name=".view_controller.task.activity.ActivityEditActivity"/>
+        <activity android:name=".view_controller.task.activity.ActivityEditActivity"
+            android:theme="@style/UMainThemeActionBar"/>
         <!-- Mob短信验证 -->
         <activity
             android:name="com.mob.tools.MobUIShell"

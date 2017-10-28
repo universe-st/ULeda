@@ -229,9 +229,9 @@ public class TaskPostActivity extends AppCompatActivity {
         final String location = mTvLocation.getText().toString();
         if (checkActivityInfoComplete(title, category, detail, maxPeopleCountStr, location, mImagePaths)) {
             mUserOperatorController = UserOperatorController.getInstance();
-            Observable.create(new ObservableOnSubscribe<Response>() {
+            Observable.create(new ObservableOnSubscribe<Integer>() {
                 @Override
-                public void subscribe(@NonNull ObservableEmitter<Response> e) throws Exception {
+                public void subscribe(@NonNull ObservableEmitter<Integer> e) throws Exception {
                     e.onNext(ServerAccessApi.postActivity(mUserOperatorController.getId(),
                             mUserOperatorController.getPassport(),
                             title,
@@ -248,16 +248,14 @@ public class TaskPostActivity extends AppCompatActivity {
             })
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
-                    .subscribe(new Consumer<Response>() {
+                    .subscribe(new Consumer<Integer>() {
                         @Override
-                        public void accept(Response response) throws Exception {
-                            String res = response.body().string();
-                            Log.e("Wa", response.code() + "" + res);
-                            if (response.isSuccessful() && res.equals("success")) {
+                        public void accept(Integer response) throws Exception {
+                            if (response == 200) {
                                 Toast.makeText(TaskPostActivity.this, "发布成功", Toast.LENGTH_SHORT).show();
                                 finish();
                             } else {
-                                Toast.makeText(TaskPostActivity.this, "发布失败：" + response.body().string(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(TaskPostActivity.this, "发布失败", Toast.LENGTH_SHORT).show();
                             }
                         }
                     }, new Consumer<Throwable>() {

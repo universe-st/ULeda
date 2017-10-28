@@ -597,7 +597,11 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
                             mActivity.setTakersCount(activityObj.getInt("taker_count_limit"));
                             mActivity.setLocation(activityObj.getString("location"));
                             ArrayList<String> imgUrls = new ArrayList<>();
-                            imgUrls.add(activityObj.getString("image"));
+                            for (int i = 1; i <= 3; i++) {
+                                String url = activityObj.getString("pic" + i);
+                                if (TextUtils.isEmpty(url)) break;
+                                imgUrls.add(url);
+                            }
                             mActivity.setImgUrls(imgUrls);
                             parseData();
                             initTakersList();

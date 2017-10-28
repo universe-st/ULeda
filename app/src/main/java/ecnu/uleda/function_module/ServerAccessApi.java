@@ -564,6 +564,26 @@ public class ServerAccessApi {
         }
     }
 
+    public static PhalApiClientResponse getProjectList(@NonNull String id,@NonNull String passport,
+                                                       @NonNull String start, @NonNull String num,
+                                                       @NonNull String position) throws UServerAccessException {
+        id=UrlEncode(id);
+        passport=UrlEncode(passport);
+        start=UrlEncode(start);
+        num=UrlEncode(num);
+        position=UrlEncode(position);
+        return createClient()
+                .withService("Task.GetList")
+                .withParams("id", id)
+                .withParams("passport", passport)
+                .withParams("orderBy", UTaskManager.TIME_LAST)
+                .withParams("start", start)
+                .withParams("num", num)
+                .withParams("tag", UTaskManager.TAG_PROJECT)
+                .withParams("position", position)
+                .withTimeout(SET_TIME_OUT)
+                .request();
+    }
 
 
     public static JSONArray getTaskList(@NonNull String id,@NonNull String passport,
@@ -835,7 +855,7 @@ public class ServerAccessApi {
                 .request();
     }
 
-    public static Response postActivity(@NonNull String id,@NonNull String passport,@NonNull String title,
+    public static int postActivity(@NonNull String id,@NonNull String passport,@NonNull String title,
                                   @NonNull String tag,String description,@NonNull String activeTime,
                                   double latitude, double longitude, @NonNull String takerCountLimit, @NonNull String location,
                                       List<String> imgPaths)
@@ -849,67 +869,35 @@ public class ServerAccessApi {
         String position = latitude + "," + longitude;
         id = UrlEncode(id);
         passport = UrlEncode(passport);
-        title = UrlEncode(title);
-        tag = UrlEncode(tag);
-        description = UrlEncode(description);
-        activeTime = UrlEncode(activeTime);
-        position = UrlEncode(position);
-        takerCountLimit = UrlEncode(takerCountLimit);
-        location = UrlEncode(location);
-        MultipartBody.Builder builder = new MultipartBody.Builder();
-        builder.setType(MultipartBody.FORM);
+//        title = UrlEncode(title);
+//        tag = UrlEncode(tag);
+//        description = UrlEncode(description);
+//        activeTime = UrlEncode(activeTime);
+//        position = UrlEncode(position);
+//        takerCountLimit = UrlEncode(takerCountLimit);
+//        location = UrlEncode(location);
 
-        builder.addFormDataPart("id", id)
-                .addFormDataPart("passport", passport)
-                .addFormDataPart("title", title)
-                .addFormDataPart("tag", tag)
-                .addFormDataPart("description", description)
-                .addFormDataPart("activeTime", activeTime)
-                .addFormDataPart("position", position)
-                .addFormDataPart("takerCountLimit", takerCountLimit)
-                .addFormDataPart("location", location);
+        UPictureUploader uploadBody = UPictureUploader.create(BASE_URL)
+                .withService("Activity.Post")
+                .withParams("id", id)
+                .withParams("passport", passport)
+                .withParams("title", title)
+                .withParams("tag", tag)
+                .withParams("description", description)
+                .withParams("activeTime", activeTime)
+                .withParams("position", position)
+                .withParams("takerCountLimit", takerCountLimit)
+                .withParams("location", location);
         for (int i = 0; i < imgPaths.size(); i++) {
             String path = imgPaths.get(i);
-            String filename = path.substring(path.lastIndexOf("/") + 1);
             File file = new File(path);
             if (!file.exists()) throw new IOException();
-            builder.addFormDataPart("pic" + (i + 1), filename, RequestBody.create(null, file));
+            uploadBody.withFiles("pic" + (i + 1), file);
         }
-        MultipartBody body = builder.build();
-        Request request = new Request.Builder().url(BASE_URL + "?service=Activity.Post")
-                .post(body).build();
-        OkHttpClient client = new OkHttpClient.Builder().writeTimeout(30, TimeUnit.SECONDS)
-                .build();
-        Call call = client.newCall(request);
-        return call.execute();
 
-//        PhalApiClientResponse response=createClient()
-//                .withService("Activity.Post")//接口的名称
-//                .withParams("id",id)//插入一个参数对
-//                .withParams("passport",passport)
-//                .withParams("title",title)
-//                .withParams("tag",tag)
-//                .withParams("description",description)
-//                .withParams("activeTime",activeTime)
-//                .withParams("position",position)
-//                .withParams("takerCountLimit", takerCountLimit)
-//                .withParams("location",location)
-//                .withTimeout(SET_TIME_OUT)
-//                .request();
-//        if(response.getRet() == 200) {
-//            try{
-//                JSONObject data = new JSONObject(response.getData());
-//                return data.getString("act_id");
-//            }catch (JSONException e){
-//                Log.e("ServerAccessApi",e.toString());
-//                //数据包无法解析，向上抛出一个异常
-//                throw new UServerAccessException(UServerAccessException.ERROR_DATA);
-//            }
-//        }else{
-//            //网络访问失败，抛出一个网络异常
-//            Log.e("TaskDetailsActivity", "fail: " + response.getMsg());
-//            throw new UServerAccessException(response.getRet());
-//        }
+        int code = uploadBody.upload();
+        if (code != 200) Log.e("upload", uploadBody.getRet());
+        return code;
     }
 
     public static String followUser(@NonNull String id,@NonNull String passport,@NonNull String followByID)throws UServerAccessException{
