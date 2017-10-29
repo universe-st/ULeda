@@ -309,7 +309,7 @@ public class TaskPostActivity extends AppCompatActivity {
     }
 
     private void initGridView() {
-        mImgChooserGrid.setAdapter(mImgAdapter = new ImageChooseAdapter(this, mImagePaths, 60, 7));
+        mImgChooserGrid.setAdapter(mImgAdapter = new ImageChooseAdapter(this, mImagePaths, 60, 3));
         mImgChooserGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

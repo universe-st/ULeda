@@ -709,34 +709,36 @@ public class ServerAccessApi {
     }
 
     public static JSONArray getActivities(@NonNull String id, @NonNull String passport, @NonNull String tag,
-                                                int from, int count) throws UServerAccessException {
+                                                String from, String count) throws UServerAccessException {
         id = UrlEncode(id);
         passport = UrlEncode(passport);
-        tag = UrlEncode(tag);
+        from = UrlEncode(from);
+        count = UrlEncode(count);
+        Log.e("wa", "id: " + id);
+        Log.e("wa", "passport: " + passport);
+        Log.e("wa", "tag: " + tag);
+        Log.e("wa", "from: " + from);
+        Log.e("wa", "count: " + count);
 
         PhalApiClientResponse response = createClient()
                 .withService("Activity.GetActivityList")
                 .withParams("id", id)
                 .withParams("passport", passport)
-//                .withParams("tag", tag)
-                .withParams("from", String.valueOf(from))
-                .withParams("count", String.valueOf(count))
+                .withParams("tag", tag)
+                .withParams("from", from)
+                .withParams("count", count)
                 .withTimeout(SET_TIME_OUT)
                 .request();
+        Log.e("wa", response.getRet() + ", " + response.getData() + ", " + response.getMsg());
         if(response.getRet() == 200) {
-            Log.e("haha", UrlDecode(response.getData()));
             try{
-                JSONArray data = new JSONArray(response.getData());
-                return data;
+                return new JSONArray(response.getData());
             }catch (JSONException e){
                 Log.e("ServerAccessApi",e.toString());
                 //数据包无法解析，向上抛出一个异常
-                throw new UServerAccessException(UServerAccessException.ERROR_DATA);
             }
-        }else{
-            //网络访问失败，抛出一个网络异常
-            throw new UServerAccessException(response.getRet());
         }
+        return null;
     }
 
     public static PhalApiClientResponse getPromotedActivities(@NonNull String id, @NonNull String passport) throws UServerAccessException {

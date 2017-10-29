@@ -599,8 +599,8 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
                             ArrayList<String> imgUrls = new ArrayList<>();
                             for (int i = 1; i <= 3; i++) {
                                 String url = activityObj.getString("pic" + i);
-                                if (TextUtils.isEmpty(url)) break;
-                                imgUrls.add(url);
+                                if (TextUtils.isEmpty(url) || "null".equals(url)) break;
+                                imgUrls.add(UPublicTool.BASE_URL_PICTURE + url);
                             }
                             mActivity.setImgUrls(imgUrls);
                             parseData();

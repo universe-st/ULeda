@@ -7,7 +7,7 @@ import ecnu.uleda.model.UActivity
  * Created by jimmyhsu on 2017/5/22.
  */
 object UActivityManager {
-    private val TAG_ALL = "全部"
+    private val TAG_ALL = ""
     private val TAG_SPORT = "运动"
     private val TAG_CLUB = "社团"
     private val TAG_CHARITY = "公益"
@@ -22,7 +22,7 @@ object UActivityManager {
         this.tag = tag
         lastIndex = 0
         hasMore = true
-        val resp = ServerAccessApi.getActivities(uoc.id, uoc.passport, tag, lastIndex, pageSize)
+        val resp = ServerAccessApi.getActivities(uoc.id, uoc.passport, tag, lastIndex.toString(), pageSize.toString()) ?: return
         val length = resp.length()
         activityList.clear()
         (0 until length)
@@ -48,9 +48,9 @@ object UActivityManager {
         if (length < pageSize) hasMore = false
     }
 
-    fun loadMoreActivityInList() {
-        if (!hasMore) return
-        val resp = ServerAccessApi.getActivities(uoc.id, uoc.passport, tag, lastIndex, pageSize)
+    fun loadMoreActivityInList(): Int {
+        if (!hasMore) return 0
+        val resp = ServerAccessApi.getActivities(uoc.id, uoc.passport, tag, lastIndex.toString(), pageSize.toString()) ?: return 0
         val length = resp.length()
         (0..length - 1)
                 .map { resp.getJSONObject(it) }
@@ -73,6 +73,7 @@ object UActivityManager {
                 .forEach { activityList.add(it) }
         lastIndex += length
         if (length < pageSize) hasMore = false
+        return length
     }
 
 }
