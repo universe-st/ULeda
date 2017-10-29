@@ -9,18 +9,17 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
@@ -294,7 +293,7 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
             @Override
             public void onItemClicked(int pos, View v) {
                 if (mOffSet == 0) {
-                    gotoCommonBigImage(String.valueOf(RESOURCES[pos]), v);
+                    gotoCommonBigImage(mUrls.get(pos), v);
                 } else {
                     mAppBar.setExpanded(true, true);
                 }
@@ -596,13 +595,6 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
                             mActivity.setLon(activityObj.getDouble("lon"));
                             mActivity.setTakersCount(activityObj.getInt("taker_count_limit"));
                             mActivity.setLocation(activityObj.getString("location"));
-                            ArrayList<String> imgUrls = new ArrayList<>();
-                            for (int i = 1; i <= 3; i++) {
-                                String url = activityObj.getString("pic" + i);
-                                if (TextUtils.isEmpty(url) || "null".equals(url)) break;
-                                imgUrls.add(UPublicTool.BASE_URL_PICTURE + url);
-                            }
-                            mActivity.setImgUrls(imgUrls);
                             parseData();
                             initTakersList();
                             initRightButton();
@@ -658,6 +650,7 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
         initProgressBar();
         Intent data = getIntent();
         mActivity = (UActivity) data.getSerializableExtra(EXTRA_ACTIVITY);
+        mUrls = mActivity.getImgUrls();
         loadDataFromServer();
         initMap(savedInstanceState);
         initCollapsingToolbar();

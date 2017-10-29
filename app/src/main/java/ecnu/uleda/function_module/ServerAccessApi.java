@@ -1,10 +1,10 @@
 package ecnu.uleda.function_module;
+
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.tencent.imsdk.protocol.im_common;
-
-import net.phalapi.sdk.*;
+import net.phalapi.sdk.PhalApiClient;
+import net.phalapi.sdk.PhalApiClientResponse;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,22 +15,15 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.text.ParseException;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import ecnu.uleda.BuildConfig;
-
+import ecnu.uleda.exception.UServerAccessException;
 import ecnu.uleda.tool.AESUtils;
 import ecnu.uleda.tool.MD5Utils;
-
-
-
 import ecnu.uleda.tool.UPublicTool;
-import ecnu.uleda.exception.UServerAccessException;
 import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.MultipartBody;
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -712,33 +705,51 @@ public class ServerAccessApi {
                                                 String from, String count) throws UServerAccessException {
         id = UrlEncode(id);
         passport = UrlEncode(passport);
-        from = UrlEncode(from);
         count = UrlEncode(count);
-        Log.e("wa", "id: " + id);
-        Log.e("wa", "passport: " + passport);
-        Log.e("wa", "tag: " + tag);
-        Log.e("wa", "from: " + from);
-        Log.e("wa", "count: " + count);
 
-        PhalApiClientResponse response = createClient()
-                .withService("Activity.GetActivityList")
-                .withParams("id", id)
-                .withParams("passport", passport)
-                .withParams("tag", tag)
-                .withParams("from", from)
-                .withParams("count", count)
-                .withTimeout(SET_TIME_OUT)
-                .request();
-        Log.e("wa", response.getRet() + ", " + response.getData() + ", " + response.getMsg());
-        if(response.getRet() == 200) {
-            try{
-                return new JSONArray(response.getData());
-            }catch (JSONException e){
-                Log.e("ServerAccessApi",e.toString());
-                //数据包无法解析，向上抛出一个异常
+        RequestBody body = new FormBody.Builder()
+                .add("service", "Activity.GetActivityList")
+                .add("id", id)
+                .add("passport", passport)
+                .add("tag", tag)
+                .add("from", from)
+                .add("count", count)
+                .build();
+        Request request = new Request.Builder().url(BASE_URL).post(body).build();
+        OkHttpClient client = new OkHttpClient.Builder().build();
+        Call call = client.newCall(request);
+        try {
+            Response response = call.execute();
+            if (response.isSuccessful()) {
+                String bodyString = response.body().string();
+                Log.e("wa", bodyString);
+                JSONObject obj = new JSONObject(bodyString);
+                return obj.getJSONArray("data");
             }
+        } catch (IOException | JSONException | NullPointerException e) {
+            e.printStackTrace();
         }
         return null;
+
+//        PhalApiClientResponse response = createClient()
+//                .withService("Activity.GetActivityList")
+//                .withParams("id", id)
+//                .withParams("passport", passport)
+//                .withParams("tag", tag)
+//                .withParams("from", "10")
+//                .withParams("count", count)
+//                .withTimeout(SET_TIME_OUT)
+//                .request();
+//        Log.e("wa", response.getRet() + ", " + response.getData() + ", " + response.getMsg());
+//        if(response.getRet() == 200) {
+//            try{
+//                return new JSONArray(response.getData());
+//            }catch (JSONException e){
+//                Log.e("ServerAccessApi",e.toString());
+//                //数据包无法解析，向上抛出一个异常
+//            }
+//        }
+//        return null;
     }
 
     public static PhalApiClientResponse getPromotedActivities(@NonNull String id, @NonNull String passport) throws UServerAccessException {
