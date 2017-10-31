@@ -28,6 +28,17 @@ public class UserInfo implements Serializable {
     private String mId;
     private String mSignature;
 
+    public int getFriendStatus() {
+        return mFriendStatus;
+    }
+
+    public UserInfo setFriendStatus(int friendStatus) {
+        mFriendStatus = friendStatus;
+        return this;
+    }
+
+    private int mFriendStatus;
+
     public String getSignature() {
         return mSignature;
     }

@@ -165,7 +165,8 @@ public class UserOperatorController {
                     .setStudentId(json.getString("studentid"))
                     .setUserName(json.getString("username"))
                     .setId(id)
-                    .setSignature(json.getString("signature"));
+                    .setSignature(json.getString("signature"))
+                    .setFriendStatus(Integer.valueOf(json.getString("friendStatus")));
             return userInfo;
         } catch (JSONException e) {
             e.printStackTrace();

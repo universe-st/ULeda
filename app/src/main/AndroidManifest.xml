@@ -118,7 +118,7 @@
         <activity android:name=".view_controller.MyTaskInFo" />
         <activity android:name=".view_controller.AddNewFriends" />
         <activity android:name=".view_controller.TaskEditActivity" />
-        <activity android:name=".view_controller.Chart" />
+        <activity android:name=".view_controller.ChatActivity" />
         <activity android:name=".view_controller.ReleasedUcircleActivity" />
         <activity android:name=".view_controller.task.activity.ActivityDetailsActivity"
                   android:theme="@style/NoStatusBarTheme"
@@ -126,6 +126,7 @@
         <activity android:name=".view_controller.CommonBigImageActivity"
                   android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <activity android:name=".view_controller.message.SendMessageActivity"
+                  android:windowSoftInputMode="adjustPan"
                   android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <!-- Mob短信验证 -->
         <activity

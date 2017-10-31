@@ -17,6 +17,9 @@
     <color name="colorTextBlue">#1173CB</color>
 
     <color name="colorUDeepGray">#666666</color>
+    <color name="text_gray1">#777777</color>
+    <color name="text_gray2">#767676</color>
+
 
     <color name="colorUGray">#ABABAB</color>
 
@@ -25,6 +28,7 @@
     <color name="colorUInfo">#f0b6ac</color>
     
     <color name="colorULightGray">#F5F5F5</color>
+    <color name="colorUDarkAlphaGray">#88666666</color>
 
     <color name="colorUWhite">#ffffff </color>
 
