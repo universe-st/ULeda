@@ -18,7 +18,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +28,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -37,17 +36,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Map;
+
 import ecnu.uleda.R;
-import ecnu.uleda.exception.UServerAccessException;
-import ecnu.uleda.function_module.ServerAccessApi;
 
-import static java.lang.Thread.sleep;
-
-public class ReleasedUcircleActivity extends Activity implements AdapterView.OnItemClickListener,View.OnClickListener{
+public class ReleasedUcircleActivity extends Activity implements AdapterView.OnItemClickListener{
     private TextView mBack;
     private TextView mRealsed;
     private ImageView mPhoto;
-    private EditText UcircleTitle;
+
     public static final int TAKE_PHOTO=6;
     public static final int CHOOSE_PHOTO=7;
     private ImageView picture;
@@ -59,7 +58,7 @@ public class ReleasedUcircleActivity extends Activity implements AdapterView.OnI
     private LinearLayout ll_popup;
     private View parentView;
     private GridView gridView;
-    private EditText UcircleContent;
+
 
 
     @Override
@@ -77,15 +76,11 @@ public class ReleasedUcircleActivity extends Activity implements AdapterView.OnI
     {
         mBack = (TextView) findViewById(R.id.back);
         mRealsed=(TextView)findViewById(R.id.ucircle_release);
-        mRealsed.setOnClickListener(this);
 //        mRealsed.setOnClickListener((View.OnClickListener) this);
 //        mPhoto=(ImageView)findViewById(R.id.addPhoto);
 //        mPhoto.setOnClickListener(this);
         gridView = (GridView) findViewById(R.id.pic_gridView);
 
-        UcircleContent = (EditText)findViewById(R.id.information);
-
-        UcircleTitle = (EditText) findViewById(R.id.UcicleTitle);
 
         pop = new PopupWindow(ReleasedUcircleActivity.this);
         View view = getLayoutInflater().inflate(R.layout.activity_bottom_dialog, null);
@@ -137,10 +132,10 @@ public class ReleasedUcircleActivity extends Activity implements AdapterView.OnI
                             android.Manifest.permission.WRITE_EXTERNAL_STORAGE
                     },1);
                 }else{
-                            Intent intent1 = new Intent("data.broadcast.action");
-                            sendBroadcast(intent1);
-                            Intent intent2 = new Intent(ReleasedUcircleActivity.this, AlbumActivity.class);
-                            startActivity(intent2);
+                    Intent intent1 = new Intent("data.broadcast.action");
+                    sendBroadcast(intent1);
+                    Intent intent2 = new Intent(ReleasedUcircleActivity.this, AlbumActivity.class);
+                    startActivityForResult(intent2, 122);
                 }
                 overridePendingTransition(R.anim.activity_translate_in, R.anim.activity_translate_out);
                 pop.dismiss();
@@ -156,7 +151,7 @@ public class ReleasedUcircleActivity extends Activity implements AdapterView.OnI
 
 
 
-        /*mRealsed.setOnClickListener(new View.OnClickListener() {
+        mRealsed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Toast.makeText(getBaseContext(),"Submit this task",Toast.LENGTH_SHORT).show();
@@ -166,7 +161,7 @@ public class ReleasedUcircleActivity extends Activity implements AdapterView.OnI
                 progressDialog.setCancelable(true);
                 progressDialog.show();
             }
-        });*/
+        });
 
 
         //生成动态数组，并且转入数据
@@ -207,60 +202,12 @@ public class ReleasedUcircleActivity extends Activity implements AdapterView.OnI
                 finish();
                 break;
             case R.id.ucircle_release:
-                if(TextUtils.isEmpty(UcircleTitle.getText().toString()))
-                {
-                    Toast.makeText(this,"标题不能为空",Toast.LENGTH_SHORT).show();
-                }
-                else if(TextUtils.isEmpty(UcircleContent.getText().toString()))
-                {
-                    Toast.makeText(this,"内容不能为空",Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
-                    if(UcircleContent.getText().toString().length() < 5)
-                    {
-                        Toast.makeText(this,"内容长度小于5",Toast.LENGTH_SHORT).show();
-                    }
-                    else{
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                try
-                                {
-                                    ServerAccessApi.ReleasedUcircle(UcircleTitle.getText().toString(),UcircleContent.getText().toString());
-                                }catch (UServerAccessException e)
-                                {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }).start();
-                    final ProgressDialog progressDialog = new ProgressDialog(ReleasedUcircleActivity.this);
-                    progressDialog.setTitle("正在提交");
-                    progressDialog.setMessage("Loading...");
-                    progressDialog.setCancelable(true);
-                    progressDialog.show();
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try
-                            {
-                                sleep(1000);
-                            }catch (InterruptedException e)
-                            {
-                                e.printStackTrace();
-                            }
-                            progressDialog.cancel();
-                            finish();
-                        }
-                    }).start();
-                    }
 
-                }
                 break;
-
-
-            default:
-                break;
+//            case R.id.addPhoto:
+//
+//
+//                break;
 
         }
     }
@@ -286,6 +233,26 @@ public class ReleasedUcircleActivity extends Activity implements AdapterView.OnI
                     adapter.update();
                 }
                 break;
+            case 122:
+                if(resultCode== RESULT_OK){
+//                    Bimp a= (Bimp) data.getSerializableExtra("Back");
+//                    ArrayList<ImageItem> images = a.tempSelectBitmap;
+//                    ArrayList<ImageItem> images = (ArrayList<ImageItem>) data.getSerializableExtra("Back");
+//                    Bundle bundle = getIntent().getExtras();
+                    Intent intent = getIntent();
+                    ArrayList<ImageItem> images = (ArrayList<ImageItem>)intent.getParcelableExtra("Back");
+                    adapter.update();
+//                    Serializable s = bundle.getSerializable("Back");
+//                    ArrayList<ImageItem> images = (ArrayList<ImageItem>)s;
+//                    List<HashMap<String,String>> mylist = (List<HashMap<String, String>>)intent.getSerializableExtra("list");
+                    if (images != null){
+//                        adapter.
+//                        Log.d("ReleasedUcircleActivity","successfully");
+                    }
+
+                }
+                break;
+            default:
         }
     }
 
