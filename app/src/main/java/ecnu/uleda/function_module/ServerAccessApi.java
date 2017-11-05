@@ -85,7 +85,7 @@ public class ServerAccessApi {
             throw new UServerAccessException(response.getRet());
         }
     }
-    public static void ReleasedUcircle(@NonNull String title,@NonNull String content,File pic1,File pic2,
+    public static int ReleasedUcircle(@NonNull String title,@NonNull String content,File pic1,File pic2,
                                       File pic3)throws UServerAccessException
     {
         UserOperatorController user = UserOperatorController.getInstance();
@@ -95,18 +95,17 @@ public class ServerAccessApi {
         passport = UrlEncode(passport);
         title = UrlEncode(title);
         content = UrlEncode(content);
-        UPictureUploader client = UPictureUploader.create("http://118.89.156.167/mobile/");
-        client.withService("UCircle.Post")
+        /*UPictureUploader client = UPictureUploader.create("http://118.89.156.167/mobile/");
+        int retCode = client.withService("UCircle.Post")
                 .withParams("id",id)
                 .withParams("passport",passport)
                 .withParams("title",title)
                 .withParams("content",content)
-                .withFiles("pic1",pic1)
-                .withFiles("pic2",pic2)
-                .withFiles("pic3",pic3)
-                .upload();
-
-        /*PhalApiClient client=createClient();
+                .withFiles("pic1",null)
+                .withFiles("pic2",null)
+                .withFiles("pic3",null)
+                .upload();*/
+        PhalApiClient client=createClient();
         PhalApiClientResponse response = client
                 .withService("UCircle.Post")
                 .withParams("id",id)
@@ -114,15 +113,15 @@ public class ServerAccessApi {
                 .withParams("title",title)
                 .withParams("content",content)
                 .withTimeout(SET_TIME_OUT)
-                .request();*/
-        /*if(response.getRet() == 200)
+                .request();
+        if(response.getRet() == 200)
         {
-            return 200;
+           return 200;
         }
         else
         {
             throw new UServerAccessException(response.getRet());
-        }*/
+        }
     }
     public static JSONArray getUserTask(@NonNull int page,@NonNull int flag)throws UServerAccessException
     {

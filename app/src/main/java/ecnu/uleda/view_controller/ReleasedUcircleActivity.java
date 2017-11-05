@@ -207,12 +207,12 @@ public class ReleasedUcircleActivity extends Activity implements AdapterView.OnI
                             public void run() {
                                 try
                                 {
-                                    File pic1,pic2,pic3;
+                                    /*File pic1,pic2,pic3;
                                     pic1 = saveBitmapFile(images.get(0).getBitmap());
                                     pic2 = saveBitmapFile(images.get(1).getBitmap());
-                                    pic3 = saveBitmapFile(images.get(2).getBitmap());
+                                    pic3 = saveBitmapFile(images.get(2).getBitmap());*/
                                     ServerAccessApi.ReleasedUcircle(UcircleTitle.getText().toString(),
-                                            UcircleContent.getText().toString(),pic1,pic2,pic3);
+                                            UcircleContent.getText().toString(),null,null,null);
                                 }catch (UServerAccessException e)
                                 {
                                     e.printStackTrace();
