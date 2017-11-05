@@ -24,7 +24,7 @@ public class ImageItem implements Parcelable{
             ImageItem it=new ImageItem();
             it.imageId=source.readString();
             it.thumbnailPath=source.readString();
-            it.imagePath=source.readString();
+            it.imagePath = source.readString();
             return it;
         }
 

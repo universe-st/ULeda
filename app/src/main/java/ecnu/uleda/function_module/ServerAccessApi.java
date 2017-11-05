@@ -90,22 +90,18 @@ public class ServerAccessApi {
     {
         UserOperatorController user = UserOperatorController.getInstance();
         String id = user.getId();
-        id = UrlEncode(id);
         String passport = user.getPassport();
-        passport = UrlEncode(passport);
-        title = UrlEncode(title);
-        content = UrlEncode(content);
-        /*UPictureUploader client = UPictureUploader.create("http://118.89.156.167/mobile/");
+        UPictureUploader client = UPictureUploader.create("http://118.89.156.167/mobile/");
+        if(pic1!=null)client.withFiles("pic1",pic1);
+        if(pic2!=null)client.withFiles("pic2",pic2);
+        if(pic3!=null)client.withFiles("pic3",pic3);
         int retCode = client.withService("UCircle.Post")
                 .withParams("id",id)
                 .withParams("passport",passport)
                 .withParams("title",title)
                 .withParams("content",content)
-                .withFiles("pic1",null)
-                .withFiles("pic2",null)
-                .withFiles("pic3",null)
-                .upload();*/
-        PhalApiClient client=createClient();
+                .upload();
+        /*PhalApiClient client=createClient();
         PhalApiClientResponse response = client
                 .withService("UCircle.Post")
                 .withParams("id",id)
@@ -113,14 +109,14 @@ public class ServerAccessApi {
                 .withParams("title",title)
                 .withParams("content",content)
                 .withTimeout(SET_TIME_OUT)
-                .request();
-        if(response.getRet() == 200)
+                .request();*/
+        if(retCode == 200)
         {
            return 200;
         }
         else
         {
-            throw new UServerAccessException(response.getRet());
+            throw new UServerAccessException(retCode);
         }
     }
     public static JSONArray getUserTask(@NonNull int page,@NonNull int flag)throws UServerAccessException

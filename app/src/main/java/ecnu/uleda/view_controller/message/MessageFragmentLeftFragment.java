@@ -21,6 +21,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cjj.MaterialRefreshLayout;
+import com.cjj.MaterialRefreshListener;
 import com.tencent.imsdk.TIMConversation;
 import com.tencent.imsdk.TIMConversationType;
 import com.tencent.imsdk.TIMElem;
@@ -58,6 +60,7 @@ import ecnu.uleda.model.UserInfo;
 import ecnu.uleda.view_controller.SingleUserInfoActivity;
 
 import static com.tencent.imsdk.TIMElemType.Text;
+import static java.lang.Thread.sleep;
 
 
 /**
@@ -76,7 +79,7 @@ public class MessageFragmentLeftFragment extends Fragment implements Conversatio
     private String peerId;
     private UserInfo userInfo;
     private ExecutorService cachedThredPool;
-
+    private MaterialRefreshLayout materialRefreshLayout;
     private static final String INVITES_SUCCESS="success";
     private static final String USERE_NOT_FOUND="notFound";
     private static final String PASSWORD_ERROR="passwordError";
@@ -88,15 +91,7 @@ public class MessageFragmentLeftFragment extends Fragment implements Conversatio
         Toast.makeText(getContext(),"接收好友请求成功！",Toast.LENGTH_SHORT).show();
 
     }
-//    private Handler mHandler=new Handler() {
-//        @Override
-//        public void handleMessage(Message msg) {
-//            if (msg.what == 1) {
-//                getActivity().runOnUiThread(new MyUiRunnable());
-//            }
-//
-//        }
-//    }
+
 
     @Override
     public void onCreate(Bundle b) {
@@ -134,6 +129,31 @@ public class MessageFragmentLeftFragment extends Fragment implements Conversatio
 
                 }
 
+            }
+        });
+        materialRefreshLayout = (MaterialRefreshLayout)view.findViewById(R.id.refresh);
+        materialRefreshLayout.setLoadMore(true);
+        materialRefreshLayout.setMaterialRefreshListener(new MaterialRefreshListener() {
+            @Override
+            public void onRefresh(final MaterialRefreshLayout materialLayout) {
+                mConversationList.clear();
+                accessServer();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try{
+                            sleep(1000);
+                        }catch (InterruptedException e)
+                        {
+                            e.printStackTrace();
+                        }
+                        materialRefreshLayout.finishRefresh();
+                    }
+                }).start();
+            }
+            @Override
+            public void onRefreshLoadMore(MaterialRefreshLayout materialLayout) {
+                        materialRefreshLayout.finishRefreshLoadMore();
             }
         });
         return view;
@@ -319,75 +339,7 @@ public class MessageFragmentLeftFragment extends Fragment implements Conversatio
                 .withHost("http://118.89.156.167/mobile/");
     }
 
-//    //更新UI
-//    class MyRunnable implements Runnable {
-//
-//        @Override
-//        public void run()
-//        {
-//            for( Object object : mConversationList)
-//            {
-//                try
-//                {
-//                    if(object instanceof Conversation)
-//                    {
-//                        Conversation mConver = (Conversation)object;
-//                        userInfo = getUserId(mConver.getConversationuId());
-//                        mConver.setConversationName(userInfo.getUserName());
-//                        mConver.setImageUrl("http://118.89.156.167/uploads/avatars/"+userInfo.getAvatar());
-////                        Message msg = new Message();
-////                        msg.what = 2;
-////                        msg.obj = INVITES_SUCCESS;
-////                        mHandler.sendMessage(msg);
-//                    }
-//                    else if(object instanceof Invites)
-//                    {
-//                        Invites invites = (Invites)object;
-//                        userInfo = getUserId(invites.getInvitesId());
-//                        Log.e(TAG, "invites.getInvitesId()"+invites.getInvitesId() );
-//                        invites.setInvitesName(userInfo.getUserName());
-//                        invites.setImageUrl("http://118.89.156.167/uploads/avatars/"+userInfo.getAvatar());
-//                    }
-//                    getActivity().runOnUiThread(new MyUiRunnable());
-//
-//                }
-//                catch (UServerAccessException e)
-//                {
-//                    e.printStackTrace();
-//                    System.exit(1);
-//                }
-//            }
-//        }
-//    }
-//
-//    class MyUiRunnable implements Runnable{
-//        @Override
-//        public void run()
-//        {
-//
-//            mConversationAdapter.notifyDataSetChanged();
-//        }
-//    }
-//
-//    class MyInvitesRunnable implements Runnable
-//    {
-//        @Override
-//        public void run()
-//        {
-//            try
-//            {
-//                onInitFriendRequest();
-////                getActivity().runOnUiThread(new MyUiRunnable());
-////                new Thread(new MyRunnable()).start();
-//
-//            }
-//            catch (UServerAccessException e)
-//            {
-//                e.printStackTrace();
-//                System.exit(1);
-//            }
-//        }
-//    }
+
 
     public void accessServer(){
         cachedThredPool.execute(new Runnable() {
@@ -396,14 +348,7 @@ public class MessageFragmentLeftFragment extends Fragment implements Conversatio
                 try{
                     initConversation();
                     onInitFriendRequest();
-//                    getActivity().runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            mConversationList.addAll(invites);
-//                            mConversationList.addAll(conversations);
-//                            mConversationAdapter.notifyDataSetChanged();
-//                        }
-//                    });
+
                 }
                 catch (UServerAccessException e){
                     e.printStackTrace();

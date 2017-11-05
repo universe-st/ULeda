@@ -134,7 +134,12 @@ public class UPictureUploader {
                     isb.append("Content-Disposition: form-data; name=\"");
                     isb.append(entry.getKey());
                     isb.append("\"; filename=\""+entry.getValue().getName()+"\""+LINE_END);
-                    isb.append("Content-Type: image/png; charset="+CHARSET+LINE_END);
+                    String fileName = entry.getValue().getName();
+                    String fileType = fileName.contains(".") && fileName.charAt(fileName.length()-1)!='.'?
+                            fileName.substring(fileName.lastIndexOf(".")+1,fileName.length())
+                            :
+                            "jpg";
+                    isb.append("Content-Type: image/"+fileType+"; charset="+CHARSET+LINE_END);
                     isb.append(LINE_END);
                     dos.write(isb.toString().getBytes());
                     InputStream iis = new FileInputStream(entry.getValue());

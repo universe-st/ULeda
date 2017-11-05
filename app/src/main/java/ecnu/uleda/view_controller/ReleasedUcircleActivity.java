@@ -18,6 +18,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -162,21 +163,19 @@ public class ReleasedUcircleActivity extends Activity implements AdapterView.OnI
         }
     }
 
-    public File saveBitmapFile(Bitmap bitmap) {
-        File file=new File("/mnt/sdcard/pic/01.jpg");
-        try {
-            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
-            bos.flush();
-            bos.close();
-        }catch (IOException e)
-        {
-            e.printStackTrace();
+
+    public File saveFile(Bitmap bm,String path, String fileName) throws IOException {
+        File dirFile = new File(path);
+        if(!dirFile.exists()){
+            dirFile.mkdir();
         }
-        return file;
+        File myCaptureFile = new File(path , fileName);
+        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(myCaptureFile));
+        bm.compress(Bitmap.CompressFormat.JPEG, 80, bos);
+        bos.flush();
+        bos.close();
+        return myCaptureFile;
     }
-
-
     public void onClick(View v)
     {
         switch (v.getId())
@@ -207,16 +206,20 @@ public class ReleasedUcircleActivity extends Activity implements AdapterView.OnI
                             public void run() {
                                 try
                                 {
+                                    //File pic1 = saveFile(images.get(0).getBitmap(),images.get(0).getImagePath(),"pic1");
+                                    Log.d("kkk",images.get(0).getImagePath());
                                     /*File pic1,pic2,pic3;
-                                    pic1 = saveBitmapFile(images.get(0).getBitmap());
-                                    pic2 = saveBitmapFile(images.get(1).getBitmap());
-                                    pic3 = saveBitmapFile(images.get(2).getBitmap());*/
+                                    pic1 = saveBitmapFile(images.get(0).getBitmap(),"pic1");
+                                    pic2 = saveBitmapFile(images.get(1).getBitmap(),"pic2");
+                                    pic3 = saveBitmapFile(images.get(2).getBitmap(),"pic3");*/
                                     ServerAccessApi.ReleasedUcircle(UcircleTitle.getText().toString(),
-                                            UcircleContent.getText().toString(),null,null,null);
+                                        UcircleContent.getText().toString(),null,null,null);
+
                                 }catch (UServerAccessException e)
                                 {
                                     e.printStackTrace();
                                 }
+
                             }
                         }).start();
                         final ProgressDialog progressDialog = new ProgressDialog(ReleasedUcircleActivity.this);
@@ -269,6 +272,7 @@ public class ReleasedUcircleActivity extends Activity implements AdapterView.OnI
                 if(resultCode== RESULT_OK){
                     Intent intent = getIntent();
                     images = (ArrayList<ImageItem>)intent.getParcelableExtra("Back");
+
                     adapter.update();
                     if (images != null){
 
