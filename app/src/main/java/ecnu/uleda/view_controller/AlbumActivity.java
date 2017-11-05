@@ -61,7 +61,7 @@ public class AlbumActivity extends AppCompatActivity {
         IntentFilter filter = new IntentFilter("data.broadcast.action");
         IntentFilter filter1 = new IntentFilter("com.example.broadcasttest.MY_BROADCAST");
         MyBroadcastReceiver myBroadcastReceiver1=new MyBroadcastReceiver();
-        registerReceiver(myBroadcastReceiver1, filter);
+//        registerReceiver(myBroadcastReceiver1, filter);
         registerReceiver(myBroadcastReceiver, filter);
         bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.plugin_camera_no_pictures);
         init();
@@ -69,12 +69,17 @@ public class AlbumActivity extends AppCompatActivity {
         //这个函数主要用来控制预览和完成按钮的状态
         isShowOkBt();
     }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(myBroadcastReceiver);
+    }
 
     BroadcastReceiver myBroadcastReceiver = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-//            mContext.unregisterReceiver(this);
+            mContext.unregisterReceiver(this);
             // TODO Auto-generated method stub
             gridImageAdapter.notifyDataSetChanged();
         }
@@ -97,7 +102,12 @@ public class AlbumActivity extends AppCompatActivity {
         public void onClick(View v) {
             overridePendingTransition(R.anim.activity_translate_in, R.anim.activity_translate_out);
             intent.setClass(mContext,ReleasedUcircleActivity.class);
-            startActivity(intent);
+//            Bundle bundle = new Bundle();
+//            bundle.putSerializable("Back",Bimp.tempSelectBitmap);
+//            intent.putExtras(bundle);
+            intent.putExtra("Back",Bimp.tempSelectBitmap);
+            setResult(RESULT_OK,intent);
+//            startActivity(intent);
             finish();
         }
 
@@ -207,7 +217,8 @@ public class AlbumActivity extends AppCompatActivity {
         return false;
     }
 
-    public void isShowOkBt() {
+    public void
+    isShowOkBt() {
         if (Bimp.tempSelectBitmap.size() > 0) {
             okButton.setText("完成"+"(" + Bimp.tempSelectBitmap.size() + "/"+ PublicWay.num+")");
             preview.setPressed(true);

@@ -140,15 +140,30 @@ public class GalleryActivity extends Activity {
         }
     }
 
-    // 完成按钮的监听
-    private class GallerySendListener implements View.OnClickListener {
-        public void onClick(View v) {
-            finish();
-            intent.setClass(mContext,ReleasedUcircleActivity.class);
-            startActivity(intent);
-        }
-
+//    // 完成按钮的监听
+//    private class GallerySendListener implements View.OnClickListener {
+//        public void onClick(View v) {
+//            finish();
+//            intent.setClass(mContext,ReleasedUcircleActivity.class);
+//            startActivity(intent);
+//        }
+//
+//    }
+// 完成按钮的监听
+private class GallerySendListener implements View.OnClickListener {
+    public void onClick(View v) {
+        overridePendingTransition(R.anim.activity_translate_in, R.anim.activity_translate_out);
+        intent.setClass(mContext,ReleasedUcircleActivity.class);
+//            Bundle bundle = new Bundle();
+//            bundle.putSerializable("Back",Bimp.tempSelectBitmap);
+//            intent.putExtras(bundle);
+        intent.putExtra("Back",Bimp.tempSelectBitmap);
+        setResult(RESULT_OK,intent);
+//            startActivity(intent);
+        finish();
     }
+
+}
 
     public void isShowOkBt() {
         if (Bimp.tempSelectBitmap.size() > 0) {

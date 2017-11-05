@@ -1,5 +1,4 @@
 package ecnu.uleda.view_controller;
-
 import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -37,12 +36,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+
 import ecnu.uleda.R;
 import ecnu.uleda.exception.UServerAccessException;
 import ecnu.uleda.function_module.ServerAccessApi;
-
 import static java.lang.Thread.sleep;
-
 public class ReleasedUcircleActivity extends Activity implements AdapterView.OnItemClickListener,View.OnClickListener{
     private TextView mBack;
     private TextView mRealsed;
@@ -60,8 +63,7 @@ public class ReleasedUcircleActivity extends Activity implements AdapterView.OnI
     private View parentView;
     private GridView gridView;
     private EditText UcircleContent;
-
-
+    private ArrayList<ImageItem> images;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,28 +78,21 @@ public class ReleasedUcircleActivity extends Activity implements AdapterView.OnI
     public void init()
     {
         mBack = (TextView) findViewById(R.id.back);
+        mBack.setOnClickListener(this);
         mRealsed=(TextView)findViewById(R.id.ucircle_release);
         mRealsed.setOnClickListener(this);
-//        mRealsed.setOnClickListener((View.OnClickListener) this);
-//        mPhoto=(ImageView)findViewById(R.id.addPhoto);
-//        mPhoto.setOnClickListener(this);
         gridView = (GridView) findViewById(R.id.pic_gridView);
-
         UcircleContent = (EditText)findViewById(R.id.information);
-
         UcircleTitle = (EditText) findViewById(R.id.UcicleTitle);
-
         pop = new PopupWindow(ReleasedUcircleActivity.this);
         View view = getLayoutInflater().inflate(R.layout.activity_bottom_dialog, null);
         ll_popup = (LinearLayout) view.findViewById(R.id.ll_popup);
-
         pop.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
         pop.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
         pop.setBackgroundDrawable(new BitmapDrawable());
         pop.setFocusable(true);
         pop.setOutsideTouchable(true);
         pop.setContentView(view);
-
         RelativeLayout parent = (RelativeLayout) view.findViewById(R.id.parent);
         Button bt1 = (Button) view
                 .findViewById(R.id.btn_open_camera);
@@ -106,7 +101,6 @@ public class ReleasedUcircleActivity extends Activity implements AdapterView.OnI
         Button bt3 = (Button) view
                 .findViewById(R.id.btn_cancel);
         parent.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
@@ -115,14 +109,6 @@ public class ReleasedUcircleActivity extends Activity implements AdapterView.OnI
             }
         });
 
-        mBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bimp.tempSelectBitmap.clear();
-                Bimp.max = 0;
-                finish();
-            }
-        });
         bt1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 photo();
@@ -137,10 +123,10 @@ public class ReleasedUcircleActivity extends Activity implements AdapterView.OnI
                             android.Manifest.permission.WRITE_EXTERNAL_STORAGE
                     },1);
                 }else{
-                            Intent intent1 = new Intent("data.broadcast.action");
-                            sendBroadcast(intent1);
-                            Intent intent2 = new Intent(ReleasedUcircleActivity.this, AlbumActivity.class);
-                            startActivity(intent2);
+                    Intent intent1 = new Intent("data.broadcast.action");
+                    sendBroadcast(intent1);
+                    Intent intent2 = new Intent(ReleasedUcircleActivity.this, AlbumActivity.class);
+                    startActivityForResult(intent2, 122);
                 }
                 overridePendingTransition(R.anim.activity_translate_in, R.anim.activity_translate_out);
                 pop.dismiss();
@@ -153,36 +139,15 @@ public class ReleasedUcircleActivity extends Activity implements AdapterView.OnI
                 ll_popup.clearAnimation();
             }
         });
-
-
-
-        /*mRealsed.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Toast.makeText(getBaseContext(),"Submit this task",Toast.LENGTH_SHORT).show();
-                ProgressDialog progressDialog = new ProgressDialog(ReleasedUcircleActivity.this);
-                progressDialog.setTitle("正在提交");
-                progressDialog.setMessage("Loading...");
-                progressDialog.setCancelable(true);
-                progressDialog.show();
-            }
-        });*/
-
-
-        //生成动态数组，并且转入数据
-
         adapter = new GridAdapter(this);
         adapter.update();
         gridView.setAdapter(adapter);
         gridView.setOnItemClickListener(this);
-        //添加消息处理
-        //   gridview.setOnItemClickListener(new ItemClickListener());
         bimap = BitmapFactory.decodeResource(
                 getResources(),
                 R.drawable.add_pic);
         PublicWay.activityList.add(this);
     }
-
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if(position==Bimp.tempSelectBitmap.size()){
             ll_popup.startAnimation(AnimationUtils.loadAnimation(ReleasedUcircleActivity.this,R.anim.activity_translate_in));
@@ -197,7 +162,22 @@ public class ReleasedUcircleActivity extends Activity implements AdapterView.OnI
         }
     }
 
-    public void onClick(View v)
+    public File saveBitmapFile(Bitmap bitmap) {
+        File file=new File("/mnt/sdcard/pic/01.jpg");
+        try {
+            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+            bos.flush();
+            bos.close();
+        }catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        return file;
+    }
+
+
+        public void onClick(View v)
     {
         switch (v.getId())
         {
@@ -227,41 +207,42 @@ public class ReleasedUcircleActivity extends Activity implements AdapterView.OnI
                             public void run() {
                                 try
                                 {
-                                    ServerAccessApi.ReleasedUcircle(UcircleTitle.getText().toString(),UcircleContent.getText().toString());
+                                    File pic1,pic2,pic3;
+                                    pic1 = saveBitmapFile(images.get(0).getBitmap());
+                                    pic2 = saveBitmapFile(images.get(1).getBitmap());
+                                    pic3 = saveBitmapFile(images.get(2).getBitmap());
+                                    ServerAccessApi.ReleasedUcircle(UcircleTitle.getText().toString(),
+                                        UcircleContent.getText().toString(),pic1,pic2,pic3);
                                 }catch (UServerAccessException e)
                                 {
                                     e.printStackTrace();
                                 }
                             }
                         }).start();
-                    final ProgressDialog progressDialog = new ProgressDialog(ReleasedUcircleActivity.this);
-                    progressDialog.setTitle("正在提交");
-                    progressDialog.setMessage("Loading...");
-                    progressDialog.setCancelable(true);
-                    progressDialog.show();
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try
-                            {
-                                sleep(1000);
-                            }catch (InterruptedException e)
-                            {
-                                e.printStackTrace();
+                        final ProgressDialog progressDialog = new ProgressDialog(ReleasedUcircleActivity.this);
+                        progressDialog.setTitle("正在提交");
+                        progressDialog.setMessage("Loading...");
+                        progressDialog.setCancelable(true);
+                        progressDialog.show();
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try
+                                {
+                                    sleep(1000);
+                                }catch (InterruptedException e)
+                                {
+                                    e.printStackTrace();
+                                }
+                                progressDialog.cancel();
+                                finish();
                             }
-                            progressDialog.cancel();
-                            finish();
-                        }
-                    }).start();
+                        }).start();
                     }
-
                 }
                 break;
-
-
             default:
                 break;
-
         }
     }
     private void photo(){
@@ -275,20 +256,27 @@ public class ReleasedUcircleActivity extends Activity implements AdapterView.OnI
         switch (requestCode) {
             case TAKE_PHOTO:
                 if (Bimp.tempSelectBitmap.size() < 9 && resultCode == RESULT_OK) {
-
                     String fileName = String.valueOf(System.currentTimeMillis());
                     Bitmap bm = (Bitmap) data.getExtras().get("data");
                     FileUtils.saveBitmap(bm, fileName);
-
                     ImageItem takePhoto = new ImageItem();
                     takePhoto.setBitmap(bm);
                     Bimp.tempSelectBitmap.add(takePhoto);
                     adapter.update();
                 }
                 break;
+            case 122:
+                if(resultCode== RESULT_OK){
+                    Intent intent = getIntent();
+                    images = (ArrayList<ImageItem>)intent.getParcelableExtra("Back");
+                    adapter.update();
+                    if (images != null){
+
+                    }
+                }
+                break;
         }
     }
-
     public class GridAdapter extends BaseAdapter {
         private LayoutInflater inflater;
         private int selectedPosition = -1;
@@ -395,5 +383,3 @@ public class ReleasedUcircleActivity extends Activity implements AdapterView.OnI
         }
     }
 }
-
-

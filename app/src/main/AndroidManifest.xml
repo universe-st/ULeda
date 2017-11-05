@@ -119,7 +119,8 @@
         <activity android:name=".view_controller.AddNewFriends" />
         <activity android:name=".view_controller.TaskEditActivity" />
         <activity android:name=".view_controller.ChatActivity" />
-        <activity android:name=".view_controller.ReleasedUcircleActivity" />
+        <activity android:name=".view_controller.ReleasedUcircleActivity"
+                  android:exported="true"/>
         <activity android:name=".view_controller.task.activity.ActivityDetailsActivity"
                   android:theme="@style/NoStatusBarTheme"
                   android:parentActivityName=".view_controller.UMainActivity"/>
