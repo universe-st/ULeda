@@ -6,29 +6,22 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.jcodecraeer.xrecyclerview.ProgressStyle;
-import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -38,15 +31,18 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import ecnu.uleda.R;
 import ecnu.uleda.function_module.UActivityManager;
-import ecnu.uleda.function_module.UActivityManagerKt;
 import ecnu.uleda.model.UActivity;
 import ecnu.uleda.view_controller.task.activity.ActivityDetailsActivity;
 import ecnu.uleda.view_controller.widgets.BrochureItemDecoration;
 import ecnu.uleda.view_controller.widgets.TaskListItemDecoration;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
-import me.xiaopan.sketch.SketchImageView;
-import me.xiaopan.sketch.request.DisplayOptions;
-import me.xiaopan.sketch.shaper.CircleImageShaper;
 
 /**
  * Created by jimmyhsu on 2017/4/11.
@@ -57,7 +53,7 @@ public class ActivityListFragment extends Fragment {
     private static final int MESSAGE_LOAD_COMPLETE = 0x111;
     private static final int MESSAGE_REFRESH_COMPLETE = 0x112;
 
-    private static final String[] TYPES = new String[]{"全部", "运动", "社团", "公益"};
+    private static final String[] TYPES = new String[]{"", "运动", "社团", "公益"};
 
     private String mType = TYPES[0];
 
@@ -138,13 +134,11 @@ public class ActivityListFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
+        if (mThreadPool == null || mThreadPool.isShutdown()) {
+            mThreadPool = Executors.newCachedThreadPool();
+        }
     }
 
     @Override
@@ -159,25 +153,9 @@ public class ActivityListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         mActivityList = UActivityManager.INSTANCE.getActivityList();
         mThreadPool = Executors.newCachedThreadPool();
-//        for (int i = 0; i < 10; i++) {
-//            mActivityList.add(new UActivity(getResources().getString(R.string.activity_example),
-//                    31.2284700000,
-//                    121.4064000000,
-//                    "幽灵地点",
-//                    "校园",
-//                    1,
-//                    "小明",
-//                    "no",
-//                    null,
-//                    System.currentTimeMillis() / 1000 + 24 * 3600,
-//                    20,
-//                    new ArrayList<>(Arrays.asList(new String[]{String.valueOf(R.drawable.img1),
-//                            String.valueOf(R.drawable.img2),
-//                            String.valueOf(R.drawable.img3)}))));
-//        }
         mActivityRv.setAdapter(mAdapter = new ActivityListAdapter(getContext()));
         mActivityRv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        mActivityRv.addItemDecoration(new TaskListItemDecoration(getContext(), 8, false));
+        mActivityRv.addItemDecoration(new TaskListItemDecoration(getContext(), 8, true));
         mActivityRv.setHasFixedSize(true);
         mActivityRv.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -197,7 +175,34 @@ public class ActivityListFragment extends Fragment {
     }
 
     private void loadMore() {
-        mThreadPool.submit(new LoadMoreRunnable());
+        final int oldSize = mActivityList.size();
+        Observable.create(new ObservableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<Integer> e) throws Exception {
+                e.onNext(UActivityManager.INSTANCE.loadMoreActivityInList());
+                e.onComplete();
+            }
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Integer>() {
+                    @Override
+                    public void accept(Integer loadedCount) throws Exception {
+                        if (loadedCount < 0) {
+                            Toast.makeText(getContext(), "网络异常", Toast.LENGTH_SHORT).show();
+                        } else if (loadedCount > 0) {
+                            mActivityList = UActivityManager.INSTANCE.getActivityList();
+                            int newSize = mActivityList.size();
+                            mAdapter.notifyItemRangeInserted(oldSize, newSize - oldSize);
+                            mActivityRv.smoothScrollBy(0, -1);
+                        }
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        throwable.printStackTrace();
+                    }
+                });
     }
 
     public void refresh() {
@@ -206,6 +211,9 @@ public class ActivityListFragment extends Fragment {
 
     public void setTag(CharSequence text) {
         mType = text.toString();
+        if (mType.equals("全部")) {
+            mType = "";
+        }
         mThreadPool.submit(new RefreshRunnable());
     }
 
@@ -252,6 +260,7 @@ public class ActivityListFragment extends Fragment {
             if (uActivity.getImgUrls() == null || uActivity.getImgUrls().size() <= 0) {
                 holder.brochure.setVisibility(View.GONE);
             } else {
+                holder.brochure.setVisibility(View.VISIBLE);
                 holder.brochure.setAdapter(new BrochureAdapter(uActivity.getImgUrls()));
                 holder.brochure.setLayoutManager(new LinearLayoutManager(getContext(),
                         LinearLayoutManager.HORIZONTAL, false));
@@ -320,7 +329,12 @@ public class ActivityListFragment extends Fragment {
 
        @Override
        public void onBindViewHolder(BrochureHolder holder, int position) {
-            holder.imageView.setImageResource(Integer.parseInt(mUrls.get(position)));
+           String url = mUrls.get(position);
+           if (url.startsWith("http")) {
+               Glide.with(getContext()).load(url).into(holder.imageView);
+           } else {
+               holder.imageView.setImageResource(Integer.parseInt(mUrls.get(position)));
+           }
        }
 
        @Override
@@ -336,14 +350,6 @@ public class ActivityListFragment extends Fragment {
            mLoadHandler.sendEmptyMessage(MESSAGE_REFRESH_COMPLETE);
        }
    }
-
-    class LoadMoreRunnable implements Runnable {
-        @Override
-        public void run() {
-            UActivityManager.INSTANCE.loadMoreActivityInList();
-            mLoadHandler.sendEmptyMessage(MESSAGE_LOAD_COMPLETE);
-        }
-    }
 
     interface OnRefreshListener {
         void onRefreshComplete();

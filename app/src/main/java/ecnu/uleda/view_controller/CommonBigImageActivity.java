@@ -2,25 +2,18 @@ package ecnu.uleda.view_controller;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.github.chrisbanes.photoview.OnPhotoTapListener;
 import com.github.chrisbanes.photoview.PhotoView;
 
 import ecnu.uleda.R;
-import me.xiaopan.sketch.Sketch;
-import me.xiaopan.sketch.request.CancelCause;
-import me.xiaopan.sketch.request.ErrorCause;
-import me.xiaopan.sketch.request.LoadListener;
-import me.xiaopan.sketch.request.LoadResult;
 
 /**
  * Created by jimmyhsu on 2017/5/11.
@@ -40,29 +33,7 @@ public class CommonBigImageActivity extends AppCompatActivity {
         if (url != null) {
             mPhotoView = (PhotoView) findViewById(R.id.photo_view);
             if (url.startsWith("http")) {
-                Sketch.with(this).load(url, new LoadListener() {
-                    @Override
-                    public void onCompleted(LoadResult loadResult) {
-                        Bitmap bm = loadResult.getBitmap();
-                        mPhotoView.setImageBitmap(bm);
-                    }
-
-                    @Override
-                    public void onStarted() {
-
-                    }
-
-                    @Override
-                    public void onError(ErrorCause errorCause) {
-                        Toast.makeText(CommonBigImageActivity.this, "图片加载失败", Toast.LENGTH_SHORT).show();
-                        finish();
-                    }
-
-                    @Override
-                    public void onCanceled(CancelCause cancelCause) {
-                        finish();
-                    }
-                });
+                Glide.with(this).load(url).into(mPhotoView);
             } else {
                 mPhotoView.setImageResource(Integer.parseInt(url));
             }

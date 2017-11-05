@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -28,11 +29,13 @@ import android.widget.Toast;
 import com.bigkoo.pickerview.OptionsPickerView;
 import com.bigkoo.pickerview.TimePickerView;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
@@ -44,6 +47,14 @@ import ecnu.uleda.function_module.UserOperatorController;
 import ecnu.uleda.function_module.ServerAccessApi;
 import ecnu.uleda.view_controller.task.adapter.ImageChooseAdapter;
 import ecnu.uleda.view_controller.task.fragment.TaskMissionFragment;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+import okhttp3.Response;
 
 
 public class TaskPostActivity extends AppCompatActivity {
@@ -216,42 +227,45 @@ public class TaskPostActivity extends AppCompatActivity {
         final String detail = mEtDescription.getText().toString();
         final String maxPeopleCountStr = mEtPeopleCount.getText().toString();
         final String location = mTvLocation.getText().toString();
-        if (checkActivityInfoComplete(title, category, detail, maxPeopleCountStr, location)) {
-            try {
-                mThreadPool.submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            mUserOperatorController = UserOperatorController.getInstance();
-                            String actId = ServerAccessApi.postActivity(mUserOperatorController.getId(),
-                                    mUserOperatorController.getPassport(),
-                                    title,
-                                    mTag,
-                                    detail,
-                                    String.valueOf(mActivityTime.getTimeInMillis() - System.currentTimeMillis()),
-                                    latitude,
-                                    longitude,
-                                    maxPeopleCountStr,
-                                    location);
-                            if (Integer.parseInt(actId) >= 0) {
-                                mClickHandler.sendEmptyMessage(0);
+        if (checkActivityInfoComplete(title, category, detail, maxPeopleCountStr, location, mImagePaths)) {
+            mUserOperatorController = UserOperatorController.getInstance();
+            Observable.create(new ObservableOnSubscribe<Integer>() {
+                @Override
+                public void subscribe(@NonNull ObservableEmitter<Integer> e) throws Exception {
+                    e.onNext(ServerAccessApi.postActivity(mUserOperatorController.getId(),
+                            mUserOperatorController.getPassport(),
+                            title,
+                            mTag,
+                            detail,
+                            String.valueOf(mActivityTime.getTimeInMillis() - System.currentTimeMillis()),
+                            latitude,
+                            longitude,
+                            maxPeopleCountStr,
+                            location,
+                            mImagePaths));
+                    e.onComplete();
+                }
+            })
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(new Consumer<Integer>() {
+                        @Override
+                        public void accept(Integer response) throws Exception {
+                            if (response == 200) {
+                                Toast.makeText(TaskPostActivity.this, "发布成功", Toast.LENGTH_SHORT).show();
+                                finish();
                             } else {
-                                Message msg = Message.obtain();
-                                msg.what = 1;
-                                msg.obj = "服务器异常";
-                                mClickHandler.sendMessage(msg);
+                                Toast.makeText(TaskPostActivity.this, "发布失败", Toast.LENGTH_SHORT).show();
                             }
-                        } catch (UServerAccessException e) {
-                            e.printStackTrace();
-                            Message msg = Message.obtain();
-                            msg.what = 1;
-                            msg.obj = "服务器异常";
-                            mClickHandler.sendMessage(msg);
                         }
-                    }
-                });
-            } catch (RejectedExecutionException e) {}
-
+                    }, new Consumer<Throwable>() {
+                        @Override
+                        public void accept(Throwable throwable) throws Exception {
+                            if (throwable instanceof IOException) {
+                                Toast.makeText(TaskPostActivity.this, "网络异常", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
         }
     }
 
@@ -262,7 +276,7 @@ public class TaskPostActivity extends AppCompatActivity {
     }
 
     private boolean checkActivityInfoComplete(String title, String category,
-                                              String detail, String maxPeopleCountStr, String location) {
+                                              String detail, String maxPeopleCountStr, String location, List<String> imagePaths) {
         boolean result = true;
 
 
@@ -287,12 +301,15 @@ public class TaskPostActivity extends AppCompatActivity {
         } else if (UPublicTool.isTextEmpty(location)) {
             Toast.makeText(this, "地点为空", Toast.LENGTH_SHORT).show();
             result = false;
+        } else if (imagePaths == null || imagePaths.size() <= 0) {
+            Toast.makeText(this, "请选择至少一张图片", Toast.LENGTH_SHORT).show();
+            result = false;
         }
         return result;
     }
 
     private void initGridView() {
-        mImgChooserGrid.setAdapter(mImgAdapter = new ImageChooseAdapter(this, mImagePaths, 60, 7));
+        mImgChooserGrid.setAdapter(mImgAdapter = new ImageChooseAdapter(this, mImagePaths, 60, 3));
         mImgChooserGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -524,7 +541,7 @@ public class TaskPostActivity extends AppCompatActivity {
         endDate.set(endDate.get(Calendar.YEAR) + 1, startDate.get(Calendar.MONTH), startDate.get(Calendar.DATE));
 
         final TimePickerView pvTime = new TimePickerView.Builder(this, new TimePickerView.OnTimeSelectListener() {
-            private SimpleDateFormat df = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
+            private SimpleDateFormat df = new SimpleDateFormat("yyyy年MM月dd日 HH:mm", Locale.CHINA);
             @Override
             public void onTimeSelect(Date date, View v) {
                 Calendar cal = Calendar.getInstance();

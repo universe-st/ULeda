@@ -109,6 +109,9 @@ public class TaskListFragment extends Fragment implements SelectableTitleView.On
                 mPos = 0;
                 break;
             case 1:
+                getChildFragmentManager().beginTransaction()
+                        .replace(R.id.post_container, TaskProjectFragment.getInstance())
+                        .commit();
                 mPos = 1;
                 break;
             case 2:

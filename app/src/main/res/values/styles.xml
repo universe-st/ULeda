@@ -20,6 +20,11 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">#FF4081</item>
     </style>
+    <style name="UMainThemeActionBar" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">#FF4081</item>
+    </style>
 
     <style name="UMainMapSwitchButton" parent="Base.Widget.AppCompat.Button.Borderless">
         <item name="android:layout_weight">1</item>
