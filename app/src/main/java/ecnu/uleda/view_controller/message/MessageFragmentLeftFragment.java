@@ -76,13 +76,14 @@ public class MessageFragmentLeftFragment extends Fragment implements Conversatio
     private TextView lastMessagg;
     private ConversationAdapter mConversationAdapter;
     private String message;
-    private String peerId;
     private UserInfo userInfo;
     private ExecutorService cachedThredPool;
+
     private MaterialRefreshLayout materialRefreshLayout;
     private static final String INVITES_SUCCESS="success";
     private static final String USERE_NOT_FOUND="notFound";
     private static final String PASSWORD_ERROR="passwordError";
+
 
     @Override
     public void onAdded(Invites i) {
@@ -91,7 +92,6 @@ public class MessageFragmentLeftFragment extends Fragment implements Conversatio
         Toast.makeText(getContext(),"接收好友请求成功！",Toast.LENGTH_SHORT).show();
 
     }
-
 
     @Override
     public void onCreate(Bundle b) {
@@ -220,7 +220,8 @@ public class MessageFragmentLeftFragment extends Fragment implements Conversatio
         List<TIMConversation> list = TIMManagerExt.getInstance().getConversionList();
         for(TIMConversation timConversation : list)
         {
-            peerId = timConversation.getPeer();
+            final String peerId = timConversation.getPeer();
+
 //            Log.e(TAG, "initConversation: " +peerId);
 //            //获取会话扩展实例
 //            TIMConversation con = TIMManager.getInstance().getConversation(TIMConversationType.C2C, peerId);
@@ -258,17 +259,19 @@ public class MessageFragmentLeftFragment extends Fragment implements Conversatio
 
                                     message = textElem.getText().toString();
                                 }
+
                             final Conversation conversation = new Conversation().setConversationuId(peerId)
                                     .setConversationName(peerId)
                                     .setContent(message)
                                     .setImageUrl("http://118.89.156.167/uploads/avatars/avatar-5.png");
+                                Log.e(TAG, "Conversation().setConversationuId(peerId): "+ peerId);
 
                                 cachedThredPool.execute(new Runnable() {
                                     @Override
                                     public void run() {
                                         {
                                             try {
-                                                UserInfo userInfo = getUserId(peerId);
+                                                UserInfo userInfo = getUserId(conversation.getConversationuId());
                                                 conversation.setConversationName(userInfo.getUserName())
                                                         .setImageUrl("http://118.89.156.167/uploads/avatars/"+userInfo.getAvatar());
                                                 getActivity().runOnUiThread(new Runnable() {
@@ -303,8 +306,6 @@ public class MessageFragmentLeftFragment extends Fragment implements Conversatio
         try {
             JSONObject json = ServerAccessApi.getBasicInfo(mId, mPwd, id);
             userInfo.setAvatar(json.getString("avatar"))
-                    .setPhone(json.getString("phone"))
-                    .setSex(json.getInt("sex"))
                     .setRealName(json.getString("realname"))
                     .setSchool(json.getString("school"))
                     .setUserName(json.getString("username"))
@@ -339,8 +340,6 @@ public class MessageFragmentLeftFragment extends Fragment implements Conversatio
                 .withHost("http://118.89.156.167/mobile/");
     }
 
-
-
     public void accessServer(){
         cachedThredPool.execute(new Runnable() {
             @Override
@@ -348,7 +347,6 @@ public class MessageFragmentLeftFragment extends Fragment implements Conversatio
                 try{
                     initConversation();
                     onInitFriendRequest();
-
                 }
                 catch (UServerAccessException e){
                     e.printStackTrace();
