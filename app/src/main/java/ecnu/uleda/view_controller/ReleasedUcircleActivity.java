@@ -177,7 +177,7 @@ public class ReleasedUcircleActivity extends Activity implements AdapterView.OnI
     }
 
 
-        public void onClick(View v)
+    public void onClick(View v)
     {
         switch (v.getId())
         {
@@ -212,7 +212,7 @@ public class ReleasedUcircleActivity extends Activity implements AdapterView.OnI
                                     pic2 = saveBitmapFile(images.get(1).getBitmap());
                                     pic3 = saveBitmapFile(images.get(2).getBitmap());
                                     ServerAccessApi.ReleasedUcircle(UcircleTitle.getText().toString(),
-                                        UcircleContent.getText().toString(),pic1,pic2,pic3);
+                                            UcircleContent.getText().toString(),pic1,pic2,pic3);
                                 }catch (UServerAccessException e)
                                 {
                                     e.printStackTrace();
