@@ -769,7 +769,7 @@ public class ServerAccessApi {
         passport = UrlEncode(passport);
         actId = UrlEncode(actId);
         return createClient()
-                .withService("Activity.GetPromotedActivity")
+                .withService("Activity.GetActivity")
                 .withParams("id", id)
                 .withParams("passport", passport)
                 .withParams("actId", actId)

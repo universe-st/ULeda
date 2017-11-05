@@ -75,8 +75,7 @@ public class TaskPostActivity extends AppCompatActivity {
                 sendBroadcast(new Intent(TaskMissionFragment.ACTION_REFRESH));
                 finish();
             } else {
-                String exception = (String) msg.obj;
-                Toast.makeText(TaskPostActivity.this, "提交任务失败：" + exception, Toast.LENGTH_SHORT).show();
+                Toast.makeText(TaskPostActivity.this, "提交任务失败", Toast.LENGTH_SHORT).show();
             }
         }
     };

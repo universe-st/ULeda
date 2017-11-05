@@ -45,11 +45,12 @@ object UActivityManager {
                             "no",
                             "no",
                             it.getString("description"),
-                            it.getLong("active_time"),
+                            System.currentTimeMillis() + it.getLong("active_time"),
                             it.getInt("taker_count_limit"),
                             imgUrls,
                             it.getInt("act_id"),
-                            it.getInt("status"))
+                            it.getInt("status"),
+                            it.getInt("postdate"))
                 }
                 .forEach { activityList.add(it) }
         lastIndex += length
@@ -80,11 +81,12 @@ object UActivityManager {
                             "no",
                             "no",
                             it.getString("description"),
-                            it.getLong("active_time"),
+                            System.currentTimeMillis() + it.getLong("active_time"),
                             it.getInt("taker_count_limit"),
                             imgUrls,
                             it.getInt("act_id"),
-                            it.getInt("status"))
+                            it.getInt("status"),
+                            it.getInt("postdate"))
                 }
                 .forEach { activityList.add(it) }
         lastIndex += length

@@ -20,6 +20,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
@@ -344,10 +345,10 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
             mTakersList.setAdapter(mTakerAdapter = new TakersAdapter(this, mTakerInfos));
             mTakersList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,
                     false));
-            initTakersData();
         } else {
             mTakersList.setVisibility(View.GONE);
         }
+        initTakersData();
     }
 
     private void initTakersData() {
@@ -373,12 +374,16 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
                             for (int i = 0; i < length; i++) {
                                 JSONObject taker = takersArray.getJSONObject(i);
                                 UserInfo user = new UserInfo();
+                                if (taker.getString("taker_id").equals(UserOperatorController.getInstance().getId())) {
+                                    mRightButton.setText("取消参加");
+                                    isSelfParticipated = true;
+                                }
                                 user.setId(taker.getString("taker_id"))
                                         .setAvatar(UPublicTool.BASE_URL_AVATAR + taker.getString("avatar"))
                                         .setUserName(taker.getString("username"));
                                 mTakerInfos.add(user);
                             }
-                            if (mTakerAdapter != null) {
+                            if (mTakerAdapter != null && mTakersList.getVisibility() != View.GONE) {
                                 mTakerAdapter.notifyDataSetChanged();
                             }
                         }
@@ -583,14 +588,13 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
                     @Override
                     public void accept(PhalApiClientResponse response) throws Exception {
                         if (response.getRet() == 200) {
-                            JSONArray activityArr = new JSONArray(response.getData());
-                            JSONObject activityObj = activityArr.getJSONObject(0);
+                            JSONObject activityObj = new JSONObject(response.getData());
                             mActivity.setTitle(activityObj.getString("act_title"));
                             mActivity.setAuthorId(activityObj.getInt("author_id"));
                             mActivity.setTag(activityObj.getString("tag"));
                             mActivity.setStatus(activityObj.getInt("status"));
                             mActivity.setDescription(activityObj.getString("description"));
-                            mActivity.setHoldTime(System.currentTimeMillis() + activityObj.getLong("active_time") * 1000);
+                            mActivity.setHoldTime(System.currentTimeMillis() + activityObj.getLong("active_time"));
                             mActivity.setLat(activityObj.getDouble("lat"));
                             mActivity.setLon(activityObj.getDouble("lon"));
                             mActivity.setTakersCount(activityObj.getInt("taker_count_limit"));
@@ -709,29 +713,32 @@ public class ActivityDetailsActivity extends BaseDetailsActivity {
     @Override
     public void onSubmitComment(@NotNull final String comment) {
         mProgress.show();
-        Observable.create(new ObservableOnSubscribe<PhalApiClientResponse>() {
+        Observable.create(new ObservableOnSubscribe<String>() {
             @Override
-            public void subscribe(@NonNull ObservableEmitter<PhalApiClientResponse> e) throws Exception {
-                UserOperatorController uoc = UserOperatorController.getInstance();
-                e.onNext(ServerAccessApi.postActivityComment(uoc.getId(), uoc.getPassport(),
-                        String.valueOf(mActivity.getId()), comment,
-                        String.valueOf(System.currentTimeMillis() / 1000)));
+            public void subscribe(@NonNull ObservableEmitter<String> e) throws Exception {
+                Thread.sleep(500);
+                e.onNext("success");
+//                UserOperatorController uoc = UserOperatorController.getInstance();
+//                e.onNext(ServerAccessApi.postActivityComment(uoc.getId(), uoc.getPassport(),
+//                        String.valueOf(mActivity.getId()), comment,
+//                        String.valueOf(System.currentTimeMillis() / 1000)));
                 e.onComplete();
             }
         })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Consumer<PhalApiClientResponse>() {
+                .subscribe(new Consumer<String>() {
                     @Override
-                    public void accept(PhalApiClientResponse response) throws Exception {
-                        if (response.getRet() == 200 && response.getMsg().equals("success")) {
-                            Toast.makeText(ActivityDetailsActivity.this, "评论成功", Toast.LENGTH_SHORT).show();
+                    public void accept(String response) throws Exception {
+//                        if (response.getRet() == 200 && response.getMsg().equals("success")) {
+//                            Toast.makeText(ActivityDetailsActivity.this, "评论成功", Toast.LENGTH_SHORT).show();
                             addCommentView(comment, mCommentContainer, 0);
-                        } else {
-                            Toast.makeText(ActivityDetailsActivity.this,
-                                    TextUtils.isEmpty(response.getMsg()) ? "未知异常" : response.getMsg(),
-                                    Toast.LENGTH_SHORT).show();
-                        }
+                        mProgress.dismiss();
+//                        } else {
+//                            Toast.makeText(ActivityDetailsActivity.this,
+//                                    TextUtils.isEmpty(response.getMsg()) ? "未知异常" : response.getMsg(),
+//                                    Toast.LENGTH_SHORT).show();
+//                        }
                     }
                 }, new Consumer<Throwable>() {
                     @Override

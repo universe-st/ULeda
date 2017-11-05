@@ -112,40 +112,6 @@ public class UMainActivity extends AppCompatActivity implements BottomBarLayout.
         mFragments[3] = new MessageFragment();
         mFragments[4] = new UserInfoFragment();
 
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-//            //getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-//        }
-//        mViewPager.setNoScroll(true);
-//        mViewPager.setAdapter(new FragmentPagerAdapter(fm) {
-//            @Override
-//            public Fragment getItem(int position) {
-//                return mFragments[position];
-//            }
-//
-//            @Override
-//            public int getCount() {
-//                return mFragments.length;
-//            }
-//
-//        });
-//        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-//            @Override
-//            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-//
-//            }
-//
-//            @Override
-//            public void onPageSelected(int position) {
-//                mBottomBar.select(position);
-//            }
-//
-//            @Override
-//            public void onPageScrollStateChanged(int state) {
-//
-//            }
-//        });
-//        mViewPager.setOffscreenPageLimit(5);
         mBottomBar.init(BOTTOM_LABELS, BOTTOM_ICONS);
         mBottomBar.setOnLabelSelectedListener(this);
     }

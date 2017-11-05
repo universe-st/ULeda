@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -250,11 +251,11 @@ public class ActivityListFragment extends Fragment {
                         .bitmapTransform(new CropCircleTransformation(getContext()))
                         .into(holder.avatar);
             }
-            holder.time.setText(df.format(new Date(uActivity.getHoldTime())));
+            holder.time.setText(df.format(new Date(uActivity.getPostDate() * 1000)));
             holder.username.setText(uActivity.getAuthorUsername());
             holder.tag.setText("#" + uActivity.getTag());
             holder.title.setText(uActivity.getTitle());
-            holder.actTime.setText(df.format(new Date(uActivity.getHoldTime() * 1000)));
+            holder.actTime.setText(df.format(new Date(uActivity.getHoldTime())));
             holder.location.setText(uActivity.getLocation());
             holder.itemView.setTag(position);
             if (uActivity.getImgUrls() == null || uActivity.getImgUrls().size() <= 0) {

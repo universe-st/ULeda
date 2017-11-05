@@ -188,6 +188,10 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
     private void initTaskData() {
         final UserOperatorController uoc = UserOperatorController.getInstance();
         if (mTask.getAuthorID() == Integer.parseInt(uoc.getId())) {
+            if (mTask.getTag().equals(UTaskManager.TAG_PROJECT)) {
+                mButtonRight.setText("编辑项目");
+                return;
+            }
             switch (mTask.getStatus()) {
                 case 0:
                     mButtonRight.setText("编辑任务");
@@ -232,6 +236,10 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
                     break;
             }
         } else if (mTask.getStatus() != 0) {
+            if (mTask.getTag().equals(UTaskManager.TAG_PROJECT)) {
+                mButtonRight.setText("参加");
+                return;
+            }
             switch (mTask.getStatus()) {
                 case 1:
                     mButtonRight.setText("确认完成");
@@ -265,6 +273,10 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
                     break;
             }
         } else {
+            if (mTask.getTag().equals(UTaskManager.TAG_PROJECT)) {
+                mButtonRight.setText("参加");
+                return;
+            }
             mButtonRight.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
