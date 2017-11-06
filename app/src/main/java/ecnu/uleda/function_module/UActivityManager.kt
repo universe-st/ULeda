@@ -1,5 +1,6 @@
 package ecnu.uleda.function_module
 
+import android.text.TextUtils
 import android.util.Log
 import ecnu.uleda.model.UActivity
 import ecnu.uleda.tool.UPublicTool
@@ -32,7 +33,7 @@ object UActivityManager {
                     val obj = it
                     val imgUrls = arrayListOf<String>()
                     (1 until 3).map {
-                        if (obj.getString("pic" + it) != "null") {
+                        if (obj.getString("pic" + it) != "null" && !TextUtils.isEmpty(obj.getString("pic" + it))) {
                             imgUrls.add(UPublicTool.BASE_URL_PICTURE + obj.getString("pic" + it))
                         }
                     }
@@ -68,7 +69,7 @@ object UActivityManager {
                     val obj = it
                     val imgUrls = arrayListOf<String>()
                     (1 until 3).map {
-                        if (obj.getString("pic" + it) != "null") {
+                        if (obj.getString("pic" + it) != "null" && !TextUtils.isEmpty(obj.getString("pic" + it))) {
                             imgUrls.add(UPublicTool.BASE_URL_PICTURE + obj.getString("pic" + it))
                         }
                     }
