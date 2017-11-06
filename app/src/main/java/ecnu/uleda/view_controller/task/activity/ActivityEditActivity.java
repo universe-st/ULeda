@@ -59,7 +59,7 @@ public class ActivityEditActivity extends AppCompatActivity {
     private static final int REQUEST_LOCATION = 200;
 
     private UActivity mActivity;
-    private static List<String> ACTIVITY_CATEGORIES;
+    private static List<String> ACTIVITY_CATEGORIES = new ArrayList<>();
 
     private ImageChooseAdapter mImageChooseAdapter;
 
@@ -89,9 +89,10 @@ public class ActivityEditActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ButterKnife.bind(this);
         setContentView(R.layout.activity_edit_activity);
+        ButterKnife.bind(this);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setTitle("编辑活动");
         initData();
         initGridView();
         spinnerInit();
@@ -179,7 +180,7 @@ public class ActivityEditActivity extends AppCompatActivity {
                 mTimeView.setText(new SimpleDateFormat("yyyy年MM月dd日 HH:mm", Locale.CHINA).format(new Date(mActivity.getHoldTime())));
                 mLocationView.setText(mActivity.getLocation());
                 mCategoryView.setText(mActivity.getTag());
-                mMaxPeopleView.setText(mActivity.getTakersCount());
+                mMaxPeopleView.setText(String.valueOf(mActivity.getTakersCount()));
                 mDescView.setText(mActivity.getDescription());
             }
         }

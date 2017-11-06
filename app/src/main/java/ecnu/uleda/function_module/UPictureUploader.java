@@ -30,8 +30,8 @@ import java.net.*;
 
 public class UPictureUploader {
     private static final String TAG = "UPictureUploader";
-    private static final int TIME_OUT = 10*10000000; //超时时间
-    private static final String CHARSET = "utf-8"; //设置编码
+    private static final int TIME_OUT = 10*10000000; //≥¨ ± ±º‰
+    private static final String CHARSET = "utf-8"; //…Ë÷√±‡¬Î
     private static final String PREFIX = "--";
     private static final String LINE_END = "\r\n";
     private HashMap<String,File> mFiles = null;
@@ -39,13 +39,13 @@ public class UPictureUploader {
     private String mHost = null;
     private String mRet = null;
     /*
-    * 创建一个图片上传器的实例
+    * ¥¥Ω®“ª∏ˆÕº∆¨…œ¥´∆˜µƒ µ¿˝
     * */
     public static UPictureUploader create(String host){
         return new UPictureUploader(host);
     }
     /*
-    * 构造函数
+    * ππ‘Ï∫Ø ˝
     * */
     private UPictureUploader(String host){
         mFiles = new HashMap<>();
@@ -53,32 +53,31 @@ public class UPictureUploader {
         mHost = host;
     }
     /*
-    * 令其携带一个参数
+    * ¡Ó∆‰–Ø¥¯“ª∏ˆ≤Œ ˝
     * */
     public UPictureUploader withParams(String key,String value){
         mParams.put(key,value);
         return this;
     }
     /*
-    * 清除其携带的参数，一般不用
+    * «Â≥˝∆‰–Ø¥¯µƒ≤Œ ˝£¨“ª∞„≤ª”√
     * */
     public UPictureUploader clearParams(){
         mParams.clear();
         return this;
     }
     /*
-    * 携带一个文件
+    * –Ø¥¯“ª∏ˆŒƒº˛
     * */
     public UPictureUploader withFiles(String key, File file){
         mFiles.put(key,file);
         return this;
     }
-
     public UPictureUploader clearFiles(){
         mFiles.clear();
         return this;
     }
-    /*服务器上接口服务的名称*/
+    /*∑˛ŒÒ∆˜…œΩ”ø⁄∑˛ŒÒµƒ√˚≥∆*/
     public UPictureUploader withService(String service){
         mParams.put("service",service);
         return this;
@@ -87,6 +86,7 @@ public class UPictureUploader {
         return mRet;
     }
     public int upload(){
+
         Pair<Integer,String> pair = upload(mHost,mParams,mFiles);
         if(pair == null){
             return -1;
@@ -94,49 +94,49 @@ public class UPictureUploader {
         mRet = pair.second;
         return pair.first;
     }
-
     private static Pair<Integer,String> upload(String host,Map<String,String> params,Map<String,File> files){
-        final String BOUNDARY = UUID.randomUUID().toString(); //边界标识 随机生成 String PREFIX = "--" , LINE_END = "\r\n";
-        String CONTENT_TYPE = "multipart/form-data"; //内容类型
+        final String BOUNDARY = UUID.randomUUID().toString(); //±ﬂΩÁ±Í ∂ ÀÊª˙…˙≥… String PREFIX = "--" , LINE_END = "\r\n";
+        String CONTENT_TYPE = "multipart/form-data"; //ƒ⁄»›¿‡–Õ
         try {
             URL url = new URL(host);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(TIME_OUT);
             conn.setConnectTimeout(TIME_OUT);
-            conn.setRequestMethod("POST"); //请求方式
-            conn.setRequestProperty("Charset", CHARSET);//设置编码
+            conn.setRequestMethod("POST"); //«Î«Û∑Ω Ω
+            conn.setRequestProperty("Charset", CHARSET);//…Ë÷√±‡¬Î
             conn.setRequestProperty("connection", "keep-alive");
             conn.setRequestProperty("Content-Type", CONTENT_TYPE + ";boundary=" + BOUNDARY);
-            conn.setDoInput(true); //允许输入流
-            conn.setDoOutput(true); //允许输出流
-            conn.setUseCaches(false); //不允许使用缓存
+            conn.setDoInput(true); //‘ –Ì ‰»Î¡˜
+            conn.setDoOutput(true); //‘ –Ì ‰≥ˆ¡˜
+            conn.setUseCaches(false); //≤ª‘ –Ì π”√ª∫¥Ê
             if(files!=null) {
                 /* *
-                 当文件不为空，把文件包装并且上传 */
+                 µ±Œƒº˛≤ªŒ™ø’£¨∞—Œƒº˛∞¸◊∞≤¢«“…œ¥´ */
                 OutputStream outputStream=conn.getOutputStream();
                 DataOutputStream dos = new DataOutputStream(outputStream);
                 StringBuffer sb = new StringBuffer();
                 sb.append(LINE_END);
-                if(params!=null){//根据格式，开始拼接文本参数
+                if(params!=null){//∏˘æ›∏Ò Ω£¨ø™ º∆¥Ω”Œƒ±æ≤Œ ˝
                     for(Map.Entry<String,String> entry:params.entrySet()){
-                        sb.append(PREFIX).append(BOUNDARY).append(LINE_END);//分界符
+                        sb.append(PREFIX).append(BOUNDARY).append(LINE_END);//∑÷ΩÁ∑˚
                         sb.append("Content-Disposition: form-data; name=\"" + entry.getKey() + "\"" + LINE_END);
                         sb.append("Content-Type: text/plain; charset=" + CHARSET + LINE_END);
                         sb.append("Content-Transfer-Encoding: 8bit" + LINE_END);
                         sb.append(LINE_END);
                         sb.append(entry.getValue());
-                        sb.append(LINE_END);//换行！
+                        sb.append(LINE_END);//ªª––£°
                     }
                 }
                 dos.write(sb.toString().getBytes());
                 for(Map.Entry<String,File> entry:files.entrySet()){
                     StringBuilder isb = new StringBuilder();
+                    isb.append(PREFIX).append(BOUNDARY).append(LINE_END);
                     isb.append("Content-Disposition: form-data; name=\"");
                     isb.append(entry.getKey());
                     isb.append("\"; filename=\""+entry.getValue().getName()+"\""+LINE_END);
                     isb.append("Content-Type: image/png; charset="+CHARSET+LINE_END);
-                    sb.append(LINE_END);
-                    dos.write(sb.toString().getBytes());
+                    isb.append(LINE_END);
+                    dos.write(isb.toString().getBytes());
                     InputStream iis = new FileInputStream(entry.getValue());
                     byte[] bytes = new byte[1024];
                     long totalBytes = entry.getValue().length();
@@ -169,5 +169,4 @@ public class UPictureUploader {
         }
         return null;
     }
-
 }

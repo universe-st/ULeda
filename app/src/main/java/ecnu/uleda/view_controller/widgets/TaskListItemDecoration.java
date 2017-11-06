@@ -34,11 +34,6 @@ public class TaskListItemDecoration extends RecyclerView.ItemDecoration {
 
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-        if (parent.getChildAdapterPosition(view) == (mHasFooter ? 0 : -1) ||
-                parent.getChildAdapterPosition(view) == state.getItemCount() - (mHasFooter ? 2 : 1)) { // 有footer
-            outRect.set(0, 0, 0, 0);
-        } else {
-            outRect.set(0, 0, 0, (int) Math.ceil(mHeight));
-        }
+        outRect.set(0, 0, 0, (int) Math.ceil(mHeight));
     }
 }

@@ -130,11 +130,11 @@ public class ConversationAdapter extends ArrayAdapter<Object> {
                             try{
                                 if(ACCEPT_INVITE_SUCCESS.equals(onAcceptInvite(invites.getInvitesId())))
                                 {
-                                    Toast.makeText(getContext(),"接收好友请求成功！",Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(getContext(),"接收好友请求成功！",Toast.LENGTH_SHORT).show();
                                 }
                                 else
                                 {
-                                    Toast.makeText(getContext(),"接收好友请求失败！",Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(getContext(),"接收好友请求失败！",Toast.LENGTH_SHORT).show();
                                 }
                             }catch (UServerAccessException e)
                             {

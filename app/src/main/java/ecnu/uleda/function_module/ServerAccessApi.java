@@ -1,34 +1,37 @@
 package ecnu.uleda.function_module;
+
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.tencent.imsdk.protocol.im_common;
-
-import net.phalapi.sdk.*;
+import net.phalapi.sdk.PhalApiClient;
+import net.phalapi.sdk.PhalApiClientResponse;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.text.ParseException;
 import java.util.List;
 
 import ecnu.uleda.BuildConfig;
-
+import ecnu.uleda.exception.UServerAccessException;
 import ecnu.uleda.tool.AESUtils;
 import ecnu.uleda.tool.MD5Utils;
-
-
-
 import ecnu.uleda.tool.UPublicTool;
-import ecnu.uleda.exception.UServerAccessException;
+import okhttp3.Call;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 
 public class ServerAccessApi {
+    public static final String BASE_URL = "http://118.89.156.167/mobile/";
     private static final int SET_TIME_OUT = 9999;
     public static final int USER_TASK_FLAG_RELEASED = 0;
     public static final int USER_TASK_FLAG_DOING = 1;
@@ -554,6 +557,26 @@ public class ServerAccessApi {
         }
     }
 
+    public static PhalApiClientResponse getProjectList(@NonNull String id,@NonNull String passport,
+                                                       @NonNull String start, @NonNull String num,
+                                                       @NonNull String position) throws UServerAccessException {
+        id=UrlEncode(id);
+        passport=UrlEncode(passport);
+        start=UrlEncode(start);
+        num=UrlEncode(num);
+        position=UrlEncode(position);
+        return createClient()
+                .withService("Task.GetList")
+                .withParams("id", id)
+                .withParams("passport", passport)
+                .withParams("orderBy", UTaskManager.TIME_LAST)
+                .withParams("start", start)
+                .withParams("num", num)
+                .withParams("tag", UTaskManager.TAG_PROJECT)
+                .withParams("position", position)
+                .withTimeout(SET_TIME_OUT)
+                .request();
+    }
 
 
     public static JSONArray getTaskList(@NonNull String id,@NonNull String passport,
@@ -679,34 +702,54 @@ public class ServerAccessApi {
     }
 
     public static JSONArray getActivities(@NonNull String id, @NonNull String passport, @NonNull String tag,
-                                                int from, int count) throws UServerAccessException {
+                                                String from, String count) throws UServerAccessException {
         id = UrlEncode(id);
         passport = UrlEncode(passport);
-        tag = UrlEncode(tag);
+        count = UrlEncode(count);
 
-        PhalApiClientResponse response = createClient()
-                .withService("Activity.GetActivityList")
-                .withParams("id", id)
-                .withParams("passport", passport)
-//                .withParams("tag", tag)
-                .withParams("from", String.valueOf(from))
-                .withParams("count", String.valueOf(count))
-                .withTimeout(SET_TIME_OUT)
-                .request();
-        if(response.getRet() == 200) {
-            Log.e("haha", UrlDecode(response.getData()));
-            try{
-                JSONArray data = new JSONArray(response.getData());
-                return data;
-            }catch (JSONException e){
-                Log.e("ServerAccessApi",e.toString());
-                //数据包无法解析，向上抛出一个异常
-                throw new UServerAccessException(UServerAccessException.ERROR_DATA);
+        RequestBody body = new FormBody.Builder()
+                .add("service", "Activity.GetActivityList")
+                .add("id", id)
+                .add("passport", passport)
+                .add("tag", tag)
+                .add("from", from)
+                .add("count", count)
+                .build();
+        Request request = new Request.Builder().url(BASE_URL).post(body).build();
+        OkHttpClient client = new OkHttpClient.Builder().build();
+        Call call = client.newCall(request);
+        try {
+            Response response = call.execute();
+            if (response.isSuccessful()) {
+                String bodyString = response.body().string();
+                Log.e("wa", bodyString);
+                JSONObject obj = new JSONObject(bodyString);
+                return obj.getJSONArray("data");
             }
-        }else{
-            //网络访问失败，抛出一个网络异常
-            throw new UServerAccessException(response.getRet());
+        } catch (IOException | JSONException | NullPointerException e) {
+            e.printStackTrace();
         }
+        return null;
+
+//        PhalApiClientResponse response = createClient()
+//                .withService("Activity.GetActivityList")
+//                .withParams("id", id)
+//                .withParams("passport", passport)
+//                .withParams("tag", tag)
+//                .withParams("from", "10")
+//                .withParams("count", count)
+//                .withTimeout(SET_TIME_OUT)
+//                .request();
+//        Log.e("wa", response.getRet() + ", " + response.getData() + ", " + response.getMsg());
+//        if(response.getRet() == 200) {
+//            try{
+//                return new JSONArray(response.getData());
+//            }catch (JSONException e){
+//                Log.e("ServerAccessApi",e.toString());
+//                //数据包无法解析，向上抛出一个异常
+//            }
+//        }
+//        return null;
     }
 
     public static PhalApiClientResponse getPromotedActivities(@NonNull String id, @NonNull String passport) throws UServerAccessException {
@@ -726,7 +769,7 @@ public class ServerAccessApi {
         passport = UrlEncode(passport);
         actId = UrlEncode(actId);
         return createClient()
-                .withService("Activity.GetPromotedActivity")
+                .withService("Activity.GetActivity")
                 .withParams("id", id)
                 .withParams("passport", passport)
                 .withParams("actId", actId)
@@ -825,10 +868,11 @@ public class ServerAccessApi {
                 .request();
     }
 
-    public static String postActivity(@NonNull String id,@NonNull String passport,@NonNull String title,
+    public static int postActivity(@NonNull String id,@NonNull String passport,@NonNull String title,
                                   @NonNull String tag,String description,@NonNull String activeTime,
-                                  double latitude, double longitude, @NonNull String takerCountLimit, @NonNull String location)
-            throws UServerAccessException{
+                                  double latitude, double longitude, @NonNull String takerCountLimit, @NonNull String location,
+                                      List<String> imgPaths)
+            throws UServerAccessException, IOException {
         if(BuildConfig.DEBUG){
             UPublicTool.UAssert(byteCount(title) >= 5 && byteCount(title) <= 30 && latitude > 0 && longitude > 0);
             if(description!=null)
@@ -838,41 +882,35 @@ public class ServerAccessApi {
         String position = latitude + "," + longitude;
         id = UrlEncode(id);
         passport = UrlEncode(passport);
-        title = UrlEncode(title);
-        tag = UrlEncode(tag);
-        description = UrlEncode(description);
-        activeTime = UrlEncode(activeTime);
-        position = UrlEncode(position);
-        takerCountLimit = UrlEncode(takerCountLimit);
-        location = UrlEncode(location);
+//        title = UrlEncode(title);
+//        tag = UrlEncode(tag);
+//        description = UrlEncode(description);
+//        activeTime = UrlEncode(activeTime);
+//        position = UrlEncode(position);
+//        takerCountLimit = UrlEncode(takerCountLimit);
+//        location = UrlEncode(location);
 
-        PhalApiClientResponse response=createClient()
-                .withService("Activity.Post")//接口的名称
-                .withParams("id",id)//插入一个参数对
-                .withParams("passport",passport)
-                .withParams("title",title)
-                .withParams("tag",tag)
-                .withParams("description",description)
-                .withParams("activeTime",activeTime)
-                .withParams("position",position)
+        UPictureUploader uploadBody = UPictureUploader.create(BASE_URL)
+                .withService("Activity.Post")
+                .withParams("id", id)
+                .withParams("passport", passport)
+                .withParams("title", title)
+                .withParams("tag", tag)
+                .withParams("description", description)
+                .withParams("activeTime", activeTime)
+                .withParams("position", position)
                 .withParams("takerCountLimit", takerCountLimit)
-                .withParams("location",location)
-                .withTimeout(SET_TIME_OUT)
-                .request();
-        if(response.getRet() == 200) {
-            try{
-                JSONObject data = new JSONObject(response.getData());
-                return data.getString("act_id");
-            }catch (JSONException e){
-                Log.e("ServerAccessApi",e.toString());
-                //数据包无法解析，向上抛出一个异常
-                throw new UServerAccessException(UServerAccessException.ERROR_DATA);
-            }
-        }else{
-            //网络访问失败，抛出一个网络异常
-            Log.e("TaskDetailsActivity", "fail: " + response.getMsg());
-            throw new UServerAccessException(response.getRet());
+                .withParams("location", location);
+        for (int i = 0; i < imgPaths.size(); i++) {
+            String path = imgPaths.get(i);
+            File file = new File(path);
+            if (!file.exists()) throw new IOException();
+            uploadBody.withFiles("pic" + (i + 1), file);
         }
+
+        int code = uploadBody.upload();
+        if (code != 200) Log.e("upload", uploadBody.getRet());
+        return code;
     }
 
     public static String followUser(@NonNull String id,@NonNull String passport,@NonNull String followByID)throws UServerAccessException{

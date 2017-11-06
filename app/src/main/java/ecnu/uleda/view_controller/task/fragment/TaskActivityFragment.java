@@ -12,6 +12,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v7.graphics.Palette;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,6 +89,11 @@ public class TaskActivityFragment extends Fragment implements StickyNavLayout.On
         initPager();
         initIndicator();
         initRollPager();
+        initContainer();
+    }
+
+    private void initContainer() {
+        mContainer.setOnRefreshListener(this);
     }
 
     private void initHandler() {
