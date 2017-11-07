@@ -2,9 +2,10 @@ package ecnu.uleda.function_module
 
 import android.text.TextUtils
 import android.util.Log
+import android.util.SparseArray
 import ecnu.uleda.model.UActivity
+import ecnu.uleda.model.UserInfo
 import ecnu.uleda.tool.UPublicTool
-import org.json.JSONException
 
 /**
  * Created by jimmyhsu on 2017/5/22.
@@ -20,6 +21,7 @@ object UActivityManager {
     private var lastIndex = 0
     private var tag = ""
     private var hasMore = true
+    private val userInfoArray = SparseArray<UserInfo>()
 
     fun refreshActivityInList(tag: String = TAG_ALL) {
         this.tag = tag
@@ -40,11 +42,18 @@ object UActivityManager {
                     }
                     var avatar = "no"
                     var username = "no"
-                    try {
-                        avatar = it.getString("avatar")
-                        username = it.getString("username")
-                    } catch (e: JSONException) {
+                    if (userInfoArray.get(it.getInt("author_id")) == null) {
+                        val basicInfoObj = ServerAccessApi.getBasicInfo(UserOperatorController.getInstance().id,
+                                UserOperatorController.getInstance().passport,
+                                it.getInt("author_id").toString())
+                        val userInfo = UserInfo()
+                        userInfo.userName = basicInfoObj.getString("username")
+                        userInfo.avatar = basicInfoObj.getString("avatar")
+                        userInfoArray.put(it.getInt("author_id"), userInfo)
                     }
+                    val info = userInfoArray.get(it.getInt("author_id"))
+                    avatar = UPublicTool.BASE_URL_AVATAR + info.avatar
+                    username = info.userName
                     UActivity(it.getString("act_title"),
                             it.getDouble("lat"),
                             it.getDouble("lon"),
@@ -83,11 +92,18 @@ object UActivityManager {
                     }
                     var avatar = "no"
                     var username = "no"
-                    try {
-                        avatar = it.getString("avatar")
-                        username = it.getString("username")
-                    } catch (e: JSONException) {
+                    if (userInfoArray.get(it.getInt("author_id")) == null) {
+                        val basicInfoObj = ServerAccessApi.getBasicInfo(UserOperatorController.getInstance().id,
+                                UserOperatorController.getInstance().passport,
+                                it.getInt("author_id").toString())
+                        val userInfo = UserInfo()
+                        userInfo.userName = basicInfoObj.getString("username")
+                        userInfo.avatar = basicInfoObj.getString("avatar")
+                        userInfoArray.put(it.getInt("author_id"), userInfo)
                     }
+                    val info = userInfoArray.get(it.getInt("author_id"))
+                    avatar = UPublicTool.BASE_URL_AVATAR + info.avatar
+                    username = info.userName
                     UActivity(it.getString("act_title"),
                             it.getDouble("lat"),
                             it.getDouble("lon"),

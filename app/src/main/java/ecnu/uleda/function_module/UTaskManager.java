@@ -23,6 +23,7 @@ import java.util.concurrent.Semaphore;
 
 import ecnu.uleda.exception.UServerAccessException;
 import ecnu.uleda.model.UTask;
+import ecnu.uleda.tool.UPublicTool;
 
 /**
  * Created by Shensheng on 2017/1/19.
@@ -123,9 +124,8 @@ public class UTaskManager {
                             .setPostID(j.getString("postID"))
                             .setActiveTime(j.getLong("activetime"))
                             .setTakersCount(j.getInt("taker_count"));
-                    // TODO 匡神接口做好以后去掉 try catch
                     try {
-                        task.setAvatar(j.getString("avatar"));
+                        task.setAvatar(UPublicTool.BASE_URL_AVATAR + j.getString("authorAvatar"));
                     } catch (JSONException e) {
                         task.setAvatar("xiaohong.jpg");
                     }
@@ -198,9 +198,8 @@ public class UTaskManager {
                         .setPostID(j.getString("postID"))
                         .setActiveTime(j.getLong("activetime"))
                         .setTakersCount(j.getInt("taker_count"));
-                // TODO 匡神接口做好以后去掉 try catch
                 try {
-                    task.setAvatar(j.getString("avatar"));
+                    task.setAvatar(UPublicTool.BASE_URL_AVATAR + j.getString("authorAvatar"));
                 } catch (JSONException e) {
                     task.setAvatar("xiaohong.jpg");
                 }
@@ -255,9 +254,8 @@ public class UTaskManager {
                             .setPostID(j.getString("postID"))
                             .setActiveTime(j.getLong("activetime"))
                             .setTakersCount(j.getInt("taker_count"));
-                    // TODO 匡神接口做好以后去掉 try catch
                     try {
-                        task.setAvatar(j.getString("avatar"));
+                        task.setAvatar(UPublicTool.BASE_URL_AVATAR + j.getString("authorAvatar"));
                     } catch (JSONException e) {
                         task.setAvatar("xiaohong.jpg");
                     }
