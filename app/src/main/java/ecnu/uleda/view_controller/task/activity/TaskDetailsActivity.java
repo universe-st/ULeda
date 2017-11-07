@@ -469,7 +469,7 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
         if (userChatItem.authorAvatar.equals("test")) {
             avatar.displayResourceImage(R.drawable.model1);
         } else {
-            avatar.displayImage(userChatItem.authorAvatar);
+            avatar.displayImage(UPublicTool.BASE_URL_AVATAR + userChatItem.authorAvatar);
         }
         TextView tv = (TextView) v.findViewById(R.id.say_what);
         tv.setText(userChatItem.sayWhat);
