@@ -1,7 +1,10 @@
 package ecnu.uleda.function_module
 
+import android.text.TextUtils
 import android.util.Log
+import android.util.SparseArray
 import ecnu.uleda.model.UActivity
+import ecnu.uleda.model.UserInfo
 import ecnu.uleda.tool.UPublicTool
 
 /**
@@ -18,6 +21,7 @@ object UActivityManager {
     private var lastIndex = 0
     private var tag = ""
     private var hasMore = true
+    private val userInfoArray = SparseArray<UserInfo>()
 
     fun refreshActivityInList(tag: String = TAG_ALL) {
         this.tag = tag
@@ -32,18 +36,32 @@ object UActivityManager {
                     val obj = it
                     val imgUrls = arrayListOf<String>()
                     (1 until 3).map {
-                        if (obj.getString("pic" + it) != "null") {
+                        if (obj.getString("pic" + it) != "null" && !TextUtils.isEmpty(obj.getString("pic" + it))) {
                             imgUrls.add(UPublicTool.BASE_URL_PICTURE + obj.getString("pic" + it))
                         }
                     }
+                    var avatar = "no"
+                    var username = "no"
+                    if (userInfoArray.get(it.getInt("author_id")) == null) {
+                        val basicInfoObj = ServerAccessApi.getBasicInfo(UserOperatorController.getInstance().id,
+                                UserOperatorController.getInstance().passport,
+                                it.getInt("author_id").toString())
+                        val userInfo = UserInfo()
+                        userInfo.userName = basicInfoObj.getString("username")
+                        userInfo.avatar = basicInfoObj.getString("avatar")
+                        userInfoArray.put(it.getInt("author_id"), userInfo)
+                    }
+                    val info = userInfoArray.get(it.getInt("author_id"))
+                    avatar = UPublicTool.BASE_URL_AVATAR + info.avatar
+                    username = info.userName
                     UActivity(it.getString("act_title"),
                             it.getDouble("lat"),
                             it.getDouble("lon"),
                             it.getString("location"),
                             it.getString("tag"),
                             it.getInt("author_id"),
-                            "no",
-                            "no",
+                            username,
+                            avatar,
                             it.getString("description"),
                             System.currentTimeMillis() + it.getLong("active_time"),
                             it.getInt("taker_count_limit"),
@@ -68,18 +86,32 @@ object UActivityManager {
                     val obj = it
                     val imgUrls = arrayListOf<String>()
                     (1 until 3).map {
-                        if (obj.getString("pic" + it) != "null") {
+                        if (obj.getString("pic" + it) != "null" && !TextUtils.isEmpty(obj.getString("pic" + it))) {
                             imgUrls.add(UPublicTool.BASE_URL_PICTURE + obj.getString("pic" + it))
                         }
                     }
+                    var avatar = "no"
+                    var username = "no"
+                    if (userInfoArray.get(it.getInt("author_id")) == null) {
+                        val basicInfoObj = ServerAccessApi.getBasicInfo(UserOperatorController.getInstance().id,
+                                UserOperatorController.getInstance().passport,
+                                it.getInt("author_id").toString())
+                        val userInfo = UserInfo()
+                        userInfo.userName = basicInfoObj.getString("username")
+                        userInfo.avatar = basicInfoObj.getString("avatar")
+                        userInfoArray.put(it.getInt("author_id"), userInfo)
+                    }
+                    val info = userInfoArray.get(it.getInt("author_id"))
+                    avatar = UPublicTool.BASE_URL_AVATAR + info.avatar
+                    username = info.userName
                     UActivity(it.getString("act_title"),
                             it.getDouble("lat"),
                             it.getDouble("lon"),
                             it.getString("location"),
                             it.getString("tag"),
                             it.getInt("author_id"),
-                            "no",
-                            "no",
+                            username,
+                            avatar,
                             it.getString("description"),
                             System.currentTimeMillis() + it.getLong("active_time"),
                             it.getInt("taker_count_limit"),

@@ -763,7 +763,7 @@ public class ServerAccessApi {
         id=UrlEncode(id);
         passport = UrlEncode(passport);
         return createClient()
-                .withService("Activity.GetActivity")
+                .withService("Activity.GetPromotedActivity")
                 .withParams("id", id)
                 .withParams("passport", passport)
                 .withTimeout(SET_TIME_OUT)
