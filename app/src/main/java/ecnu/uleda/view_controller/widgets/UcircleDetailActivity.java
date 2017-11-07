@@ -101,21 +101,21 @@ public class UcircleDetailActivity extends AppCompatActivity implements View.OnC
                            marticleTextView.setText(jsonObject.getString("content"));
                            if (!jsonObject.getString("pic1").equals("null")) {
                                Glide.with(UcircleDetailActivity.this)
-                                       .load("http://118.89.156.167/uploads/avatars/" + jsonObject.getString("pic1"))
+                                       .load("http://118.89.156.167/uploads/pictures/" + jsonObject.getString("pic1"))
                                        .into(mdynamic_photoImageView1);
                            } else {
                                mdynamic_photoImageView1.setVisibility(View.GONE);
                            }
                            if (!jsonObject.getString("pic2").equals("null")) {
                                Glide.with(UcircleDetailActivity.this)
-                                       .load("http://118.89.156.167/uploads/avatars/" + jsonObject.getString("pic2"))
+                                       .load("http://118.89.156.167/uploads/pictures/" + jsonObject.getString("pic2"))
                                        .into(mdynamic_photoImageView2);
                            } else {
                                mdynamic_photoImageView2.setVisibility(View.GONE);
                            }
                            if (!jsonObject.getString("pic3").equals("null")) {
                                Glide.with(UcircleDetailActivity.this)
-                                       .load("http://118.89.156.167/uploads/avatars/" + jsonObject.getString("pic3"))
+                                       .load("http://118.89.156.167/uploads/pictures/" + jsonObject.getString("pic3"))
                                        .into(mdynamic_photoImageView3);
                            } else {
                                mdynamic_photoImageView3.setVisibility(View.GONE);

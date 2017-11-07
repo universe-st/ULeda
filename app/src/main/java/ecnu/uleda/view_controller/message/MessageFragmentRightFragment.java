@@ -15,6 +15,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.cjj.MaterialRefreshLayout;
+import com.cjj.MaterialRefreshListener;
 import com.tencent.imsdk.TIMUserProfile;
 import com.tencent.imsdk.TIMValueCallBack;
 import com.tencent.imsdk.ext.sns.TIMFriendshipManagerExt;
@@ -42,6 +44,8 @@ import ecnu.uleda.model.Friend;
 import ecnu.uleda.model.UserInfo;
 import ecnu.uleda.view_controller.SingleUserInfoActivity;
 
+import static java.lang.Thread.sleep;
+
 
 /**
  * Created by zhaoning on 2017/5/1.
@@ -62,13 +66,14 @@ public class MessageFragmentRightFragment extends Fragment {
 //    private ViewGroup container;
 
     private View view;
-    private List<Friend> mFriendList = new ArrayList<>();
+    private List<Friend> mFriendList;
     private static final String TAG = "MFRF";
     private FriendAdapter mFriendAdapter;
     private ListView mListView;
     private boolean flag=false;
     private UserOperatorController mUOC;
     private UserInfo mUserInfo;
+    private MaterialRefreshLayout materialRefreshLayout;
     public interface FriendRefreshEvent{
 
     }
@@ -80,6 +85,7 @@ public class MessageFragmentRightFragment extends Fragment {
             {
                 case 1:
                 {
+                    mFriendList = new ArrayList<>();
                     JSONArray jsonArray = (JSONArray)msg.obj;
                     for(int i = 0;i < jsonArray.length();i++)
                     {
@@ -140,7 +146,31 @@ public class MessageFragmentRightFragment extends Fragment {
                 startActivity(intent);
             }
         });
-
+        materialRefreshLayout = (MaterialRefreshLayout)view.findViewById(R.id.refresh);
+        materialRefreshLayout.setLoadMore(true);
+        materialRefreshLayout.setMaterialRefreshListener(new MaterialRefreshListener() {
+            @Override
+            public void onRefresh(final MaterialRefreshLayout materialLayout) {
+                initFriends();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try{
+                            sleep(1000);
+                        }catch (InterruptedException e)
+                        {
+                            e.printStackTrace();
+                        }
+                        materialRefreshLayout.finishRefresh();
+                    }
+                }).start();
+            }
+            @Override
+            public void onRefreshLoadMore(MaterialRefreshLayout materialLayout) {
+                //load more refreshing...
+                        materialRefreshLayout.finishRefreshLoadMore();
+            }
+        });
         return view;
     }
 

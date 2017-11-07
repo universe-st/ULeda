@@ -21,6 +21,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cjj.MaterialRefreshLayout;
+import com.cjj.MaterialRefreshListener;
 import com.tencent.imsdk.TIMConversation;
 import com.tencent.imsdk.TIMConversationType;
 import com.tencent.imsdk.TIMElem;
@@ -58,6 +60,7 @@ import ecnu.uleda.model.UserInfo;
 import ecnu.uleda.view_controller.SingleUserInfoActivity;
 
 import static com.tencent.imsdk.TIMElemType.Text;
+import static java.lang.Thread.sleep;
 
 
 /**
@@ -75,6 +78,12 @@ public class MessageFragmentLeftFragment extends Fragment implements Conversatio
     private String message;
     private UserInfo userInfo;
     private ExecutorService cachedThredPool;
+
+    private MaterialRefreshLayout materialRefreshLayout;
+    private static final String INVITES_SUCCESS="success";
+    private static final String USERE_NOT_FOUND="notFound";
+    private static final String PASSWORD_ERROR="passwordError";
+
 
     @Override
     public void onAdded(Invites i) {
@@ -120,6 +129,31 @@ public class MessageFragmentLeftFragment extends Fragment implements Conversatio
 
                 }
 
+            }
+        });
+        materialRefreshLayout = (MaterialRefreshLayout)view.findViewById(R.id.refresh);
+        materialRefreshLayout.setLoadMore(true);
+        materialRefreshLayout.setMaterialRefreshListener(new MaterialRefreshListener() {
+            @Override
+            public void onRefresh(final MaterialRefreshLayout materialLayout) {
+                mConversationList.clear();
+                accessServer();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try{
+                            sleep(1000);
+                        }catch (InterruptedException e)
+                        {
+                            e.printStackTrace();
+                        }
+                        materialRefreshLayout.finishRefresh();
+                    }
+                }).start();
+            }
+            @Override
+            public void onRefreshLoadMore(MaterialRefreshLayout materialLayout) {
+                        materialRefreshLayout.finishRefreshLoadMore();
             }
         });
         return view;
