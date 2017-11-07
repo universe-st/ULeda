@@ -64,7 +64,7 @@ public class ReleasedUcircleActivity extends Activity implements AdapterView.OnI
     private View parentView;
     private GridView gridView;
     private EditText UcircleContent;
-    private ArrayList<ImageItem> images;
+    private ArrayList<ImageItem> images = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -164,17 +164,13 @@ public class ReleasedUcircleActivity extends Activity implements AdapterView.OnI
     }
 
 
-    public File saveFile(Bitmap bm,String path, String fileName) throws IOException {
+    public File saveFile(Bitmap bm,String path) throws IOException {
         File dirFile = new File(path);
-        if(!dirFile.exists()){
-            dirFile.mkdir();
-        }
-        File myCaptureFile = new File(path , fileName);
-        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(myCaptureFile));
-        bm.compress(Bitmap.CompressFormat.JPEG, 80, bos);
+        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(dirFile));
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, bos);
         bos.flush();
         bos.close();
-        return myCaptureFile;
+        return dirFile;
     }
     public void onClick(View v)
     {
@@ -206,16 +202,33 @@ public class ReleasedUcircleActivity extends Activity implements AdapterView.OnI
                             public void run() {
                                 try
                                 {
-                                    //File pic1 = saveFile(images.get(0).getBitmap(),images.get(0).getImagePath(),"pic1");
-                                    Log.d("kkk",images.get(0).getImagePath());
-                                    /*File pic1,pic2,pic3;
-                                    pic1 = saveBitmapFile(images.get(0).getBitmap(),"pic1");
-                                    pic2 = saveBitmapFile(images.get(1).getBitmap(),"pic2");
-                                    pic3 = saveBitmapFile(images.get(2).getBitmap(),"pic3");*/
+                                    File pic1 = null;
+                                    File pic2 = null;
+                                    File pic3 = null;
+                                    if(images.size() == 1)
+                                    {
+                                        pic1 = saveFile(images.get(0).getBitmap(),images.get(0).getImagePath());
+                                    }
+                                    else if(images.size() == 2)
+                                    {
+                                        pic1 = saveFile(images.get(0).getBitmap(),images.get(0).getImagePath());
+                                        pic2 = saveFile(images.get(1).getBitmap(),images.get(1).getImagePath());
+                                    }
+                                    else if(images.size() == 3)
+                                    {
+                                        pic1 = saveFile(images.get(0).getBitmap(),images.get(0).getImagePath());
+                                        pic2 = saveFile(images.get(1).getBitmap(),images.get(1).getImagePath());
+                                        pic3 = saveFile(images.get(2).getBitmap(),images.get(2).getImagePath());
+                                    }
+                                    images.clear();
                                     ServerAccessApi.ReleasedUcircle(UcircleTitle.getText().toString(),
-                                        UcircleContent.getText().toString(),null,null,null);
+                                        UcircleContent.getText().toString(),pic1,pic2,pic3);
 
                                 }catch (UServerAccessException e)
+                                {
+                                    e.printStackTrace();
+                                }
+                                catch (IOException e)
                                 {
                                     e.printStackTrace();
                                 }
@@ -256,6 +269,7 @@ public class ReleasedUcircleActivity extends Activity implements AdapterView.OnI
         startActivityForResult(openCameraIntent, TAKE_PHOTO);
     }
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Bimp bimp1=new Bimp();
         switch (requestCode) {
             case TAKE_PHOTO:
                 if (Bimp.tempSelectBitmap.size() < 9 && resultCode == RESULT_OK) {
@@ -271,12 +285,16 @@ public class ReleasedUcircleActivity extends Activity implements AdapterView.OnI
             case 122:
                 if(resultCode== RESULT_OK){
                     Intent intent = getIntent();
-                    images = (ArrayList<ImageItem>)intent.getParcelableExtra("Back");
-
+                    bimp1=intent.getParcelableExtra("Back");
+                    images=bimp1.tempSelectBitmap;
                     adapter.update();
-                    if (images != null){
-
+                    /*if(images == null)
+                    {
+                        Toast.makeText(this,"codeError",Toast.LENGTH_SHORT).show();
                     }
+                    else if (images != null){
+                        Toast.makeText(this,images.get(0).getImagePath(),Toast.LENGTH_SHORT).show();
+                    }*/
                 }
                 break;
         }

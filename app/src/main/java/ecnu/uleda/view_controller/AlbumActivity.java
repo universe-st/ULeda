@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import ecnu.uleda.R;
@@ -100,12 +102,17 @@ public class AlbumActivity extends AppCompatActivity {
     // 完成按钮的监听
     private class AlbumSendListener implements View.OnClickListener {
         public void onClick(View v) {
+            Bimp bimp1 =new Bimp();
             overridePendingTransition(R.anim.activity_translate_in, R.anim.activity_translate_out);
             intent.setClass(mContext,ReleasedUcircleActivity.class);
-//            Bundle bundle = new Bundle();
-//            bundle.putSerializable("Back",Bimp.tempSelectBitmap);
-//            intent.putExtras(bundle);
-            intent.putExtra("Back",Bimp.tempSelectBitmap);
+
+            if(Bimp.tempSelectBitmap== null){
+                Log.d("ReleasedUcircleActivity","ThisisisisisisNULL!!!!!!");
+            }
+            if(Bimp.tempSelectBitmap!= null){
+                Log.d("ReleasedUcircleActivity","ThisisisisisisNONONONULL!!!!!!");
+            }
+            intent.putExtra("Back",bimp1);
             setResult(RESULT_OK,intent);
 //            startActivity(intent);
             finish();
@@ -145,6 +152,7 @@ public class AlbumActivity extends AppCompatActivity {
     private void init() {
         helper = AlbumHelper.getHelper();
         helper.init(getApplicationContext());
+
 
         contentList = helper.getImagesBucketList(false);
         dataList = new ArrayList<ImageItem>();

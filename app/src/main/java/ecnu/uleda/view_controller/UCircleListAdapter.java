@@ -76,7 +76,7 @@ public class UCircleListAdapter extends ArrayAdapter<UCircle> {
         {
             viewHolder.dynamicphoto1 = (ImageView) view.findViewById(R.id.dynamic_photo1);
             Glide.with(getContext())
-                    .load("http://118.89.156.167/uploads/avatars/"+Circle.getmDynamic_Photo1() )
+                    .load("http://118.89.156.167/uploads/pictures/"+Circle.getmDynamic_Photo1() )
                     .into(viewHolder.dynamicphoto1);
         }
         if(Circle.getmDynamic_Photo2().equals("null"))
@@ -87,8 +87,9 @@ public class UCircleListAdapter extends ArrayAdapter<UCircle> {
         else
         {
             viewHolder.dynamicphoto2 = (ImageView) view.findViewById(R.id.dynamic_photo2);
+
             Glide.with(getContext())
-                    .load("http://118.89.156.167/uploads/avatars/"+Circle.getmDynamic_Photo2() )
+                    .load("http://118.89.156.167/uploads/pictures/"+Circle.getmDynamic_Photo2() )
                     .into(viewHolder.dynamicphoto2);
         }
         if(Circle.getmDynamic_Photo3().equals("null"))
@@ -100,7 +101,7 @@ public class UCircleListAdapter extends ArrayAdapter<UCircle> {
         {
             viewHolder.dynamicphoto3 = (ImageView) view.findViewById(R.id.dynamic_photo3);
             Glide.with(getContext())
-                    .load("http://118.89.156.167/uploads/avatars/"+Circle.getmDynamic_Photo3() )
+                    .load("http://118.89.156.167/uploads/pictures/"+Circle.getmDynamic_Photo3() )
                     .into(viewHolder.dynamicphoto3);
         }
 
