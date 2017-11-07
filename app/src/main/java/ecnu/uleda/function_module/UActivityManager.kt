@@ -4,6 +4,7 @@ import android.text.TextUtils
 import android.util.Log
 import ecnu.uleda.model.UActivity
 import ecnu.uleda.tool.UPublicTool
+import org.json.JSONException
 
 /**
  * Created by jimmyhsu on 2017/5/22.
@@ -37,14 +38,21 @@ object UActivityManager {
                             imgUrls.add(UPublicTool.BASE_URL_PICTURE + obj.getString("pic" + it))
                         }
                     }
+                    var avatar = "no"
+                    var username = "no"
+                    try {
+                        avatar = it.getString("avatar")
+                        username = it.getString("username")
+                    } catch (e: JSONException) {
+                    }
                     UActivity(it.getString("act_title"),
                             it.getDouble("lat"),
                             it.getDouble("lon"),
                             it.getString("location"),
                             it.getString("tag"),
                             it.getInt("author_id"),
-                            "no",
-                            "no",
+                            username,
+                            avatar,
                             it.getString("description"),
                             System.currentTimeMillis() + it.getLong("active_time"),
                             it.getInt("taker_count_limit"),
@@ -73,14 +81,21 @@ object UActivityManager {
                             imgUrls.add(UPublicTool.BASE_URL_PICTURE + obj.getString("pic" + it))
                         }
                     }
+                    var avatar = "no"
+                    var username = "no"
+                    try {
+                        avatar = it.getString("avatar")
+                        username = it.getString("username")
+                    } catch (e: JSONException) {
+                    }
                     UActivity(it.getString("act_title"),
                             it.getDouble("lat"),
                             it.getDouble("lon"),
                             it.getString("location"),
                             it.getString("tag"),
                             it.getInt("author_id"),
-                            "no",
-                            "no",
+                            username,
+                            avatar,
                             it.getString("description"),
                             System.currentTimeMillis() + it.getLong("active_time"),
                             it.getInt("taker_count_limit"),
