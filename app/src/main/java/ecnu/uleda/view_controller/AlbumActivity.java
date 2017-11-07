@@ -61,7 +61,7 @@ public class AlbumActivity extends AppCompatActivity {
         IntentFilter filter = new IntentFilter("data.broadcast.action");
         IntentFilter filter1 = new IntentFilter("com.example.broadcasttest.MY_BROADCAST");
         MyBroadcastReceiver myBroadcastReceiver1=new MyBroadcastReceiver();
-        registerReceiver(myBroadcastReceiver1, filter);
+//        registerReceiver(myBroadcastReceiver1, filter);
         registerReceiver(myBroadcastReceiver, filter);
         bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.plugin_camera_no_pictures);
         init();

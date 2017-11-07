@@ -20,5 +20,6 @@ data class UActivity(
     var takersCount: Int,
     var imgUrls: ArrayList<String>,
     var id: Int,
-    var status: Int
+    var status: Int,
+    val postDate: Int
 ): Serializable

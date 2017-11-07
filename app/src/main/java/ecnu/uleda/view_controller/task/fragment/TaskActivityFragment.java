@@ -1,25 +1,30 @@
 package ecnu.uleda.view_controller.task.fragment;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v7.graphics.Palette;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 
-import org.greenrobot.eventbus.EventBus;
+import net.phalapi.sdk.PhalApiClientResponse;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,11 +33,21 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import ecnu.uleda.R;
+import ecnu.uleda.function_module.ServerAccessApi;
+import ecnu.uleda.function_module.UserOperatorController;
 import ecnu.uleda.model.UActivity;
+import ecnu.uleda.tool.UPublicTool;
+import ecnu.uleda.view_controller.task.activity.ActivityDetailsActivity;
 import ecnu.uleda.view_controller.widgets.BannerView;
 import ecnu.uleda.view_controller.widgets.NoScrollViewPager;
 import ecnu.uleda.view_controller.widgets.StickyNavLayout;
-import me.xiaopan.sketch.SketchImageView;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by jimmyhsu on 2017/4/11.
@@ -50,6 +65,8 @@ public class TaskActivityFragment extends Fragment implements StickyNavLayout.On
     private int[] mTitleBgColors;
     private int[] mTitleTextColors;
     private boolean isRefreshing = false;
+
+    private List<UActivity> mProActivities = new ArrayList<>();
 
     @BindView(R.id.stickynavlayout)
     StickyNavLayout mContainer;
@@ -87,7 +104,13 @@ public class TaskActivityFragment extends Fragment implements StickyNavLayout.On
         initHandler();
         initPager();
         initIndicator();
+        getPromotedActivities();
         initRollPager();
+        initContainer();
+    }
+
+    private void initContainer() {
+        mContainer.setOnRefreshListener(this);
     }
 
     private void initHandler() {
@@ -148,33 +171,92 @@ public class TaskActivityFragment extends Fragment implements StickyNavLayout.On
         });
     }
 
+    private void getPromotedActivities() {
+        Observable.create(new ObservableOnSubscribe<PhalApiClientResponse>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<PhalApiClientResponse> e) throws Exception {
+                UserOperatorController uoc = UserOperatorController.getInstance();
+                e.onNext(ServerAccessApi.getPromotedActivities(uoc.getId(), uoc.getPassport()));
+                e.onComplete();
+            }
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<PhalApiClientResponse>() {
+                    @Override
+                    public void accept(PhalApiClientResponse response) throws Exception {
+                        if (response.getRet() == 200) {
+                            mProActivities = parseActivitiesJsonArray(new JSONArray(response.getData()));
+                        }
+                    }
+                });
+    }
+
+    private List<UActivity> parseActivitiesJsonArray(JSONArray pros) throws JSONException {
+        List<UActivity> proActivities = new ArrayList<>();
+        int length = pros.length();
+        for (int i = 0; i < length; i++) {
+            JSONObject proAct = pros.getJSONObject(i);
+            ArrayList<String> imgUrls = new ArrayList<>();
+            for (int j = 1; j <= 3; j++) {
+                if (!TextUtils.isEmpty(proAct.getString("pic" + j)) &&
+                        !proAct.getString("pic" + j).equals("null")) {
+                    imgUrls.add(UPublicTool.BASE_URL_PICTURE + proAct.getString("pic" + j));
+                }
+            }
+            proActivities.add(new UActivity(proAct.getString("act_title"),
+                    proAct.getDouble("lat"),
+                    proAct.getDouble("lon"),
+                    proAct.getString("location"),
+                    proAct.getString("tag"),
+                    proAct.getInt("author_id"),
+                    "no",
+                    "no",
+                    proAct.getString("description"),
+                    System.currentTimeMillis() + proAct.getLong("active_time"),
+                    proAct.getInt("taker_count_limit"),
+                    imgUrls,
+                    proAct.getInt("act_id"),
+                    proAct.getInt("status"),
+                    proAct.getInt("postdate")));
+        }
+        return proActivities;
+    }
+
     private void initRollPager() {
-        final List<Integer> datas = new ArrayList<>();
-        datas.add(R.drawable.img1);
-        datas.add(R.drawable.img2);
-        datas.add(R.drawable.img4);
+        final List<String> datas = new ArrayList<>();
+        datas.add(UPublicTool.BASE_URL_PICTURE + "pic-1509967730fUjVHHfvjy9M28B29d.jpg");
+        datas.add(UPublicTool.BASE_URL_PICTURE + "pic-1509967778jvR9c5w8ZTOvlZToA4.jpg");
+        datas.add(UPublicTool.BASE_URL_PICTURE + "pic-1509967823DzGmyfz0OBsofJey8W.jpg");
         mTitleBgColors = new int[datas.size()];
         mTitleTextColors = new int[datas.size()];
         final List<String> titles = new ArrayList<>();
-        titles.add("title 1");
-        titles.add("title 2");
-        titles.add("title 3");
-        mBanner.setHolder(new BannerView.Holder<Integer>(datas) {
+        titles.add("计软院迎新晚会");
+        titles.add("寝室文化节");
+        titles.add("计软院运会");
+        mBanner.setHolder(new BannerView.Holder<String>(datas) {
             @Override
-            public View getView(final int pos, Integer item) {
-                SketchImageView imageView = new SketchImageView(getContext());
+            public View getView(final int pos, String item) {
+                final ImageView imageView = new ImageView(getContext());
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                Bitmap bm = BitmapFactory.decodeResource(getResources(), item);
-                Palette.Builder builder = Palette.from(bm);
-                Palette palette = builder.generate();
-                Palette.Swatch swatch = null;
-                swatch = palette.getMutedSwatch();
-                if (swatch == null) {
-                    swatch = palette.getDarkMutedSwatch();
-                }
-                mTitleBgColors[pos] = swatch == null ? BannerView.DEFAULT_TITLE_BG : swatch.getRgb();
-                mTitleTextColors[pos] = swatch == null ? BannerView.DEFAULT_TITLE_TEXT_COLOR : swatch.getTitleTextColor();
-                imageView.setImageBitmap(bm);
+                Glide.with(getContext())
+                        .load(item)
+                        .asBitmap()
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(Bitmap bm, GlideAnimation<? super Bitmap> glideAnimation) {
+                                Palette.Builder builder = Palette.from(bm);
+                                Palette palette = builder.generate();
+                                Palette.Swatch swatch = null;
+                                swatch = palette.getMutedSwatch();
+                                if (swatch == null) {
+                                    swatch = palette.getDarkMutedSwatch();
+                                }
+                                mTitleBgColors[pos] = swatch == null ? BannerView.DEFAULT_TITLE_BG : swatch.getRgb();
+                                mTitleTextColors[pos] = swatch == null ? BannerView.DEFAULT_TITLE_TEXT_COLOR : swatch.getTitleTextColor();
+                                imageView.setImageBitmap(bm);
+                            }
+                        });
                 return imageView;
             }
 
@@ -200,7 +282,9 @@ public class TaskActivityFragment extends Fragment implements StickyNavLayout.On
 
             @Override
             public void onItemClicked(int pos, View v) {
-                Toast.makeText(getContext(), "点击了banner " + pos, Toast.LENGTH_SHORT).show();
+                if (pos >= mProActivities.size()) return;
+                UActivity act = mProActivities.get(pos);
+                ActivityDetailsActivity.startActivity(getContext(), act);
             }
         });
     }

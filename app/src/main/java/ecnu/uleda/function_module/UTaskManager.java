@@ -46,6 +46,8 @@ public class UTaskManager {
     public static final String PRICE_DES = "priceDes";
     public static final String PRICE_ASC = "priceAsc";
     public static final String DISTANCE = "distance";
+    public static final String TAG_ALL = "全部";
+    public static final String TAG_PROJECT = "项目找人";
     private String mSortBy = TIME_LAST;
     private String mTag = "全部";
     private String mLocation = "31.2296,121.403";
@@ -66,8 +68,9 @@ public class UTaskManager {
         mSortBy = sortBy;
     }
 
-    public void setTag(String tag) {
+    public UTaskManager setTag(String tag) {
         mTag = tag;
+        return this;
     }
 
     public ArrayList<UTask> getTasksInList() {

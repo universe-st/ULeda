@@ -89,6 +89,7 @@ public class TaskMissionFragment extends Fragment {
     //    private final static ArrayList<String> mMainArrayProject;
 //    private final static ArrayList<String> mMainArrayActivity;
     private final static ArrayList<String> mSortArray;
+    private String mTag = UTaskManager.TAG_ALL;
 
     static {
         mMainArrayTask = new ArrayList<>();
@@ -135,7 +136,7 @@ public class TaskMissionFragment extends Fragment {
                 @Override
                 public void OnItemSelected(View v, int pos) {
                     mMainSpinner.setText(mMainArrayTask.get(pos));
-                    mUTaskManager.setTag(mMainArrayTask.get(pos));
+                    mTag = mMainArrayTask.get(pos);
                     mTaskListView.refresh();
                 }
             });
@@ -330,7 +331,8 @@ public class TaskMissionFragment extends Fragment {
         @Override
         public void run() {
             try {
-                mUTaskManager.refreshTaskInList(getContext());
+                mUTaskManager.setTag(mTag)
+                        .refreshTaskInList(getContext());
                 Message message = new Message();
                 message.what = REFRESH;
                 isLoadedFromServer = true;
@@ -369,7 +371,8 @@ public class TaskMissionFragment extends Fragment {
         @Override
         public void run() {
             try {
-                hasMoreItems = mUTaskManager.loadMoreTaskInList(5);
+                hasMoreItems = mUTaskManager.setTag(mTag)
+                        .loadMoreTaskInList(5);
             } catch (UServerAccessException e) {
                 //TODO:根据异常的状态决定向主线程的handle发送哪些信息
                 e.printStackTrace();
