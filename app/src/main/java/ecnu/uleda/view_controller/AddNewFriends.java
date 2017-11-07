@@ -1,81 +1,44 @@
 package ecnu.uleda.view_controller;
 
 import android.content.Intent;
-import android.os.Handler;
-import android.os.Message;
-import android.support.annotation.NonNull;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.tencent.imsdk.TIMValueCallBack;
-import com.tencent.imsdk.ext.sns.TIMAddFriendRequest;
-import com.tencent.imsdk.ext.sns.TIMFriendResult;
-import com.tencent.imsdk.ext.sns.TIMFriendshipManagerExt;
-
-import net.phalapi.sdk.PhalApiClient;
-import net.phalapi.sdk.PhalApiClientResponse;
-
+import com.bumptech.glide.Glide;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
+
 
 import butterknife.OnClick;
+import de.hdodenhof.circleimageview.CircleImageView;
 import ecnu.uleda.R;
 import ecnu.uleda.exception.UServerAccessException;
+import ecnu.uleda.function_module.ServerAccessApi;
 import ecnu.uleda.function_module.UserOperatorController;
+import ecnu.uleda.model.UserInfo;
 
 /**
  * modefied by Zhao Ning
  */
 public class AddNewFriends extends AppCompatActivity {
 
-    //private TextView phoneNumber ;
-    //private TextView paint ;
     private EditText mSearchInput;
     private TextView back;
-    private TextView mSearchFriends;
-    private String mSearchIdentifier;
+    private TextView mSearchFriend;
+    private String mSearchName;
     private static final String TAG = "AddNewFriends";
-
-    private static final String ADD_FRIEND_SUCCESS="success";
-    private static final String ADD_FRIEND_ALREADY="already";
-    private static final String ADD_FRIEND_NOT_FOUND="notFound";
-    private static final String ADD_FRIEND_NOT_MYSELF="notMyself";
-    private static final String ADD_FRIEND_FAILED="failed";
-
-
-    private Handler mHandler=new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            if (msg.what == 1) {
-                String ret = (String) msg.obj;
-                if (ret == ADD_FRIEND_SUCCESS)
-                    Toast.makeText(AddNewFriends.this, "添加好友成功～", Toast.LENGTH_SHORT).show();
-                else if (ret == ADD_FRIEND_ALREADY)
-                    Toast.makeText(AddNewFriends.this, "您已经添加过该好友～", Toast.LENGTH_SHORT).show();
-                else if (ret == ADD_FRIEND_NOT_FOUND)
-                    Toast.makeText(AddNewFriends.this, "抱歉～该用户不存在", Toast.LENGTH_SHORT).show();
-                else if (ret == ADD_FRIEND_NOT_MYSELF)
-                    Toast.makeText(AddNewFriends.this, "不可以添加自己哦～", Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(AddNewFriends.this, "添加好友失败！", Toast.LENGTH_SHORT).show();
-            } else {
-                UServerAccessException exception = (UServerAccessException) msg.obj;
-                Toast.makeText(AddNewFriends.this, "获取信息失败：" + exception.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-
-        }
-    };
+    private CircleImageView mNewFriendImage;
+    private TextView mNewFriendName;
+    private TextView mNewFriendTag;
+    private TextView mNewFriendSex;
+    private UserOperatorController mUOC;
+    private UserInfo mFriendInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,11 +46,15 @@ public class AddNewFriends extends AppCompatActivity {
         setContentView(R.layout.activity_add_new_friends);
 
         back =(TextView) findViewById(R.id.add_Back);
-        mSearchFriends = (TextView) findViewById(R.id.search_friends);
-        // phoneNumber.findViewById(R.id.findByPhoneNumber);
-        //paint.findViewById(R.id.findByPaint);
+        mSearchFriend = (TextView) findViewById(R.id.search_friends);
         mSearchInput = (EditText) findViewById(R.id.edit_add_friends);
+        mNewFriendImage = (CircleImageView)findViewById(R.id.image_new_friend);
+        mNewFriendName = (TextView)findViewById(R.id.new_friend_name);
+        mNewFriendTag = (TextView)findViewById(R.id.new_friend_tag);
+        mUOC = UserOperatorController.getInstance();
+        mNewFriendSex = (TextView)findViewById(R.id.new_friend_sex);
 
+        mFriendInfo = new UserInfo();
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,132 +62,149 @@ public class AddNewFriends extends AppCompatActivity {
             }
         });
 
-        mSearchFriends.setOnClickListener(new View.OnClickListener() {
+        mSearchFriend.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                mSearchIdentifier = mSearchInput.getText().toString();
-                Log.e(TAG, "mSearchIdentifier222: "+mSearchIdentifier );
-                addFriends();
+                mSearchName = mSearchInput.getText().toString();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        searchNewFriend(mSearchName);
+                    }
+                }).start();
             }
         });
-        /*button_phoneNumber.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(AddNewFriends.this,)
-            }
-        });*/
+
+        setInvisiable();
+
+        mNewFriendName.setOnClickListener(new MyClickListener());
+        mNewFriendImage.setOnClickListener(new MyClickListener());
+        mNewFriendSex.setOnClickListener(new MyClickListener());
+        mNewFriendTag.setOnClickListener(new MyClickListener());
+
     }
 
-    void addFriends()
-    {
-//        //创建请求列表
-//        List<TIMAddFriendRequest> reqList = new ArrayList<TIMAddFriendRequest>();
-//
-////添加好友请求
-//        TIMAddFriendRequest req = new TIMAddFriendRequest(mSearchIdentifier);//identifier
-////        req.setIdentifier(mSearchIdentifier);
-//        req.setAddrSource("AddSource_Type_Android");
-//        req.setAddWording("add me");
-//        req.setRemark("Cat");
-//
-//        reqList.add(req);
-//
-////申请添加好友
-//        TIMFriendshipManagerExt.getInstance().addFriend(reqList, new TIMValueCallBack<List<TIMFriendResult>>() {
-//            @Override
-//            public void onError(int code, String desc){
-//                //错误码code和错误描述desc，可用于定位请求失败原因
-//                //错误码code列表请参见错误码表
-//                Log.e(tag, "addFriend failed: " + code + " desc");
-//            }
-//
-//            @Override
-//            public void onSuccess(List<TIMFriendResult> result){
-//                Log.e(tag, "addFriend succ");
-//                for(TIMFriendResult res : result){
-//                    Log.e(tag, "identifier: " + res.getIdentifer() + " status: " + res.getStatus());
-//                }
-//            }
-//        });
+    void searchNewFriend(final String friendName) {
+        final String id = mUOC.getId();
+        String pwd = mUOC.getPassport();
+        try {
+            JSONObject jsonObject = ServerAccessApi.getBasicInfoByName(id,pwd,friendName);
+            Log.e(TAG, "searchNewFriend: "+jsonObject.toString() );
+            mFriendInfo.setId(jsonObject.getString("id"))
+                    .setAvatar("http://118.89.156.167/uploads/avatars/"+jsonObject.getString("avatar"))
+                    .setFriendStatus(jsonObject.getInt("friendStatus"))
+                    .setUserType(jsonObject.getInt("usertype"))
+                    .setUserName(friendName)
+                    .setSchool(jsonObject.getString("school"))
+                    .setSex(jsonObject.getInt("sex"));
+            AddNewFriends.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    setVisiable();
+                    if(friendName.equals(id))
+                        Toast.makeText(AddNewFriends.this,"您搜索的用户是您自己诶～",Toast.LENGTH_LONG).show();
+                    else {
+                        if(mFriendInfo.getUserType()==-1)
+                            Toast.makeText(AddNewFriends.this,"您搜索的用户被禁辣sorry～",Toast.LENGTH_LONG).show();
+                        else {
+                            if(mFriendInfo.getFriendStatus()==2)
+                                Toast.makeText(AddNewFriends.this,"ta已经是您的好友哇～",Toast.LENGTH_LONG).show();
+                            else {
+                                Glide.with(AddNewFriends.this)
+                                        .load(mFriendInfo.getAvatar())
+                                        .into(mNewFriendImage);
+                                mNewFriendName.setText(mFriendInfo.getUserName());
+                                mNewFriendTag.setText(mFriendInfo.getSchool());
+                                if(mFriendInfo.getSex()==0)
+                                    mNewFriendSex.setText("♂");
+                                else
+                                {
+                                    mNewFriendSex.setText("♀");
+                                    mNewFriendSex.setTextColor(Color.parseColor("#FF4081"));
+                                }
+                            }
+                        }
+                    }
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try
-                {
-                    String ret = onAddFriend(mSearchIdentifier);
-                    Log.e(TAG, "run: "+mSearchIdentifier);
-                    Message msg = new Message();
-                    msg.what = 1;
-                    msg.obj = ret;
-                    mHandler.sendMessage(msg);
-                }catch (UServerAccessException e)
-                {
-                    e.printStackTrace();
                 }
-
-
-            }
-        }).start();
-    }
-
-
-    public static String onAddFriend(@NonNull String inviteByID )throws UServerAccessException{
-        UserOperatorController user = UserOperatorController.getInstance();
-        String id = user.getId();
-        id = UrlEncode(id);
-        String passport = user.getPassport();
-        passport = UrlEncode(passport);
-        PhalApiClient client=createClient();
-        PhalApiClientResponse response=client
-                .withService("User.InviteFriend")//接口的名称
-                .withParams("id",id)
-                .withParams("passport",passport)
-                .withParams("inviteByID",inviteByID)
-                .request();
-        Log.e(TAG, "onAddFriend: "+response.getRet());
-        if(response.getRet()==200) {
-//            try{
-//                JSONObject data=new JSONObject(response.getData());
-                return ADD_FRIEND_SUCCESS;// "success"
-//            }catch (JSONException e){
-//                Log.e("ServerAccessApi",e.toString());
-//                数据包无法解析，向上抛出一个异常
-//                throw new UServerAccessException(UServerAccessException.ERROR_DATA);
-//            }
-        }
-        else if(response.getRet()==410)
+            });
+        }catch (JSONException e)
         {
-            return ADD_FRIEND_ALREADY;
-        }
-        else if(response.getRet()==408)
-        {
-            Log.e("add new friend","?????");
-            return ADD_FRIEND_NOT_FOUND;
-        }
-        else if(response.getRet()==409)
-        {
-            return ADD_FRIEND_NOT_MYSELF;
-        }
-        else {
-            throw new UServerAccessException(response.getRet());
-        }
-    }
-
-
-    private static String UrlEncode(String str)throws UServerAccessException{
-        try{
-            if(str==null)return null;
-            return URLEncoder.encode(str,"UTF-8");
-        }catch (UnsupportedEncodingException e){
             e.printStackTrace();
-            throw new UServerAccessException(UServerAccessException.PARAMS_ERROR);
+            System.exit(1);
+        }
+        catch (UServerAccessException e)
+        {
+            switch (e.getStatus())
+            {
+                case 401:
+                    AddNewFriends.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(AddNewFriends.this,"您搜索的用户不存在╭(°A°`)╮",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    break;
+                case 402:
+                    AddNewFriends.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(AddNewFriends.this,"用户被禁止登录╭(°A°`)╮",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    break;
+                case 408:
+                    AddNewFriends.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(AddNewFriends.this,"请输入正确的用户名(￣^￣)ゞ",Toast.LENGTH_LONG).show();
+                        }
+                    });
+                    break;
+                default:
+                    AddNewFriends.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(AddNewFriends.this,"请输入正确的用户名(◐‿◑)",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    e.printStackTrace();
+                    System.exit(1);
+                    break;
+            }
         }
     }
 
-    private static PhalApiClient createClient(){
-        //这个函数创造一个客户端实例
-        return PhalApiClient.create()
-                .withHost("http://118.89.156.167/mobile/");
+    class MyClickListener implements View.OnClickListener{
+
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(AddNewFriends.this,SingleUserInfoActivity.class);
+            intent.putExtra("userid", String.valueOf(mFriendInfo.getId()));
+            Log.e(TAG, "onClick userid: "+mFriendInfo.getId() );
+            startActivity(intent);
+        }
+    }
+
+    void setInvisiable(){
+        mNewFriendName.setVisibility(View.INVISIBLE);
+        mNewFriendName.setEnabled(false);
+        mNewFriendImage.setVisibility(View.INVISIBLE);
+        mNewFriendImage.setEnabled(false);
+        mNewFriendSex.setVisibility(View.INVISIBLE);
+        mNewFriendSex.setEnabled(false);
+        mNewFriendTag.setVisibility(View.INVISIBLE);
+        mNewFriendTag.setEnabled(false);
+    }
+
+    void setVisiable(){
+        mNewFriendName.setVisibility(View.VISIBLE);
+        mNewFriendName.setEnabled(true);
+        mNewFriendImage.setVisibility(View.VISIBLE);
+        mNewFriendImage.setEnabled(true);
+        mNewFriendSex.setVisibility(View.VISIBLE);
+        mNewFriendSex.setEnabled(true);
+        mNewFriendTag.setVisibility(View.VISIBLE);
+        mNewFriendTag.setEnabled(true);
     }
 }

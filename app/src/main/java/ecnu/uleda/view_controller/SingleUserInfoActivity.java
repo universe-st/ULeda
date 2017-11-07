@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.bumptech.glide.Glide;
 import com.tencent.imsdk.TIMFriendshipManager;
 import com.tencent.imsdk.TIMUserProfile;
 import com.tencent.imsdk.TIMValueCallBack;
@@ -42,6 +43,7 @@ import java.util.Collections;
 import java.util.List;
 
 import butterknife.OnClick;
+import de.hdodenhof.circleimageview.CircleImageView;
 import ecnu.uleda.BuildConfig;
 import ecnu.uleda.R;
 import ecnu.uleda.exception.UServerAccessException;
@@ -122,6 +124,7 @@ public class SingleUserInfoActivity extends AppCompatActivity {
     private String userClass;//userClass[0]:入学年份 userClass[1]:院系 userClass[2]:专业 userClass[3]:班级
     private Button buttonAddUser;
     private Button buttonSendmsg;
+    private CircleImageView mCircleImageView;
     private String tag = "SingleUserInfoActivity";
     private static final String ADD_FRIEND_SUCCESS="success";
     private static final String ADD_FRIEND_ALREADY="already";
@@ -138,6 +141,7 @@ public class SingleUserInfoActivity extends AppCompatActivity {
         textViewUserAge = (TextView) findViewById(R.id.user_age);
         textViewUsersign = (TextView) findViewById(R.id.text_sign);
         textViewSchoolClass = (TextView) findViewById(R.id.user_class);
+        mCircleImageView = (CircleImageView)findViewById(R.id.user_image);
 //        buttonAddUser = (Button) findViewById(R.id.button_adduser);
 //        buttonSendmsg = (Button) findViewById(R.id.button_sendmsg);
 
@@ -162,6 +166,9 @@ public class SingleUserInfoActivity extends AppCompatActivity {
         sYear = String.valueOf(year);
         textViewUserAge.setText(sYear);
 
+        Glide.with(SingleUserInfoActivity.this)
+                .load("http://118.89.156.167/uploads/avatars/"+mUserInfo.getAvatar())
+                .into(mCircleImageView);
         textViewUsersign.setText(mUserInfo.getSignature());
 
         schoolClass = mUserInfo.getSchoolClass();

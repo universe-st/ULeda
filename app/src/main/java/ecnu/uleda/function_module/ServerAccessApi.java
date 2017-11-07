@@ -776,7 +776,7 @@ public class ServerAccessApi {
         passport = UrlEncode(passport);
         actId = UrlEncode(actId);
         return createClient()
-                .withService("Activity.GetPromotedActivity")
+                .withService("Activity.GetActivity")
                 .withParams("id", id)
                 .withParams("passport", passport)
                 .withParams("actId", actId)
@@ -958,6 +958,29 @@ public class ServerAccessApi {
                 .withParams("id",id)
                 .withParams("passport",passport)
                 .withParams("getByID",getByID)
+                .withTimeout(SET_TIME_OUT)
+                .request();
+        if(response.getRet()==200){
+            try {
+                return new JSONObject(response.getData());
+            }catch (JSONException e){
+                e.printStackTrace();
+                throw new UServerAccessException(UServerAccessException.ERROR_DATA);
+            }
+        }else{
+            throw new UServerAccessException(response.getRet());
+        }
+    }
+
+    public static JSONObject getBasicInfoByName(@NonNull String id,@NonNull String passport,@NonNull String friendName) throws UServerAccessException{
+        id=UrlEncode(id);
+        passport=UrlEncode(passport);
+        friendName= UrlEncode(friendName);
+        PhalApiClientResponse response=createClient()
+                .withService("User.GetBasicInfoByName")
+                .withParams("id",id)
+                .withParams("passport",passport)
+                .withParams("getByName",friendName)
                 .withTimeout(SET_TIME_OUT)
                 .request();
         if(response.getRet()==200){
