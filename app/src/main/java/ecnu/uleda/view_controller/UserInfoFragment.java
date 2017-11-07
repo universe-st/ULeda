@@ -52,6 +52,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.znq.zbarcode.CaptureActivity;
 
 import java.io.File;
@@ -89,7 +90,7 @@ public class UserInfoFragment extends Fragment
     private TextView mMyMoneyBag;
     private TextView mMyQRCode;
     private TextView mMyAskServer;
-    private CircleImageView icon;
+    private CircleImageView mCircleImageView;
     private ImageButton add;
     private PopupWindow mPopupWindow;
     private TextView userId;
@@ -136,7 +137,7 @@ public class UserInfoFragment extends Fragment
         mMyMoneyBag = (TextView) v.findViewById(R.id.my_money_bag);
         mMyQRCode = (TextView) v.findViewById(R.id.my_qr_code);
         mMyAskServer = (TextView) v.findViewById(R.id.ask_server);
-        icon = (CircleImageView) v.findViewById(R.id.icon);
+        mCircleImageView = (CircleImageView) v.findViewById(R.id.icon);
 
         add = (ImageButton) v.findViewById(R.id.add);
         userId = (TextView) v.findViewById(R.id.id);
@@ -153,7 +154,7 @@ public class UserInfoFragment extends Fragment
         mMyMoneyBag.setOnClickListener(this);
         mMyQRCode.setOnClickListener(this);
         mMyAskServer.setOnClickListener(this);
-        icon.setOnClickListener(this);
+        mCircleImageView.setOnClickListener(this);
         add.setOnClickListener(this);
         T1.setOnClickListener(this);
         T2.setOnClickListener(this);
@@ -211,6 +212,9 @@ public class UserInfoFragment extends Fragment
     private void putInformation() {
         //TODO:将用户信息显示在屏幕上
         userId.setText(mUserInfo.getRealName());
+        Glide.with(getContext())
+                .load("http://118.89.156.167/uploads/avatars/"+mUserInfo.getAvatar())
+                .into(mCircleImageView);
     }
 
     @Override
@@ -370,7 +374,7 @@ public class UserInfoFragment extends Fragment
                         // 将拍摄的照片显示出来
                         Bitmap bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(imgUri));
                         Drawable drawable = new BitmapDrawable(toRoundBitmap(bitmap));
-                        icon.setImageDrawable(drawable);
+                        mCircleImageView.setImageDrawable(drawable);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -444,7 +448,7 @@ public class UserInfoFragment extends Fragment
     private void displayImage(String imagePath) {
         if (imagePath != null) {
             Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-            icon.setImageBitmap(bitmap);
+            mCircleImageView.setImageBitmap(bitmap);
         } else {
             Toast.makeText(getActivity(), "failed to get image", Toast.LENGTH_SHORT).show();
         }
@@ -522,7 +526,7 @@ public class UserInfoFragment extends Fragment
             bmp = Bitmap.createBitmap(bmp, //用原来的 Bitmap 产生一个新的 Bitmap
                     0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
         }
-        icon.setImageBitmap(bmp);
+        mCircleImageView.setImageBitmap(bmp);
     }
 
 
@@ -560,7 +564,7 @@ public class UserInfoFragment extends Fragment
         }
 
         mPopupWindow.setContentView(view);
-        mPopupWindow.showAtLocation(icon, Gravity.BOTTOM, 0, 0);
+        mPopupWindow.showAtLocation(mCircleImageView, Gravity.BOTTOM, 0, 0);
         mPopupWindow.update();
     }
 
