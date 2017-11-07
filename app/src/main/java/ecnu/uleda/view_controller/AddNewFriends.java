@@ -2,29 +2,14 @@ package ecnu.uleda.view_controller;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Handler;
-import android.os.Message;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
-import com.google.gson.JsonObject;
-import com.tencent.imsdk.TIMValueCallBack;
-import com.tencent.imsdk.ext.sns.TIMAddFriendRequest;
-import com.tencent.imsdk.ext.sns.TIMFriendResult;
-import com.tencent.imsdk.ext.sns.TIMFriendshipManagerExt;
-
-import net.phalapi.sdk.PhalApiClient;
-import net.phalapi.sdk.PhalApiClientResponse;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
