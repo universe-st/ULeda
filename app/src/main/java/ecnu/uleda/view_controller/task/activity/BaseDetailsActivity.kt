@@ -92,6 +92,12 @@ abstract class BaseDetailsActivity: AppCompatActivity() {
         mPopupWindow.dismiss()
     }
 
+    protected fun dismissPopupWindow() {
+        if (mPopupWindow.isShowing) {
+            mPopupWindow.dismiss()
+        }
+    }
+
     protected fun setChatItems(items: List<TaskDetailsActivity.UserChatItem>) {
         mUserChatItems = items as ArrayList<TaskDetailsActivity.UserChatItem>
     }

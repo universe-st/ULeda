@@ -171,8 +171,9 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
                 addCommentView(mDetailContainer, 2);
             } else if (msg.what == MSG_COMMENT_SUCCESS) {
                 mProgress.dismiss();
+                dismissPopupWindow();
                 Toast.makeText(TaskDetailsActivity.this, "评论成功", Toast.LENGTH_SHORT).show();
-                addCommentView((String) msg.obj, mDetailContainer, 2);
+                initComments(UserOperatorController.getInstance());
             } else if (msg.what == MSG_COMMENT_FAILED) {
                 mProgress.dismiss();
                 Toast.makeText(TaskDetailsActivity.this, "评论失败", Toast.LENGTH_SHORT).show();
@@ -650,6 +651,7 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
                     String response = ServerAccessApi.getComment(uoc.getId(),
                             uoc.getPassport(), mTask.getPostID(), String.valueOf(0));
                     if (!response.equals("null")) {
+                        getMUserChatItems().clear();
                         setChatItems((List<UserChatItem>) new Gson().fromJson(response,
                                 new TypeToken<List<UserChatItem>>() {
                                 }.getType()));
