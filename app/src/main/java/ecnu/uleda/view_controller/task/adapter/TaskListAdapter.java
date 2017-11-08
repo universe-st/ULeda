@@ -17,8 +17,8 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import ecnu.uleda.R;
-import ecnu.uleda.tool.UPublicTool;
 import ecnu.uleda.model.UTask;
+import ecnu.uleda.tool.UPublicTool;
 import me.xiaopan.sketch.SketchImageView;
 import me.xiaopan.sketch.request.DisplayOptions;
 import me.xiaopan.sketch.shaper.CircleImageShaper;
@@ -83,7 +83,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
         holder.mTvTimeLimit.setText(UPublicTool.parseTime(task.getLeftTime()));
         holder.mTvType.setText(task.getTag().substring(0, 2));
         holder.mTvFromAndTo.setText(getFromTo(task));
-        holder.mTvTakesCount.setText(task.getTakersCount() + "人接单");
+        holder.mTvTakesCount.setText(task.getTakersCount() + (task.getTag().equals("项目找人") ? "人报名" : "人接单"));
         holder.itemView.setTag(task);
 
     }

@@ -5,16 +5,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Point;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.InputType;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.util.Log;
@@ -42,7 +41,6 @@ import com.tencent.mapsdk.raster.model.MarkerOptions;
 import com.tencent.tencentmap.mapsdk.map.MapView;
 import com.tencent.tencentmap.mapsdk.map.TencentMap;
 
-
 import net.phalapi.sdk.PhalApiClientResponse;
 
 import org.jetbrains.annotations.NotNull;
@@ -61,14 +59,14 @@ import java.util.concurrent.Executors;
 import butterknife.BindView;
 import butterknife.OnClick;
 import ecnu.uleda.R;
+import ecnu.uleda.exception.UServerAccessException;
+import ecnu.uleda.function_module.ServerAccessApi;
 import ecnu.uleda.function_module.UTaskManager;
+import ecnu.uleda.function_module.UserOperatorController;
+import ecnu.uleda.model.UTask;
 import ecnu.uleda.model.UserInfo;
 import ecnu.uleda.tool.RecyclerViewTouchListener;
 import ecnu.uleda.tool.UPublicTool;
-import ecnu.uleda.exception.UServerAccessException;
-import ecnu.uleda.model.UTask;
-import ecnu.uleda.function_module.UserOperatorController;
-import ecnu.uleda.function_module.ServerAccessApi;
 import ecnu.uleda.view_controller.MyTaskInFo;
 import ecnu.uleda.view_controller.SingleUserInfoActivity;
 import ecnu.uleda.view_controller.TaskEditActivity;
@@ -172,7 +170,10 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
             } else if (msg.what == MSG_COMMENT_GET) {
                 addCommentView(mDetailContainer, 2);
             } else if (msg.what == MSG_COMMENT_SUCCESS) {
-                addCommentView((String) msg.obj, mDetailContainer, 2);
+                mProgress.dismiss();
+                dismissPopupWindow();
+                Toast.makeText(TaskDetailsActivity.this, "评论成功", Toast.LENGTH_SHORT).show();
+                initComments(UserOperatorController.getInstance());
             } else if (msg.what == MSG_COMMENT_FAILED) {
                 mProgress.dismiss();
                 Toast.makeText(TaskDetailsActivity.this, "评论失败", Toast.LENGTH_SHORT).show();
@@ -469,7 +470,7 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
         if (userChatItem.authorAvatar.equals("test")) {
             avatar.displayResourceImage(R.drawable.model1);
         } else {
-            avatar.displayImage(userChatItem.authorAvatar);
+            avatar.displayImage(UPublicTool.BASE_URL_AVATAR + userChatItem.authorAvatar);
         }
         TextView tv = (TextView) v.findViewById(R.id.say_what);
         tv.setText(userChatItem.sayWhat);
@@ -650,6 +651,7 @@ public class TaskDetailsActivity extends BaseDetailsActivity {
                     String response = ServerAccessApi.getComment(uoc.getId(),
                             uoc.getPassport(), mTask.getPostID(), String.valueOf(0));
                     if (!response.equals("null")) {
+                        getMUserChatItems().clear();
                         setChatItems((List<UserChatItem>) new Gson().fromJson(response,
                                 new TypeToken<List<UserChatItem>>() {
                                 }.getType()));
