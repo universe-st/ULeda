@@ -7,8 +7,10 @@ import android.graphics.Point;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
+import android.util.TypedValue;
 import android.view.WindowManager;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -17,10 +19,44 @@ import java.util.Date;
  */
 
 public class UPublicTool {
+
+    public static final String SERVICE_PHONE_NUMBER = "10086";
+    public static final String BASE_URL_AVATAR = "http://118.89.156.167/uploads/avatars/";
+    public static final String BASE_URL_PICTURE = "http://118.89.156.167/uploads/pictures/";
+
+    public static String parseTime(long second) {
+        int mi = 60;
+        int hh = mi * 60;
+        int dd = hh * 24;
+        long day = second / dd;
+        long hour = (second - day * dd) / hh;
+        long minute = (second - day * dd - hour * hh) / mi;
+        StringBuilder sb = new StringBuilder();
+        if (day > 0) {
+            if (day <= 7) {
+                return sb.append("剩余").append(day).append("天").append(hour).append("小时").toString();
+            } else {
+                Calendar calendar = Calendar.getInstance();
+                calendar.add(Calendar.SECOND, (int) second);
+                return sb.append("截止").append(calendar.get(Calendar.YEAR)).append("年").append(calendar.get(Calendar.MONTH) + 1).append("月").append(calendar.get(Calendar.DAY_OF_MONTH)).append("日").toString();
+            }
+        }
+        sb.append("剩余");
+        if (hour > 0) {
+            return sb.append(hour).append("小时").append(minute).append("分钟").toString();
+        }
+        if (minute >= 0) {
+            return sb.append(minute).append("分钟").toString();
+        }
+        return sb.append(second).append("秒").toString();
+    }
+
     public static String timeLeft(Date date){
         Date now = new Date();
         long timeLeft=(date.getTime()-now.getTime())/1000;
-        if(timeLeft<60){
+        if (timeLeft < 0) {
+            return "已失效";
+        } else if(timeLeft<60){
             return timeLeft+"秒";
         }
         if(timeLeft/60 < 60){
@@ -30,6 +66,10 @@ public class UPublicTool {
             return timeLeft/3600+"小时"+timeLeft%3600/60+"分钟"+timeLeft%60+"秒";
         }
         return timeLeft/(3600*24)+"天";
+    }
+
+    public static String timeBefore(long timeInSecond) {
+        return dateToTimeBefore(new Date(timeInSecond * 1000));
     }
     /*
     * 将某日期转化为距离现在的时间，用于在各种场合显示
@@ -124,4 +164,37 @@ public class UPublicTool {
     private UPublicTool(){
 
     }
+
+    public static float sp2px(Context context, int sp) {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp,
+                context.getResources().getDisplayMetrics());
+    }
+
+    public static float dp2px(Context context, int dp) {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
+                context.getResources().getDisplayMetrics());
+    }
+    public static int getStatusBarHeight(Context context)
+    {
+        int result = 0;
+        int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0)
+        {
+            result = context.getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
+    }
+
+    public static boolean isTextEmpty(String text) {
+        return text == null || text.length() == 0;
+    }
+
+    public static boolean isTextEmpty(String text, String ignore) {
+        return text == null || text.length() == 0 || text.equals(ignore);
+    }
+
+    public static boolean isTextLegal(String text, int minLen, int maxLen) {
+        return isTextEmpty(text) && text.length() >= minLen && text.length() <= maxLen;
+    }
+
 }

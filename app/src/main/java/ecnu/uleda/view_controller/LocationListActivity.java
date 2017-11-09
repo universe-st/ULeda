@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AbsListView;
@@ -89,16 +90,17 @@ public class LocationListActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 SearchResultObject.SearchResultData a=list.get(i);
-                Intent intent=new Intent();
+            Intent intent=new Intent();
                 intent.putExtra("title",a.title);
                 intent.putExtra("lat",a.location.lat);
                 intent.putExtra("lng",a.location.lng);
-                LocationListActivity.this.setResult(0,intent);
-                LocationListActivity.this.finish();
-            }
+            LocationListActivity.this.setResult(0,intent);
+            LocationListActivity.this.finish();
+        }
         });
-        getLocation();
-
+//        getLocation();
+        mTencentSearch = new TencentSearch(getApplicationContext());
+        searchPOIAndPut();
         mButtonBack = (Button)findViewById(R.id.button_location_list_back);
         mButtonBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,6 +112,8 @@ public class LocationListActivity extends AppCompatActivity {
     }
     private void searchPOIAndPut(){
         mButton.setEnabled(false);
+        mLocation = new Location();
+        mLocation.lat(31.228470f).lng(121.40640f); // 记得移除
         SearchParam.Nearby mNearBy = new SearchParam.Nearby().point(mLocation);
         mNearBy.r(5000);
         SearchParam object = new SearchParam().keyword(mKeyWord).boundary(mNearBy);
@@ -131,6 +135,8 @@ public class LocationListActivity extends AppCompatActivity {
             }
             @Override
             public void onFailure(int i, String s, Throwable throwable) {
+                throwable.printStackTrace();
+                Log.e("bb", "fail");
                 mButton.setEnabled(true);
             }
         });
@@ -139,7 +145,7 @@ public class LocationListActivity extends AppCompatActivity {
     {
         mLocationManager = TencentLocationManager.getInstance(this.getApplication());
 
-        mLocationManager.requestLocationUpdates(TencentLocationRequest.create()
+        int errorCode = mLocationManager.requestLocationUpdates(TencentLocationRequest.create()
                 .setInterval(5000)
                 .setRequestLevel(TencentLocationRequest.REQUEST_LEVEL_ADMIN_AREA), new TencentLocationListener() {
             @Override
@@ -159,6 +165,9 @@ public class LocationListActivity extends AppCompatActivity {
             public void onStatusUpdate(String s, int i, String s1) {
             }
         });
+        if (errorCode > 0) {
+            Log.e("LocationListActivity", "errorCode: " + errorCode);
+        }
     }
 
     private void getNearBy() {

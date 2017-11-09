@@ -1,29 +1,26 @@
 package ecnu.uleda.view_controller;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import ecnu.uleda.R;
-import ecnu.uleda.view_controller.MyTask_DoingFragment;
-import ecnu.uleda.view_controller.MyTask_DoneFragment;
-import ecnu.uleda.view_controller.MyTask_MyEvaluationFragment;
-import ecnu.uleda.view_controller.MyTask_ReleasedFragment;
-import ecnu.uleda.view_controller.MyTask_ToEvaluateFragment;
-import ecnu.uleda.view_controller.MyinfoFragmentAdapter;
 
 public class MyTaskInFo extends AppCompatActivity implements
- ViewPager.OnPageChangeListener,RadioGroup.OnCheckedChangeListener,OnClickListener {
-    private ImageButton mback;
+         RadioGroup.OnCheckedChangeListener, OnClickListener {
+    public static final String ACTION_REFRESH = "ecnu.uleda.view_controller.my_task_info_refresh";
+    public static final String EXTRA_TASK_POS = "extra_task_pos";
+    private static final int[] IDS = new int[]{R.id.released, R.id.doing, R.id.evaluate, R.id.done, R.id.evaluation};
     private RadioGroup group;
     private RadioButton released;
     private RadioButton doing;
@@ -35,34 +32,68 @@ public class MyTaskInFo extends AppCompatActivity implements
     public static final int PAGE_THREE = 2;
     public static final int PAGE_FOUR = 3;
     public static final int PAGE_FIVE = 4;
-    private MyinfoFragmentAdapter mAdapter;
-    private ViewPager mViewPager;
+    private BroadcastReceiver mReceiver;
+    private int mCheckedPos = -1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_already_release);
-        mAdapter = new MyinfoFragmentAdapter(getSupportFragmentManager());
-       initial();
-         init();
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        setTitle("");
+        initial();
+        init();
+        initReceiver();
     }
+
+    private void initReceiver() {
+        IntentFilter filter = new IntentFilter(ACTION_REFRESH);
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                int affectedTaskPos = intent.getIntExtra(EXTRA_TASK_POS, -1);
+                if (affectedTaskPos < 0) return;
+                Fragment activeFragment = getSupportFragmentManager().findFragmentById(R.id.task_layout);
+                if (activeFragment instanceof MyTask_ReleasedFragment) {
+                    ((MyTask_ReleasedFragment) activeFragment).notifyItemRemoved(affectedTaskPos);
+                } else if (activeFragment instanceof MyTask_DoingFragment) {
+                    ((MyTask_DoingFragment) activeFragment).notifyItemRemoved(affectedTaskPos);
+                } else if (activeFragment instanceof MyTask_DoneFragment) {
+                    ((MyTask_DoneFragment) activeFragment).notifyItemRemoved(affectedTaskPos);
+                } else if (activeFragment instanceof MyTask_MyEvaluationFragment) {
+                    ((MyTask_MyEvaluationFragment) activeFragment).notifyItemRemoved(affectedTaskPos);
+                } else if (activeFragment instanceof MyTask_ToEvaluateFragment) {
+                    ((MyTask_ToEvaluateFragment) activeFragment).notifyItemRemoved(affectedTaskPos);
+                }
+            }
+        };
+        registerReceiver(mReceiver, filter);
+    }
+
     @Override
-    public void onClick(View v)
-    {
-       mSwitch(v.getId());
+    public void onClick(View v) {
+        if (v.getId() != mCheckedPos) {
+            initFragment(v.getId());
+        }
     }
-    public void initial()
-    {
-        group = (RadioGroup)findViewById(R.id.radio_group);
-        released=(RadioButton)findViewById(R.id.released) ;
-        doing=(RadioButton)findViewById(R.id.doing) ;
-        evaluate=(RadioButton)findViewById(R.id.evaluate) ;
-        done=(RadioButton)findViewById(R.id.done) ;
-        evaluation=(RadioButton)findViewById(R.id.evaluation) ;
-        mback = (ImageButton) findViewById(R.id.Release_back);
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mReceiver != null) {
+            unregisterReceiver(mReceiver);
+        }
+    }
+
+    public void initial() {
+        group = (RadioGroup) findViewById(R.id.radio_group);
+        released = (RadioButton) findViewById(R.id.released);
+        doing = (RadioButton) findViewById(R.id.doing);
+        evaluate = (RadioButton) findViewById(R.id.evaluate);
+        done = (RadioButton) findViewById(R.id.done);
+        evaluation = (RadioButton) findViewById(R.id.evaluation);
         group.setOnCheckedChangeListener(this);
-        mViewPager = (ViewPager)findViewById(R.id.task_layout);
-        mViewPager.setAdapter(mAdapter);
-        mViewPager.addOnPageChangeListener(this);
 
         released.setOnClickListener(this);
         doing.setOnClickListener(this);
@@ -70,107 +101,60 @@ public class MyTaskInFo extends AppCompatActivity implements
         evaluation.setOnClickListener(this);
         done.setOnClickListener(this);
     }
+
     @Override
-    public void onCheckedChanged(RadioGroup group, int checkedId)
-    {
-        mSwitch(checkedId);
-    }
-    public void mSwitch(int Id)
-    {
-        switch (Id)
-        {
-            case R.id.released:
-                mViewPager.setCurrentItem(0);
-                break;
-            case R.id.doing:
-                mViewPager.setCurrentItem(1);
-                break;
-            case R.id.evaluate:
-                mViewPager.setCurrentItem(2);
-                break;
-            case R.id.done:
-                mViewPager.setCurrentItem(3);
-                break;
-            case R.id.evaluation:
-                mViewPager.setCurrentItem(4);
-                break;
-            case R.id.Release_back:
-                finish();
-                break;
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
+        if (mCheckedPos != checkedId) {
+            initFragment(checkedId);
         }
     }
-    public void init()
-    {
+
+
+    public void init() {
         Intent i = getIntent();
-        String i0=i.getStringExtra("data");
-        int i1=Integer.valueOf(i0);
-        switch (i1)
-        {
-            case 1:
-            {
+        String i0 = i.getStringExtra("data");
+        initFragment(IDS[Integer.parseInt(i0) - 1]);
+    }
+
+    private void initFragment(int id) {
+        mCheckedPos = id;
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        switch (id) {
+            case R.id.released: {
                 released.setChecked(true);
-                replaceFragement(new MyTask_ReleasedFragment());
+                transaction.replace(R.id.task_layout, new MyTask_ReleasedFragment());
                 break;
             }
-            case 2:
-            {
+            case R.id.doing: {
                 doing.setChecked(true);
-                replaceFragement(new MyTask_DoingFragment());
+                transaction.replace(R.id.task_layout, new MyTask_DoingFragment());
                 break;
             }
-            case 3:
-            {
+            case R.id.evaluate: {
                 evaluate.setChecked(true);
-                replaceFragement(new MyTask_ToEvaluateFragment());
+                transaction.replace(R.id.task_layout, new MyTask_ToEvaluateFragment());
                 break;
             }
-            case 4:
-            {
+            case R.id.done: {
                 done.setChecked(true);
-                replaceFragement(new MyTask_DoneFragment());
+                transaction.replace(R.id.task_layout, new MyTask_DoneFragment());
                 break;
             }
-            case 5:
-            {
+            case R.id.evaluation: {
                 evaluation.setChecked(true);
-                replaceFragement(new MyTask_MyEvaluationFragment());
+                transaction.replace(R.id.task_layout, new MyTask_MyEvaluationFragment());
                 break;
             }
         }
-    }
-    private void replaceFragement(Fragment fragment){
-        FragmentManager fragmentManager=getSupportFragmentManager();
-        FragmentTransaction transaction=fragmentManager.beginTransaction();
-        transaction.replace(R.id.task_layout,fragment);
         transaction.commit();
     }
+
+
+
     @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
-    @Override
-    public void onPageSelected(int position) {
-    }
-    public void onPageScrollStateChanged(int state) {
-        if(state == 2)
-        {
-            switch (mViewPager.getCurrentItem())
-            {
-                case PAGE_ONE:
-                released.setChecked(true);
-                break;
-                case PAGE_TWO:
-                    doing.setChecked(true);
-                    break;
-                case PAGE_THREE:
-                    evaluate.setChecked(true);
-                    break;
-                case PAGE_FOUR:
-                    done.setChecked(true);
-                    break;
-                case PAGE_FIVE:
-                    evaluation.setChecked(true);
-                    break;
-            }
-        }
-    }
+
 }

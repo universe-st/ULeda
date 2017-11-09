@@ -8,9 +8,13 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import ecnu.uleda.R;
 import ecnu.uleda.model.UCircle;
 
@@ -19,7 +23,6 @@ import ecnu.uleda.model.UCircle;
  */
 
 public class UCircleListAdapter extends ArrayAdapter<UCircle> {
-
     public UCircleListAdapter(Context context, ArrayList<UCircle> objects)
     {
         super(context, R.layout.u_circle_list_item,objects);
@@ -36,7 +39,7 @@ public class UCircleListAdapter extends ArrayAdapter<UCircle> {
             view = LayoutInflater.from(getContext().getApplicationContext()).inflate(R.layout.u_circle_list_item,parent,false);
             viewHolder = new ViewHolder();
 
-            viewHolder.photoImage = (ImageView) view.findViewById(R.id.photo);
+            viewHolder.photoImage = ( CircleImageView) view.findViewById(R.id.photo);
 
             viewHolder.publishername = (TextView) view.findViewById(R.id.publisher_name);
 
@@ -44,10 +47,7 @@ public class UCircleListAdapter extends ArrayAdapter<UCircle> {
 
             viewHolder.article = (TextView) view.findViewById(R.id.article);
 
-            if(Circle.getmDynamic_Photo() != 0)
-            {
-               viewHolder.dynamicphoto = (ImageView) view.findViewById(R.id.dynamic_photo);
-            }
+
             viewHolder.publishtime = (TextView) view.findViewById(R.id.publish_time);
 
 
@@ -61,31 +61,64 @@ public class UCircleListAdapter extends ArrayAdapter<UCircle> {
             view = convertView;
             viewHolder = (ViewHolder) view.getTag();
         }
-        viewHolder.photoImage.setImageResource(Circle.getmPhotoId());
+                Glide.with(getContext())
+                        .load("http://118.89.156.167/uploads/avatars/"+Circle.getmPhotoId())
+                        .into(viewHolder.photoImage);
         viewHolder.publishername.setText(Circle.getmName());
         viewHolder.title.setText(Circle.getmTitle());
         viewHolder.article.setText(Circle.getmArticle());
-        if(Circle.getmDynamic_Photo() != 0)
+        if(Circle.getmDynamic_Photo1().equals("null"))
         {
-            viewHolder.dynamicphoto = (ImageView) view.findViewById(R.id.dynamic_photo);
-            viewHolder.dynamicphoto.setImageResource(Circle.getmDynamic_Photo());
+            viewHolder.dynamicphoto1 = (ImageView) view.findViewById(R.id.dynamic_photo1);
+            viewHolder.dynamicphoto1.setVisibility(View.GONE);
         }
         else
         {
-            viewHolder.dynamicphoto = (ImageView) view.findViewById(R.id.dynamic_photo);
-            viewHolder.dynamicphoto.setVisibility(View.GONE);
+            viewHolder.dynamicphoto1 = (ImageView) view.findViewById(R.id.dynamic_photo1);
+            Glide.with(getContext())
+                    .load("http://118.89.156.167/uploads/pictures/"+Circle.getmDynamic_Photo1() )
+                    .into(viewHolder.dynamicphoto1);
         }
+        if(Circle.getmDynamic_Photo2().equals("null"))
+        {
+            viewHolder.dynamicphoto2 = (ImageView) view.findViewById(R.id.dynamic_photo2);
+            viewHolder.dynamicphoto2.setVisibility(View.GONE);
+        }
+        else
+        {
+            viewHolder.dynamicphoto2 = (ImageView) view.findViewById(R.id.dynamic_photo2);
+
+            Glide.with(getContext())
+                    .load("http://118.89.156.167/uploads/pictures/"+Circle.getmDynamic_Photo2() )
+                    .into(viewHolder.dynamicphoto2);
+        }
+        if(Circle.getmDynamic_Photo3().equals("null"))
+        {
+            viewHolder.dynamicphoto3 = (ImageView) view.findViewById(R.id.dynamic_photo3);
+            viewHolder.dynamicphoto3.setVisibility(View.GONE);
+        }
+        else
+        {
+            viewHolder.dynamicphoto3 = (ImageView) view.findViewById(R.id.dynamic_photo3);
+            Glide.with(getContext())
+                    .load("http://118.89.156.167/uploads/pictures/"+Circle.getmDynamic_Photo3() )
+                    .into(viewHolder.dynamicphoto3);
+        }
+
+
         viewHolder.publishtime.setText(Circle.getmTime());
         viewHolder.Getzan.setText(Circle.getmGet());
         return view;
     }
     class ViewHolder
     {
-        ImageView photoImage;
+        CircleImageView photoImage;
         TextView publishername;
         TextView title;
         TextView article;
-        ImageView dynamicphoto;
+        ImageView dynamicphoto1;
+        ImageView dynamicphoto2;
+        ImageView dynamicphoto3;
         TextView publishtime;
         TextView Getzan;
     }

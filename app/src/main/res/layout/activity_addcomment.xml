@@ -14,6 +14,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
+        android:hint="评论..."
         android:layout_marginBottom="5dip"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="5dip"
@@ -29,6 +30,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
+        android:background="@null"
+        android:textColor="#ffffff"
         android:text="发送"
         android:textSize="16sp" />
 

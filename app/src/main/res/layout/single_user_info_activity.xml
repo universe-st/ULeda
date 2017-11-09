@@ -1,96 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/single_user_info_background"
+    android:orientation="vertical"
     android:weightSum="100">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="4"
-        android:background="@android:color/transparent"/>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="10"
+        android:background="@android:color/transparent" />
+
+
+    <Button
+        android:id="@+id/button_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:background="@android:color/transparent"
-        android:weightSum="10">
+        android:drawableLeft="@drawable/ic_chevron_left_white_36dp"
+        android:drawablePadding="-24dp"
+        android:text="返回"
+        android:textColor="@android:color/white"
+        android:textSize="20sp" />
 
-        <Button
-            android:id="@+id/button_back"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:text="〈 返回"
-            android:textSize="20sp"
-            android:background="@android:color/transparent"
-            android:textColor="@android:color/white"/>
-
-    </LinearLayout>
 
     <RelativeLayout
+        android:id="@+id/r1"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="45"
-        android:scaleType="matrix"
-        android:id="@+id/r1"
-        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_centerVertical="true" >
+        android:layout_alignParentTop="true"
+        android:layout_centerVertical="true"
+        android:layout_weight="45"
+        android:scaleType="matrix">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/icon_image"
+            android:id="@+id/user_image"
             android:layout_width="85dp"
             android:layout_height="79dp"
-            android:layout_marginTop="25dp"
             android:layout_centerHorizontal="true"
+            android:layout_marginTop="25dp"
             android:src="@drawable/user" />
 
         <TextView
             android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/user_image"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
             android:text=""
             android:textColor="@color/colorUWhite"
-            android:textSize="18sp"
-            android:layout_below="@+id/icon_image"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp" />
+            android:textSize="18sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/name"
-            android:weightSum="2"
-            android:orientation="horizontal"
             android:layout_centerHorizontal="true"
-            >
+            android:orientation="horizontal"
+            android:weightSum="2">
+
             <TextView
                 android:id="@+id/user_sex"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
                 android:layout_weight="1"
+                android:gravity="right"
                 android:text=""
                 android:textColor="@color/colorUAquablue"
-                android:textSize="18sp"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="5dp"
-                android:gravity="right"/>
+                android:textSize="18sp" />
+
             <TextView
                 android:id="@+id/user_age"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
                 android:layout_weight="1"
+                android:gravity="left"
                 android:text=""
                 android:textColor="@color/colorUAquablue"
-                android:textSize="18sp"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="5dp"
-                android:gravity="left"/>
+                android:textSize="18sp" />
         </LinearLayout>
 
 
@@ -99,8 +95,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="5"
         android:layout_marginTop="7dp"
+        android:layout_weight="5"
         android:background="@color/colorUBlack_transparent"
         android:orientation="horizontal"
         android:weightSum="10">
@@ -108,59 +104,58 @@
         <TextView
             android:layout_width="75dp"
             android:layout_height="match_parent"
-            android:textColor="@color/colorUWhite"
+            android:gravity="right|center_vertical"
             android:text="签名"
-            android:textSize="20sp"
-            android:gravity="right|center_vertical"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
             android:textColor="@color/colorUWhite"
+            android:textSize="20sp" />
+
+        <TextView
             android:id="@+id/text_sign"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:layout_weight="1"
+            android:gravity="left|center_vertical"
+            android:paddingLeft="20dp"
             android:text="专业跑腿一百年"
-            android:textSize="15sp"
-            android:gravity="left|center_vertical"
-            android:layout_gravity="right"
-            android:paddingLeft="20dp"
-            />
+            android:textColor="@color/colorUWhite"
+            android:textSize="15sp" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="5"
         android:layout_marginTop="7dp"
+        android:layout_weight="5"
         android:background="@color/colorUBlack_transparent"
         android:orientation="horizontal"
         android:weightSum="10">
+
         <TextView
             android:layout_width="75dp"
             android:layout_height="match_parent"
-            android:textColor="@color/colorUWhite"
+            android:gravity="right|center_vertical"
             android:text="班级"
-            android:textSize="20sp"
-            android:gravity="right|center_vertical"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
             android:textColor="@color/colorUWhite"
+            android:textSize="20sp" />
+
+        <TextView
             android:id="@+id/user_class"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:gravity="left|center_vertical"
+            android:paddingLeft="20dp"
             android:text=" "
-            android:textSize="15sp"
-            android:gravity="left|center_vertical"
-            android:layout_gravity="right"
-            android:paddingLeft="20dp"
-            />
+            android:textColor="@color/colorUWhite"
+            android:textSize="15sp" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="5"
         android:layout_marginTop="7dp"
+        android:layout_weight="5"
         android:background="@color/colorUBlack_transparent"
         android:orientation="horizontal"
         android:weightSum="10">
@@ -168,41 +163,39 @@
         <TextView
             android:layout_width="75dp"
             android:layout_height="match_parent"
-            android:textColor="@color/colorUWhite"
+            android:gravity="right|center_vertical"
             android:text="荣誉度"
-            android:textSize="20sp"
-            android:gravity="right|center_vertical"
-            />
+            android:textColor="@color/colorUWhite"
+            android:textSize="20sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:textColor="@color/colorUGreen"
-            android:text="★★★★★"
-            android:textSize="15sp"
-            android:paddingLeft="20dp"
             android:gravity="left|center_vertical"
-            />
+            android:paddingLeft="20dp"
+            android:text="★★★★★"
+            android:textColor="@color/colorUGreen"
+            android:textSize="15sp" />
 
         <TextView
+            android:id="@+id/text_taskNum"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:textColor="@color/colorUWhite"
-            android:id="@+id/text_taskNum"
-            android:text="（共32单）"
-            android:textSize="15sp"
-            android:gravity="left|center_vertical"
             android:layout_gravity="right"
-            android:layout_marginLeft="5dp"/>
+            android:layout_marginLeft="5dp"
+            android:gravity="left|center_vertical"
+            android:text="（共32单）"
+            android:textColor="@color/colorUWhite"
+            android:textSize="15sp" />
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="5"
         android:layout_marginTop="7dp"
+        android:layout_weight="5"
         android:background="@color/colorUBlack_transparent"
         android:orientation="horizontal"
         android:weightSum="10">
@@ -210,22 +203,20 @@
         <TextView
             android:layout_width="75dp"
             android:layout_height="match_parent"
-            android:textColor="@color/colorUWhite"
-            android:text="热心度"
-            android:textSize="20sp"
             android:gravity="right|center_vertical"
-            />
+            android:text="热心度"
+            android:textColor="@color/colorUWhite"
+            android:textSize="20sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:textColor="@color/colorUOrange"
-            android:text="★★★★☆"
-            android:textSize="15sp"
-            android:paddingLeft="20dp"
             android:gravity="left|center_vertical"
-            />
+            android:paddingLeft="20dp"
+            android:text="★★★★☆"
+            android:textColor="@color/colorUOrange"
+            android:textSize="15sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -238,26 +229,24 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
+        android:orientation="horizontal">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="vertical"
             android:gravity="center"
-           >
+            android:orientation="vertical">
 
             <Button
                 android:id="@+id/button_adduser"
                 android:layout_width="120dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="加为好友"
-                android:textColor="@color/colorUWhite"
                 android:backgroundTint="@color/colorUGreen"
-                />
+                android:text="加为好友"
+                android:enabled="false"
+                android:textColor="@color/colorUWhite" />
 
         </LinearLayout>
 
@@ -265,20 +254,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="vertical"
             android:gravity="center"
-            >
+            android:orientation="vertical">
+
             <Button
                 android:id="@+id/button_sendmsg"
                 android:layout_width="120dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="发消息"
-                android:textColor="@color/colorUWhite"
                 android:backgroundTint="@color/colorUBlue"
-                />
+                android:text="发消息"
+                android:textColor="@color/colorUWhite" />
         </LinearLayout>
-        
+
     </LinearLayout>
 
 </LinearLayout>

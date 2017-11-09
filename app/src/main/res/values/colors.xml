@@ -1,23 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#DD5A44</color>
+<color name="colorPrimaryDark">#DD5A44</color>
+<color name="colorAccent">#FF4081</color>
 
     <color name="colorUMain">#DD5A44</color>
     <color name="colorUSwitch">#B84A37</color>
+    <color name="colorUSwitchDark">#b71c1c</color>
+    <color name="colorUMainRipple">#53dd5a44</color>
+    <color name="colorUSwitchDarkPressed">#8f1515</color>
 
     <color name="colorUTaskType">#5CCD8F</color>
 
     <color name="colorUBlue">#4FBDFE</color>
 
+    <color name="colorTextBlue">#1173CB</color>
+
     <color name="colorUDeepGray">#666666</color>
+    <color name="text_gray1">#777777</color>
+    <color name="text_gray2">#767676</color>
+
 
     <color name="colorUGray">#ABABAB</color>
+
+    <color name="colorBackgroundGray">#EBEBEB</color>
 
     <color name="colorUInfo">#f0b6ac</color>
     
     <color name="colorULightGray">#F5F5F5</color>
+    <color name="colorUDarkAlphaGray">#88666666</color>
 
     <color name="colorUWhite">#ffffff </color>
 
@@ -36,5 +47,16 @@
     <color name="colorUWhiteLogin">#FDFDFD</color>
 
     <color name="colorUDarkregister">#000000</color>
+
+    <color name="add_bg_normal">#ff8200</color>
+    <color name="add_bg_pressed">#d46403</color>
+    <color name="result_view">#b0000000</color>
+    <color name="viewfinder_mask">#60000000</color>
+    <color name="possible_result_points">#c0ffff00</color>
+
+    <!-- 上传图片添加的颜色 -->
+    <color name="none_color">#00000000</color>
+    <color name="albumback">#E1E0DE</color>
+    <color name="plugin_camera_black">#000000</color>
 
 </resources>
